@@ -3,7 +3,7 @@
  * Notify moderators that a post needs to be approved.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -36,7 +36,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 		require_once($sourcedir . '/Subs-Members.php');
 		$modMembers = membersAllowedTo('approve_posts', $topicOptions['board']);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, email_address, lngfile
 			FROM {db_prefix}members
 			WHERE id_member IN({array_int:members})',
@@ -51,7 +51,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($members))
 			return true;

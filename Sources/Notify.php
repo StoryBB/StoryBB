@@ -5,7 +5,7 @@
  * to topics or boards.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -51,7 +51,7 @@ function BoardNotify()
 				['id_member', 'id_board']
 			);
 		else
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_notify
 				WHERE id_member = {int:current_member}
 				AND id_board = {int:current_board}',
@@ -106,7 +106,7 @@ function TopicNotify()
 			if (empty($mode))
 				$mode = 1;
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, id_topic, id_msg, unwatched
 				FROM {db_prefix}log_topics
 				WHERE id_member = {int:current_user}
@@ -117,7 +117,7 @@ function TopicNotify()
 				]
 			);
 			$log = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($log))
 			{
 				$insert = true;
@@ -157,7 +157,7 @@ function TopicNotify()
 				);
 			}
 			else
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}log_notify
 					WHERE id_topic = {int:topic}
 						AND id_member = {int:member}',

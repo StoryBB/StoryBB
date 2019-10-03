@@ -3,7 +3,7 @@
  * Weekly maintenance tasks.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -69,7 +69,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			'search_enable_captcha', 'search_floodcontrol_time',
 		];
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable IN ({array_string:setting_list})
 				AND (value = {string:zero_value} OR value = {string:blank_value})',
@@ -85,7 +85,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			'attachment_full_notified',
 		];
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable IN ({array_string:setting_list})',
 			[
@@ -113,7 +113,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
 			$t = time() - $modSettings['pruneErrorLog'] * 86400;
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_errors
 				WHERE log_time < {int:log_time}',
 				[
@@ -127,7 +127,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
 			$t = time() - $modSettings['pruneModLog'] * 86400;
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_actions
 				WHERE log_time < {int:log_time}
 					AND id_log = {int:moderation_log}',
@@ -143,7 +143,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
 			$t = time() - $modSettings['pruneBanLog'] * 86400;
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_banned
 				WHERE log_time < {int:log_time}',
 				[
@@ -159,7 +159,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 
 			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
 			$reports = [];
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT id_report
 				FROM {db_prefix}log_reported
 				WHERE time_started < {int:time_started}
@@ -175,12 +175,12 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			while ($row = $smcFunc['db_fetch_row']($result))
 				$reports[] = $row[0];
 
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if (!empty($reports))
 			{
 				// Now delete the reports...
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}log_reported
 					WHERE id_report IN ({array_int:report_list})',
 					[
@@ -188,7 +188,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 					]
 				);
 				// And delete the comments for those reports...
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}log_reported_comments
 					WHERE id_report IN ({array_int:report_list})',
 					[
@@ -203,7 +203,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
 			$t = time() - $modSettings['pruneScheduledTaskLog'] * 86400;
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_scheduled_tasks
 				WHERE time_run < {int:time_run}',
 				[
@@ -221,7 +221,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 		global $smcFunc;
 
 		// Get rid of any paid subscriptions that were never actioned.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE end_time = {int:no_end_time}
 				AND status = {int:not_active}
@@ -244,7 +244,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 		global $smcFunc;
 
 		// Some OS's don't seem to clean out their sessions.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}sessions
 			WHERE last_update < {int:last_update}',
 			[

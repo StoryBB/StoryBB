@@ -5,13 +5,14 @@
  * logging in and out members, and the validation of that.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Ask them for their login information. (shows a page for the user to type
@@ -185,7 +186,7 @@ function Login2()
 	$context['sub_template'] = 'login_main';
 
 	// Set up the default/fallback stuff.
-	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';
+	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($_POST['user'])) : '';
 	$context['default_password'] = '';
 	$context['login_errors'] = [$txt['error_occured']];
 	$context['page_title'] = $txt['login'];
@@ -218,10 +219,10 @@ function Login2()
 	}
 
 	// And if it's too long, trim it back.
-	if ($smcFunc['strlen']($_POST['user']) > 80)
+	if (StringLibrary::strlen($_POST['user']) > 80)
 	{
-		$_POST['user'] = $smcFunc['substr']($_POST['user'], 0, 79);
-		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user']));
+		$_POST['user'] = StringLibrary::substr($_POST['user'], 0, 79);
+		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($_POST['user']));
 	}
 
 
@@ -233,22 +234,22 @@ function Login2()
 	}
 
 	// Load the data up!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			passwd_flood, tfa_secret
 		FROM {db_prefix}members
-		WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
+		WHERE ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
 		LIMIT 1',
 		[
-			'user_name' => $smcFunc['db_case_sensitive'] ? strtolower($_POST['user']) : $_POST['user'],
+			'user_name' => $smcFunc['db']->is_case_sensitive() ? strtolower($_POST['user']) : $_POST['user'],
 		]
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
-	if ($smcFunc['db_num_rows']($request) == 0 && strpos($_POST['user'], '@') !== false)
+	if ($smcFunc['db']->num_rows($request) == 0 && strpos($_POST['user'], '@') !== false)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			passwd_flood, tfa_secret
 			FROM {db_prefix}members
@@ -261,14 +262,14 @@ function Login2()
 	}
 
 	// Let them try again, it didn't match anything...
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$context['login_errors'] = [$txt['username_no_exist']];
 		return;
 	}
 
 	$user_settings = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Bad password!  Thought you could fool the database?!
 	if (!hash_verify_password($user_settings['member_name'], un_htmlspecialchars($_POST['passwrd']), $user_settings['passwd']))
@@ -479,7 +480,7 @@ function DoLogin()
 	unset($_SESSION['language'], $_SESSION['id_theme']);
 
 	// First login?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT last_login
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -488,11 +489,11 @@ function DoLogin()
 			'id_member' => $user_info['id'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 1)
+	if ($smcFunc['db']->num_rows($request) == 1)
 		$_SESSION['first_login'] = true;
 	else
 		unset($_SESSION['first_login']);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// You've logged in, haven't you?
 	$update = ['member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']];
@@ -501,7 +502,7 @@ function DoLogin()
 	updateMemberData($user_info['id'], $update);
 
 	// Get rid of the online entry for that old guest....
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_online
 		WHERE session = {string:session}',
 		[
@@ -564,7 +565,7 @@ function Logout($internal = false, $redirect = true)
 		(new Observable\Account\LoggedOut($user_settings['member_name'], $user_info['id']))->execute();
 
 		// If you log out, you aren't online anymore :P.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			[

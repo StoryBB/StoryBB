@@ -4,7 +4,7 @@
  * This taks handles notifying someone that a user has requested to join a group they moderate.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -26,7 +26,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
 
 		// Do we have any group moderators?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}group_moderators
 			WHERE id_group = {int:selected_group}',
@@ -37,7 +37,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		$moderators = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$moderators[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		require_once($sourcedir . '/Subs-Members.php');
 
@@ -99,7 +99,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 				require_once($sourcedir . '/Subs-Post.php');
 				loadEssentialThemeData();
 
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member, email_address, lngfile, member_name
 					FROM {db_prefix}members
 					WHERE id_member IN ({array_int:moderator_list})

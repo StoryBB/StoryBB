@@ -4,7 +4,7 @@
  * This file contains liking posts and displaying the list of who liked a post.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -193,7 +193,7 @@ class Likes
 			// So we're doing something off a like. We need to verify that it exists, and that the current user can see it.
 			// Fortunately for messages, this is quite easy to do - and we'll get the topic id while we're at it, because
 			// we need this later for other things.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT m.id_topic, m.id_member
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
@@ -203,10 +203,10 @@ class Likes
 					'msg' => $this->_content,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 1)
+			if ($smcFunc['db']->num_rows($request) == 1)
 				list ($this->_idTopic, $topicOwner) = $smcFunc['db_fetch_row']($request);
 
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($this->_idTopic))
 				return $this->_error = 'cannot_';
 
@@ -272,7 +272,7 @@ class Likes
 	{
 		global $smcFunc;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}
@@ -341,7 +341,7 @@ class Likes
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_member)
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
@@ -352,7 +352,7 @@ class Likes
 			]
 		);
 		list ($this->_numLikes) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If you want to call this directly, fill out _data property too.
 		if ($this->_sa == __FUNCTION__)
@@ -373,7 +373,7 @@ class Likes
 			return $this->_error = 'cannot_';
 
 		// Do we already like this?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT content_id, content_type, id_member
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
@@ -385,8 +385,8 @@ class Likes
 				'id_member' => $this->_user['id'],
 			]
 		);
-		$this->_alreadyLiked = (bool) $smcFunc['db_num_rows']($request) != 0;
-		$smcFunc['db_free_result']($request);
+		$this->_alreadyLiked = (bool) $smcFunc['db']->num_rows($request) != 0;
+		$smcFunc['db']->free_result($request);
 
 		if ($this->_alreadyLiked)
 			$this->delete();
@@ -444,7 +444,7 @@ class Likes
 		if ($this->_type !== 'msg')
 			return;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET likes = {int:num_likes}
 			WHERE id_msg = {int:id_msg}',
@@ -472,7 +472,7 @@ class Likes
 
 		// Firstly, load what we need. We already know we can see this, so that's something.
 		$context['likers'] = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, like_time
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}

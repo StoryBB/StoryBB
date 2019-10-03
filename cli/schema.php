@@ -4,7 +4,7 @@
  * Checks the schema and implements upgrades if needed.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -35,8 +35,6 @@ else
 	}
 }
 
-require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 require_once($boarddir . '/vendor/autoload.php');
 
 require_once($sourcedir . '/Errors.php');

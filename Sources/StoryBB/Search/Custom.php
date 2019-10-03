@@ -4,13 +4,15 @@
  * Provides searching via a custom set of tables
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Search;
+
+use StoryBB\StringLibrary;
 
 /**
  * Used for the "custom search index" option
@@ -154,7 +156,7 @@ class Custom extends AbstractSearchable implements Searchable
 		{
 			foreach ($subwords as $subword)
 			{
-				if ($smcFunc['strlen']($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
+				if (StringLibrary::strlen($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
 				{
 					$wordsSearch['indexed_words'][] = $subword;
 					if ($isExcluded)
@@ -315,7 +317,7 @@ class Custom extends AbstractSearchable implements Searchable
 			if (!empty($removed_words))
 			{
 				$removed_words = array_merge($removed_words, $inserted_words);
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}log_search_words
 					WHERE id_msg = {int:id_msg}
 						AND id_word IN ({array_int:removed_words})',

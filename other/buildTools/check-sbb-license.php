@@ -4,7 +4,7 @@
  * This file checks files during pull requests to ensure they have correct headers.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -36,16 +36,16 @@ foreach ($ignoreFiles as $if)
 	if (preg_match('~' . $if . '~i', $currentFile))
 		die;
 
-// Lets get the main index.php for $forum_version and $software_year.
-$indexFile = fopen('./index.php', 'r');
+// Lets get the main application for version and year.
+$indexFile = fopen('./Sources/StoryBB/App.php', 'r');
 $indexContents = fread($indexFile, 850);
 
-if (!preg_match('~\$forum_version = \'StoryBB ([^\']+)\';~i', $indexContents, $versionResults))
-	die('Error: Could not locate $forum_version' . "\n");
+if (!preg_match('~const SOFTWARE_VERSION = \'([^\']+)\';~i', $indexContents, $versionResults))
+	die('Error: Could not locate SOFTWARE_VERSION' . "\n");
 $currentVersion = $versionResults[1];
 
-if (!preg_match('~\$software_year = \'(\d{4})\';~i', $indexContents, $yearResults))
-	die('Error: Could not locate $software_year' . "\n");
+if (!preg_match('~const SOFTWARE_YEAR = (\d{4});~i', $indexContents, $yearResults))
+	die('Error: Could not locate SOFTWARE_YEAR' . "\n");
 $currentSoftwareYear = (int) $yearResults[1];
 
 $file = fopen($currentFile, 'r');
@@ -85,7 +85,7 @@ if (in_array($currentFile, ['./other/upgrade.php', './other/install.php']))
 	$upgradeFile = file_get_contents($currentFile);
 
 	if (!preg_match('~<li class="copyright"><a href="https?://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; (\d{4}), StoryBB project</a></li>~i', $upgradeFile, $upgradeResults))
-		die('Error: Could not locate upgrade template copyright $software_year' . "\n");
+		die('Error: Could not locate upgrade template copyright year' . "\n");
 
 	if ((int) $upgradeResults[1] != $currentSoftwareYear)
 		die('Error: Upgrade template copyright year is invalid' . "\n");

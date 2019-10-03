@@ -4,7 +4,7 @@
  * Handles processing for a theme.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -161,7 +161,7 @@ class Theme
 			return $cache;
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
@@ -176,7 +176,7 @@ class Theme
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$cache[$row['id_theme']][$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $cache;
 	}

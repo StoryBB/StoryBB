@@ -4,13 +4,15 @@
  * Any autocomplete handlers probably should extend this class.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Helper\Autocomplete;
+
+use StoryBB\StringLibrary;
 
 /**
  * Any autocomplete handlers probably should extend this class.
@@ -42,7 +44,7 @@ abstract class AbstractCompletable
 	protected function escape_term(string $term): string
 	{
 		global $smcFunc;
-		$term = trim($smcFunc['strtolower']($term)) . '*';
+		$term = trim(StringLibrary::toLower($term)) . '*';
 		return strtr($term, [
 			'%' => '\%',
 			'_' => '\_',

@@ -4,7 +4,7 @@
  * This file contains the functions to add, modify, remove, collapse and expand categories.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -40,7 +40,7 @@ function modifyCategory($category_id, $catOptions)
 			$cats[] = $category_id;
 
 		// Grab the categories sorted by cat_order.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_cat, cat_order
 			FROM {db_prefix}categories
 			ORDER BY cat_order',
@@ -55,12 +55,12 @@ function modifyCategory($category_id, $catOptions)
 				$cats[] = $category_id;
 			$cat_order[$row['id_cat']] = $row['cat_order'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Set the new order for the categories.
 		foreach ($cats as $index => $cat)
 			if ($index != $cat_order[$cat])
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}categories
 					SET cat_order = {int:new_order}
 					WHERE id_cat = {int:current_category}',
@@ -100,7 +100,7 @@ function modifyCategory($category_id, $catOptions)
 	// Do the updates (if any).
 	if (!empty($catUpdates))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}categories
 			SET
 				' . implode(',
@@ -195,7 +195,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 	// With no category set to move the boards to, delete them all.
 	if ($moveBoardsTo === null)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}boards
 			WHERE id_cat IN ({array_int:category_list})',
@@ -206,7 +206,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 		$boards_inside = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_inside[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards_inside))
 			deleteBoards($boards_inside, null);
@@ -218,7 +218,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 
 	// Move the boards inside the categories to a safe category.
 	else
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET id_cat = {int:new_parent_cat}
 			WHERE id_cat IN ({array_int:category_list})',
@@ -229,7 +229,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 		);
 
 	// Do the deletion of the category itself
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}categories
 		WHERE id_cat IN ({array_int:category_list})',
 		[

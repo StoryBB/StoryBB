@@ -12,7 +12,7 @@
  * Never access the context directly, but use the data handling functions to do so.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -119,7 +119,7 @@ function BoardReport()
 	loadPermissionProfiles();
 
 	// Get every moderator.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mods.id_board, mods.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)',
@@ -129,10 +129,10 @@ function BoardReport()
 	$moderators = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$moderators[$row['id_board']][] = $row['real_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get every moderator gruop.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT modgs.id_board, modgs.id_group, memg.group_name
 		FROM {db_prefix}moderator_groups AS modgs
 			INNER JOIN {db_prefix}membergroups AS memg ON (memg.id_group = modgs.id_group)',
@@ -142,10 +142,10 @@ function BoardReport()
 	$moderator_groups = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$moderator_groups[$row['id_board']][] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the possible membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		[
@@ -154,7 +154,7 @@ function BoardReport()
 	$groups = [-1 => $txt['guest_title'], 0 => $txt['full_member']];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// All the fields we'll show.
 	$boardSettings = [
@@ -178,7 +178,7 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.in_character, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
 			b.redirect, c.name AS cat_name, COALESCE(par.name, {string:text_none}) AS parent_name, COALESCE(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b
@@ -250,7 +250,7 @@ function BoardReport()
 		// Next add the main data.
 		addData($boardData);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -293,7 +293,7 @@ function BoardPermissionsReport()
 		$group_clause = '1=1';
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name, id_profile
 		FROM {db_prefix}boards
 		WHERE ' . $board_clause . '
@@ -312,11 +312,11 @@ function BoardPermissionsReport()
 		];
 		$profiles[] = $row['id_profile'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the ids of any groups allowed to moderate this board
 	// Limit it to any boards and/or groups we're looking at
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, id_group
 		FROM {db_prefix}moderator_groups
 		WHERE ' . $board_clause . ' AND ' . $group_clause,
@@ -327,10 +327,10 @@ function BoardPermissionsReport()
 	{
 		$boards[$row['id_board']]['mod_groups'][] = $row['id_group'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the possible membergroups, except admin!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
@@ -347,7 +347,7 @@ function BoardPermissionsReport()
 		$member_groups = ['col' => ''];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$member_groups[$row['id_group']] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Make sure that every group is represented - plus in rows!
 	setKeys('rows', $member_groups);
@@ -360,7 +360,7 @@ function BoardPermissionsReport()
 	// Cache every permission setting, to make sure we don't miss any allows.
 	$permissions = [];
 	$board_permissions = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
@@ -389,7 +389,7 @@ function BoardPermissionsReport()
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now cycle through the board permissions array... lots to do ;)
 	foreach ($board_permissions as $board => $groups)
@@ -467,7 +467,7 @@ function MemberGroupsReport()
 	global $txt, $settings, $modSettings, $smcFunc;
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name, member_groups, id_profile, deny_member_groups
 		FROM {db_prefix}boards',
 		[
@@ -493,7 +493,7 @@ function MemberGroupsReport()
 			'deny_groups' => $denyGroups,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Standard settings.
 	$mgSettings = [
@@ -520,7 +520,7 @@ function MemberGroupsReport()
 	addData($mgSettings);
 
 	// Now start cycling the membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name, mg.online_color, mg.max_messages, mg.icons, mg.is_character,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
@@ -553,7 +553,7 @@ function MemberGroupsReport()
 	];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$rows[] = $row;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($rows as $row)
 	{
@@ -601,7 +601,7 @@ function GroupPermissionsReport()
 		$clause = 'id_group != {int:moderator_group}';
 
 	// Get all the possible membergroups, except admin!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
@@ -620,7 +620,7 @@ function GroupPermissionsReport()
 		$groups = ['col' => ''];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$groups[$row['id_group']] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Make sure that every group is represented!
 	setKeys('rows', $groups);
@@ -642,7 +642,7 @@ function GroupPermissionsReport()
 	call_integration_hook('integrate_reports_groupperm', [&$disabled_permissions]);
 
 	// Now the big permission fetch!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, add_deny, permission
 		FROM {db_prefix}permissions
 		WHERE ' . $clause . '
@@ -678,7 +678,7 @@ function GroupPermissionsReport()
 		else
 			$curData[$row['id_group']] = '<span class="red">' . $txt['board_perms_deny'] . '</span>';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Flush the last data!
 	addData($curData);
@@ -699,7 +699,7 @@ function StaffReport()
 	require_once($sourcedir . '/Subs-Members.php');
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name
 		FROM {db_prefix}boards',
 		[
@@ -708,10 +708,10 @@ function StaffReport()
 	$boards = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$boards[$row['id_board']] = $row['name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get every moderator.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mods.id_board, mods.id_member
 		FROM {db_prefix}moderators AS mods',
 		[
@@ -724,10 +724,10 @@ function StaffReport()
 		$moderators[$row['id_member']][] = $row['id_board'];
 		$local_mods[$row['id_member']] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get any additional boards they can moderate through group-based board moderation
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, modgs.id_board
 		FROM {db_prefix}members AS mem
 			INNER JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_group = mem.id_group OR FIND_IN_SET(modgs.id_group, mem.additional_groups) != 0)',
@@ -761,7 +761,7 @@ function StaffReport()
 		fatal_lang_error('report_error_too_many_staff');
 
 	// Get all the possible membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		[
@@ -770,7 +770,7 @@ function StaffReport()
 	$groups = [0 => $txt['full_member']];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// All the fields we'll show.
 	$staffSettings = [
@@ -784,7 +784,7 @@ function StaffReport()
 	setKeys('cols');
 
 	// Get each member!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, id_group, posts, last_login
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:staff_list})
@@ -827,7 +827,7 @@ function StaffReport()
 		// Next add the main data.
 		addData($staffData);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**

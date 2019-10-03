@@ -3,11 +3,13 @@
  * Provides functions for managing several character-focused features in the administration area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Front end controller for the character sheet templates section in the admin area.
@@ -34,7 +36,7 @@ function char_template_list()
 	global $smcFunc, $context, $txt;
 
 	$context['char_templates'] = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_template, template_name, position
 		FROM {db_prefix}character_sheet_templates
 		ORDER BY position ASC');
@@ -42,7 +44,7 @@ function char_template_list()
 	{
 		$context['char_templates'][$row['id_template']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['char_templates'];
 	$context['sub_template'] = 'admin_character_template_list';
@@ -63,7 +65,7 @@ function char_template_reorder()
 		$order = 1;
 		foreach ($_POST['template'] as $template) {
 			$template = (int) $template;
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}character_sheet_templates
 				SET position = {int:order}
 				WHERE id_template = {int:template}',
@@ -118,7 +120,7 @@ function char_template_edit()
 	require_once($sourcedir . '/Subs-Editor.php');
 
 	$template_id = isset($_GET['template_id']) ? (int) $_GET['template_id'] : 0;
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_template, template_name, template
 		FROM {db_prefix}character_sheet_templates
 		WHERE id_template = {int:template}',
@@ -166,8 +168,8 @@ function char_template_save()
 	if (empty($_POST['template_name']) || empty($_POST['message']))
 		redirectexit('action=admin;area=templates');
 
-	$template_name = $smcFunc['htmlspecialchars'](trim($_POST['template_name']), ENT_QUOTES);
-	$template = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+	$template_name = StringLibrary::escape(trim($_POST['template_name']), ENT_QUOTES);
+	$template = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 	preparsecode($template);
 
 	$template_id = isset($_POST['template_id']) ? (int) $_POST['template_id'] : 0;
@@ -182,7 +184,7 @@ function char_template_save()
 		);
 	} else {
 		// Updating an existing one
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}character_sheet_templates
 			SET template_name = {string:template_name},
 				template = {string:template}
@@ -218,7 +220,7 @@ function CharacterSheets()
 			{
 				global $smcFunc;
 				$rows = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT csv.id_character, MAX(csv.created_time) AS latest_version,
 						MAX(csv.approved_time) AS last_approval, MAX(csv.approval_state) AS approval_state
 					FROM {db_prefix}character_sheet_versions AS csv
@@ -236,12 +238,12 @@ function CharacterSheets()
 
 					$rows[$row['id_character']] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Having fetched whichever versions are relevant, we now need to fetch the rest of the data.
 				if (!empty($rows))
 				{
-					$request = $smcFunc['db_query']('', '
+					$request = $smcFunc['db']->query('', '
 						SELECT mem.id_member, mem.real_name, chars.id_character, chars.character_name
 						FROM {db_prefix}characters AS chars
 						INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -254,7 +256,7 @@ function CharacterSheets()
 					{
 						$rows[$row['id_character']] = array_merge($rows[$row['id_character']], $row);
 					}
-					$smcFunc['db_free_result']($request);
+					$smcFunc['db']->free_result($request);
 				}
 
 				// And make sure any stray entries are cleaned.

@@ -4,13 +4,14 @@
  * This file currently just shows group info, and allows certain priviledged members to add/remove members.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\StringLibrary;
 
 /**
  * Entry point function, permission checks, admin bars, etc.
@@ -216,7 +217,7 @@ function MembergroupMembers()
 		fatal_lang_error('membergroup_does_not_exist', false);
 
 	// Load up the group details.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group AS id, group_name AS name, hidden, online_color,
 			is_character, icons, description, group_type
 		FROM {db_prefix}membergroups
@@ -227,10 +228,10 @@ function MembergroupMembers()
 		]
 	);
 	// Doesn't exist?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
 	$context['group'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Fix the membergroup icons.
 	$context['group']['assignable'] = 1;
@@ -245,7 +246,7 @@ function MembergroupMembers()
 	$context['can_send_email'] = allowedTo('moderate_forum');
 
 	// Load all the group moderators, for fun.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name
 		FROM {db_prefix}group_moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -265,7 +266,7 @@ function MembergroupMembers()
 		if ($user_info['id'] == $row['id_member'] && $context['group']['group_type'] != 1)
 			$context['group']['can_moderate'] = true;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['group']['moderators_formatted'] = [];
 	foreach ($context['group']['moderators'] as $moderator)
@@ -381,7 +382,7 @@ function MembergroupMembers()
 	}
 
 	// Count members of the group.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM ' . ($context['group']['is_character'] ? '{db_prefix}characters' : '{db_prefix}members') . '
 		WHERE ' . $where,
@@ -390,7 +391,7 @@ function MembergroupMembers()
 		]
 	);
 	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$context['total_members'] = comma_format($context['total_members']);
 
 	// Create the page index.
@@ -401,7 +402,7 @@ function MembergroupMembers()
 	// Load up all members of this group.
 	if ($context['group']['is_character'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
 				chars.posts, is_activated, real_name, id_character, character_name
 			FROM {db_prefix}members AS mem
@@ -416,7 +417,7 @@ function MembergroupMembers()
 			]
 		);
 	} else {
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
 				posts, is_activated, real_name
 			FROM {db_prefix}members
@@ -453,7 +454,7 @@ function MembergroupMembers()
 			'is_activated' => $row['is_activated'] % 10 == 1,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Select the template.
 	$context['sub_template'] = 'admin_membergroups_members';
@@ -532,7 +533,7 @@ function GroupRequests()
 		// Otherwise we do something!
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT lgr.id_request
 				FROM {db_prefix}log_group_requests AS lgr
 				WHERE ' . $where . '
@@ -552,11 +553,11 @@ function GroupRequests()
 						'id_member_acted' => $user_info['id'],
 						'member_name_acted' => $user_info['name'],
 						'time_acted' => time(),
-						'act_reason' => $_POST['req_action'] != 'approve' && !empty($_POST['groupreason']) && !empty($_POST['groupreason'][$row['id_request']]) ? $smcFunc['htmlspecialchars']($_POST['groupreason'][$row['id_request']], ENT_QUOTES) : '',
+						'act_reason' => $_POST['req_action'] != 'approve' && !empty($_POST['groupreason']) && !empty($_POST['groupreason'][$row['id_request']]) ? StringLibrary::escape($_POST['groupreason'][$row['id_request']], ENT_QUOTES) : '',
 					];
 				$request_list[] = $row['id_request'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Add a background task to handle notifying people of this request
 			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\GroupActNotify', [
@@ -573,7 +574,7 @@ function GroupRequests()
 			{
 				foreach ($log_changes as $id_request => $details)
 				{
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}log_group_requests
 						SET status = {int:status},
 							id_member_acted = {int:id_member_acted},
@@ -726,7 +727,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_group_requests AS lgr
 		WHERE ' . $where,
@@ -734,7 +735,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 		])
 	);
 	list ($totalRequests) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $totalRequests;
 }
@@ -759,7 +760,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 {
 	global $smcFunc, $scripturl, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, lgr.reason,
 			lgr.status, lgr.id_member_acted, lgr.member_name_acted, lgr.time_acted, lgr.act_reason,
@@ -804,7 +805,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 			'time_submitted' => timeformat($row['time_applied']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $group_requests;
 }

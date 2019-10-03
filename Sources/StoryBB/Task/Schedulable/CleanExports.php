@@ -3,7 +3,7 @@
  * Clean up older data exports.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -50,7 +50,7 @@ class CleanExports implements \StoryBB\Task\Schedulable
 			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 		// Identify which files are out of date.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT a.id_attach, a.filename, a.file_hash, a.id_folder, ue.id_export
 			FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}user_exports AS ue ON (ue.id_attach = a.id_attach)
@@ -75,12 +75,12 @@ class CleanExports implements \StoryBB\Task\Schedulable
 
 			@unlink($modSettings['attachmentUploadDir'][$row['id_folder']] . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.dat');
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Clean up dangling entries.
 		if (!empty($exports))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}user_exports
 				WHERE id_export IN ({array_int:exports})',
 				[
@@ -90,7 +90,7 @@ class CleanExports implements \StoryBB\Task\Schedulable
 		}
 		if (!empty($attachments))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}attachments
 				WHERE id_attach IN ({array_int:attachments})',
 				[

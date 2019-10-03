@@ -4,7 +4,7 @@
  * This class handles tables.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -181,7 +181,7 @@ class Table
 		global $smcFunc, $db_prefix;
 		if (self::$table_cache === null)
 		{
-			self::$table_cache = $smcFunc['db_list_tables']();
+			self::$table_cache = $smcFunc['db']->list_tables();
 		}
 
 		return in_array($db_prefix . $this->table_name, self::$table_cache);

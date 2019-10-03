@@ -4,7 +4,7 @@
  * This file has the hefty job of loading information for the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -18,6 +18,7 @@ use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
 use StoryBB\Plugin\Manager as PluginManager;
+use StoryBB\StringLibrary;
 
 /**
  * Load the $modSettings array.
@@ -33,7 +34,7 @@ function reloadSettings()
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
 	if (($modSettings = cache_get_data('modSettings', 90)) == null)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT variable, value
 			FROM {db_prefix}settings',
 			[
@@ -41,10 +42,12 @@ function reloadSettings()
 		);
 		$modSettings = [];
 		if (!$request)
+		{
 			display_db_error();
+		}
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Do a few things to protect against missing settings or settings with invalid values...
 		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
@@ -90,96 +93,6 @@ function reloadSettings()
 		$modSettings['enable_immersive_mode'] = 'user_on';
 	}
 	$modSettings['cache_enable'] = $cache_enable;
-
-	// Set a list of common functions.
-	$ent_list = '&(?:#\d{1,7}|quot|amp|lt|gt|nbsp);';
-	$ent_check = function($string)
-	{
-		$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
-		return $string;
-	};
-
-	// Preg_replace space characters depend on the character set in use
-	$space_chars = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
-
-	// global array of anonymous helper functions, used mostly to properly handle multi byte strings
-	$smcFunc += [
-		'entity_fix' => function($string)
-		{
-			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
-			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
-		},
-		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check)
-		{
-			return $ent_check(htmlspecialchars($string, $quote_style, $charset));
-		},
-		'htmltrim' => function($string) use ($space_chars, $ent_check)
-		{
-			return preg_replace('~^(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+$~u', '', $ent_check($string));
-		},
-		'strlen' => function($string) use ($ent_list, $ent_check)
-		{
-			return strlen(preg_replace('~' . $ent_list . '|.~u', '_', $ent_check($string)));
-		},
-		'strpos' => function($haystack, $needle, $offset = 0) use ($ent_check, $modSettings)
-		{
-			$haystack_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-
-			if (strlen($needle) === 1)
-			{
-				$result = array_search($needle, array_slice($haystack_arr, $offset));
-				return is_int($result) ? $result + $offset : false;
-			}
-			else
-			{
-				$needle_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-				$needle_size = count($needle_arr);
-
-				$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
-				while ((int) $result === $result)
-				{
-					$offset += $result;
-					if (array_slice($haystack_arr, $offset, $needle_size) === $needle_arr)
-						return $offset;
-					$result = array_search($needle_arr[0], array_slice($haystack_arr, ++$offset));
-				}
-				return false;
-			}
-		},
-		'substr' => function($string, $start, $length = null) use ($ent_check, $modSettings)
-		{
-			$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
-		},
-		'strtolower' => function($string) use ($sourcedir)
-		{
-			return mb_strtolower($string, 'UTF-8');
-		},
-		'strtoupper' => function($string)
-		{
-			return mb_strtoupper($string, 'UTF-8');
-		},
-		'truncate' => function($string, $length) use ($ent_check, $ent_list, &$smcFunc)
-		{
-			$string = $ent_check($string);
-			preg_match('~^(' . $ent_list . '|.){' . $smcFunc['strlen'](substr($string, 0, $length)) . '}~u', $string, $matches);
-			$string = $matches[0];
-			while (strlen($string) > $length)
-				$string = preg_replace('~(?:' . $ent_list . '|.)$~u', '', $string);
-			return $string;
-		},
-		'ucfirst' => function($string) use (&$smcFunc)
-		{
-			return $smcFunc['strtoupper']($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
-		},
-		'ucwords' => function($string) use (&$smcFunc)
-		{
-			$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-			for ($i = 0, $n = count($words); $i < $n; $i += 2)
-				$words[$i] = $smcFunc['ucfirst']($words[$i]);
-			return implode('', $words);
-		},
-	];
 
 	// Setting the timezone is a requirement for some functions.
 	if (isset($modSettings['default_timezone']) && in_array($modSettings['default_timezone'], timezone_identifiers_list()))
@@ -384,7 +297,7 @@ function loadUserSettings()
 		// Is the member data cached?
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
 					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
 				FROM {db_prefix}members AS mem
@@ -400,7 +313,7 @@ function loadUserSettings()
 			$user_settings = $smcFunc['db_fetch_assoc']($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
 			$user_settings['avatar'] = $user_settings['char_avatar'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
 				$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
@@ -486,7 +399,7 @@ function loadUserSettings()
 				}
 
 				//Find out if any group requires 2FA
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(id_group) AS total
 					FROM {db_prefix}membergroups
 					WHERE tfa_required = {int:tfa_required}
@@ -497,7 +410,7 @@ function loadUserSettings()
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			else
 				$row['total'] = 1; //simplifies logics in the next "if"
@@ -522,7 +435,7 @@ function loadUserSettings()
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -532,7 +445,7 @@ function loadUserSettings()
 				]
 			);
 			list ($visitTime) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
@@ -779,7 +692,7 @@ function loadBoard()
 		// Looking through the message table can be slow, so try using the cache first.
 		if (($topic = cache_get_data('msg_topic-' . $_REQUEST['msg'], 120)) === null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_topic
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -790,10 +703,10 @@ function loadBoard()
 			);
 
 			// So did it find anything?
-			if ($smcFunc['db_num_rows']($request))
+			if ($smcFunc['db']->num_rows($request))
 			{
 				list ($topic) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				// Save save save.
 				cache_put_data('msg_topic-' . $_REQUEST['msg'], $topic, 120);
 			}
@@ -834,7 +747,7 @@ function loadBoard()
 
 	if (empty($temp))
 	{
-		$request = $smcFunc['db_query']('load_board_info', '
+		$request = $smcFunc['db']->query('load_board_info', '
 			SELECT
 				c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups, b.deny_member_groups,
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
@@ -852,11 +765,11 @@ function loadBoard()
 			WHERE b.id_board = {raw:board_link}',
 			[
 				'current_topic' => $topic,
-				'board_link' => empty($topic) ? $smcFunc['db_quote']('{int:current_board}', ['current_board' => $board]) : 't.id_board',
+				'board_link' => empty($topic) ? $smcFunc['db']->quote('{int:current_board}', ['current_board' => $board]) : 't.id_board',
 			]
 		);
 		// If there aren't any, skip.
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 		{
 			$row = $smcFunc['db_fetch_assoc']($request);
 
@@ -922,11 +835,11 @@ function loadBoard()
 			if ($board_info['num_topics'] == 0 && !allowedTo('approve_posts'))
 			{
 				// Free the previous result
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// @todo why is this using id_topic?
 				// @todo Can this get cached?
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(id_topic)
 					FROM {db_prefix}topics
 					WHERE id_member_started={int:id_member}
@@ -961,7 +874,7 @@ function loadBoard()
 			$topic = null;
 			$board = 0;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($topic))
@@ -1083,7 +996,7 @@ function loadPermissions()
 	if (empty($user_info['permissions']))
 	{
 		// Get the general permissions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}permissions
 			WHERE id_group IN ({array_int:member_groups})',
@@ -1099,7 +1012,7 @@ function loadPermissions()
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (isset($cache_groups))
 			cache_put_data('permissions:' . $cache_groups, [$user_info['permissions'], $removals], 240);
@@ -1112,7 +1025,7 @@ function loadPermissions()
 		if (!isset($board_info['profile']))
 			fatal_lang_error('no_board');
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_group IN ({array_int:member_groups})
@@ -1129,7 +1042,7 @@ function loadPermissions()
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Remove all the permissions they shouldn't have ;).
@@ -1291,7 +1204,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	if (!empty($users))
 	{
 		// Load the member's data.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT' . $select_columns . '
 			FROM {db_prefix}members AS mem' . $select_tables . '
 			WHERE mem.' . ($is_name ? 'member_name' : 'id_member') . ' IN ({' . ($is_name ? 'array_string' : 'array_int') . ':users})',
@@ -1323,7 +1236,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$row['options'] = [];
 			$user_profile[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($new_loaded_ids) && $set !== 'minimal')
@@ -1340,7 +1253,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$user_profile[$new_id]['member_group'] = $user_profile[$new_id]['character_group'];
 			}
 		}
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_member, chars.id_character, chars.character_name, 
 				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.signature, chars.id_theme,
 				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
@@ -1406,7 +1319,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($user_profile as $id_member => $member)
 		{
@@ -1419,7 +1332,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			}
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member IN ({array_int:loaded_ids})',
@@ -1429,7 +1342,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$user_profile[$row['id_member']]['options'][$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$additional_mods = [];
@@ -1464,7 +1377,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	{
 		if (($row = cache_get_data('moderator_group_info', 480)) == null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT group_name AS member_group, online_color AS member_group_color, icons
 				FROM {db_prefix}membergroups
 				WHERE id_group = {int:moderator_group}
@@ -1474,7 +1387,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				]
 			);
 			$row = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('moderator_group_info', $row, 480);
 		}
@@ -1599,17 +1512,17 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'posts' => comma_format($profile['posts']),
 			'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
 			'last_login_timestamp' => empty($profile['last_login']) ? 0 : forum_time(0, $profile['last_login']),
-			'ip' => $smcFunc['htmlspecialchars']($profile['member_ip']),
-			'ip2' => $smcFunc['htmlspecialchars']($profile['member_ip2']),
+			'ip' => StringLibrary::escape($profile['member_ip']),
+			'ip2' => StringLibrary::escape($profile['member_ip2']),
 			'online' => [
 				'is_online' => !empty($profile['is_online']),
-				'text' => $smcFunc['htmlspecialchars']($txt[$profile['is_online'] ? 'online' : 'offline']),
-				'member_online_text' => sprintf($txt[$profile['is_online'] ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($profile['real_name'])),
+				'text' => StringLibrary::escape($txt[$profile['is_online'] ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$profile['is_online'] ? 'member_is_online' : 'member_is_offline'], StringLibrary::escape($profile['real_name'])),
 				'href' => $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'],
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'] . '">' . $txt[$profile['is_online'] ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 			],
-			'language' => !empty($loadedLanguages[$profile['lngfile']]) && !empty($loadedLanguages[$profile['lngfile']]['name']) ? $loadedLanguages[$profile['lngfile']]['name'] : $smcFunc['ucwords'](strtr($profile['lngfile'], ['_' => ' ', '-utf8' => ''])),
+			'language' => !empty($loadedLanguages[$profile['lngfile']]) && !empty($loadedLanguages[$profile['lngfile']]['name']) ? $loadedLanguages[$profile['lngfile']]['name'] : StringLibrary::ucwords(strtr($profile['lngfile'], ['_' => ' ', '-utf8' => ''])),
 			'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
 			'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 			'options' => $profile['options'],
@@ -1741,7 +1654,7 @@ function loadMemberCustomFields($users, $params)
 	$params = !is_array($params) ? [$params] : array_unique($params);
 	$return = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT c.id_field, c.col_name, c.field_name, c.field_desc, c.field_type, c.field_order, c.field_length, c.field_options, c.mask, show_reg,
 		c.show_display, c.show_profile, c.private, c.active, c.bbc, c.can_search, c.default_value, c.enclose, c.placement, t.variable, t.value, t.id_member
 		FROM {db_prefix}themes AS t
@@ -1801,7 +1714,7 @@ function loadMemberCustomFields($users, $params)
 		}
 	}
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return !empty($return) ? $return : false;
 }
@@ -1903,7 +1816,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (empty($flag))
 	{
 		// Load variables from the current or default theme, global or this user's.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT variable, value, id_member, id_theme
 			FROM {db_prefix}themes
 			WHERE id_member' . (empty($themeData[0]) ? ' IN (-1, 0, {int:id_member})' : ' = {int:id_member}') . '
@@ -1928,7 +1841,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
 				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		if (!empty($themeData[-1]))
 			foreach ($themeData[-1] as $k => $v)
@@ -2132,9 +2045,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
-	$context['forum_name_html_safe'] = $smcFunc['htmlspecialchars']($context['forum_name']);
-	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : $smcFunc['htmlspecialchars']($settings['header_logo_url']);
-	$context['current_action'] = isset($_REQUEST['action']) ? $smcFunc['htmlspecialchars']($_REQUEST['action']) : null;
+	$context['forum_name_html_safe'] = StringLibrary::escape($context['forum_name']);
+	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : StringLibrary::escape($settings['header_logo_url']);
+	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	$context['can_register'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] != 3;
 	if (isset($modSettings['load_average']))
@@ -2772,7 +2685,7 @@ function getBoardParents($id_parent)
 		// Loop while the parent is non-zero.
 		while ($id_parent != 0)
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT
 					b.id_parent, b.name, {int:board_parent} AS id_board, b.member_groups, b.deny_member_groups,
 					b.child_level, COALESCE(mem.id_member, 0) AS id_moderator, mem.real_name,
@@ -2788,7 +2701,7 @@ function getBoardParents($id_parent)
 				]
 			);
 			// In the EXTREMELY unlikely event this happens, give an error message.
-			if ($smcFunc['db_num_rows']($result) == 0)
+			if ($smcFunc['db']->num_rows($result) == 0)
 				fatal_lang_error('parent_not_found', 'critical');
 			while ($row = $smcFunc['db_fetch_assoc']($result))
 			{
@@ -2829,7 +2742,7 @@ function getBoardParents($id_parent)
 						];
 					}
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 
 		cache_put_data('board_parents-' . $original_parent, $boards, 480);
@@ -2852,8 +2765,8 @@ function getLanguages($use_cache = true)
 	// Either we don't use the cache, or its expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) === null)
 	{
-		// If we don't have our ucwords function defined yet, let's load the settings data.
-		if (empty($smcFunc['ucwords']))
+		// If we don't have our settings defined yet, let's load the settings data.
+		if (empty($modSettings))
 			reloadSettings();
 
 		// If we don't have our theme information yet, let's get it.
@@ -3295,7 +3208,7 @@ function get_char_membergroup_data()
 	if (($groups = cache_get_data('char_membergroups', 300)) === null)
 	{
 		$groups = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, group_name, online_color, icons, is_character
 			FROM {db_prefix}membergroups
 			WHERE hidden != 2
@@ -3325,7 +3238,7 @@ function get_char_membergroup_data()
 			$groups[$row['id_group']] = $row;
 		}
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		cache_put_data('char_membergroups', $groups, 300);
 	}
 

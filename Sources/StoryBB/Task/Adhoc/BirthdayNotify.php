@@ -4,7 +4,7 @@
  * Send people a notification wishing them a happy birthday.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -32,7 +32,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 		$day = date('j'); // Day without leading zeros.
 
 		// So who are the lucky ones?  Don't include those who are banned and those who don't want them.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, lngfile, email_address
 			FROM {db_prefix}members
 			WHERE is_activated < 10
@@ -57,7 +57,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 				'email' => $row['email_address']
 			];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		if (!empty($birthdays))
 		{

@@ -4,7 +4,7 @@
  * The Q&A handler for CAPTCHA.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -15,6 +15,7 @@ namespace StoryBB\Helper\Verifiable;
 use StoryBB\Helper\Verifiable\AbstractVerifiable;
 use StoryBB\Helper\Verifiable\UnverifiableException;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 class Questions extends AbstractVerifiable implements Verifiable
 {
@@ -51,7 +52,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 		if (($this->question_cache = cache_get_data('verificationQuestions', 300)) === null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_question, lngfile, question, answers
 				FROM {db_prefix}qanda',
 				[]
@@ -66,17 +67,14 @@ class Questions extends AbstractVerifiable implements Verifiable
 				$id_question = $row['id_question'];
 				unset ($row['id_question']);
 
-				// Make them all lowercase. We can't directly use $smcFunc['strtolower'] with array_walk, so do it manually, eh?
+				// Make them all lowercase.
 				$row['answers'] = sbb_json_decode($row['answers'], true);
-				foreach ($row['answers'] as $k => $v)
-				{
-					$row['answers'][$k] = $smcFunc['strtolower']($v);
-				}
+				array_walk($row['answers'], ['StoryBB\\StringLibrary', 'toLower']);
 
 				$this->question_cache['questions'][$id_question] = $row;
 				$this->question_cache['langs'][$row['lngfile']][] = $id_question;
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('verificationQuestions', $this->question_cache, 300);
 		}
@@ -126,7 +124,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				'q' => Parser::parse_bbc($row['question']),
 				'is_error' => !empty($incorrectQuestions) && in_array($q, $incorrectQuestions),
 				// Remember a previous submission?
-				'a' => isset($_REQUEST[$this->id . '_vv'], $_REQUEST[$this->id . '_vv']['q'], $_REQUEST[$this->id . '_vv']['q'][$q]) ? $smcFunc['htmlspecialchars']($_REQUEST[$this->id . '_vv']['q'][$q]) : '',
+				'a' => isset($_REQUEST[$this->id . '_vv'], $_REQUEST[$this->id . '_vv']['q'], $_REQUEST[$this->id . '_vv']['q'][$q]) ? StringLibrary::escape($_REQUEST[$this->id . '_vv']['q'][$q]) : '',
 			];
 		}
 	}
@@ -154,7 +152,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 			// Second, is their answer in the list of possible answers?
 			else
 			{
-				$given_answer = trim($smcFunc['htmlspecialchars'](strtolower($_REQUEST[$this->id . '_vv']['q'][$q])));
+				$given_answer = trim(StringLibrary::escape(strtolower($_REQUEST[$this->id . '_vv']['q'][$q])));
 				if (!in_array($given_answer, $this->question_cache['questions'][$q]['answers']))
 				{
 					$incorrectQuestions[] = $q;
@@ -203,7 +201,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				'questions' => [],
 			];
 		}
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_question, lngfile, question, answers
 			FROM {db_prefix}qanda'
 		);
@@ -221,7 +219,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 			];
 			$questions++;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If the user has insisted on questions, but hasn't put anything in for the default forum language, warn them.
 		if (!empty($modSettings['qa_verification_number']) && (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions'])))
@@ -313,7 +311,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 						}
 						continue;
 					}
-					$question = $smcFunc['htmlspecialchars'](trim($question));
+					$question = StringLibrary::escape(trim($question));
 
 					// Get the answers. Firstly check there actually might be some.
 					if (!isset($_POST['answer'][$lang_id][$q_id]) || !is_array($_POST['answer'][$lang_id][$q_id]))
@@ -330,7 +328,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 					{
 						if (!empty($answer) && trim($answer) !== '')
 						{
-							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
+							$answers[] = StringLibrary::escape(trim($answer));
 						}
 					}
 					if (empty($answers))
@@ -370,7 +368,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		// OK, so changes?
 		if (!empty($changes['delete']))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}qanda
 				WHERE id_question IN ({array_int:questions})',
 				[
@@ -383,7 +381,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		{
 			foreach ($changes['replace'] as $q_id => $question)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}qanda
 					SET lngfile = {string:lngfile},
 						question = {string:question},

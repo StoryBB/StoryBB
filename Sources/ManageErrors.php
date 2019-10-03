@@ -5,11 +5,13 @@
  * logged on the forum, and allow filtering and deleting them.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * View the forum's error log.
@@ -93,7 +95,7 @@ function ViewErrorLog()
 		deleteErrors();
 
 	// Just how many errors are there?
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_errors' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' ' . $filters[$_GET['filter']]['operator'] . ' {' . $filters[$_GET['filter']]['datatype'] . ':filter}' : ''),
@@ -102,7 +104,7 @@ function ViewErrorLog()
 		]
 	);
 	list ($num_errors) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// If this filter is empty...
 	if ($num_errors == 0 && isset($filter))
@@ -125,18 +127,18 @@ function ViewErrorLog()
 	else
 	{
 		// We want all errors, not just the number of filtered messages...
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT COUNT(id_error)
 			FROM {db_prefix}log_errors',
 			[]
 		);
 
 		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	// Find and sort out the errors.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_error, id_member, ip, url, log_time, message, session, error_type, file, line
 		FROM {db_prefix}log_errors' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' ' . $filters[$_GET['filter']]['operator'] . ' {' . $filters[$_GET['filter']]['datatype'] . ':filter}' : '') . '
@@ -167,7 +169,7 @@ function ViewErrorLog()
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
 			'url' => [
-				'html' => $smcFunc['htmlspecialchars'](strpos($row['url'], 'cron.php') === false ? (substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url'] : $row['url']),
+				'html' => StringLibrary::escape(strpos($row['url'], 'cron.php') === false ? (substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url'] : $row['url']),
 				'href' => base64_encode($smcFunc['db_escape_wildcard_string']($row['url']))
 			],
 			'message' => [
@@ -198,13 +200,13 @@ function ViewErrorLog()
 		// Make a list of members to load later.
 		$members[$row['id_member']] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the member data.
 	if (!empty($members))
 	{
 		// Get some additional member info...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, member_name, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
@@ -216,7 +218,7 @@ function ViewErrorLog()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member']] = $row;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This is a guest...
 		$members[0] = [
@@ -249,15 +251,15 @@ function ViewErrorLog()
 			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'url')
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), ['\_' => '_']) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr(StringLibrary::escape((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), ['\_' => '_']) . '\'';
 		elseif ($filter['variable'] == 'message')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr(StringLibrary::escape($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
 			$context['filter']['value']['html'] = preg_replace('~&amp;lt;span class=&amp;quot;remove&amp;quot;&amp;gt;(.+?)&amp;lt;/span&amp;gt;~', '$1', $context['filter']['value']['html']);
 		}
 		elseif ($filter['variable'] == 'error_type')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr(StringLibrary::escape($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
 		}
 		else
 			$context['filter']['value']['html'] = &$filter['value']['sql'];
@@ -274,7 +276,7 @@ function ViewErrorLog()
 
 	$sum = 0;
 	// What type of errors do we have and how many do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT error_type, COUNT(*) AS num_errors
 		FROM {db_prefix}log_errors
 		GROUP BY error_type
@@ -295,7 +297,7 @@ function ViewErrorLog()
 			'is_selected' => isset($filter) && $filter['value']['sql'] == $smcFunc['db_escape_wildcard_string']($row['error_type']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
@@ -331,14 +333,12 @@ function deleteErrors()
 
 	// Delete all or just some?
 	if (isset($_POST['delall']) && !isset($filter))
-		$smcFunc['db_query']('truncate_table', '
-			TRUNCATE {db_prefix}log_errors',
-			[
-			]
-		);
+	{
+		$smcFunc['db']->truncate_table('log_errors');
+	}
 	// Deleting all with a filter?
 	elseif (isset($_POST['delall']) && isset($filter))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_errors
 			WHERE ' . $filter['variable'] . ' LIKE {string:filter}',
 			[
@@ -348,7 +348,7 @@ function deleteErrors()
 	// Just specific errors?
 	elseif (!empty($_POST['delete']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_errors
 			WHERE id_error IN ({array_int:error_list})',
 			[
@@ -391,7 +391,7 @@ function ViewFile()
 
 	// Make sure the file we are looking for is one they are allowed to look at
 	if ($ext != '.php' || (strpos($file, $real_board) === false && strpos($file, $real_source) === false) || ($basename == 'settings.php' || $basename == 'settings_bak.php') || strpos($file, $real_cache) !== false || !is_readable($file))
-		fatal_lang_error('error_bad_file', true, [$smcFunc['htmlspecialchars']($file)]);
+		fatal_lang_error('error_bad_file', true, [StringLibrary::escape($file)]);
 
 	// get the min and max lines
 	$min = $line - 20 <= 0 ? 1 : $line - 20;
@@ -400,7 +400,7 @@ function ViewFile()
 	if ($max <= 0 || $min >= $max)
 		fatal_lang_error('error_bad_line');
 
-	$file_data = explode('<br />', highlight_php_code($smcFunc['htmlspecialchars'](implode('', file($file)))));
+	$file_data = explode('<br />', highlight_php_code(StringLibrary::escape(implode('', file($file)))));
 
 	// We don't want to slice off too many so lets make sure we stop at the last one
 	$max = min($max, max(array_keys($file_data)));

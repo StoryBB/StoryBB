@@ -4,7 +4,7 @@
  * This class handles attachments.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -57,7 +57,7 @@ class Attachment
 		// Left this for legacy.
 		if ($file_hash === '')
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT file_hash
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:id_attach}',
@@ -65,11 +65,11 @@ class Attachment
 					'id_attach' => $attachment_id,
 				]);
 
-			if ($smcFunc['db_num_rows']($request) === 0)
+			if ($smcFunc['db']->num_rows($request) === 0)
 				return false;
 
 			list ($file_hash) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Still no hash? mmm...

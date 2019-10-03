@@ -4,7 +4,7 @@
  * Provides some supporting functionality regarding notifications, notably getting user preferences.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -34,7 +34,7 @@ function getNotifyPrefs($members, $prefs = '', $process_default = false)
 	// We want to now load the default, which is stored with a member id of 0.
 	$members[] = 0;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, alert_pref, alert_value
 		FROM {db_prefix}user_alerts_prefs
 		WHERE id_member IN ({array_int:members})' . (!empty($prefs) ? '
@@ -100,7 +100,7 @@ function deleteNotifyPrefs($memID, array $prefs)
 	if (empty($prefs) || empty($memID))
 		return;
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}user_alerts_prefs
 		WHERE id_member = {int:member}
 			AND alert_pref IN ({array_string:prefs})',

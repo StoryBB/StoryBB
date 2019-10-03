@@ -4,7 +4,7 @@
  * This file handles most of the read-only views within the user profile area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * View a summary.
@@ -167,7 +168,7 @@ function summary($memID)
 		}
 
 		// So... are they banned?  Dying to know!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT bg.id_ban_group, bg.name, bg.cannot_access, bg.cannot_post,
 				bg.cannot_login, bg.reason
 			FROM {db_prefix}ban_items AS bi
@@ -200,7 +201,7 @@ function summary($memID)
 				'explanation' => $ban_explanation,
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	loadCustomFields($memID);
 
@@ -264,7 +265,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	$query_see_board = $query_see_board['query_see_board'];
 
 	$alerts = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_alert, alert_time, mem.id_member AS sender_id, COALESCE(mem.real_name, ua.member_name) AS sender_name,
 			chars_src, chars_dest, content_type, content_id, content_action, is_read, extra
 		FROM {db_prefix}user_alerts AS ua
@@ -293,7 +294,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 		if (!empty($row['sender_id']))
 			$senders[] = $row['sender_id'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if($withSender)
 	{
@@ -331,7 +332,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	// Having figured out what boards etc. there are, let's now get the names of them if we can see them. If not, there's already a fallback set up.
 	if (!empty($boards))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board, name
 			FROM {db_prefix}boards AS b
 			WHERE ' . $query_see_board . '
@@ -345,7 +346,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	}
 	if (!empty($topics))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT t.id_topic, m.subject
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
@@ -361,7 +362,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	}
 	if (!empty($msgs))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg, t.id_topic, m.subject
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
@@ -379,7 +380,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	// Now to handle characters
 	if (!empty($chars))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name
 			FROM {db_prefix}characters AS chars
 			WHERE id_character IN ({array_int:chars})',
@@ -392,7 +393,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
 			$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Now to go back through the alerts, reattach this extra information and then try to build the string out of it (if a hook didn't already)
@@ -506,14 +507,14 @@ function showAlerts($memID)
 		$toMark = array_map('intval', $_POST['mark']);
 
 		// Which action?
-		$action = !empty($_POST['mark_as']) ? $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($_POST['mark_as'])) : '';
+		$action = !empty($_POST['mark_as']) ? StringLibrary::escape(StringLibrary::htmltrim($_POST['mark_as'])) : '';
 	}
 
 	// A single change.
 	if (!empty($_GET['do']) && !empty($_GET['aid']))
 	{
 		$toMark = (int) $_GET['aid'];
-		$action = $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($_GET['do']));
+		$action = StringLibrary::escape(StringLibrary::htmltrim($_GET['do']));
 	}
 
 	// Save the changes.
@@ -604,7 +605,7 @@ function showPosts($memID)
 		checkSession('get');
 
 		// We need msg info for logging.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT subject, id_member, id_topic, id_board
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}',
@@ -613,7 +614,7 @@ function showPosts($memID)
 			]
 		);
 		$info = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Trying to remove a message that doesn't exist.
 		if (empty($info))
@@ -636,7 +637,7 @@ function showPosts($memID)
 		$_REQUEST['viewscount'] = '10';
 
 	if ($context['is_topics'])
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
@@ -650,7 +651,7 @@ function showPosts($memID)
 			]
 		);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -664,9 +665,9 @@ function showPosts($memID)
 			]
 		);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
@@ -679,7 +680,7 @@ function showPosts($memID)
 		]
 	);
 	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$range_limit = '';
 
@@ -723,7 +724,7 @@ function showPosts($memID)
 	{
 		if ($context['is_topics'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, t.id_member_started, t.id_first_msg, t.id_last_msg,
 					t.approved, m.body, m.smileys_enabled, m.subject, m.poster_time, m.id_topic, m.id_msg
@@ -749,7 +750,7 @@ function showPosts($memID)
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, m.id_topic, m.id_msg,
 					t.id_member_started, t.id_first_msg, t.id_last_msg, m.body, m.smileys_enabled,
@@ -776,7 +777,7 @@ function showPosts($memID)
 		}
 
 		// Make sure we quit this loop.
-		if ($smcFunc['db_num_rows']($request) === $maxIndex || $looped || $range_limit === '')
+		if ($smcFunc['db']->num_rows($request) === $maxIndex || $looped || $range_limit === '')
 			break;
 		$looped = true;
 		$range_limit = '';
@@ -825,7 +826,7 @@ function showPosts($memID)
 			$board_ids['own'][$row['id_board']][] = $counter;
 		$board_ids['any'][$row['id_board']][] = $counter;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// All posts were retrieved in reverse order, get them right again.
 	if ($reverse)
@@ -1031,7 +1032,7 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 	global $smcFunc, $board, $modSettings, $context;
 
 	// Retrieve some attachments.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_attach, a.id_msg, a.filename, a.downloads, a.approved, m.id_msg, m.id_topic,
 			m.id_board, m.poster_time, m.subject, b.name
 		FROM {db_prefix}attachments AS a
@@ -1072,7 +1073,7 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 			'approved' => $row['approved'],
 		];
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $attachments;
 }
@@ -1089,7 +1090,7 @@ function list_getNumAttachments($boardsAllowed, $memID)
 	global $board, $smcFunc, $modSettings, $context;
 
 	// Get the total number of attachments they have posted.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -1110,7 +1111,7 @@ function list_getNumAttachments($boardsAllowed, $memID)
 		]
 	);
 	list ($attachCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $attachCount;
 }
@@ -1251,7 +1252,7 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 	global $smcFunc;
 
 	// Get the list of topics we can see
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lt.id_topic
 		FROM {db_prefix}log_topics as lt
 			LEFT JOIN {db_prefix}topics as t ON (lt.id_topic = t.id_topic)
@@ -1275,13 +1276,13 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$topics[] = $row['id_topic'];
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Any topics found?
 	$topicsInfo = [];
 	if (!empty($topics))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mf.subject, mf.poster_time as started_on, COALESCE(memf.real_name, mf.poster_name) as started_by, ml.poster_time as last_post_on, COALESCE(meml.real_name, ml.poster_name) as last_post_by, t.id_topic
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
@@ -1295,7 +1296,7 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topicsInfo[] = $row;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	return $topicsInfo;
@@ -1312,7 +1313,7 @@ function list_getNumUnwatched($memID)
 	global $smcFunc;
 
 	// Get the total number of attachments they have posted.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_topics as lt
 		LEFT JOIN {db_prefix}topics as t ON (lt.id_topic = t.id_topic)
@@ -1325,7 +1326,7 @@ function list_getNumUnwatched($memID)
 		]
 	);
 	list ($unwatchedCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $unwatchedCount;
 }
@@ -1368,7 +1369,7 @@ function statPanel($memID)
 	];
 
 	// Number of topics started and Number polls started
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*), COUNT( CASE WHEN id_poll != {int:no_poll} THEN 1 ELSE NULL END )
 		FROM {db_prefix}topics
 		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -1380,10 +1381,10 @@ function statPanel($memID)
 		]
 	);
 	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Number polls voted in.
-	$result = $smcFunc['db_query']('distinct_poll_votes', '
+	$result = $smcFunc['db']->query('distinct_poll_votes', '
 		SELECT COUNT(DISTINCT id_poll)
 		FROM {db_prefix}log_polls
 		WHERE id_member = {int:current_member}',
@@ -1392,7 +1393,7 @@ function statPanel($memID)
 		]
 	);
 	list ($context['num_votes']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Format the numbers...
 	$context['num_topics'] = comma_format($context['num_topics']);
@@ -1400,7 +1401,7 @@ function statPanel($memID)
 	$context['num_votes'] = comma_format($context['num_votes']);
 
 	// Grab the board this member posted in most often.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT
 			b.id_board, MAX(b.name) AS name, MAX(b.num_posts) AS num_posts, COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
@@ -1429,10 +1430,10 @@ function statPanel($memID)
 			'total_posts_member' => $user_profile[$memID]['posts'],
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Now get the 10 boards this user has most often participated in.
-	$result = $smcFunc['db_query']('profile_board_stats', '
+	$result = $smcFunc['db']->query('profile_board_stats', '
 		SELECT
 			b.id_board, MAX(b.name) AS name, b.num_posts, COUNT(*) AS message_count,
 			CASE WHEN COUNT(*) > MAX(b.num_posts) THEN 1 ELSE COUNT(*) / MAX(b.num_posts) END * 100 AS percentage
@@ -1460,10 +1461,10 @@ function statPanel($memID)
 			'total_posts' => $row['num_posts'],
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Posting activity by time.
-	$result = $smcFunc['db_query']('user_activity_by_time', '
+	$result = $smcFunc['db']->query('user_activity_by_time', '
 		SELECT
 			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
 			COUNT(*) AS post_count
@@ -1495,7 +1496,7 @@ function statPanel($memID)
 			'is_last' => $row['hour'] == 23,
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if ($maxPosts > 0)
 		for ($hour = 0; $hour < 24; $hour++)
@@ -1686,7 +1687,7 @@ function trackActivity($memID)
 	// If this is a big forum, or a large posting user, let's limit the search.
 	if ($modSettings['totalMessages'] > 50000 && $user_profile[$memID]['posts'] > 500)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(id_msg)
 			FROM {db_prefix}messages AS m
 			WHERE m.id_member = {int:current_member}',
@@ -1695,7 +1696,7 @@ function trackActivity($memID)
 			]
 		);
 		list ($max_msg_member) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// There's no point worrying ourselves with messages made yonks ago, just get recent ones!
 		$min_msg_member = max(0, $max_msg_member - $user_profile[$memID]['posts'] * 3);
@@ -1709,7 +1710,7 @@ function trackActivity($memID)
 
 	// @todo cache this
 	// Get all IP addresses this user has used for his messages.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT poster_ip
 		FROM {db_prefix}messages
 		WHERE id_member = {int:current_member}
@@ -1728,10 +1729,10 @@ function trackActivity($memID)
 		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['poster_ip']) . ';u=' . $memID . '">' . inet_dtop($row['poster_ip']) . '</a>';
 		$ips[] = inet_dtop($row['poster_ip']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now also get the IP addresses from the error messages.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS error_count, ip
 		FROM {db_prefix}log_errors
 		WHERE id_member = {int:current_member}
@@ -1746,7 +1747,7 @@ function trackActivity($memID)
 		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['ip']) . ';u=' . $memID . '">' . inet_dtop($row['ip']) . '</a>';
 		$ips[] = inet_dtop($row['ip']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Find other users that might use the same IP.
 	$ips = array_unique($ips);
@@ -1754,7 +1755,7 @@ function trackActivity($memID)
 	if (!empty($ips))
 	{
 		// Get member ID's which are in messages...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT DISTINCT mem.id_member
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -1768,12 +1769,12 @@ function trackActivity($memID)
 		$message_members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$message_members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Fetch their names, cause of the GROUP BY doesn't like giving us that normally.
 		if (!empty($message_members))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:message_members})',
@@ -1784,10 +1785,10 @@ function trackActivity($memID)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member != {int:current_member}
@@ -1799,7 +1800,7 @@ function trackActivity($memID)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$context['sub_template'] = 'profile_track_activity';
@@ -1816,14 +1817,14 @@ function list_getUserErrorCount($where, $where_vars = [])
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS error_count
 		FROM {db_prefix}log_errors
 		WHERE ' . $where,
 		$where_vars
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
 }
@@ -1843,7 +1844,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 	global $smcFunc, $txt, $scripturl;
 
 	// Get a list of error messages from this ip (range).
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			le.log_time, le.ip, le.url, le.message, COALESCE(mem.id_member, 0) AS id_member,
 			COALESCE(mem.real_name, {string:guest_title}) AS display_name, mem.member_name
@@ -1869,7 +1870,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 			'time' => timeformat($row['log_time']),
 			'timestamp' => forum_time(true, $row['log_time']),
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $error_messages;
 }
@@ -1885,7 +1886,7 @@ function list_getIPMessageCount($where, $where_vars = [])
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -1893,7 +1894,7 @@ function list_getIPMessageCount($where, $where_vars = [])
 		$where_vars
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
 }
@@ -1914,7 +1915,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 	// Get all the messages fitting this where clause.
 	// @todo SLOW This query is using a filesort.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.id_msg, m.poster_ip, COALESCE(mem.real_name, m.poster_name) AS display_name, mem.id_member,
 			m.subject, m.poster_time, m.id_topic, m.id_board
@@ -1945,7 +1946,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time'])
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $messages;
 }
@@ -1993,7 +1994,7 @@ function TrackIP($memID = 0)
 	if (empty($context['tracking_area']))
 		$context['page_title'] = $txt['trackIP'] . ' - ' . $context['ip'];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name AS display_name, member_ip
 		FROM {db_prefix}members
 		WHERE member_ip ' . $ip_string,
@@ -2004,7 +2005,7 @@ function TrackIP($memID = 0)
 	$context['ips'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['ips'][inet_dtop($row['member_ip'])][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	ksort($context['ips']);
 
@@ -2327,7 +2328,7 @@ function list_getLoginCount($where, $where_vars = [])
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS message_count
 		FROM {db_prefix}member_logins
 		WHERE id_member = {int:id_member}',
@@ -2336,7 +2337,7 @@ function list_getLoginCount($where, $where_vars = [])
 		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
 }
@@ -2355,7 +2356,7 @@ function list_getLogins($start, $items_per_page, $sort, $where, $where_vars = []
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT time, ip, ip2
 		FROM {db_prefix}member_logins
 		WHERE id_member = {int:id_member}
@@ -2371,7 +2372,7 @@ function list_getLogins($start, $items_per_page, $sort, $where, $where_vars = []
 			'ip' => inet_dtop($row['ip']),
 			'ip2' => inet_dtop($row['ip2']),
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $logins;
 }
@@ -2388,7 +2389,7 @@ function trackEdits($memID)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// Get the names of any custom fields.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, bbc
 		FROM {db_prefix}custom_fields',
 		[
@@ -2400,7 +2401,7 @@ function trackEdits($memID)
 			'title' => $row['field_name'],
 			'parse_bbc' => $row['bbc'],
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Set the options for the error lists.
 	$listOptions = [
@@ -2487,7 +2488,7 @@ function list_getProfileEditCount($memID)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS edit_count
 		FROM {db_prefix}log_actions
 		WHERE id_log = {int:log_type}
@@ -2498,7 +2499,7 @@ function list_getProfileEditCount($memID)
 		]
 	);
 	list ($edit_count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $edit_count;
 }
@@ -2517,7 +2518,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	global $smcFunc, $txt, $scripturl, $context;
 
 	// Get a list of error messages from this ip (range).
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			id_action, id_member, ip, log_time, action, extra
 		FROM {db_prefix}log_actions
@@ -2578,12 +2579,12 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			'time' => timeformat($row['log_time']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get any member names.
 	if (!empty($members))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				id_member, real_name
 			FROM {db_prefix}members
@@ -2595,7 +2596,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member']] = $row['real_name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($edits as $key => $value)
 			if (isset($members[$value['id_member']]))
@@ -2694,7 +2695,7 @@ function list_getGroupRequestsCount($memID)
 {
 	global $smcFunc, $user_info;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS req_count
 		FROM {db_prefix}log_group_requests AS lgr
 		WHERE id_member = {int:memID}
@@ -2704,7 +2705,7 @@ function list_getGroupRequestsCount($memID)
 		]
 	);
 	list ($report_count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $report_count;
 }
@@ -2724,7 +2725,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $memID)
 
 	$groupreq = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lgr.id_group, mg.group_name, mg.online_color, lgr.time_applied, lgr.reason, lgr.status,
 			ma.id_member AS id_member_acted, COALESCE(ma.member_name, lgr.member_name_acted) AS act_name, lgr.time_acted, lgr.act_reason
@@ -2766,7 +2767,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $memID)
 
 		$groupreq[] = $this_req;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $groupreq;
 }
@@ -2807,7 +2808,7 @@ function showPermissions($memID)
 	$curGroups[] = $user_profile[$memID]['id_group'];
 
 	// Load a list of boards for the jump box - except the defaults.
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_board, b.name, b.id_profile, b.member_groups, COALESCE(mods.id_member, modgs.id_group, 0) AS is_mod
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
@@ -2837,7 +2838,7 @@ function showPermissions($memID)
 				'profile_name' => $context['profiles'][$row['id_profile']]['name'],
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortBoards($context['boards']);
@@ -2858,7 +2859,7 @@ function showPermissions($memID)
 	$denied = [];
 
 	// Get all general permissions.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT p.permission, p.add_deny, mg.group_name, p.id_group
 		FROM {db_prefix}permissions AS p
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = p.id_group)
@@ -2902,9 +2903,9 @@ function showPermissions($memID)
 		// Once denied is always denied.
 		$context['member']['permissions']['general'][$row['permission']]['is_denied'] |= empty($row['add_deny']);
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			bp.add_deny, bp.permission, bp.id_group, mg.group_name' . (empty($board) ? '' : ',
 			b.id_profile, CASE WHEN (mods.id_member IS NULL AND modgs.id_group IS NULL) THEN 0 ELSE 1 END AS is_moderator') . '
@@ -2954,7 +2955,7 @@ function showPermissions($memID)
 
 		$context['member']['permissions']['board'][$row['permission']]['is_denied'] |= empty($row['add_deny']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**

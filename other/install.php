@@ -4,7 +4,7 @@
  * StoryBB Installer
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -313,8 +313,6 @@ function load_database()
 
 		if (!$db_connection)
 		{
-			require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-			require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 			require_once(__DIR__ . '/vendor/autoload.php');
 
 			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
@@ -660,8 +658,6 @@ function DatabaseSettings()
 	global $db_server, $db_name, $db_user, $db_passwd, $db_connection;
 
 	// Load our autoloader stuff.
-	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'database_settings';
@@ -864,8 +860,6 @@ function ForumSettings()
 {
 	global $txt, $incontext, $databases, $db_type, $db_connection;
 
-	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'forum_settings';
@@ -979,7 +973,7 @@ function DatabasePopulation()
 	load_database();
 
 	// Before running any of the queries, let's make sure another version isn't already installed.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
 		[
@@ -992,7 +986,7 @@ function DatabasePopulation()
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$modSettings[$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Do they match?  If so, this is just a refresh so charge on!
 		if (!isset($modSettings['sbbVersion']) || $modSettings['sbbVersion'] != $GLOBALS['current_sbb_version'])
@@ -1092,7 +1086,7 @@ function DatabasePopulation()
 			continue;
 		}
 
-		if ($smcFunc['db_query']('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
 		{
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
@@ -1191,13 +1185,13 @@ function DatabasePopulation()
 
 	// Find database user privileges.
 	$privs = [];
-	$get_privs = $smcFunc['db_query']('', 'SHOW PRIVILEGES', []);
+	$get_privs = $smcFunc['db']->query('', 'SHOW PRIVILEGES', []);
 	while ($row = $smcFunc['db_fetch_assoc']($get_privs))
 	{
 		if ($row['Privilege'] == 'Alter')
 			$privs[] = $row['Privilege'];
 	}
-	$smcFunc['db_free_result']($get_privs);
+	$smcFunc['db']->free_result($get_privs);
 
 	// Check for the ALTER privilege.
 	if (!empty($databases[$db_type]['alter_support']) && !in_array('Alter', $privs))
@@ -1234,18 +1228,11 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
 
-	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	require_once($sourcedir . '/Subs.php');
-
-	// We need this to properly hash the password for Admin
-	$smcFunc['strtolower'] = function($string) {
-		return mb_strtolower($string, 'UTF-8');
-	};
 
 	if (!isset($_POST['username']))
 		$_POST['username'] = '';
@@ -1261,7 +1248,7 @@ function AdminAccount()
 	$incontext['require_db_confirm'] = empty($db_type);
 
 	// Only allow skipping if we think they already have an account setup.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member
 		FROM {db_prefix}members
 		WHERE id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0
@@ -1271,9 +1258,9 @@ function AdminAccount()
 			'admin_group' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 		$incontext['skip'] = 1;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Trying to create an account?
 	if (isset($_POST['password1']) && !empty($_POST['contbutt']))
@@ -1305,7 +1292,7 @@ function AdminAccount()
 		$invalid_characters = preg_match('~[<>&"\'=\\\]~', $_POST['username']) != 0;
 		$_POST['username'] = preg_replace('~[<>&"\'=\\\]~', '', $_POST['username']);
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, password_salt
 			FROM {db_prefix}members
 			WHERE member_name = {string:username} OR email_address = {string:email}
@@ -1316,10 +1303,10 @@ function AdminAccount()
 				'db_error_skip' => true,
 			]
 		);
-		if ($smcFunc['db_num_rows']($result) != 0)
+		if ($smcFunc['db']->num_rows($result) != 0)
 		{
 			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			$incontext['account_existed'] = $txt['error_user_settings_taken'];
 		}
@@ -1404,7 +1391,7 @@ function AdminAccount()
 			);
 
 			// And update the current character.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}members
 				SET current_character = {int:current_character}
 				WHERE id_member = {int:id_member}',
@@ -1429,7 +1416,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_sbb_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_sbb_version, $databases, $boarddir, $sourcedir, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1440,8 +1427,6 @@ function DeleteInstall()
 
 	chdir(dirname(__FILE__));
 
-	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Errors.php');
@@ -1455,7 +1440,7 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			SET NAMES {string:db_character_set}',
 			[
 			'db_character_set' => 'UTF-8',
@@ -1472,7 +1457,7 @@ function DeleteInstall()
 	);
 
 	// We're going to want our lovely $modSettings now.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
 		[
@@ -1484,14 +1469,14 @@ function DeleteInstall()
 	{
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Automatically log them in ;)
 	if (isset($incontext['member_id']) && isset($incontext['member_salt']))
 		setLoginCookie(3153600 * 60, $incontext['member_id'], hash_salt($_POST['password1'], $incontext['member_salt']));
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:db_sessions}',
@@ -1500,9 +1485,9 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		]
 	);
-	if ($smcFunc['db_num_rows']($result) != 0)
+	if ($smcFunc['db']->num_rows($result) != 0)
 		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (empty($db_sessions))
 		$_SESSION['admin_time'] = time();
@@ -1526,12 +1511,7 @@ function DeleteInstall()
 	updateStats('message');
 	updateStats('topic');
 
-	// This function is needed to do the updateStats('subject') call.
-	$smcFunc['strtolower'] = function($string){
-		return mb_strtolower($string, 'UTF-8');
-	};
-
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_msg = 1
@@ -1541,22 +1521,21 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now is the perfect time to fetch the SM files.
 	require_once($sourcedir . '/ScheduledTasks.php');
 	// Sanity check that they loaded earlier!
 	if (isset($modSettings['recycle_board']))
 	{
-		$forum_version = $current_sbb_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
 		(new \StoryBB\Task\Schedulable\FetchStoryBBFiles)->execute();
 
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
 		$user_info['id'] = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
-		logAction('install', ['version' => $forum_version], 'admin');
+		logAction('install', ['version' => \StoryBB\App::SOFTWARE_VERSION], 'admin');
 	}
 
 	// Some final context for the template.
@@ -1820,7 +1799,7 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2018, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2019, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>

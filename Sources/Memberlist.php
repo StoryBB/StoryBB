@@ -5,13 +5,14 @@
  * members list.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Shows a listing of registered members.
@@ -181,7 +182,7 @@ function MLAll()
 		// Only update the cache if something changed or no cache existed yet.
 		if (empty($memberlist_cache) || empty($modSettings['memberlist_updated']) || $memberlist_cache['last_update'] < $modSettings['memberlist_updated'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}
@@ -193,18 +194,18 @@ function MLAll()
 
 			$memberlist_cache = [
 				'last_update' => time(),
-				'num_members' => $smcFunc['db_num_rows']($request),
+				'num_members' => $smcFunc['db']->num_rows($request),
 				'index' => [],
 			];
 
-			for ($i = 0, $n = $smcFunc['db_num_rows']($request); $i < $n; $i += $cache_step_size)
+			for ($i = 0, $n = $smcFunc['db']->num_rows($request); $i < $n; $i += $cache_step_size)
 			{
 				$smcFunc['db_data_seek']($request, $i);
 				list($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
 			}
 			$smcFunc['db_data_seek']($request, $memberlist_cache['num_members'] - 1);
 			list ($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Now we've got the cache...store it.
 			updateSettings(['memberlist_cache' => json_encode($memberlist_cache)]);
@@ -216,7 +217,7 @@ function MLAll()
 	// Without cache we need an extra query to get the amount of members.
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE is_activated = {int:is_activated}',
@@ -225,7 +226,7 @@ function MLAll()
 			]
 		);
 		list ($context['num_members']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Set defaults for sort (real_name) and start. (0)
@@ -234,12 +235,12 @@ function MLAll()
 
 	if (!is_numeric($_REQUEST['start']))
 	{
-		if (preg_match('~^[^\'\\\\/]~u', $smcFunc['strtolower']($_REQUEST['start']), $match) === 0)
+		if (preg_match('~^[^\'\\\\/]~u', StringLibrary::toLower($_REQUEST['start']), $match) === 0)
 			fatal_error('Hacker?', false);
 
 		$_REQUEST['start'] = $match[0];
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE LOWER(SUBSTRING(real_name, 1, 1)) < {string:first_letter}
@@ -250,7 +251,7 @@ function MLAll()
 			]
 		);
 		list ($_REQUEST['start']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$context['letter_links'] = '';
@@ -327,7 +328,7 @@ function MLAll()
 		$custom_fields_qry = $context['custom_profile_fields']['join'][$_REQUEST['sort']];
 
 	// Select the members from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($_REQUEST['sort'] === 'is_online' ? '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'id_group' ? '
@@ -344,7 +345,7 @@ function MLAll()
 		])
 	);
 	printMemberListRows($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Add anchors at the start of each letter.
 	if ($_REQUEST['sort'] == 'real_name')
@@ -352,11 +353,11 @@ function MLAll()
 		$last_letter = '';
 		foreach ($context['members'] as $i => $dummy)
 		{
-			$this_letter = $smcFunc['strtolower']($smcFunc['substr']($context['members'][$i]['name'], 0, 1));
+			$this_letter = StringLibrary::toLower(StringLibrary::substr($context['members'][$i]['name'], 0, 1));
 
 			if ($this_letter != $last_letter && preg_match('~[a-z]~', $this_letter) === 1)
 			{
-				$context['members'][$i]['sort_letter'] = $smcFunc['htmlspecialchars']($this_letter);
+				$context['members'][$i]['sort_letter'] = StringLibrary::escape($this_letter);
 				$last_letter = $this_letter;
 			}
 		}
@@ -377,7 +378,7 @@ function MLSearch()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Can they search custom fields?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, field_desc
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
@@ -400,7 +401,7 @@ function MLSearch()
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// They're searching..
 	if (isset($_REQUEST['search']) && isset($_REQUEST['fields']))
@@ -442,7 +443,7 @@ function MLSearch()
 			'regular_id_group' => 0,
 			'is_activated' => 1,
 			'blank_string' => '',
-			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), ['_' => '\\_', '%' => '\\%', '*' => '%']) . '%',
+			'search' => '%' . strtr(StringLibrary::escape($_POST['search'], ENT_QUOTES), ['_' => '\\_', '%' => '\\%', '*' => '%']) . '%',
 			'sort' => $context['columns'][$_REQUEST['sort']]['sort'][$context['sort_direction']],
 		];
 
@@ -477,7 +478,7 @@ function MLSearch()
 			$search_fields[] = 'email';
 		}
 
-		if ($smcFunc['db_case_sensitive'])
+		if ($smcFunc['db']->is_case_sensitive())
 			foreach ($fields as $key => $field)
 				$fields[$key] = 'LOWER(' . $field . ')';
 
@@ -501,9 +502,9 @@ function MLSearch()
 		if (empty($search_fields))
 			fatal_lang_error('invalid_search_string', false);
 
-		$query = $_POST['search'] == '' ? '= {string:blank_string}' : ($smcFunc['db_case_sensitive'] ? 'LIKE LOWER({string:search})' : 'LIKE {string:search}');
+		$query = $_POST['search'] == '' ? '= {string:blank_string}' : ($smcFunc['db']->is_case_sensitive() ? 'LIKE LOWER({string:search})' : 'LIKE {string:search}');
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)' .
@@ -514,12 +515,12 @@ function MLSearch()
 			$query_parameters
 		);
 		list ($numResults) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -536,7 +537,7 @@ function MLSearch()
 			])
 		);
 		printMemberListRows($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -563,7 +564,7 @@ function MLSearch()
 			$context['search_fields']['cust_' . $field['colname']] = sprintf($txt['mlist_search_by'], $field['name']);
 
 		$context['sub_template'] = 'memberlist_search';
-		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? $smcFunc['htmlspecialchars']($_POST['search']) : '');
+		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? StringLibrary::escape($_POST['search']) : '');
 
 		// Since we're nice we also want to default focus on to the search field.
 		addInlineJavaScript('
@@ -592,14 +593,14 @@ function printMemberListRows($request)
 	global $scripturl, $settings;
 
 	// Get the most posts.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT MAX(posts)
 		FROM {db_prefix}members',
 		[
 		]
 	);
 	list ($most_posts) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Avoid division by zero...
 	if ($most_posts == 0)
@@ -663,7 +664,7 @@ function getCustFieldsMList()
 
 	$cpf = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, field_desc, field_type, bbc, enclose
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
@@ -701,7 +702,7 @@ function getCustFieldsMList()
 
 		$cpf['join'][$row['col_name']] = 'LEFT JOIN {db_prefix}themes AS t' . $row['col_name'] . ' ON (t' . $row['col_name'] . '.variable = {literal:' . $row['col_name'] . '} AND t' . $row['col_name'] . '.id_theme = 1 AND t' . $row['col_name'] . '.id_member = mem.id_member)';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $cpf;
 }

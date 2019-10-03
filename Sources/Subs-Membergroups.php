@@ -4,7 +4,7 @@
  * This file contains functions regarding manipulation of and information about membergroups.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -50,7 +50,7 @@ function deleteMembergroups($groups)
 	// There maybe some others as well.
 	if (!allowedTo('admin_forum'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group
 			FROM {db_prefix}membergroups
 			WHERE group_type = {int:is_protected}',
@@ -62,7 +62,7 @@ function deleteMembergroups($groups)
 		{
 			$protected_groups[] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Make sure they don't delete protected groups!
@@ -74,7 +74,7 @@ function deleteMembergroups($groups)
 
 	// Make sure they don't try to delete a group attached to a paid subscription.
 	$subscriptions = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_subscribe, name, id_group, add_groups
 		FROM {db_prefix}subscriptions
 		ORDER BY name');
@@ -93,7 +93,7 @@ function deleteMembergroups($groups)
 			}
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if (!empty($subscriptions))
 	{
 		// Uh oh. But before we return, we need to update a language string because we want the names of the groups.
@@ -103,7 +103,7 @@ function deleteMembergroups($groups)
 	}
 
 	// Log the deletion.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
@@ -115,13 +115,13 @@ function deleteMembergroups($groups)
 	{
 		logAction('delete_group', ['group' => $row['group_name']], 'admin');
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Notify any plugins that this has happened.
 	(new Observable\Group\Deleted($groups))->execute();
 
 	// Remove the membergroups themselves.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
 		[
@@ -130,28 +130,28 @@ function deleteMembergroups($groups)
 	);
 
 	// Remove the permissions of the membergroups.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}permissions
 		WHERE id_group IN ({array_int:group_list})',
 		[
 			'group_list' => $groups,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}board_permissions
 		WHERE id_group IN ({array_int:group_list})',
 		[
 			'group_list' => $groups,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}group_moderators
 		WHERE id_group IN ({array_int:group_list})',
 		[
 			'group_list' => $groups,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}moderator_groups
 		WHERE id_group IN ({array_int:group_list})',
 		[
@@ -160,7 +160,7 @@ function deleteMembergroups($groups)
 	);
 
 	// Delete any outstanding requests.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_group_requests
 		WHERE id_group IN ({array_int:group_list})',
 		[
@@ -169,7 +169,7 @@ function deleteMembergroups($groups)
 	);
 
 	// Update the primary groups of members.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET id_group = {int:regular_group}
 		WHERE id_group IN ({array_int:group_list})',
@@ -180,7 +180,7 @@ function deleteMembergroups($groups)
 	);
 
 	// Update any inherited groups (Lose inheritance).
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}membergroups
 		SET id_parent = {int:uninherited}
 		WHERE id_parent IN ({array_int:group_list})',
@@ -191,7 +191,7 @@ function deleteMembergroups($groups)
 	);
 
 	// Update the additional groups of members.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, additional_groups
 		FROM {db_prefix}members
 		WHERE FIND_IN_SET({raw:additional_groups_explode}, additional_groups) != 0',
@@ -204,7 +204,7 @@ function deleteMembergroups($groups)
 	{
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $additional_groups => $memberArray)
 	{
@@ -212,7 +212,7 @@ function deleteMembergroups($groups)
 	}
 
 	// No boards can provide access to these membergroups anymore.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, member_groups
 		FROM {db_prefix}boards
 		WHERE FIND_IN_SET({raw:member_groups_explode}, member_groups) != 0',
@@ -225,11 +225,11 @@ function deleteMembergroups($groups)
 	{
 		$updates[$row['member_groups']][] = $row['id_board'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $member_groups => $boardArray)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET member_groups = {string:member_groups}
 			WHERE id_board IN ({array_int:board_lists})',
@@ -310,7 +310,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	elseif ($groups === null)
 	{
 		// Wanna remove all groups from these members? That's easy.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET
 				id_group = {int:regular_member},
@@ -350,7 +350,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 
 	// Fetch a list of groups members cannot be assigned to explicitly, and the group names of the ones we want.
 	$implicitGroups = [Group::GUEST, Group::UNGROUPED_ACCOUNT, Group::BOARD_MODERATOR];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
@@ -363,7 +363,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now get rid of those groups.
 	$groups = array_diff($groups, $implicitGroups);
@@ -371,7 +371,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	// Don't forget the protected groups.
 	if (!allowedTo('admin_forum') && !$ignoreProtected)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group
 			FROM {db_prefix}membergroups
 			WHERE group_type = {int:is_protected}',
@@ -384,7 +384,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		{
 			$protected_groups[] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If you're not an admin yourself, you can't touch protected groups!
 		$groups = array_diff($groups, array_unique($protected_groups));
@@ -398,7 +398,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 
 	// First, reset those who have this as their primary group - this is the easy one.
 	$log_inserts = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, id_group
 		FROM {db_prefix}members AS members
 		WHERE id_group IN ({array_int:group_list})
@@ -412,9 +412,9 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	{
 		$log_inserts[] = ['group' => $group_names[$row['id_group']], 'member' => $row['id_member']];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET id_group = {int:regular_member}
 		WHERE id_group IN ({array_int:group_list})
@@ -427,7 +427,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	);
 
 	// Those who have it as part of their additional group must be updated the long way... sadly.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, additional_groups
 		FROM {db_prefix}members
 		WHERE (FIND_IN_SET({raw:additional_groups_implode}, additional_groups) != 0)
@@ -453,11 +453,11 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $additional_groups => $memberArray)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET additional_groups = {string:additional_groups}
 			WHERE id_member IN ({array_int:member_list})',
@@ -518,7 +518,7 @@ function removeCharactersFromGroups($characters, $groups)
 	// Check against protected groups
 	if (!allowedTo('admin_forum'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT group_type
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:current_group})',
@@ -531,7 +531,7 @@ function removeCharactersFromGroups($characters, $groups)
 		{
 			$protected[] = $row[0];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$groups = array_diff($groups, $protected);
 	}
@@ -539,7 +539,7 @@ function removeCharactersFromGroups($characters, $groups)
 	if (empty($groups) || empty($characters))
 		return false;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:current_group})',
@@ -552,11 +552,11 @@ function removeCharactersFromGroups($characters, $groups)
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// First, reset those who have this as their primary group - this is the easy one.
 	$log_inserts = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, id_character, character_name, main_char_group
 		FROM {db_prefix}characters AS characters
 		WHERE main_char_group IN ({array_int:group_list})
@@ -568,9 +568,9 @@ function removeCharactersFromGroups($characters, $groups)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$log_inserts[] = ['group' => $group_names[$row['main_char_group']], 'member' => $row['id_member'], 'character' => $row['character_name']];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET main_char_group = {int:regular_member}
 		WHERE main_char_group IN ({array_int:group_list})
@@ -583,7 +583,7 @@ function removeCharactersFromGroups($characters, $groups)
 	);
 
 	// Those who have it as part of their additional group must be updated the long way... sadly.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, id_character, character_name, char_groups
 		FROM {db_prefix}characters
 		WHERE (FIND_IN_SET({raw:additional_groups_implode}, char_groups) != 0)
@@ -608,10 +608,10 @@ function removeCharactersFromGroups($characters, $groups)
 
 		$updates[$row['char_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $char_groups => $memberArray)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET char_groups = {string:char_groups}
 			WHERE id_member IN ({array_int:member_list})',
@@ -689,7 +689,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 
 	// Some groups just don't like explicitly having members.
 	$implicitGroups = [Group::GUEST, Group::UNGROUPED_ACCOUNT, Group::BOARD_MODERATOR];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}',
@@ -702,7 +702,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Sorry, you can't join an implicit group.
 	if (in_array($group, $implicitGroups) || empty($members))
@@ -718,7 +718,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	// ... and assign protected groups!
 	elseif (!allowedTo('admin_forum') && !$ignoreProtected)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT group_type
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
@@ -729,7 +729,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Is it protected?
 		if ($is_protected == 1)
@@ -739,7 +739,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	// Do the actual updates.
 	if ($type == 'only_additional')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET additional_groups = CASE WHEN additional_groups = {empty} THEN {string:id_group_string} ELSE CONCAT(additional_groups, {string:id_group_string_extend}) END
 			WHERE id_member IN ({array_int:member_list})
@@ -755,7 +755,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	}
 	elseif ($type == 'only_primary' || $type == 'force_primary')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET id_group = {int:id_group}
 			WHERE id_member IN ({array_int:member_list})' . ($type == 'force_primary' ? '' : '
@@ -770,7 +770,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	}
 	elseif ($type == 'auto')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET
 				id_group = CASE WHEN id_group = {int:regular_group} THEN {int:id_group} ELSE id_group END,
@@ -838,7 +838,7 @@ function addCharactersToGroup($characters, $group)
 	// Check against protected groups
 	if (!allowedTo('admin_forum'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT group_type
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
@@ -849,7 +849,7 @@ function addCharactersToGroup($characters, $group)
 			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Is it protected?
 		if ($is_protected == 1)
@@ -859,7 +859,7 @@ function addCharactersToGroup($characters, $group)
 	}
 
 	// Do the dirty deed
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET char_groups = CASE WHEN char_groups = {empty} THEN {string:id_group_string} ELSE CONCAT(char_groups, {string:id_group_string_extend}) END
 		WHERE id_character IN ({array_int:char_list})
@@ -875,7 +875,7 @@ function addCharactersToGroup($characters, $group)
 
 	// Get the members for these characters.
 	$members = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, id_character, character_name
 		FROM {db_prefix}characters
 		WHERE id_character IN ({array_int:char_list})',
@@ -887,9 +887,9 @@ function addCharactersToGroup($characters, $group)
 	{
 		$members[$row['id_character']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}',
@@ -902,7 +902,7 @@ function addCharactersToGroup($characters, $group)
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');
@@ -927,7 +927,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 {
 	global $scripturl, $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE id_group = {int:id_group} OR FIND_IN_SET({int:id_group}, additional_groups) != 0' . ($limit === null ? '' : '
@@ -941,7 +941,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 	{
 		$members[$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If there are more than $limit members, add a 'more' link.
 	if ($limit !== null && count($members) > $limit)
@@ -962,7 +962,7 @@ function cache_getMembergroupList()
 {
 	global $scripturl, $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups
 		WHERE hidden = {int:not_hidden}
@@ -978,7 +978,7 @@ function cache_getMembergroupList()
 	{
 		$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return [
 		'data' => $groupCache,
@@ -1000,7 +1000,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
 	global $scripturl, $context, $settings, $smcFunc, $user_info, $txt;
 
-	$request = $smcFunc['db_query']('substring_membergroups', '
+	$request = $smcFunc['db']->query('substring_membergroups', '
 		SELECT mg.id_group, mg.group_name, mg.description, mg.group_type, mg.online_color, mg.hidden,
 			mg.icons, COALESCE(gm.id_member, 0) AS can_moderate, 0 AS num_members, is_character
 		FROM {db_prefix}membergroups AS mg
@@ -1045,12 +1045,12 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		$context['can_moderate'] |= $row['can_moderate'];
 		$group_ids[] = $row['id_group'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we found any membergroups, get the amount of members in them.
 	if (!empty($group_ids))
 	{
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT id_group, COUNT(*) AS num_members
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:group_list})
@@ -1066,10 +1066,10 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// And collect all the characters too.
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT main_char_group, COUNT(*) AS num_members
 			FROM {db_prefix}characters
 			WHERE main_char_group IN ({array_int:group_list})
@@ -1085,11 +1085,11 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
 			}
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($context['can_moderate'])
 		{
-			$query = $smcFunc['db_query']('', '
+			$query = $smcFunc['db']->query('', '
 				SELECT mg.id_group, COUNT(*) AS num_members
 				FROM {db_prefix}membergroups AS mg
 					INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {empty}
@@ -1105,13 +1105,13 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
-			$smcFunc['db_free_result']($query);
+			$smcFunc['db']->free_result($query);
 		}
 
 		// Only do additional groups if we can moderate...
 		if ($context['can_moderate'])
 		{
-			$query = $smcFunc['db_query']('', '
+			$query = $smcFunc['db']->query('', '
 				SELECT mg.id_group, COUNT(*) AS num_members
 				FROM {db_prefix}membergroups AS mg
 					INNER JOIN {db_prefix}members AS mem ON (mem.additional_groups != {empty}
@@ -1127,10 +1127,10 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
-			$smcFunc['db_free_result']($query);
+			$smcFunc['db']->free_result($query);
 		}
 
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT mods.id_group, mods.id_member, mem.member_name, mem.real_name
 			FROM {db_prefix}group_moderators AS mods
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -1143,7 +1143,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		{
 			$groups[$row['id_group']]['moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	// Apply manual sorting if the 'number of members' column is selected.

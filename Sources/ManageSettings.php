@@ -5,7 +5,7 @@
  * settings and options.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
+use StoryBB\StringLibrary;
 
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
@@ -471,20 +472,20 @@ function ModifySignatureSettings($return_config = false)
 		$_GET['step'] = isset($_GET['step']) ? (int) $_GET['step'] : 0;
 		$done = false;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(id_member)
 			FROM {db_prefix}members',
 			[
 			]
 		);
 		list ($context['max_member']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		while (!$done)
 		{
 			$changes = [];
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, signature
 				FROM {db_prefix}members
 				WHERE id_member BETWEEN {int:step} AND {int:step} + 49
@@ -502,7 +503,7 @@ function ModifySignatureSettings($return_config = false)
 
 				// Max characters...
 				if (!empty($sig_limits[1]))
-					$sig = $smcFunc['substr']($sig, 0, $sig_limits[1]);
+					$sig = StringLibrary::substr($sig, 0, $sig_limits[1]);
 				// Max lines...
 				if (!empty($sig_limits[2]))
 				{
@@ -668,15 +669,15 @@ function ModifySignatureSettings($return_config = false)
 				if ($sig != $row['signature'])
 					$changes[$row['id_member']] = $sig;
 			}
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				$done = true;
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Do we need to delete what we have?
 			if (!empty($changes))
 			{
 				foreach ($changes as $id => $sig)
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}members
 						SET signature = {string:signature}
 						WHERE id_member = {int:id_member}',
@@ -1090,7 +1091,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 	else
 	{
 		// Load all the fields.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_field, col_name, field_name, field_desc, field_type, field_order, active, placement
 			FROM {db_prefix}custom_fields
 			ORDER BY {raw:sort}
@@ -1103,7 +1104,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$list[] = $row;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	return $list;
@@ -1117,7 +1118,7 @@ function list_getProfileFieldSize()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}custom_fields',
 		[
@@ -1125,7 +1126,7 @@ function list_getProfileFieldSize()
 	);
 
 	list ($numProfileFields) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $numProfileFields;
 }
@@ -1160,7 +1161,7 @@ function EditCustomProfiles()
 
 	if ($context['fid'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_order, field_length, field_options,
 				show_reg, show_display, show_mlist, show_profile, private, active, default_value, can_search,
@@ -1208,7 +1209,7 @@ function EditCustomProfiles()
 				'placement' => $row['placement'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Setup the default values as needed.
@@ -1240,7 +1241,7 @@ function EditCustomProfiles()
 		];
 
 	// Are we moving it?
-	if (isset($_GET['move']) && in_array($smcFunc['htmlspecialchars']($_GET['move']), $move_to))
+	if (isset($_GET['move']) && in_array(StringLibrary::escape($_GET['move']), $move_to))
 	{
 		// Down is the new up.
 		$new_order = ($_GET['move'] == 'up' ? ($context['field']['order'] - 1) : ($context['field']['order'] + 1));
@@ -1250,7 +1251,7 @@ function EditCustomProfiles()
 			redirectexit('action=admin;area=featuresettings;sa=profile'); // @todo implement an error handler
 
 		// All good, proceed.
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:old_order}
 			WHERE field_order = {int:new_order}',
@@ -1259,7 +1260,7 @@ function EditCustomProfiles()
 				'old_order' => $context['field']['order'],
 			]
 		);
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:new_order}
 			WHERE id_field = {int:id_field}',
@@ -1291,8 +1292,8 @@ function EditCustomProfiles()
 			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
 		}
 
-		$_POST['field_name'] = $smcFunc['htmlspecialchars']($_POST['field_name']);
-		$_POST['field_desc'] = $smcFunc['htmlspecialchars']($_POST['field_desc']);
+		$_POST['field_name'] = StringLibrary::escape($_POST['field_name']);
+		$_POST['field_desc'] = StringLibrary::escape($_POST['field_desc']);
 
 		// Checkboxes...
 		$show_reg = isset($_POST['reg']) ? (int) $_POST['reg'] : 0;
@@ -1322,7 +1323,7 @@ function EditCustomProfiles()
 			foreach ($_POST['select_option'] as $k => $v)
 			{
 				// Clean, clean, clean...
-				$v = $smcFunc['htmlspecialchars']($v);
+				$v = StringLibrary::escape($v);
 				$v = strtr($v, [',' => '']);
 
 				// Nada, zip, etc...
@@ -1348,7 +1349,7 @@ function EditCustomProfiles()
 		// Come up with the unique name?
 		if (empty($context['fid']))
 		{
-			$col_name = $smcFunc['substr'](strtr($_POST['field_name'], [' ' => '']), 0, 6);
+			$col_name = StringLibrary::substr(strtr($_POST['field_name'], [' ' => '']), 0, 6);
 			preg_match('~([\w\d_-]+)~', $col_name, $matches);
 
 			// If there is nothing to the name, then let's start out own - for foreign languages etc.
@@ -1359,12 +1360,12 @@ function EditCustomProfiles()
 
 			// Make sure this is unique.
 			$current_fields = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_field, col_name
 				FROM {db_prefix}custom_fields');
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$current_fields[$row['id_field']] = $row['col_name'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$unique = false;
 			for ($i = 0; !$unique && $i < 9; $i ++)
@@ -1387,7 +1388,7 @@ function EditCustomProfiles()
 				|| (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && $context['field']['type'] != 'select' && $context['field']['type'] != 'radio')
 				|| ($context['field']['type'] == 'check' && $_POST['field_type'] != 'check'))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND id_member > {int:no_member}',
@@ -1421,7 +1422,7 @@ function EditCustomProfiles()
 				{
 					// Just been renamed?
 					if (!in_array($k, $takenKeys) && !empty($newOptions[$k]))
-						$smcFunc['db_query']('', '
+						$smcFunc['db']->query('', '
 							UPDATE {db_prefix}themes
 							SET value = {string:new_value}
 							WHERE variable = {string:current_column}
@@ -1442,7 +1443,7 @@ function EditCustomProfiles()
 		// Do the insertion/updates.
 		if ($context['fid'])
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}custom_fields
 				SET
 					field_name = {string:field_name}, field_desc = {string:field_desc},
@@ -1477,7 +1478,7 @@ function EditCustomProfiles()
 
 			// Just clean up any old selects - these are a pain!
 			if (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && !empty($newOptions))
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND value NOT IN ({array_string:new_option_values})
@@ -1521,7 +1522,7 @@ function EditCustomProfiles()
 		validateToken('admin-ecp');
 
 		// Delete the user data first.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}themes
 			WHERE variable = {string:current_column}
 				AND id_member > {int:no_member}',
@@ -1531,7 +1532,7 @@ function EditCustomProfiles()
 			]
 		);
 		// Finally - the field itself is gone!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			[
@@ -1540,7 +1541,7 @@ function EditCustomProfiles()
 		);
 
 		// Re-arrange the order.
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = field_order - 1
 			WHERE field_order > {int:current_order}',
@@ -1555,7 +1556,7 @@ function EditCustomProfiles()
 	{
 		checkSession();
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT col_name, field_name, field_type, field_order, bbc, enclose, placement, show_mlist, field_options
 			FROM {db_prefix}custom_fields
 			WHERE show_display = {int:is_displayed}
@@ -1586,7 +1587,7 @@ function EditCustomProfiles()
 				'options' => (!empty($row['field_options']) ? explode(',', $row['field_options']) : []),
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateSettings(['displayFields' => json_encode($fields)]);
 		session_flash('success', $txt['settings_saved']);
@@ -1605,14 +1606,14 @@ function custFieldsMaxOrder()
 	global $smcFunc;
 
 	// Gotta know the order limit
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 			SELECT MAX(field_order)
 			FROM {db_prefix}custom_fields',
 			[]
 		);
 
 	list ($order_count) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return (int) $order_count;
 }

@@ -4,11 +4,13 @@
  * Functions concerned with viewing queries, and is used for debugging.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Show the database queries for debugging
@@ -113,7 +115,7 @@ function ViewQuery()
 		echo '
 		<div id="qq', $q, '" style="margin-bottom: 2ex;">
 			<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none;">
-				', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', $smcFunc['htmlspecialchars']($query_data['q']))), '
+				', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', StringLibrary::escape($query_data['q']))), '
 			</a><br>';
 
 		if (!empty($query_data['f']) && !empty($query_data['l']))
@@ -130,7 +132,7 @@ function ViewQuery()
 		// Explain the query.
 		if ($query_id == $q && $is_select_query)
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				EXPLAIN ' . $select,
 				[
 				]
@@ -164,7 +166,7 @@ function ViewQuery()
 				<td>', $row) . '</td>
 			</tr>';
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			echo '
 		</table>';

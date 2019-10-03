@@ -3,7 +3,7 @@
  * Cleaning up old drafts.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -51,7 +51,7 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 
 		// Find all of the old drafts.
 		$drafts = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_draft
 			FROM {db_prefix}user_drafts
 			WHERE poster_time <= {int:poster_time_old}',
@@ -64,7 +64,7 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 		{
 			$drafts[] = (int) $row[0];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If we have old one, remove them
 		if (!empty($drafts))

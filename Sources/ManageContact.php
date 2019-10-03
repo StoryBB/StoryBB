@@ -4,11 +4,13 @@
  * This file manages responses to contact-us messages.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * The main dispatcher.
@@ -44,12 +46,12 @@ function ListContact()
 		'get_count' => [
 			'function' => function() use ($smcFunc)
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(cf.id_message)
 					FROM {db_prefix}contact_form AS cf'
 				);
 				list($count) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				return $count;
 			},
@@ -59,7 +61,7 @@ function ListContact()
 			{
 				global $smcFunc;
 				$rows = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 						COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.time_received, cf.status
 					FROM {db_prefix}contact_form AS cf
@@ -75,7 +77,7 @@ function ListContact()
 				{
 					$rows[$row['id_message']] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				return $rows;
 			},
@@ -161,7 +163,7 @@ function ViewContact()
 
 	$msg = isset($_GET['msg']) ? (int) $_GET['msg'] : 0;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
 		FROM {db_prefix}contact_form AS cf
@@ -171,21 +173,21 @@ function ViewContact()
 			'msg' => $msg,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
 	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['contact']['time_received_timeformat'] = timeformat($context['contact']['time_received']);
 
 	// See if there's any previous messages we should show.
 	$context['contact']['previous'] = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name, cfr.response, cfr.time_sent
 		FROM {db_prefix}contact_form_response AS cfr
 			LEFT JOIN {db_prefix}members AS mem ON (cfr.id_member = mem.id_member)
@@ -200,7 +202,7 @@ function ViewContact()
 		$row['time_sent_format'] = timeformat($row['time_sent']);
 		$context['contact']['previous'][] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// And set up the template.
 	$context['page_title'] = $txt['contact_us'];
@@ -222,9 +224,9 @@ function ReplyContact()
 
 	$msg = isset($_POST['msg']) ? (int) $_POST['msg'] : 0;
 
-	$message = !empty($_POST['reply']) ? $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['reply'], ENT_QUOTES)) : '';
+	$message = !empty($_POST['reply']) ? StringLibrary::htmltrim(StringLibrary::escape($_POST['reply'], ENT_QUOTES)) : '';
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
 		FROM {db_prefix}contact_form AS cf
@@ -234,13 +236,13 @@ function ReplyContact()
 			'msg' => $msg,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Nothing entered?
 	if (empty($message))
@@ -258,7 +260,7 @@ function ReplyContact()
 	);
 
 	// Update the message to be sent.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}contact_form
 		SET status = 1
 		WHERE status = 0

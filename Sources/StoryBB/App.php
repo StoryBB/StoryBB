@@ -1,6 +1,8 @@
 <?php
+
 /**
- * Exceptions from within the schema system.
+ * This file does a lot of important stuff.  Mainly, this means it handles
+ * the query string, request variables, and session management.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
@@ -9,11 +11,10 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Schema;
+namespace StoryBB;
 
-/**
- * Exceptions from within the schema system.
- */
-class InvalidIndexTypeException extends \StoryBB\Schema\Exception
+class App
 {
+	const SOFTWARE_YEAR = 2019;
+	const SOFTWARE_VERSION = '1.0 Alpha 1';
 }

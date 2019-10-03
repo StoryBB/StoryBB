@@ -21,11 +21,14 @@
  * - please include any special license in a license.txt file.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\App;
+use StoryBB\StringLibrary;
 
 /**
  * Subaction handler - manages the action and delegates control to the proper
@@ -248,7 +251,7 @@ function SetThemeOptions()
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:name}, {string:theme_dir})
@@ -270,9 +273,9 @@ function SetThemeOptions()
 				];
 			$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, COUNT(*) AS value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:guest_member}
@@ -283,10 +286,10 @@ function SetThemeOptions()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['themes'][$row['id_theme']]['num_default_options'] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Need to make sure we don't do custom fields.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT col_name
 			FROM {db_prefix}custom_fields',
 			[
@@ -295,10 +298,10 @@ function SetThemeOptions()
 		$customFields = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$customFields[] = $row['col_name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
-		$request = $smcFunc['db_query']('themes_count', '
+		$request = $smcFunc['db']->query('themes_count', '
 			SELECT COUNT(DISTINCT id_member) AS value, id_theme
 			FROM {db_prefix}themes
 			WHERE id_member > {int:no_member}
@@ -311,7 +314,7 @@ function SetThemeOptions()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['themes'][$row['id_theme']]['num_members'] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// There has to be a Settings template!
 		foreach ($context['themes'] as $k => $v)
@@ -354,7 +357,7 @@ function SetThemeOptions()
 		{
 			// Are there options in non-default themes set that should be cleared?
 			if (!empty($old_settings))
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme != {int:default_theme}
 						AND id_member = {int:guest_member}
@@ -397,7 +400,7 @@ function SetThemeOptions()
 			elseif ($_POST['default_options_master'][$opt] == 1)
 			{
 				// Delete then insert for ease of database compatibility!
-				$smcFunc['db_query']('substring', '
+				$smcFunc['db']->query('substring', '
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme = {int:default_theme}
 						AND id_member != {int:no_member}
@@ -408,7 +411,7 @@ function SetThemeOptions()
 						'option' => $opt,
 					]
 				);
-				$smcFunc['db_query']('substring', '
+				$smcFunc['db']->query('substring', '
 					INSERT INTO {db_prefix}themes
 						(id_member, id_theme, variable, value)
 					SELECT id_member, 1, SUBSTRING({string:option}, 1, 255), SUBSTRING({string:value}, 1, 65534)
@@ -423,7 +426,7 @@ function SetThemeOptions()
 			}
 			elseif ($_POST['default_options_master'][$opt] == 2)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:option_name}
 						AND id_member > {int:no_member}',
@@ -437,7 +440,7 @@ function SetThemeOptions()
 
 		// Delete options from other themes.
 		if (!empty($old_settings))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}themes
 				WHERE id_theme != {int:default_theme}
 					AND id_member > {int:no_member}
@@ -456,7 +459,7 @@ function SetThemeOptions()
 			elseif ($_POST['options_master'][$opt] == 1)
 			{
 				// Delete then insert for ease of database compatibility - again!
-				$smcFunc['db_query']('substring', '
+				$smcFunc['db']->query('substring', '
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme = {int:current_theme}
 						AND id_member != {int:no_member}
@@ -467,7 +470,7 @@ function SetThemeOptions()
 						'option' => $opt,
 					]
 				);
-				$smcFunc['db_query']('substring', '
+				$smcFunc['db']->query('substring', '
 					INSERT INTO {db_prefix}themes
 						(id_member, id_theme, variable, value)
 					SELECT id_member, {int:current_theme}, SUBSTRING({string:option}, 1, 255), SUBSTRING({string:value}, 1, 65534)
@@ -481,7 +484,7 @@ function SetThemeOptions()
 			}
 			elseif ($_POST['options_master'][$opt] == 2)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:option}
 						AND id_member > {int:no_member}
@@ -505,7 +508,7 @@ function SetThemeOptions()
 		// Don't delete custom fields!!
 		if ($_GET['th'] == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT col_name
 				FROM {db_prefix}custom_fields',
 				[
@@ -514,11 +517,11 @@ function SetThemeOptions()
 			$customFields = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$customFields[] = $row['col_name'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}themes
 			WHERE id_member > {int:no_member}
 				AND id_theme = {int:current_theme}
@@ -553,7 +556,7 @@ function SetThemeOptions()
 
 	if (empty($_REQUEST['who']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT variable, value
 			FROM {db_prefix}themes
 			WHERE id_theme IN (1, {int:current_theme})
@@ -566,7 +569,7 @@ function SetThemeOptions()
 		$context['theme_options'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['theme_options_reset'] = false;
 	}
@@ -947,7 +950,7 @@ function PickTheme()
 			// Remove any custom variants.
 			if (!empty($_GET['vrt']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme = {int:current_theme}
 						AND variable = {string:theme_variant}',
@@ -1017,7 +1020,7 @@ function PickTheme()
 	{
 		$context['current_member'] = (int) $_REQUEST['u'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
@@ -1027,14 +1030,14 @@ function PickTheme()
 			]
 		);
 		list ($context['current_theme']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Get the theme name and descriptions.
 	$context['available_themes'] = [];
 	if (!empty($modSettings['knownThemes']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:name}, {string:theme_url}, {string:theme_dir}, {string:images_url}, {string:disable_user_variant})' . (!allowedTo('admin_forum') ? '
@@ -1064,7 +1067,7 @@ function PickTheme()
 				];
 			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Okay, this is a complicated problem: the default theme is 1, but they aren't allowed to access 1!
@@ -1078,7 +1081,7 @@ function PickTheme()
 	else
 		$guest_theme = $modSettings['theme_guests'];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, COUNT(*) AS the_count
 		FROM {db_prefix}members
 		GROUP BY id_theme
@@ -1099,13 +1102,13 @@ function PickTheme()
 		else
 			$context['available_themes'][$guest_theme]['num_users'] += $row['the_count'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get any member variant preferences.
 	$variant_preferences = [];
 	if ($context['current_member'] > 0)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, value
 			FROM {db_prefix}themes
 			WHERE variable = {string:theme_variant}
@@ -1118,7 +1121,7 @@ function PickTheme()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$variant_preferences[$row['id_theme']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Save the setting first.
@@ -1232,7 +1235,7 @@ function ThemeInstall()
 	// Is there a function to call?
 	if (isset($_GET['do']) && !empty($_GET['do']) && isset($subActions[$_GET['do']]))
 	{
-		$action = $smcFunc['htmlspecialchars'](trim($_GET['do']));
+		$action = StringLibrary::escape(trim($_GET['do']));
 
 		// Got any info from the specific form?
 		if (!isset($_POST['save_' . $action]))
@@ -1270,7 +1273,6 @@ function ThemeInstall()
 function InstallCopy()
 {
 	global $themedir, $themeurl, $settings, $smcFunc, $context;
-	global $forum_version;
 
 	// There's gotta be something to work with.
 	if (!isset($_REQUEST['copy']) || empty($_REQUEST['copy']))
@@ -1290,7 +1292,7 @@ function InstallCopy()
 		'name' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
-		'install_for' => '1.0 - 1.0.99, ' . strtr($forum_version, ['StoryBB ' => '']),
+		'install_for' => '1.0 - 1.0.99, ' . App::SOFTWARE_VERSION,
 	];
 
 	// Create the specific dir.
@@ -1322,7 +1324,7 @@ function InstallCopy()
 	// Let's add a theme.json to this theme. Most of this should come from the default theme.
 	$json_loaded = @json_decode(file_get_contents($settings['default_theme_dir'] . '/theme.json'), true);
 	$json = [
-		'id' => 'StoryBB:' . $smcFunc['strtolower']($context['to_install']['name']),
+		'id' => 'StoryBB:' . StringLibrary::toLower($context['to_install']['name']),
 		'name' => $context['to_install']['name'],
 		'theme_version' => '1.0',
 		'storybb_version' => $context['to_install']['install_for'],

@@ -3,11 +3,13 @@
 /**
  * The functions in this file deal with reporting posts or profiles to mods and admins
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Report a post or profile to the moderator... ask for a comment.
@@ -40,7 +42,7 @@ function ReportToModerator()
 		require_once($sourcedir . '/Subs-Post.php');
 
 		// Set up the preview message.
-		$context['preview_message'] = $smcFunc['htmlspecialchars']($_POST['comment'], ENT_QUOTES);
+		$context['preview_message'] = StringLibrary::escape($_POST['comment'], ENT_QUOTES);
 		preparsecode($context['preview_message']);
 
 		// We censor for your protection...
@@ -69,7 +71,7 @@ function ReportToModerator()
 	if (isset($_REQUEST['msg']))
 	{
 		// Check the message's ID - don't want anyone reporting a post they can't even see!
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_member, t.id_member_started
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -81,10 +83,10 @@ function ReportToModerator()
 				'id_msg' => $_REQUEST['msg'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($result) == 0)
+		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_board', false);
 		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 
 		// This is here so that the user could, in theory, be redirected back to the topic.
@@ -97,7 +99,7 @@ function ReportToModerator()
 	else
 	{
 		// Check the user's ID
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, member_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_user}',
@@ -106,7 +108,7 @@ function ReportToModerator()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($result) == 0)
+		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_user', false);
 		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db_fetch_row']($result);
 
@@ -114,7 +116,7 @@ function ReportToModerator()
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
 	}
 
-	$context['comment_body'] = !isset($_POST['comment']) ? '' : $smcFunc['htmlspecialchars'](trim($_POST['comment'], ENT_QUOTES));
+	$context['comment_body'] = !isset($_POST['comment']) ? '' : StringLibrary::escape(trim($_POST['comment'], ENT_QUOTES));
 
 	$context['page_title'] = $context['report_type'] == 'msg' ? $txt['report_to_mod'] : sprintf($txt['report_profile'], $display_name);
 	$context['notice'] = $context['report_type'] == 'msg' ? $txt['report_to_mod_func'] : $txt['report_profile_func'];
@@ -183,12 +185,12 @@ function ReportToModerator2()
 		$post_errors[] = 'session_timeout';
 
 	// Make sure we have a comment and it's clean.
-	if (!isset($_POST['comment']) || $smcFunc['htmltrim']($_POST['comment']) === '')
+	if (!isset($_POST['comment']) || StringLibrary::htmltrim($_POST['comment']) === '')
 		$post_errors[] = 'no_comment';
 
-	$poster_comment = strtr($smcFunc['htmlspecialchars']($_POST['comment']), ["\r" => '', "\t" => '']);
+	$poster_comment = strtr(StringLibrary::escape($_POST['comment']), ["\r" => '', "\t" => '']);
 
-	if ($smcFunc['strlen']($poster_comment) > 254)
+	if (StringLibrary::strlen($poster_comment) > 254)
 		$post_errors[] = 'post_too_long';
 
 	// Any errors?
@@ -227,7 +229,7 @@ function reportPost($msg, $reason)
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['msg'] = (int) $msg;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_topic, m.id_board, m.subject, m.body, m.id_member AS id_poster, m.poster_name, mem.real_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
@@ -239,12 +241,12 @@ function reportPost($msg, $reason)
 			'id_msg' => $_POST['msg'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
 	$message = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_report, ignore_all
 		FROM {db_prefix}log_reported
 		WHERE id_msg = {int:id_msg}
@@ -256,10 +258,10 @@ function reportPost($msg, $reason)
 			'ignored' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we're just going to ignore these, then who gives a monkeys...
 	if (!empty($ignore))
@@ -267,7 +269,7 @@ function reportPost($msg, $reason)
 
 	// Already reported? My god, we could be dealing with a real rogue here...
 	if (!empty($id_report))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',
@@ -347,7 +349,7 @@ function reportUser($id_member, $reason)
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['u'] = (int) $id_member;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, member_name
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
@@ -355,14 +357,14 @@ function reportUser($id_member, $reason)
 			'id_member' => $_POST['u']
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_user', false);
 	$user = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$user_name = un_htmlspecialchars($user['real_name']) . ($user['real_name'] != $user['member_name'] ? ' (' . $user['member_name'] . ')' : '');
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_report, ignore_all
 		FROM {db_prefix}log_reported
 		WHERE id_member = {int:id_member}
@@ -376,10 +378,10 @@ function reportUser($id_member, $reason)
 			'ignored' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we're just going to ignore these, then who gives a monkeys...
 	if (!empty($ignore))
@@ -387,7 +389,7 @@ function reportUser($id_member, $reason)
 
 	// Already reported? My god, we could be dealing with a real rogue here...
 	if (!empty($id_report))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',

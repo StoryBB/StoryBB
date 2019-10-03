@@ -5,11 +5,13 @@
  * It views it, and that's about all it does.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Prepares the information from the moderation log for viewing.
@@ -50,7 +52,7 @@ function ViewModlog()
 		checkSession();
 		validateToken('mod-ml');
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_actions
 			WHERE id_log = {int:moderate_log}',
 			[
@@ -68,7 +70,7 @@ function ViewModlog()
 		validateToken('mod-ml');
 
 		// No sneaky removing the 'cleared the log' entries.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_actions
 			WHERE id_log = {int:moderate_log}
 				AND id_action IN ({array_string:delete_actions})
@@ -273,7 +275,7 @@ function ViewModlog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ' (' . $txt['modlog_by'] . ': ' . $context['search']['label'] . '):
-					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
+					<input type="text" name="search" size="18" value="' . StringLibrary::escape($context['search']['string']) . '">
 					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" style="float:none">
 					' . ($context['can_delete'] ? '&nbsp;
 					<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" data-confirm="' . $txt['modlog_remove_selected_confirm'] . '" class="you_sure">
@@ -321,7 +323,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 
 	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : (($user_info['mod_cache']['bq'] == '0=1' || $ignore_boards) ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], ['id_board' => 'b.id_board']) . ' AND ' . strtr($user_info['mod_cache']['bq'], ['id_board' => 't.id_board'])));
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_actions AS lm
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lm.id_member)
@@ -338,7 +340,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 		])
 	);
 	list ($entry_count) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return $entry_count;
 }
@@ -366,7 +368,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	$seeIP = allowedTo('moderate_forum');
 
 	// Here we have the query getting the log details.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT
 			lm.id_action, lm.id_member, lm.ip, lm.log_time, lm.action, lm.id_board, lm.id_topic, lm.id_msg, lm.extra,
 			mem.real_name, mg.group_name
@@ -482,11 +484,11 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			'action_text' => isset($row['action_text']) ? $row['action_text'] : '',
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (!empty($boards))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board, name
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:board_list})
@@ -509,12 +511,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					$entries[$action]['extra']['board'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($topics))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT ms.subject, t.id_topic
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
@@ -546,12 +548,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					$this_action['extra']['new_topic'] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.' . (isset($this_action['extra']['message']) ? 'msg' . $this_action['extra']['message'] . '#msg' . $this_action['extra']['message'] : '0') . '">' . $row['subject'] . '</a>';
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($messages))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg, subject
 			FROM {db_prefix}messages
 			WHERE id_msg IN ({array_int:message_list})
@@ -580,12 +582,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 					$this_action['extra']['message'] = '<a href="' . $scripturl . '?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($members))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT real_name, id_member
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
@@ -610,7 +612,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$entries[$action]['extra']['member'] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Do some formatting of the action string.

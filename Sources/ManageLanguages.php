@@ -4,7 +4,7 @@
  * This file handles the administration of languages tasks.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,6 +13,7 @@
 use StoryBB\Model\Policy;
 use StoryBB\Model\Language;
 use StoryBB\Model\Theme;
+use StoryBB\StringLibrary;
 
 /**
  * This is the main function for the languages area.
@@ -306,7 +307,7 @@ function list_getLanguages()
 	}
 
 	// Work out how many people are using each language.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lngfile, COUNT(*) AS num_users
 		FROM {db_prefix}members
 		GROUP BY lngfile',
@@ -323,7 +324,7 @@ function list_getLanguages()
 		elseif (isset($languages[$row['lngfile']]))
 			$languages[$row['lngfile']]['count'] += $row['num_users'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Restore the current users language.
 	$txt = $old_txt;
@@ -690,7 +691,7 @@ function cleanLangString($string, $to_display = true)
 		}
 
 		// Unhtml then rehtml the whole thing!
-		$new_string = $smcFunc['htmlspecialchars'](un_htmlspecialchars($new_string));
+		$new_string = StringLibrary::escape(un_htmlspecialchars($new_string));
 	}
 	else
 	{

@@ -5,7 +5,7 @@
  * Subclasses may exist to be more specific for convenience purposes.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -71,17 +71,17 @@ class Group extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_group)
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters(),
 			[
-				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
 	}
@@ -113,13 +113,13 @@ class Group extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mg.id_group, mg.group_name, mg.icons
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters() . '
 			LIMIT {int:start}, {int:limit}',
 			[
-				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 				'start' => $start,
 				'limit' => $limit,
@@ -136,7 +136,7 @@ class Group extends AbstractCompletable implements Completable
 				'icons' => $row['icons'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $result;
 	}
@@ -158,7 +158,7 @@ class Group extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, group_name
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:default_value})',
@@ -170,7 +170,7 @@ class Group extends AbstractCompletable implements Completable
 		{
 			$this->default[$row['id_group']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	/**

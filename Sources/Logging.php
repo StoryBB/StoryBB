@@ -4,11 +4,13 @@
  * This file concerns itself with logging, whether in the database or files.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Truncate the GET array to a specified length
@@ -84,7 +86,7 @@ function writeLog($force = false)
 	{
 		if ($do_delete)
 		{
-			$smcFunc['db_query']('delete_log_online_interval', '
+			$smcFunc['db']->query('delete_log_online_interval', '
 				DELETE FROM {db_prefix}log_online
 				WHERE log_time < {int:log_time}
 					AND session != {string:session}',
@@ -98,7 +100,7 @@ function writeLog($force = false)
 			cache_put_data('log_online-update', time(), 30);
 		}
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_online
 			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}
 			WHERE session = {string:session}',
@@ -121,7 +123,7 @@ function writeLog($force = false)
 	if (empty($_SESSION['log_time']))
 	{
 		if ($do_delete || !empty($user_info['id']))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_online
 				WHERE ' . ($do_delete ? 'log_time < {int:log_time}' : '') . ($do_delete && !empty($user_info['id']) ? ' OR ' : '') . (empty($user_info['id']) ? '' : 'id_member = {int:current_member}'),
 				[
@@ -153,7 +155,7 @@ function writeLog($force = false)
 			$_SESSION['timeOnlineUpdated'] = time();
 
 		$user_settings['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET last_active = {int:last_active}
 			WHERE id_character = {int:character}',
@@ -288,7 +290,7 @@ function displayDebug()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			echo '
-	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" rel="noopener" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', $smcFunc['htmlspecialchars'](ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" rel="noopener" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', StringLibrary::escape(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				echo sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
@@ -346,7 +348,7 @@ function trackStats($stats = [])
 		$insert_keys[$field] = 'int';
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_activity
 		SET' . substr($setStringUpdate, 0, -1) . '
 		WHERE date = {date:current_date}',
@@ -447,7 +449,7 @@ function logActions($logs)
 		// Is there an associated report on this?
 		if (in_array($log['action'], ['move', 'remove', 'split', 'merge']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_report
 				FROM {db_prefix}log_reported
 				WHERE {raw:column_name} = {int:reported}
@@ -458,14 +460,14 @@ function logActions($logs)
 			]);
 
 			// Alright, if we get any result back, update open reports.
-			if ($smcFunc['db_num_rows']($request) > 0)
+			if ($smcFunc['db']->num_rows($request) > 0)
 			{
 				require_once($sourcedir . '/ModerationCenter.php');
 				require_once($sourcedir . '/Subs-ReportedContent.php');
 				updateSettings(['last_mod_report_action' => time()]);
 				recountOpenReports('posts');
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		if (isset($log['extra']['member']) && !is_numeric($log['extra']['member']))

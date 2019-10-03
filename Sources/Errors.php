@@ -6,11 +6,13 @@
  * error log administration.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Log an error, if the error logging is enabled.
@@ -74,8 +76,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
 
 	// Don't log the session hash in the url twice, it's a waste.
-	if (!empty($smcFunc['htmlspecialchars']))
-		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
+	$query_string = StringLibrary::escape((STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
@@ -475,7 +476,7 @@ function log_error_online($error, $sprintf = [])
 	$session_id = !empty($user_info['is_guest']) ? 'ip' . $user_info['ip'] : session_id();
 
 	// First, we have to get the online log, because we need to break apart the serialized string.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT url
 		FROM {db_prefix}log_online
 		WHERE session = {string:session}',
@@ -483,7 +484,7 @@ function log_error_online($error, $sprintf = [])
 			'session' => $session_id,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 	{
 		list ($url) = $smcFunc['db_fetch_row']($request);
 		$url = sbb_json_decode($url, true);
@@ -502,7 +503,7 @@ function log_error_online($error, $sprintf = [])
 		if (!empty($sprintf))
 			$url['error_params'] = $sprintf;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_online
 			SET url = {string:url}
 			WHERE session = {string:session}',
@@ -512,7 +513,7 @@ function log_error_online($error, $sprintf = [])
 			]
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**

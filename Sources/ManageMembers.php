@@ -4,7 +4,7 @@
  * Show a list of members or a selection of members.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * The main entrance point for the Manage Members screen.
@@ -46,7 +47,7 @@ function ViewMembers()
 	loadLanguage('ManageMembers');
 
 	// Get counts on every type of activation - for sections and filtering alike.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS total_members, is_activated
 		FROM {db_prefix}members
 		WHERE is_activated != {int:is_activated}
@@ -60,7 +61,7 @@ function ViewMembers()
 	$context['awaiting_approval'] = 0;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['activation_numbers'][$row['is_activated']] = $row['total_members'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($context['activation_numbers'] as $activation_type => $total_members)
 	{
@@ -178,7 +179,7 @@ function ViewMemberlist()
 		];
 		$context['charactergroups'] = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, group_name, is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}
@@ -202,7 +203,7 @@ function ViewMemberlist()
 					'can_be_additional' => true
 				];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Some data about the form fields and how they are linked to the database.
 		$params = [
@@ -379,9 +380,9 @@ function ViewMemberlist()
 			else
 			{
 				// Replace the wildcard characters ('*' and '?') into MySQL ones.
-				$parameter = strtolower(strtr($smcFunc['htmlspecialchars']($search_params[$param_name], ENT_QUOTES), ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_']));
+				$parameter = strtolower(strtr(StringLibrary::escape($search_params[$param_name], ENT_QUOTES), ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_']));
 
-				if ($smcFunc['db_case_sensitive'])
+				if ($smcFunc['db']->is_case_sensitive())
 					$query_parts[] = '(LOWER(' . implode(') LIKE {string:' . $param_name . '_normal} OR LOWER(', $param_info['db_fields']) . ') LIKE {string:' . $param_name . '_normal})';
 				else
 					$query_parts[] = '(' . implode(' LIKE {string:' . $param_name . '_normal} OR ', $param_info['db_fields']) . ' LIKE {string:' . $param_name . '_normal})';
@@ -434,7 +435,7 @@ function ViewMemberlist()
 		if (!empty($cg_query_parts))
 		{
 			$character_owners = [];
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT id_member
 				FROM {db_prefix}characters AS chars
 				WHERE ' . implode(' OR ', $cg_query_parts),
@@ -444,7 +445,7 @@ function ViewMemberlist()
 			{
 				$character_owners[$row['id_member']] = true;
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if (!empty($character_owners))
 			{
@@ -682,7 +683,7 @@ function SearchMembers()
 	];
 	$context['charactergroups'] = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
@@ -706,7 +707,7 @@ function SearchMembers()
 				'can_be_additional' => true
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['admin_members'];
 	$context['sub_template'] = 'admin_member_search';
@@ -1108,7 +1109,7 @@ function AdminApprove()
 	}
 
 	// Get information on each of the members, things that are important to us, like email address...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, email_address, validation_code, lngfile
 		FROM {db_prefix}members
 		WHERE is_activated = {int:activated_status}' . $condition . '
@@ -1120,7 +1121,7 @@ function AdminApprove()
 		]
 	);
 
-	$member_count = $smcFunc['db_num_rows']($request);
+	$member_count = $smcFunc['db']->num_rows($request);
 
 	// If no results then just return!
 	if ($member_count == 0)
@@ -1141,13 +1142,13 @@ function AdminApprove()
 			'code' => $row['validation_code']
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Are we activating or approving the members?
 	if ($_POST['todo'] == 'ok' || $_POST['todo'] == 'okemail')
 	{
 		// Approve/activate this member.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET validation_code = {string:blank_string}, is_activated = {int:is_activated}
 			WHERE is_activated = {int:activated_status}' . $condition,
@@ -1209,7 +1210,7 @@ function AdminApprove()
 			$validation_code = generateValidationCode();
 
 			// Set these members for activation - I know this includes two id_member checks but it's safer than bodging $condition ;).
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}members
 				SET validation_code = {string:validation_code}, is_activated = {int:not_activated}
 				WHERE is_activated = {int:activated_status}

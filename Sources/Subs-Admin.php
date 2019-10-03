@@ -4,7 +4,7 @@
  * This file contains functions that are specifically done by administrators.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -23,7 +23,7 @@ function getAdminFile(string $filename, string $path = '')
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.data, a.filetype
 		FROM {db_prefix}admin_info_files AS a
 		WHERE filename = {string:filename}
@@ -45,7 +45,7 @@ function getAdminFile(string $filename, string $path = '')
 				break;
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -440,7 +440,7 @@ function updateAdminPreferences()
 	$options['admin_preferences'] = json_encode($context['admin_preferences']);
 
 	// Just check we haven't ended up with something theme exclusive somehow.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
 		AND variable = {string:admin_preferences}',
@@ -487,7 +487,7 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($members, 'announcements', true);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, lngfile, email_address
 		FROM {db_prefix}members
 		WHERE id_member IN({array_int:members})',
@@ -515,7 +515,7 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 		// Track who we emailed so we don't do it twice.
 		$emails_sent[] = $row['email_address'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Any additional users we must email this to?
 	if (!empty($additional_recipients))

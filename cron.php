@@ -11,7 +11,7 @@
  * running a little bit faster.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -70,8 +70,6 @@ if (!FROM_CLI)
 		obExit_cron();
 }
 
-require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 require_once($boarddir . '/vendor/autoload.php');
 
 // Load the most important includes. In general, a background should be loading its own dependencies.
@@ -109,7 +107,7 @@ while ($task_details = fetch_task())
 	$result = perform_task($task_details);
 	if ($result)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}background_tasks
 			WHERE id_task = {int:task}',
 			[
@@ -136,7 +134,7 @@ function fetch_task()
 	// Try to find a task. Specifically, try to find one that hasn't been claimed previously, or failing that,
 	// a task that was claimed but failed for whatever reason and failed long enough ago. We should not care
 	// what task it is, merely that it is one in the queue, the order is irrelevant.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, task_file, task_class, task_data, claimed_time
 		FROM {db_prefix}background_tasks
 		WHERE claimed_time < {int:claim_limit}
@@ -148,8 +146,8 @@ function fetch_task()
 	if ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// We found one. Let's try and claim it immediately.
-		$smcFunc['db_free_result']($request);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->free_result($request);
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}background_tasks
 			SET claimed_time = {int:new_claimed}
 			WHERE id_task = {int:task}
@@ -178,7 +176,7 @@ function fetch_task()
 	else
 	{
 		// No dice. Clean up and go home.
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		return false;
 	}
 }

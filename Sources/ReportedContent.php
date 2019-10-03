@@ -4,13 +4,14 @@
  * Handles reported members and posts, as well as moderation comments.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Sets and call a function based on the given subaction. Acts as a dispatcher function.
@@ -62,7 +63,7 @@ function ReportedContent()
 
 	// By default we call the open sub-action.
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
-		$context['sub_action'] = $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_REQUEST['sa']), ENT_QUOTES);
+		$context['sub_action'] = StringLibrary::htmltrim(StringLibrary::escape($_REQUEST['sa']), ENT_QUOTES);
 
 	else
 		$context['sub_action'] = 'show';
@@ -411,7 +412,7 @@ function HandleComment()
 		checkSession();
 		validateToken('mod-reportC-add');
 
-		$new_comment = trim($smcFunc['htmlspecialchars']($_POST['mod_comment']));
+		$new_comment = trim(StringLibrary::escape($_POST['mod_comment']));
 
 		saveModComment($report_id, [$report_id, $new_comment, time()]);
 
@@ -502,7 +503,7 @@ function EditComment()
 			fatal_lang_error('report_action_message_edit_cannot');
 
 		// All good!
-		$edited_comment = trim($smcFunc['htmlspecialchars']($_POST['mod_comment']));
+		$edited_comment = trim(StringLibrary::escape($_POST['mod_comment']));
 
 		editModComment($context['comment_id'], $edited_comment);
 

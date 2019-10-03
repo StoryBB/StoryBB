@@ -4,7 +4,7 @@
  * This task handles notifying users when they've commented to a moderation report and someone else replies to them.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -27,7 +27,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 
 		// Let's see. Let us, first of all, establish the list of possible people.
 		$possible_members = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}log_comments
 			WHERE id_notice = {int:report}
@@ -40,7 +40,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 		);
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$possible_members[] = $row[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Presumably, there are some people?
 		if (!empty($possible_members))
@@ -124,7 +124,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 
 			// First, get everyone's language and details.
 			$emails = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',
@@ -138,7 +138,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 					$row['lngfile'] = $language;
 				$emails[$row['lngfile']][$row['id_member']] = $row['email_address'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)

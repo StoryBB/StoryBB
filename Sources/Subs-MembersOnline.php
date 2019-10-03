@@ -4,7 +4,7 @@
  * Handle online users
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -58,7 +58,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	$robot = new \StoryBB\Model\Robot;
 	$robot_finds = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lo.id_member, lo.log_time, lo.robot_name, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
 			IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name,
@@ -147,7 +147,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 				'parent' => $row['id_parent'],
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If there are robots only and we're showing the detail, add them to the online list - at the bottom.
 	if (!empty($robot_finds))
@@ -217,7 +217,7 @@ function trackStatsUsersOnline($total_users_online)
 	// No entry exists for today yet?
 	if (!isset($modSettings['mostOnlineUpdated']) || $modSettings['mostOnlineUpdated'] != $date)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT most_on
 			FROM {db_prefix}log_activity
 			WHERE date = {date:date}
@@ -228,7 +228,7 @@ function trackStatsUsersOnline($total_users_online)
 		);
 
 		// The log_activity hasn't got an entry for today?
-		if ($smcFunc['db_num_rows']($request) === 0)
+		if ($smcFunc['db']->num_rows($request) === 0)
 		{
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}log_activity',
@@ -247,7 +247,7 @@ function trackStatsUsersOnline($total_users_online)
 
 			$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$settingsToUpdate['mostOnlineUpdated'] = $date;
 		$settingsToUpdate['mostOnlineToday'] = $total_users_online;

@@ -5,13 +5,14 @@
  * as well as the auto management of the attachment directories.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Model\Attachment;
+use StoryBB\StringLibrary;
 
 /**
  * Check if the current directory is still valid or not.
@@ -321,7 +322,7 @@ function processAttachments()
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
@@ -332,7 +333,7 @@ function processAttachments()
 				]
 			);
 			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 			$context['attachments'] = [
@@ -426,7 +427,7 @@ function processAttachments()
 				$_FILES['attachment']['type'][$n] = mime_content_type($_FILES['attachment']['tmp_name'][$n]);
 
 			$_SESSION['temp_attachments'][$attachID] = [
-				'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
+				'name' => StringLibrary::escape(basename($_FILES['attachment']['name'][$n])),
 				'tmp_name' => $destName,
 				'size' => $_FILES['attachment']['size'][$n],
 				'type' => $_FILES['attachment']['type'][$n],
@@ -447,7 +448,7 @@ function processAttachments()
 		else
 		{
 			$_SESSION['temp_attachments'][$attachID] = [
-				'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
+				'name' => StringLibrary::escape(basename($_FILES['attachment']['name'][$n])),
 				'tmp_name' => $destName,
 				'errors' => $errors,
 			];
@@ -539,7 +540,7 @@ function attachmentChecks($attachID)
 		// Check the folder size and count. If it hasn't been done already.
 		if (empty($context['dir_size']) || empty($context['dir_files']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_folder = {int:folder_id}
@@ -550,7 +551,7 @@ function attachmentChecks($attachID)
 				]
 			);
 			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		$context['dir_size'] += $_SESSION['temp_attachments'][$attachID]['size'];
 		$context['dir_files']++;
@@ -809,7 +810,7 @@ function createAttachment(&$attachmentOptions)
 
 			if (!empty($attachmentOptions['thumb']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:id_thumb}
 					WHERE id_attach = {int:id_attach}',
@@ -851,7 +852,7 @@ function assignAttachments($attachIDs = [], $msgID = 0)
 		return false;
 
 	// Perform.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}attachments
 		SET id_msg = {int:id_msg}
 		WHERE id_attach IN ({array_int:attach_ids})',
@@ -910,7 +911,7 @@ function parseAttachBBC($attachID = 0)
 		// Fix the url to point out to showAvatar().
 		$attachContext['href'] = $scripturl . '?action=dlattach;attach=' . $attachID . ';type=preview';
 
-		$attachContext['link'] = '<a href="' . $scripturl . '?action=dlattach;attach=' . $attachID . ';type=preview' . (empty($attachContext['is_image']) ? ';file' : '') . '">' . $smcFunc['htmlspecialchars']($attachContext['name']) . '</a>';
+		$attachContext['link'] = '<a href="' . $scripturl . '?action=dlattach;attach=' . $attachID . ';type=preview' . (empty($attachContext['is_image']) ? ';file' : '') . '">' . StringLibrary::escape($attachContext['name']) . '</a>';
 
 		// Fix the thumbnail too, if the image has one.
 		if (!empty($attachContext['thumbnail']) && !empty($attachContext['thumbnail']['has_thumb']))
@@ -988,7 +989,7 @@ function getRawAttachInfo($attachIDs)
 
 	$return = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_attach, a.id_msg, a.id_character, a.size, a.mime_type, a.id_folder, a.filename' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
 				COALESCE(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
 		FROM {db_prefix}attachments AS a' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : '
@@ -1000,12 +1001,12 @@ function getRawAttachInfo($attachIDs)
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) != 1)
+	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$return[$row['id_attach']] = [
-			'name' => $smcFunc['htmlspecialchars']($row['filename']),
+			'name' => StringLibrary::escape($row['filename']),
 			'size' => $row['size'],
 			'attachID' => $row['id_attach'],
 			'unchecked' => false,
@@ -1013,7 +1014,7 @@ function getRawAttachInfo($attachIDs)
 			'mime_type' => $row['mime_type'],
 			'thumb' => $row['id_thumb'],
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $return;
 }
@@ -1032,7 +1033,7 @@ function getAttachMsgInfo($attachID)
 	if (empty($attachID))
 		return [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_msg AS msg, m.id_topic AS topic, m.id_board AS board
 		FROM {db_prefix}attachments AS a
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -1043,11 +1044,11 @@ function getAttachMsgInfo($attachID)
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) != 1)
+	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $row;
 }
@@ -1066,7 +1067,7 @@ function getAttachsByMsg($msgID = 0)
 
 	if (!isset($attached[$msgID]))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, COALESCE(a.size, 0) AS filesize, a.downloads, a.approved, m.id_topic AS topic, m.id_board AS board,
 				a.width, a.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
@@ -1090,7 +1091,7 @@ function getAttachsByMsg($msgID = 0)
 
 			$temp[$row['id_attach']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This is better than sorting it with the query...
 		ksort($temp);
@@ -1127,12 +1128,12 @@ function loadAttachmentContext($id_msg, $attachments)
 		{
 			$attachmentData[$i] = [
 				'id' => $attachment['id_attach'],
-				'name' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($attachment['filename'])),
+				'name' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($attachment['filename'])),
 				'downloads' => $attachment['downloads'],
 				'size' => ($attachment['filesize'] < 1024000) ? round($attachment['filesize'] / 1024, 2) . ' ' . $txt['kilobyte'] : round($attachment['filesize'] / 1024 / 1024, 2) . ' ' . $txt['megabyte'],
 				'byte_size' => $attachment['filesize'],
 				'href' => $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_attach'],
-				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_attach'] . '">' . $smcFunc['htmlspecialchars']($attachment['filename']) . '</a>',
+				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_attach'] . '">' . StringLibrary::escape($attachment['filename']) . '</a>',
 				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($modSettings['attachmentShowImages']),
 				'is_approved' => $attachment['approved'],
 				'topic' => $attachment['topic'],
@@ -1204,7 +1205,7 @@ function loadAttachmentContext($id_msg, $attachments)
 						$old_id_thumb = $attachment['id_thumb'];
 						if (!empty($attachment['id_thumb']))
 						{
-							$smcFunc['db_query']('', '
+							$smcFunc['db']->query('', '
 								UPDATE {db_prefix}attachments
 								SET id_thumb = {int:id_thumb}
 								WHERE id_attach = {int:id_attach}',

@@ -4,7 +4,7 @@
  * This file contains language strings for the general site.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -485,7 +485,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go up';
 $txt['go_down'] = 'Go down';
 
-$txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">%1$s &copy; %2$s, StoryBB project</a>';
+$txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>';
 
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';

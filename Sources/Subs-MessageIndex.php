@@ -4,7 +4,7 @@
  * Supplementary functions used when building the message index (lists of topics)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -50,7 +50,7 @@ function getBoardList($boardListOptions = [])
 		$where_parameters['blank_redirect'] = '';
 	}
 
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT c.name AS cat_name, c.id_cat, b.id_board, b.name AS board_name, b.child_level
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' . (empty($where) ? '' : '
@@ -60,7 +60,7 @@ function getBoardList($boardListOptions = [])
 	);
 
 	$return_value = [];
-	if ($smcFunc['db_num_rows']($request) !== 0)
+	if ($smcFunc['db']->num_rows($request) !== 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -79,7 +79,7 @@ function getBoardList($boardListOptions = [])
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($return_value);

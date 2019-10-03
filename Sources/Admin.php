@@ -4,13 +4,15 @@
  * This file, unpredictable as this might be, handles basic administration.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Environment;
+use StoryBB\StringLibrary;
 
 /**
  * The main admin handling function.<br>
@@ -482,7 +484,7 @@ function AdminMain()
 */
 function AdminHome()
 {
-	global $sourcedir, $forum_version, $txt, $scripturl, $context, $user_info;
+	global $sourcedir, $txt, $scripturl, $context, $user_info;
 
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
@@ -497,7 +499,7 @@ function AdminHome()
 
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
-	$context['forum_version'] = $forum_version;
+	$context['forum_version'] = App::SOFTWARE_VERSION;
 
 	// Get a list of current server versions.
 	require_once($sourcedir . '/Subs-Admin.php');
@@ -539,7 +541,7 @@ function AdminHome()
 
 	if (!empty($context['admin_news']['current_version']))
 	{
-		$context['admin_news']['needs_update'] = version_compare(strtr($context['forum_version'], ['StoryBB ' => '']), $context['admin_news']['current_version'], '<');
+		$context['admin_news']['needs_update'] = version_compare($context['forum_version'], $context['admin_news']['current_version'], '<');
 	}
 }
 
@@ -559,7 +561,7 @@ function AdminSearch()
 	];
 
 	$context['search_type'] = !isset($_REQUEST['search_type']) || !isset($subActions[$_REQUEST['search_type']]) ? 'internal' : $_REQUEST['search_type'];
-	$context['search_term'] = isset($_REQUEST['search_term']) ? $smcFunc['htmlspecialchars']($_REQUEST['search_term'], ENT_QUOTES) : '';
+	$context['search_term'] = isset($_REQUEST['search_term']) ? StringLibrary::escape($_REQUEST['search_term'], ENT_QUOTES) : '';
 
 	$context['sub_template'] = 'admin_search_results';
 	$context['page_title'] = $txt['admin_search_results'];

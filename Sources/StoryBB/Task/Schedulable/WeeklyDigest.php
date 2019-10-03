@@ -3,7 +3,7 @@
  * Send out a weekly email of all subscribed topics.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -53,14 +53,14 @@ class WeeklyDigest extends \StoryBB\Task\Schedulable\DailyDigest
 		global $smcFunc;
 
 		// Clear any only weekly ones, and stop us from sending weekly again.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_digest
 			WHERE daily != {int:not_daily}',
 			[
 				'not_daily' => 0,
 			]
 		);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_digest
 			SET daily = {int:daily_value}
 			WHERE daily = {int:not_daily}',

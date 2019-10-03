@@ -4,7 +4,7 @@
  * This file contains database functions specific to search related activity.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -17,13 +17,19 @@ function db_search_init()
 {
 	global $smcFunc;
 
-	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'sbb_db_query')
+	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'sbb_db_search_query')
 		$smcFunc += [
-			'db_search_query' => 'sbb_db_query',
+			'db_search_query' => 'sbb_db_search_query',
 			'db_search_support' => 'sbb_db_search_support',
 			'db_create_word_search' => 'sbb_db_create_word_search',
 			'db_support_ignore' => true,
 		];
+}
+
+function sbb_db_search_query($identifier, $db_string, $db_values = [])
+{
+	global $smcFunc;
+	return $smcFunc['db']->query($identifier, $db_string, $db_values);
 }
 
 /**
@@ -55,7 +61,7 @@ function sbb_db_create_word_search($size)
 	else
 		$size = 'int(10)';
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		CREATE TABLE {db_prefix}log_search_words (
 			id_word {raw:size} unsigned NOT NULL default {string:string_zero},
 			id_msg int(10) unsigned NOT NULL default {string:string_zero},

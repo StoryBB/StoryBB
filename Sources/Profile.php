@@ -6,11 +6,13 @@
  * and such things.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * The main designating function for modifying profiles. Loads up info, determins what to do, etc.
@@ -69,7 +71,7 @@ function ModifyProfile($post_errors = [])
 
 	if (!empty($modSettings['paid_enabled']))
 	{
-		$get_active_subs = $smcFunc['db_query']('', '
+		$get_active_subs = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}subscriptions
 			WHERE active = {int:active}', [
@@ -81,7 +83,7 @@ function ModifyProfile($post_errors = [])
 
 		$context['subs_available'] = ($num_subs > 0);
 
-		$smcFunc['db_free_result']($get_active_subs);
+		$smcFunc['db']->free_result($get_active_subs);
 	}
 
 	/* Define all the sections within the profile area!
@@ -991,7 +993,7 @@ function loadCustomFields($memID, $area = 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
 	// Load all the relevant fields - and data.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			col_name, field_name, field_desc, field_type, field_order, show_reg, field_length, field_options,
 			default_value, bbc, enclose, placement
@@ -1013,7 +1015,7 @@ function loadCustomFields($memID, $area = 'summary')
 		// If this was submitted already then make the value the posted version.
 		if (isset($_POST['customfield']) && isset($_POST['customfield'][$row['col_name']]))
 		{
-			$value = $smcFunc['htmlspecialchars']($_POST['customfield'][$row['col_name']]);
+			$value = StringLibrary::escape($_POST['customfield'][$row['col_name']]);
 			if (in_array($row['field_type'], ['select', 'radio']))
 					$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
 		}
@@ -1093,7 +1095,7 @@ function loadCustomFields($memID, $area = 'summary')
 		];
 		$context['custom_fields_required'] = $context['custom_fields_required'] || $row['show_reg'] == 2;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	call_integration_hook('integrate_load_custom_profile_fields', [$memID, $area]);
 }

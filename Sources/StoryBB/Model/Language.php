@@ -4,7 +4,7 @@
  * This class handles languages.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -76,7 +76,7 @@ class Language
 
 		$language_delta = [];
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT lang_var, lang_key, lang_string, is_multi
 			FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
@@ -97,7 +97,7 @@ class Language
 
 			$language_delta[$row['lang_var']][$row['lang_key']] = $row['lang_string'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		return $language_delta;
 	}
@@ -218,7 +218,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
 				AND id_lang = {string:lang_id}

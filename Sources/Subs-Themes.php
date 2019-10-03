@@ -4,11 +4,13 @@
  * Helper file for handling themes.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\App;
 
 /**
  * Gets a single theme's info.
@@ -48,7 +50,7 @@ function get_single_theme($id)
 	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : [];
 	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE variable IN ({array_string:theme_values})
@@ -113,7 +115,7 @@ function get_all_themes($enable_only = false)
 	$query_where = $enable_only ? $enableThemes : $knownThemes;
 
 	// Perform the query as requested.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE variable IN ({array_string:theme_values})
@@ -144,7 +146,7 @@ function get_all_themes($enable_only = false)
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 	}
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -156,7 +158,7 @@ function get_all_themes($enable_only = false)
  */
 function get_theme_info($path)
 {
-	global $sourcedir, $forum_version, $txt, $scripturl, $context;
+	global $sourcedir, $txt, $scripturl, $context;
 	global $explicit_images;
 
 	if (empty($path))
@@ -189,17 +191,14 @@ function get_theme_info($path)
 	if (empty($theme_info['storybb_version']))
 	{
 		remove_dir($path);
-		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
+		fatal_lang_error('package_get_error_theme_not_compatible', false, App::SOFTWARE_VERSION);
 	}
 
-	// So, we have an install tag which is cool and stuff but we also need to check it and match your current StoryBB version...
-	$the_version = strtr($forum_version, ['StoryBB ' => '']);
-
 	// The theme isn't compatible with the current StoryBB version.
-	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
+	if (!matchPackageVersion(App::SOFTWARE_VERSION, $theme_info['storybb_version']))
 	{
 		remove_dir($path);
-		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
+		fatal_lang_error('package_get_error_theme_not_compatible', false, App::SOFTWARE_VERSION);
 	}
 
 	// Remove things that definitely shouldn't be exported up here.
@@ -232,7 +231,7 @@ function theme_install($to_install = [])
 	// OK, is this a newer version of an already installed theme?
 	if (!empty($context['to_install']['version']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
@@ -248,14 +247,14 @@ function theme_install($to_install = [])
 		);
 
 		$to_update = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Got something, lets figure it out what to do next.
 		if (!empty($to_update) && !empty($to_update['version']))
 			switch (version_compare($context['to_install']['version'], $to_update['version']))
 			{
 				case 1: // Got a newer version, update the old entry.
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}themes
 						SET value = {string:new_value}
 						WHERE variable = {string:version}
@@ -280,14 +279,14 @@ function theme_install($to_install = [])
 	}
 
 	// Find the newest id_theme.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT MAX(id_theme)
 		FROM {db_prefix}themes',
 		[
 		]
 	);
 	list ($id_theme) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// This will be theme number...
 	$id_theme++;
@@ -369,7 +368,7 @@ function remove_theme($themeID)
 	$enable = explode(',', $modSettings['enableThemes']);
 
 	// Remove it from the themes table.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme = {int:current_theme}',
 		[
@@ -378,7 +377,7 @@ function remove_theme($themeID)
 	);
 
 	// Update users preferences.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -389,7 +388,7 @@ function remove_theme($themeID)
 	);
 
 	// Update characters settings too.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -400,7 +399,7 @@ function remove_theme($themeID)
 	);
 
 	// Some boards may have it as preferred theme.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}boards
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',

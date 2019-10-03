@@ -4,7 +4,7 @@
  * This file concerns itself with scheduled tasks management.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -91,7 +91,7 @@ function ScheduledTasks()
 				$enablers[] = (int) $id;
 
 		// Do the update!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = CASE WHEN id_task IN ({array_int:id_task_enable}) THEN 0 ELSE 1 END',
 			[
@@ -100,7 +100,7 @@ function ScheduledTasks()
 		);
 
 		// Update the "allow_expire_redirect" setting...
-		$get_info = $smcFunc['db_query']('', '
+		$get_info = $smcFunc['db']->query('', '
 			SELECT disabled
 			FROM {db_prefix}scheduled_tasks
 			WHERE task = {string:remove_redirect}',
@@ -111,7 +111,7 @@ function ScheduledTasks()
 
 		$temp = $smcFunc['db_fetch_assoc']($get_info);
 		$task_disabled = !empty($temp['disabled']) ? 0 : 1;
-		$smcFunc['db_free_result']($get_info);
+		$smcFunc['db']->free_result($get_info);
 
 		updateSettings(['allow_expire_redirect' => $task_disabled]);
 
@@ -128,7 +128,7 @@ function ScheduledTasks()
 			$tasks[] = (int) $task;
 
 		// Load up the tasks.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_task, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
@@ -175,7 +175,7 @@ function ScheduledTasks()
 				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $task->get_name(), $e->getMessage()));
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		redirectexit('action=admin;area=scheduledtasks');
 	}
@@ -289,7 +289,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks',
 		[
@@ -314,7 +314,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 			'regularity' => $offset . ', ' . $repeating,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $known_tasks;
 }
@@ -372,7 +372,7 @@ function EditTask()
 		$disabled = !isset($_POST['enabled']) ? 1 : 0;
 
 		// Do the update!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}, time_offset = {int:time_offset}, time_unit = {string:time_unit},
 				time_regularity = {int:time_regularity}
@@ -394,7 +394,7 @@ function EditTask()
 	}
 
 	// Load the task, understand? Que? Que?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks
 		WHERE id_task = {int:id_task}',
@@ -404,7 +404,7 @@ function EditTask()
 	);
 
 	// Should never, ever, happen!
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -422,7 +422,7 @@ function EditTask()
 			'unit' => $row['time_unit'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	createToken('admin-st');
 }
@@ -445,11 +445,7 @@ function TaskLog()
 		checkSession();
 		validateToken('admin-tl');
 
-		$smcFunc['db_query']('truncate_table', '
-			TRUNCATE {db_prefix}log_scheduled_tasks',
-			[
-			]
-		);
+		$smcFunc['db']->truncate_table('log_scheduled_tasks');
 	}
 
 	// Setup the list.
@@ -546,7 +542,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.class
 		FROM {db_prefix}log_scheduled_tasks AS lst
 			INNER JOIN {db_prefix}scheduled_tasks AS st ON (st.id_task = lst.id_task)
@@ -569,7 +565,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 			'time_taken' => $row['time_taken'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $log_entries;
 }
@@ -582,14 +578,14 @@ function list_getNumTaskLogEntries()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_scheduled_tasks',
 		[
 		]
 	);
 	list ($num_entries) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $num_entries;
 }

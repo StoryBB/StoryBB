@@ -4,7 +4,7 @@
  * This taks handles notifying someone that their request to join a group has been decided.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -26,7 +26,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 		global $sourcedir, $smcFunc, $language, $modSettings;
 
 		// Get the details of all the members concerned...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lgr.id_request, lgr.id_member, lgr.id_group, mem.email_address,
 				mem.lngfile, mem.member_name,  mg.group_name
 			FROM {db_prefix}log_group_requests AS lgr
@@ -72,7 +72,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 				'language' => $row['lngfile'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Ensure everyone who is online gets their changes right away.
 		updateSettings(['settings_updated' => time()]);

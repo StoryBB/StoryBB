@@ -5,7 +5,7 @@
  * show a list of boards for the board index and the message index.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -38,7 +38,7 @@ function getBoardIndex($boardIndexOptions)
 		];
 
 	// Find all boards and categories, as well as related information.  This will be sorted by the natural order of boards and categories, which we control.
-	$result_boards = $smcFunc['db_query']('', '
+	$result_boards = $smcFunc['db']->query('', '
 		SELECT' . ($boardIndexOptions['include_categories'] ? '
 			c.id_cat, c.name AS cat_name, c.description AS cat_desc,' : '') . '
 			b.id_board, b.name AS board_name, b.description,
@@ -310,7 +310,7 @@ function getBoardIndex($boardIndexOptions)
 				'ref' => &$this_category[$isChild ? $row_board['id_parent'] : $row_board['id_board']]['last_post'],
 			];
 	}
-	$smcFunc['db_free_result']($result_boards);
+	$smcFunc['db']->free_result($result_boards);
 
 	// Fetch the board's moderators and moderator groups
 	$boards = array_unique($boards);

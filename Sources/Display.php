@@ -5,7 +5,7 @@
  * of StoryBB.  This file controls topic, message, and attachment display.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * The central part of the board - topic display.
@@ -67,7 +68,7 @@ function Display()
 			$gt_lt = $_REQUEST['prev_next'] == 'prev' ? '>' : '<';
 			$order = $_REQUEST['prev_next'] == 'prev' ? '' : ' DESC';
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT t2.id_topic
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}topics AS t2 ON (
@@ -87,12 +88,12 @@ function Display()
 			);
 
 			// No more left.
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 			{
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Roll over - if we're going prev, get the last - otherwise the first.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_topic
 					FROM {db_prefix}topics
 					WHERE id_board = {int:current_board}' . (allowedTo('approve_posts') ? '' : '
@@ -110,7 +111,7 @@ function Display()
 
 			// Now you can be sure $topic is the id_topic to view.
 			list ($topic) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$context['current_topic'] = $topic;
 		}
@@ -122,7 +123,7 @@ function Display()
 	// Add 1 to the number of views of this topic (except for robots).
 	if (!$user_info['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}topics
 			SET num_views = num_views + 1
 			WHERE id_topic = {int:current_topic}',
@@ -147,7 +148,7 @@ function Display()
 	// @todo Why isn't this cached?
 	// @todo if we get id_board in this query and cache it, we can save a query on posting
 	// Get all the important topic info.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.id_redirect_topic,
@@ -169,10 +170,10 @@ function Display()
 			$topic_parameters
 	);
 
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('not_a_topic', false, 404);
 	$context['topicinfo'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Is this a moved or merged topic that we are redirecting to?
 	if (!empty($context['topicinfo']['id_redirect_topic']))
@@ -213,7 +214,7 @@ function Display()
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	if ($context['topicinfo']['unapproved_posts'] && !$user_info['is_guest'] && !$approve_posts)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_member) AS my_unapproved_posts
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
@@ -225,7 +226,7 @@ function Display()
 			]
 		);
 		list ($myUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($context['topicinfo']['approved'] ? 1 : 0);
 	}
@@ -249,7 +250,7 @@ function Display()
 			else
 			{
 				// Find the earliest unread message in the topic. (the use of topics here is just for both tables.)
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COALESCE(lt.id_msg, lmr.id_msg, -1) + 1 AS new_from
 					FROM {db_prefix}topics AS t
 						LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
@@ -263,7 +264,7 @@ function Display()
 					]
 				);
 				list ($new_from) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Fall through to the next if statement.
 				$_REQUEST['start'] = 'msg' . $new_from;
@@ -279,7 +280,7 @@ function Display()
 			else
 			{
 				// Find the number of messages posted before said time...
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE poster_time < {int:timestamp}
@@ -293,7 +294,7 @@ function Display()
 					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Handle view_newest_first options, and get the correct start value.
 				$_REQUEST['start'] = empty($options['view_newest_first']) ? $context['start_from'] : $context['total_visible_posts'] - $context['start_from'] - 1;
@@ -311,7 +312,7 @@ function Display()
 			else
 			{
 				// Find the start value for that message......
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE id_msg < {int:virtual_msg}
@@ -326,7 +327,7 @@ function Display()
 					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// We need to reverse the start as well in this case.
@@ -361,7 +362,7 @@ function Display()
 		$context['view_num_hidden'] = 0;
 
 		// Search for members who have this topic set in their GET data.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				lo.id_member, lo.log_time, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
 				IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name
@@ -409,8 +410,8 @@ function Display()
 		}
 
 		// The number of guests is equal to the rows minus the ones we actually used ;).
-		$context['view_num_guests'] = $smcFunc['db_num_rows']($request) - count($context['view_members']);
-		$smcFunc['db_free_result']($request);
+		$context['view_num_guests'] = $smcFunc['db']->num_rows($request) - count($context['view_members']);
+		$smcFunc['db']->free_result($request);
 
 		// Sort the list.
 		krsort($context['view_members']);
@@ -528,7 +529,7 @@ function Display()
 	if ($context['is_poll'])
 	{
 		// Get the question and if it's locked.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				p.question, p.voting_locked, p.hide_results, p.expire_time, p.max_votes, p.change_vote,
 				p.guest_vote, p.id_member, COALESCE(mem.real_name, p.poster_name) AS poster_name, p.num_guest_voters, p.reset_poll
@@ -541,9 +542,9 @@ function Display()
 			]
 		);
 		$pollinfo = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(DISTINCT id_member) AS total
 			FROM {db_prefix}log_polls
 			WHERE id_poll = {int:id_poll}
@@ -554,13 +555,13 @@ function Display()
 			]
 		);
 		list ($pollinfo['total']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Total voters needs to include guest voters
 		$pollinfo['total'] += $pollinfo['num_guest_voters'];
 
 		// Get all the options, and calculate the total votes.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pc.id_choice, pc.label, pc.votes, COALESCE(lp.id_choice, -1) AS voted_this
 			FROM {db_prefix}poll_choices AS pc
 				LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_choice = pc.id_choice AND lp.id_poll = {int:id_poll} AND lp.id_member = {int:current_member} AND lp.id_member != {int:not_guest})
@@ -581,7 +582,7 @@ function Display()
 			$realtotal += $row['votes'];
 			$pollinfo['has_voted'] |= $row['voted_this'] != -1;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		
 		// Got we multi choice?
 		if ($pollinfo['max_votes'] > 1)
@@ -761,7 +762,7 @@ function Display()
 	}
 
 	// Get each post and poster in this topic.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg, id_member, approved
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:current_topic}' . ($approve_posts ? '' : '
@@ -786,7 +787,7 @@ function Display()
 			$all_posters[$row['id_msg']] = $row['id_member'];
 		$messages[] = $row['id_msg'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$posters = array_unique($all_posters);
 	if (!$user_info['is_guest'] && !in_array($context['user']['id'], $posters))
 		$posters[] = $context['user']['id'];
@@ -832,7 +833,7 @@ function Display()
 		}
 
 		// Check for notifications on this topic OR board.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT sent, id_topic
 			FROM {db_prefix}log_notify
 			WHERE (id_topic = {int:current_topic} OR id_board = {int:current_board})
@@ -854,7 +855,7 @@ function Display()
 			// Only do this once, but mark the notifications as "not sent yet" for next time.
 			if (!empty($row['sent']) && $do_once)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}log_notify
 					SET sent = {int:is_not_sent}
 					WHERE (id_topic = {int:current_topic} OR id_board = {int:current_board})
@@ -877,7 +878,7 @@ function Display()
 		elseif (isset($_REQUEST['topicseen']))
 		{
 			// Use the mark read tables... and the last visit to figure out if this should be read or not.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}topics AS t
 					LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = {int:current_board} AND lb.id_member = {int:current_member})
@@ -893,7 +894,7 @@ function Display()
 				]
 			);
 			list ($numNewTopics) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// If there're no real new topics in this board, mark the board as seen.
 			if (empty($numNewTopics))
@@ -942,7 +943,7 @@ function Display()
 		// Fetch attachments.
 		if (!empty($modSettings['attachmentEnable']) && allowedTo('view_attachments'))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, COALESCE(a.size, 0) AS filesize, a.downloads, a.approved,
 					a.width, a.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
@@ -970,7 +971,7 @@ function Display()
 				if (!isset($context['loaded_attachments'][$row['id_msg']]))
 					$context['loaded_attachments'][$row['id_msg']] = [];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// This is better than sorting it with the query...
 			ksort($temp);
@@ -989,7 +990,7 @@ function Display()
 
 		// What?  It's not like it *couldn't* be only guests in this topic...
 		loadMemberData($posters);
-		$messages_request = $smcFunc['db_query']('', '
+		$messages_request = $smcFunc['db']->query('', '
 			SELECT
 				id_msg, subject, poster_time, poster_ip, id_member, modified_time, modified_name, modified_reason, body,
 				smileys_enabled, poster_name, poster_email, approved, likes,
@@ -1028,7 +1029,7 @@ function Display()
 
 	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
+		'board_name' => StringLibrary::escape(strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
 		'child_level' => $board_info['child_level'],
 	];
 
@@ -1142,7 +1143,7 @@ function Display()
 	// When was the last time this topic was replied to?  Should we warn them about it?
 	if (!empty($modSettings['oldTopicDays']) && ($context['can_reply'] || $context['can_reply_unapproved']) && empty($context['topicinfo']['is_sticky']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT poster_time
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_last_msg}
@@ -1153,7 +1154,7 @@ function Display()
 		);
 
 		list ($lastPostTime) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
 	}
@@ -1406,7 +1407,7 @@ function prepareDisplayContext($reset = false)
 	$message = $smcFunc['db_fetch_assoc']($messages_request);
 	if (!$message)
 	{
-		$smcFunc['db_free_result']($messages_request);
+		$smcFunc['db']->free_result($messages_request);
 		return false;
 	}
 
@@ -1561,8 +1562,8 @@ function prepareDisplayContext($reset = false)
 			$is_online = $message['id_character'] == $output['member']['current_character'];
 			$output['member']['online'] = [
 				'is_online' => $is_online,
-				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
-				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'text' => StringLibrary::escape($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], StringLibrary::escape($character['character_name'])),
 				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$is_online ? 'online' : 'offline']
@@ -1670,7 +1671,7 @@ function QuickInTopicModeration()
 		redirectexit('action=restoretopic;msgs=' . implode(',', $messages) . ';' . $context['session_var'] . '=' . $context['session_id']);
 	if (isset($_REQUEST['split_selection']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT subject
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:message}
@@ -1680,7 +1681,7 @@ function QuickInTopicModeration()
 			]
 		);
 		list($subname) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$_SESSION['split_selection'][$topic] = $messages;
 		redirectexit('action=splittopics;sa=selectTopics;topic=' . $topic . '.0;subname_enc=' . urlencode($subname) . ';' . $context['session_var'] . '=' . $context['session_id']);
 	}
@@ -1691,7 +1692,7 @@ function QuickInTopicModeration()
 	// Allowed to delete replies to their messages?
 	elseif (allowedTo('delete_replies'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member_started
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}
@@ -1701,7 +1702,7 @@ function QuickInTopicModeration()
 			]
 		);
 		list ($starter) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$allowed_all = $starter == $user_info['id'];
 	}
@@ -1713,7 +1714,7 @@ function QuickInTopicModeration()
 		isAllowedTo('delete_own');
 
 	// Allowed to remove which messages?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg, subject, id_member, poster_time
 		FROM {db_prefix}messages
 		WHERE id_msg IN ({array_int:message_list})
@@ -1735,10 +1736,10 @@ function QuickInTopicModeration()
 
 		$messages[$row['id_msg']] = [$row['subject'], $row['id_member']];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the first message in the topic - because you can't delete that!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_first_msg, id_last_msg
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -1748,7 +1749,7 @@ function QuickInTopicModeration()
 		]
 	);
 	list ($first_message, $last_message) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Delete all the messages we know they can delete. ($messages)
 	foreach ($messages as $message => $info)

@@ -4,7 +4,7 @@
  * Provide an autocomplete handler to match member accounts (not characters)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -36,18 +36,18 @@ class Member extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_member)
 			FROM {db_prefix}members
 			WHERE {raw:real_name} LIKE {string:search}
 				AND is_activated IN (1, 11)',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
 	}
@@ -79,7 +79,7 @@ class Member extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
@@ -88,7 +88,7 @@ class Member extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
@@ -102,7 +102,7 @@ class Member extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $result;
 	}
@@ -124,7 +124,7 @@ class Member extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:default_value})',
@@ -136,7 +136,7 @@ class Member extends AbstractCompletable implements Completable
 		{
 			$this->default[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	/**

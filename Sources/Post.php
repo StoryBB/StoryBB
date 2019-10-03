@@ -5,7 +5,7 @@
  * new topics, quotes, and modifications to existing posts.  It also handles
  * quoting posts by way of javascript.
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * Handles showing the post screen, loading the post to be modified, and loading any post quoted.
@@ -68,24 +69,24 @@ function Post($post_errors = [])
 	// No message is complete without a topic.
 	if (empty($topic) && !empty($_REQUEST['msg']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:msg}',
 			[
 				'msg' => (int) $_REQUEST['msg'],
 		]);
-		if ($smcFunc['db_num_rows']($request) != 1)
+		if ($smcFunc['db']->num_rows($request) != 1)
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
 			list ($topic) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Check if it's locked. It isn't locked if no topic is specified.
 	if (!empty($topic))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				t.locked, t.approved, COALESCE(ln.id_topic, 0) AS notify, t.is_sticky, t.id_poll, t.id_last_msg, mf.id_member,
 				t.id_first_msg, mf.subject, ml.modified_reason,
@@ -102,7 +103,7 @@ function Post($post_errors = [])
 			]
 		);
 		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
 		if (isset($_REQUEST['poll']) && $pollID > 0)
@@ -248,7 +249,7 @@ function Post($post_errors = [])
 	{
 		if (isset($_REQUEST['last_msg']) && $context['topic_last_message'] > $_REQUEST['last_msg'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
@@ -262,7 +263,7 @@ function Post($post_errors = [])
 				]
 			);
 			list ($context['new_replies']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($context['new_replies']))
 			{
@@ -323,16 +324,16 @@ function Post($post_errors = [])
 		$context['can_announce'] &= $context['becomes_approved'];
 
 		// Set up the inputs for the form.
-		$form_subject = strtr($smcFunc['htmlspecialchars']($_REQUEST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
-		$form_message = $smcFunc['htmlspecialchars']($_REQUEST['message'], ENT_QUOTES);
+		$form_subject = strtr(StringLibrary::escape($_REQUEST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+		$form_message = StringLibrary::escape($_REQUEST['message'], ENT_QUOTES);
 
 		// Make sure the subject isn't too long - taking into account special characters.
-		if ($smcFunc['strlen']($form_subject) > 100)
-			$form_subject = $smcFunc['substr']($form_subject, 0, 100);
+		if (StringLibrary::strpos($form_subject) > 100)
+			$form_subject = StringLibrary::substr($form_subject, 0, 100);
 
 		if (isset($_REQUEST['poll']))
 		{
-			$context['question'] = isset($_REQUEST['question']) ? $smcFunc['htmlspecialchars'](trim($_REQUEST['question'])) : '';
+			$context['question'] = isset($_REQUEST['question']) ? StringLibrary::escape(trim($_REQUEST['question'])) : '';
 
 			$context['choices'] = [];
 			$choice_id = 0;
@@ -378,9 +379,9 @@ function Post($post_errors = [])
 			$_REQUEST['guestname'] = !isset($_REQUEST['guestname']) ? '' : trim($_REQUEST['guestname']);
 			$_REQUEST['email'] = !isset($_REQUEST['email']) ? '' : trim($_REQUEST['email']);
 
-			$_REQUEST['guestname'] = $smcFunc['htmlspecialchars']($_REQUEST['guestname']);
+			$_REQUEST['guestname'] = StringLibrary::escape($_REQUEST['guestname']);
 			$context['name'] = $_REQUEST['guestname'];
-			$_REQUEST['email'] = $smcFunc['htmlspecialchars']($_REQUEST['email']);
+			$_REQUEST['email'] = StringLibrary::escape($_REQUEST['email']);
 			$context['email'] = $_REQUEST['email'];
 
 			$user_info['name'] = $_REQUEST['guestname'];
@@ -424,7 +425,7 @@ function Post($post_errors = [])
 		if (isset($_REQUEST['msg']) && !empty($topic))
 		{
 			// Get the existing message. Previewing.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					m.id_member, m.modified_time, m.smileys_enabled, m.body,
 					m.poster_name, m.poster_email, m.subject, m.approved,
@@ -446,14 +447,14 @@ function Post($post_errors = [])
 			);
 			// The message they were trying to edit was most likely deleted.
 			// @todo Change this error message?
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board', false);
 			$row = $smcFunc['db_fetch_assoc']($request);
 
 			$attachment_stuff = [$row];
 			while ($row2 = $smcFunc['db_fetch_assoc']($request))
 				$attachment_stuff[] = $row2;
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 			{
@@ -478,7 +479,7 @@ function Post($post_errors = [])
 
 			if (!empty($modSettings['attachmentEnable']))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COALESCE(size, -1) AS filesize, filename, id_attach, approved, mime_type, id_thumb
 					FROM {db_prefix}attachments
 					WHERE id_msg = {int:id_msg}
@@ -495,7 +496,7 @@ function Post($post_errors = [])
 					if ($row['filesize'] <= 0)
 						continue;
 					$context['current_attachments'][$row['id_attach']] = [
-						'name' => $smcFunc['htmlspecialchars']($row['filename']),
+						'name' => StringLibrary::escape($row['filename']),
 						'size' => $row['filesize'],
 						'attachID' => $row['id_attach'],
 						'approved' => $row['approved'],
@@ -503,13 +504,13 @@ function Post($post_errors = [])
 						'thumb' => $row['id_thumb'],
 					];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// Allow moderators to change names....
 			if (allowedTo('moderate_forum') && !empty($topic))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member, poster_name, poster_email
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}
@@ -521,12 +522,12 @@ function Post($post_errors = [])
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				if (empty($row['id_member']))
 				{
-					$context['name'] = $smcFunc['htmlspecialchars']($row['poster_name']);
-					$context['email'] = $smcFunc['htmlspecialchars']($row['poster_email']);
+					$context['name'] = StringLibrary::escape($row['poster_name']);
+					$context['email'] = StringLibrary::escape($row['poster_email']);
 				}
 			}
 		}
@@ -542,7 +543,7 @@ function Post($post_errors = [])
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
 		// Get the existing message. Editing.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				m.id_member, m.modified_time, m.modified_name, m.modified_reason, m.smileys_enabled, m.body,
 				m.poster_name, m.poster_email, m.subject, m.approved,
@@ -563,14 +564,14 @@ function Post($post_errors = [])
 			]
 		);
 		// The message they were trying to edit was most likely deleted.
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_message', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 
 		$attachment_stuff = [$row];
 		while ($row2 = $smcFunc['db_fetch_assoc']($request))
 			$attachment_stuff[] = $row2;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
@@ -628,7 +629,7 @@ function Post($post_errors = [])
 		foreach ($temp as $attachment)
 		{
 			$context['current_attachments'][$attachment['id_attach']] = [
-				'name' => $smcFunc['htmlspecialchars']($attachment['filename']),
+				'name' => StringLibrary::escape($attachment['filename']),
 				'size' => $attachment['filesize'],
 				'attachID' => $attachment['id_attach'],
 				'approved' => $attachment['attachment_approved'],
@@ -640,8 +641,8 @@ function Post($post_errors = [])
 		// Allow moderators to change names....
 		if (allowedTo('moderate_forum') && empty($row['id_member']))
 		{
-			$context['name'] = $smcFunc['htmlspecialchars']($row['poster_name']);
-			$context['email'] = $smcFunc['htmlspecialchars']($row['poster_email']);
+			$context['name'] = StringLibrary::escape($row['poster_name']);
+			$context['email'] = StringLibrary::escape($row['poster_email']);
 		}
 
 		// Set the destination.
@@ -667,7 +668,7 @@ function Post($post_errors = [])
 		if (!empty($topic) && !empty($_REQUEST['quote']))
 		{
 			// Make sure they _can_ quote this post, and if so get it.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT m.subject, COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body
 				FROM {db_prefix}messages AS m
 					LEFT JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
@@ -681,13 +682,13 @@ function Post($post_errors = [])
 					'is_approved' => 1,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
 			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
-			if (trim($context['response_prefix']) != '' && $smcFunc['strpos']($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && StringLibrary::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the message and subject.
@@ -726,7 +727,7 @@ function Post($post_errors = [])
 			$form_subject = $first_subject;
 
 			// Add 'Re: ' to the front of the subject.
-			if (trim($context['response_prefix']) != '' && $form_subject != '' && $smcFunc['strpos']($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && $form_subject != '' && StringLibrary::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the subject.
@@ -877,7 +878,7 @@ function Post($post_errors = [])
 					$context['files_in_session_warning'] = $txt['attached_files_in_session'];
 
 				$context['current_attachments'][$attachID] = [
-					'name' => '<u>' . $smcFunc['htmlspecialchars']($attachment['name']) . '</u>',
+					'name' => '<u>' . StringLibrary::escape($attachment['name']) . '</u>',
 					'size' => $attachment['size'],
 					'attachID' => $attachID,
 					'unchecked' => false,
@@ -1065,9 +1066,9 @@ function Post($post_errors = [])
 	// File Upload.
 	if ($context['can_post_attachment'])
 	{
-		$trimfunc = function($val) use ($smcFunc)
+		$trimfunc = function($val)
 		{
-			return '.' . $smcFunc['htmltrim']($val);
+			return '.' . StringLibrary::htmltrim($val);
 		};
 		$acceptedFiles = implode(',', array_map($trimfunc, explode(',', $context['allowed_extensions'])));
 
@@ -1261,7 +1262,7 @@ function Post2()
 	// If this isn't a new topic load the topic info that we need.
 	if (!empty($topic))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT locked, is_sticky, id_poll, approved, id_first_msg, id_last_msg, id_member_started, id_board
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}
@@ -1271,7 +1272,7 @@ function Post2()
 			]
 		);
 		$topic_info = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Though the topic should be there, it might have vanished.
 		if (!is_array($topic_info))
@@ -1426,7 +1427,7 @@ function Post2()
 	{
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, poster_name, poster_email, poster_time, approved
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
@@ -1435,10 +1436,10 @@ function Post2()
 				'id_msg' => $_REQUEST['msg'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
 			fatal_lang_error('topic_locked', false);
@@ -1544,7 +1545,7 @@ function Post2()
 
 		if ($_POST['guestname'] == '' || $_POST['guestname'] == '_')
 			$post_errors[] = 'no_name';
-		if ($smcFunc['strlen']($_POST['guestname']) > 25)
+		if (StringLibrary::strpos($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -1575,16 +1576,16 @@ function Post2()
 		$_POST['message'] = $_POST['quickReply'];
 
 	// Check the subject and message.
-	if (!isset($_POST['subject']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) === '')
+	if (!isset($_POST['subject']) || StringLibrary::htmltrim(StringLibrary::escape($_POST['subject'])) === '')
 		$post_errors[] = 'no_subject';
-	if (!isset($_POST['message']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['message']), ENT_QUOTES) === '')
+	if (!isset($_POST['message']) || StringLibrary::htmltrim(StringLibrary::escape($_POST['message']), ENT_QUOTES) === '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_POST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = ['long_message', [$modSettings['max_messageLength']]];
 	else
 	{
 		// Prepare the message a bit for some additional testing.
-		$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+		$_POST['message'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
@@ -1592,7 +1593,7 @@ function Post2()
 		preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
+		if (StringLibrary::htmltrim(strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -1673,18 +1674,18 @@ function Post2()
 	@set_time_limit(300);
 
 	// Add special html entities to the subject, name, and email.
-	$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
-	$_POST['guestname'] = $smcFunc['htmlspecialchars']($_POST['guestname']);
-	$_POST['email'] = $smcFunc['htmlspecialchars']($_POST['email']);
-	$_POST['modify_reason'] = empty($_POST['modify_reason']) ? '' : strtr($smcFunc['htmlspecialchars']($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
+	$_POST['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+	$_POST['guestname'] = StringLibrary::escape($_POST['guestname']);
+	$_POST['email'] = StringLibrary::escape($_POST['email']);
+	$_POST['modify_reason'] = empty($_POST['modify_reason']) ? '' : strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 	// At this point, we want to make sure the subject isn't too long.
-	if ($smcFunc['strlen']($_POST['subject']) > 100)
-		$_POST['subject'] = $smcFunc['substr']($_POST['subject'], 0, 100);
+	if (StringLibrary::strpos($_POST['subject']) > 100)
+		$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 
 	// Same with the "why did you edit this" text.
-	if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
-		$_POST['modify_reason'] = $smcFunc['substr']($_POST['modify_reason'], 0, 100);
+	if (StringLibrary::strpos($_POST['modify_reason']) > 100)
+		$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 
 	// Make the poll...
 	if (isset($_REQUEST['poll']))
@@ -1725,8 +1726,8 @@ function Post2()
 			$_POST['poll_hide'] = 1;
 
 		// Clean up the question and answers.
-		$_POST['question'] = $smcFunc['htmlspecialchars']($_POST['question']);
-		$_POST['question'] = $smcFunc['truncate']($_POST['question'], 255);
+		$_POST['question'] = StringLibrary::escape($_POST['question']);
+		$_POST['question'] = StringLibrary::htmltrim($_POST['question'], 255);
 		$_POST['question'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $_POST['question']);
 		$_POST['options'] = htmlspecialchars__recursive($_POST['options']);
 	}
@@ -1922,7 +1923,7 @@ function Post2()
 	// Mark all the parents read.  (since you just posted and they will be unread.)
 	if (!$user_info['is_guest'] && !empty($board_info['parent_boards']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_boards
 			SET id_msg = {int:id_msg}
 			WHERE id_member = {int:current_member}
@@ -1946,7 +1947,7 @@ function Post2()
 		);
 	}
 	elseif (!$newTopic)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_notify
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:current_topic}',
@@ -1970,7 +1971,7 @@ function Post2()
 	if (!empty($_REQUEST['goback']))
 	{
 		// Mark the board as read.... because it might get confusing otherwise.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_boards
 			SET id_msg = {int:maxMsgID}
 			WHERE id_member = {int:current_member}
@@ -2061,7 +2062,7 @@ function AnnouncementSelectMembergroup()
 	}
 
 	// Get all membergroups that have access to the board the announcement was made on.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, COUNT(mem.id_member) AS num_members
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_group = mg.id_group OR FIND_IN_SET(mg.id_group, mem.additional_groups) != 0)
@@ -2080,10 +2081,10 @@ function AnnouncementSelectMembergroup()
 			'member_count' => $row['num_members'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now get the membergroup names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
@@ -2093,10 +2094,10 @@ function AnnouncementSelectMembergroup()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['groups'][$row['id_group']]['name'] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the subject of the topic we're about to announce.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.subject
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -2106,7 +2107,7 @@ function AnnouncementSelectMembergroup()
 		]
 	);
 	list ($context['topic_subject']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	censorText($context['announce_topic']['subject']);
 
@@ -2146,7 +2147,7 @@ function AnnouncementSend()
 		$_POST['who'][$id] = in_array((int) $mg, $groups) ? (int) $mg : 0;
 
 	// Get the topic subject and censor it.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_msg, m.subject, m.body
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -2156,7 +2157,7 @@ function AnnouncementSend()
 		]
 	);
 	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	censorText($context['topic_subject']);
 	censorText($message);
@@ -2167,7 +2168,7 @@ function AnnouncementSend()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Select the email addresses for this batch.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.email_address, mem.lngfile
 		FROM {db_prefix}members AS mem
 		WHERE (mem.id_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:additional_group_list}, mem.additional_groups) != 0)
@@ -2186,7 +2187,7 @@ function AnnouncementSend()
 	);
 
 	// All members have received a mail. Go to the next screen.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		logAction('announce_topic', ['topic' => $topic], 'user');
 		if (!empty($_REQUEST['move']) && allowedTo('move_any'))
@@ -2204,7 +2205,7 @@ function AnnouncementSend()
 	{
 		$rows[$row['id_member']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');
@@ -2276,7 +2277,7 @@ function getTopic()
 		LIMIT ' . (int) $modSettings['topicSummaryPosts'];
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			m.body, m.smileys_enabled, m.id_msg, m.id_member
@@ -2318,7 +2319,7 @@ function getTopic()
 		if (!empty($context['new_replies']))
 			$context['new_replies']--;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -2341,7 +2342,7 @@ function QuoteFast()
 	// Where we going if we need to?
 	$context['post_box_name'] = isset($_GET['pb']) ? $_GET['pb'] : '';
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.id_topic, m.subject,
 			m.id_board, m.id_member, m.approved, m.modified_time, m.modified_name, m.modified_reason
 		FROM {db_prefix}messages AS m
@@ -2359,9 +2360,9 @@ function QuoteFast()
 			'not_locked' => 0,
 		]
 	);
-	$context['close_window'] = $smcFunc['db_num_rows']($request) == 0;
+	$context['close_window'] = $smcFunc['db']->num_rows($request) == 0;
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['sub_template'] = 'xml_quotefast';
 	StoryBB\Template::set_layout('xml');
@@ -2413,7 +2414,7 @@ function QuoteFast()
 		$context['quote']['text'] = strtr(un_htmlspecialchars($context['quote']['xml']), ['\'' => '\\\'', '\\' => '\\\\', "\n" => '\\n', '</script>' => '</\' + \'script>']);
 		$context['quote']['xml'] = strtr($context['quote']['xml'], ['&nbsp;' => '&#160;', '<' => '&lt;', '>' => '&gt;']);
 
-		$context['quote']['mozilla'] = strtr($smcFunc['htmlspecialchars']($context['quote']['text']), ['&quot;' => '"']);
+		$context['quote']['mozilla'] = strtr(StringLibrary::escape($context['quote']['text']), ['&quot;' => '"']);
 	}
 	//@todo Needs a nicer interface.
 	// In case our message has been removed in the meantime.
@@ -2456,7 +2457,7 @@ function JavaScriptModify()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Assume the first message if no message ID was given.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			t.locked, t.num_replies, t.id_member_started, t.id_first_msg,
 			m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body,
@@ -2475,10 +2476,10 @@ function JavaScriptModify()
 			'guest_id' => 0,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Change either body or subject requires permissions to modify messages.
 	if (isset($_POST['message']) || isset($_POST['subject']))
@@ -2506,13 +2507,13 @@ function JavaScriptModify()
 	}
 
 	$post_errors = [];
-	if (isset($_POST['subject']) && $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) !== '')
+	if (isset($_POST['subject']) && StringLibrary::htmltrim(StringLibrary::escape($_POST['subject'])) !== '')
 	{
-		$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+		$_POST['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if ($smcFunc['strlen']($_POST['subject']) > 100)
-			$_POST['subject'] = $smcFunc['substr']($_POST['subject'], 0, 100);
+		if (StringLibrary::strpos($_POST['subject']) > 100)
+			$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
 	{
@@ -2522,23 +2523,23 @@ function JavaScriptModify()
 
 	if (isset($_POST['message']))
 	{
-		if ($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['message'])) === '')
+		if (StringLibrary::htmltrim(StringLibrary::escape($_POST['message'])) === '')
 		{
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
 		{
 			$post_errors[] = 'long_message';
 			unset($_POST['message']);
 		}
 		else
 		{
-			$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+			$_POST['message'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 			preparsecode($_POST['message']);
 
-			if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
+			if (StringLibrary::htmltrim(strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
@@ -2568,11 +2569,11 @@ function JavaScriptModify()
 
 	if (isset($_POST['modify_reason']))
 	{
-		$_POST['modify_reason'] = strtr($smcFunc['htmlspecialchars']($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
+		$_POST['modify_reason'] = strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
-			$_POST['modify_reason'] = $smcFunc['substr']($_POST['modify_reason'], 0, 100);
+		if (StringLibrary::strpos($_POST['modify_reason']) > 100)
+			$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 	}
 
 	if (empty($post_errors))
@@ -2646,7 +2647,7 @@ function JavaScriptModify()
 				cache_put_data('response_prefix', $context['response_prefix'], 600);
 			}
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}messages
 				SET subject = {string:subject}
 				WHERE id_topic = {int:current_topic}

@@ -4,13 +4,15 @@
  * Provides searching using full text indexes on the database
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Search;
+
+use StoryBB\StringLibrary;
 
 /**
  * Class fulltext_search
@@ -114,10 +116,10 @@ class Fulltext extends AbstractSearchable implements Searchable
 				'fulltext_minimum_word_length' => 'ft_min_word_len',
 			]
 		);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			list (, $min_word_length) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		// 4 is the MySQL default...
 		else
@@ -139,8 +141,8 @@ class Fulltext extends AbstractSearchable implements Searchable
 	{
 		global $excludedWords, $smcFunc;
 
-		$x = $smcFunc['strlen']($a) - (in_array($a, $excludedWords) ? 1000 : 0);
-		$y = $smcFunc['strlen']($b) - (in_array($b, $excludedWords) ? 1000 : 0);
+		$x = StringLibrary::strlen($a) - (in_array($a, $excludedWords) ? 1000 : 0);
+		$y = StringLibrary::strlen($b) - (in_array($b, $excludedWords) ? 1000 : 0);
 
 		return $x < $y ? 1 : ($x > $y ? -1 : 0);
 	}
@@ -166,13 +168,13 @@ class Fulltext extends AbstractSearchable implements Searchable
 			if (count($subwords) > 1 && preg_match('~[.:@$]~', $word))
 			{
 				// using special characters that a full index would ignore and the remaining words are short which would also be ignored
-				if (($smcFunc['strlen'](current($subwords)) < $this->min_word_length) && ($smcFunc['strlen'](next($subwords)) < $this->min_word_length))
+				if ((StringLibrary::strlen(current($subwords)) < $this->min_word_length) && (StringLibrary::strlen(next($subwords)) < $this->min_word_length))
 				{
 					$wordsSearch['words'][] = trim($word, "/*- ");
 					$wordsSearch['complex_words'][] = count($subwords) === 1 ? $word : '"' . $word . '"';
 				}
 			}
-			elseif ($smcFunc['strlen'](trim($word, "/*- ")) < $this->min_word_length)
+			elseif (StringLibrary::strlen(trim($word, "/*- ")) < $this->min_word_length)
 			{
 				// short words have feelings too
 				$wordsSearch['words'][] = trim($word, "/*- ");

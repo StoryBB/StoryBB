@@ -4,7 +4,7 @@
  * This file is automatically called and handles all manner of scheduled things.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -28,7 +28,7 @@ function AutoTask()
 		$task_string = '';
 
 		// Select the next task to do.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_task, next_time, time_offset, time_regularity, time_unit, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
@@ -40,7 +40,7 @@ function AutoTask()
 				'current_time' => time(),
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) != 0)
+		if ($smcFunc['db']->num_rows($request) != 0)
 		{
 			// The two important things really...
 			$row = $smcFunc['db_fetch_assoc']($request);
@@ -64,7 +64,7 @@ function AutoTask()
 				$next_time += $duration;
 
 			// Update it now, so no others run this!
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}scheduled_tasks
 				SET next_time = {int:next_time}
 				WHERE id_task = {int:id_task}
@@ -104,10 +104,10 @@ function AutoTask()
 				}
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Get the next timestamp right.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT next_time
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
@@ -118,11 +118,11 @@ function AutoTask()
 			]
 		);
 		// No new task scheduled yet?
-		if ($smcFunc['db_num_rows']($request) === 0)
+		if ($smcFunc['db']->num_rows($request) === 0)
 			$nextEvent = time() + 86400;
 		else
 			list ($nextEvent) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateSettings(['next_task_time' => $nextEvent]);
 	}
@@ -167,7 +167,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	{
 		$delay = !empty($modSettings['mail_queue_delay']) ? $modSettings['mail_queue_delay'] : (!empty($modSettings['mail_limit']) && $modSettings['mail_limit'] < 5 ? 10 : 5);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:next_mail_send}
 			WHERE variable = {literal:mail_next_send}
@@ -207,7 +207,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	}
 
 	// Now we know how many we're sending, let's send them.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT /*!40001 SQL_NO_CACHE */ id_mail, recipient, body, subject, headers, send_html, time_sent, private
 		FROM {db_prefix}mail_queue
 		ORDER BY priority ASC, id_mail ASC
@@ -232,11 +232,11 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'private' => $row['private'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Delete, delete, delete!!!
 	if (!empty($ids))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_list})',
 			[
@@ -248,7 +248,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	if (count($ids) < $number)
 	{
 		// Only update the setting if no-one else has beaten us to it.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:no_send}
 			WHERE variable = {literal:mail_next_send}
@@ -308,7 +308,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 
 		// If we have failed to many times, tell mail to wait a bit and try again.
 		if ($modSettings['mail_failed_attempts'] > 5)
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}settings
 				SET value = {string:next_mail_send}
 				WHERE variable = {literal:mail_next_send}
@@ -330,7 +330,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	}
 	// We where unable to send the email, clear our failed attempts.
 	elseif (!empty($modSettings['mail_failed_attempts']))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
 			WHERE variable = {string:mail_failed_attempts}',
@@ -368,7 +368,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 	$nextTaskTime = empty($tasks) ? time() + 86400 : $modSettings['next_task_time'];
 
 	// Get the critical info for the tasks.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit
 		FROM {db_prefix}scheduled_tasks
 		WHERE disabled = {int:no_disabled}
@@ -393,11 +393,11 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		if ($next_time < $nextTaskTime)
 			$nextTaskTime = $next_time;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now make the changes!
 	foreach ($tasks as $id => $time)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET next_time = {int:next_time}
 			WHERE id_task = {int:id_task}',
@@ -488,7 +488,7 @@ function loadEssentialThemeData()
 	global $settings, $modSettings, $smcFunc, $mbname, $context, $sourcedir, $txt;
 
 	// Get all the default theme variables.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE id_member = {int:no_member}
@@ -506,7 +506,7 @@ function loadEssentialThemeData()
 		if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1')
 			$settings['default_' . $row['variable']] = $row['value'];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Check we have some directories setup.
 	if (empty($settings['template_dirs']))

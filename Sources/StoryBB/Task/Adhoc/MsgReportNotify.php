@@ -4,7 +4,7 @@
  * This task handles notifying users when a message gets reported.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -31,7 +31,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 		$members = membersAllowedTo('moderate_board', $this->_details['board_id']);
 
 		// Second, anyone assigned to be a moderator of this board directly.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}moderators
 			WHERE id_board = {int:current_board}',
@@ -41,10 +41,10 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Thirdly, anyone assigned to be a moderator of this group as a group->board moderator.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem, {db_prefix}moderator_groups AS bm
 			WHERE bm.id_board = {int:current_board}
@@ -59,7 +59,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// And now weed out the duplicates.
 		$members = array_flip(array_flip($members));
@@ -132,7 +132,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 
 			// First, get everyone's language and details.
 			$emails = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',
@@ -146,11 +146,11 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 					$row['lngfile'] = $language;
 				$emails[$row['lngfile']][$row['id_member']] = $row['email_address'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Second, get some details that might be nice for the report email.
 			// We don't bother cluttering up the tasks data for this, when it's really no bother to fetch it.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT lr.subject, lr.membername, lr.body
 				FROM {db_prefix}log_reported AS lr
 				WHERE id_report = {int:report}',
@@ -159,7 +159,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 				]
 			);
 			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Third, iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)

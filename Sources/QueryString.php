@@ -5,13 +5,14 @@
  * the query string, request variables, and session management.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 
 /**
  * Clean the request variables - add html entities to GET.
@@ -30,11 +31,7 @@ function cleanRequest()
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
 
 	// Makes it easier to refer to things this way.
-	$scripturl = $boardurl . '/index.php';
-
-	// Save some memory.. (since we don't use these anyway.)
-	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_VARS']);
-	unset($GLOBALS['HTTP_POST_FILES'], $GLOBALS['HTTP_POST_FILES']);
+	$scripturl = $boardurl . '/legacy.php';
 
 	// These keys shouldn't be set...ever.
 	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
@@ -309,7 +306,7 @@ function cleanRequest()
 		$_SERVER['REQUEST_URL'] = $_SERVER['REQUEST_URI'];
 
 	// And make sure HTTP_USER_AGENT is set.
-	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? (isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : htmlspecialchars($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES)) : '';
+	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? StringLibrary::escape($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
 
 	// Some final checking.
 	if (!IP::is_valid($_SERVER['BAN_CHECK_IP']))
@@ -454,7 +451,7 @@ function htmlspecialchars__recursive($var, $level = 0)
 	global $smcFunc;
 
 	if (!is_array($var))
-		return isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($var, ENT_QUOTES) : htmlspecialchars($var, ENT_QUOTES);
+		return StringLibrary::escape($var, ENT_QUOTES);
 
 	// Add the htmlspecialchars to every element.
 	foreach ($var as $k => $v)
@@ -558,11 +555,15 @@ function htmltrim__recursive($var, $level = 0)
 
 	// Remove spaces (32), tabs (9), returns (13, 10, and 11), nulls (0), and hard spaces. (160)
 	if (!is_array($var))
-		return isset($smcFunc) ? $smcFunc['htmltrim']($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
+	{
+		return StringLibrary::htmltrim($var);
+	}
 
 	// Go through all the elements and remove the whitespace.
 	foreach ($var as $k => $v)
+	{
 		$var[$k] = $level > 25 ? null : htmltrim__recursive($v, $level + 1);
+	}
 
 	return $var;
 }

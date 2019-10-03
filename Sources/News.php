@@ -4,13 +4,14 @@
  * This file contains the files necessary to display news as an XML feed.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Outputs xml data representing recent information or a profile.
@@ -30,7 +31,7 @@ use StoryBB\Helper\Parser;
 function ShowXmlFeed()
 {
 	global $board, $board_info, $context, $scripturl, $boardurl, $txt, $modSettings, $user_info;
-	global $query_this_board, $smcFunc, $forum_version, $settings;
+	global $query_this_board, $smcFunc, $settings;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -65,7 +66,7 @@ function ShowXmlFeed()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:current_category}',
@@ -74,12 +75,12 @@ function ShowXmlFeed()
 				]
 			);
 			list ($feed_meta['title']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$feed_meta['title'] = ' - ' . strip_tags($feed_meta['title']);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:current_category_list})
@@ -95,7 +96,7 @@ function ShowXmlFeed()
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -110,7 +111,7 @@ function ShowXmlFeed()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts, b.name
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -123,7 +124,7 @@ function ShowXmlFeed()
 		);
 
 		// Either the board specified doesn't exist or you have no access.
-		$num_boards = $smcFunc['db_num_rows']($request);
+		$num_boards = $smcFunc['db']->num_rows($request);
 		if ($num_boards == 0)
 			fatal_lang_error('no_board');
 
@@ -137,7 +138,7 @@ function ShowXmlFeed()
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -148,7 +149,7 @@ function ShowXmlFeed()
 	}
 	elseif (!empty($board))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT num_posts
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -158,7 +159,7 @@ function ShowXmlFeed()
 			]
 		);
 		list ($total_posts) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$feed_meta['title'] = ' - ' . strip_tags($board_info['name']);
 		$feed_meta['source'] .= '?board=' . $board . '.0';
@@ -218,7 +219,7 @@ function ShowXmlFeed()
 			cache_put_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, $xml_data, 240);
 	}
 
-	$feed_meta['title'] = $smcFunc['htmlspecialchars'](strip_tags($context['forum_name'])) . (isset($feed_meta['title']) ? $feed_meta['title'] : '');
+	$feed_meta['title'] = StringLibrary::escape(strip_tags($context['forum_name'])) . (isset($feed_meta['title']) ? $feed_meta['title'] : '');
 
 	// Allow mods to add extra namespaces and tags to the feed/channel
 	$namespaces = [
@@ -333,7 +334,7 @@ function ShowXmlFeed()
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
 	<id>', $feed_meta['source'], '</id>
 	<subtitle>', $feed_meta['desc'], '</subtitle>
-	<generator uri="https://storybb.org" version="', strtr($forum_version, ['StoryBB ' => '']), '">StoryBB</generator>',
+	<generator uri="https://storybb.org" version="', App::SOFTWARE_VERSION, '">StoryBB</generator>',
 	!empty($feed_meta['icon']) ? '
 	<icon>' . $feed_meta['icon'] . '</icon>' : '',
 	!empty($feed_meta['author']) ? '
@@ -392,14 +393,14 @@ function cdata_parse($data, $ns = '', $force = false)
 
 	$cdata = '<![CDATA[';
 
-	for ($pos = 0, $n = $smcFunc['strlen']($data); $pos < $n; null)
+	for ($pos = 0, $n = StringLibrary::strlen($data); $pos < $n; null)
 	{
 		$positions = [
-			$smcFunc['strpos']($data, '&', $pos),
-			$smcFunc['strpos']($data, ']', $pos),
+			StringLibrary::strpos($data, '&', $pos),
+			StringLibrary::strpos($data, ']', $pos),
 		];
 		if ($ns != '')
-			$positions[] = $smcFunc['strpos']($data, '<', $pos);
+			$positions[] = StringLibrary::strpos($data, '<', $pos);
 		foreach ($positions as $k => $dummy)
 		{
 			if ($dummy === false)
@@ -410,37 +411,37 @@ function cdata_parse($data, $ns = '', $force = false)
 		$pos = empty($positions) ? $n : min($positions);
 
 		if ($pos - $old > 0)
-			$cdata .= $smcFunc['substr']($data, $old, $pos - $old);
+			$cdata .= StringLibrary::substr($data, $old, $pos - $old);
 		if ($pos >= $n)
 			break;
 
-		if ($smcFunc['substr']($data, $pos, 1) == '<')
+		if (StringLibrary::substr($data, $pos, 1) == '<')
 		{
-			$pos2 = $smcFunc['strpos']($data, '>', $pos);
+			$pos2 = StringLibrary::strpos($data, '>', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			if ($smcFunc['substr']($data, $pos + 1, 1) == '/')
-				$cdata .= ']]></' . $ns . ':' . $smcFunc['substr']($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
+			if (StringLibrary::substr($data, $pos + 1, 1) == '/')
+				$cdata .= ']]></' . $ns . ':' . StringLibrary::substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
 			else
-				$cdata .= ']]><' . $ns . ':' . $smcFunc['substr']($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
+				$cdata .= ']]><' . $ns . ':' . StringLibrary::substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
 			$pos = $pos2 + 1;
 		}
-		elseif ($smcFunc['substr']($data, $pos, 1) == ']')
+		elseif (StringLibrary::substr($data, $pos, 1) == ']')
 		{
 			$cdata .= ']]>&#093;<![CDATA[';
 			$pos++;
 		}
-		elseif ($smcFunc['substr']($data, $pos, 1) == '&')
+		elseif (StringLibrary::substr($data, $pos, 1) == '&')
 		{
-			$pos2 = $smcFunc['strpos']($data, ';', $pos);
+			$pos2 = StringLibrary::strpos($data, ';', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			$ent = $smcFunc['substr']($data, $pos + 1, $pos2 - $pos - 1);
+			$ent = StringLibrary::substr($data, $pos + 1, $pos2 - $pos - 1);
 
-			if ($smcFunc['substr']($data, $pos + 1, 1) == '#')
-				$cdata .= ']]>' . $smcFunc['substr']($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+			if (StringLibrary::substr($data, $pos + 1, 1) == '#')
+				$cdata .= ']]>' . StringLibrary::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			elseif (in_array($ent, ['amp', 'lt', 'gt', 'quot']))
-				$cdata .= ']]>' . $smcFunc['substr']($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+				$cdata .= ']]>' . StringLibrary::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 
 			$pos = $pos2 + 1;
 		}
@@ -559,7 +560,7 @@ function getXmlMembers($xml_format)
 		return [];
 
 	// Find the most recent members.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, date_registered, last_login
 		FROM {db_prefix}members
 		ORDER BY id_member DESC
@@ -635,7 +636,7 @@ function getXmlMembers($xml_format)
 				],
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -665,7 +666,7 @@ function getXmlNews($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
 				t.id_topic, t.id_board, t.num_replies,
@@ -691,9 +692,9 @@ function getXmlNews($xml_format)
 			]
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && $smcFunc['db']->num_rows($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -708,8 +709,8 @@ function getXmlNews($xml_format)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr($smcFunc['substr'](str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(StringLibrary::substr(str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
 
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -719,7 +720,7 @@ function getXmlNews($xml_format)
 		// Do we want to include any attachments?
 		if (!empty($modSettings['attachmentEnable']) && !empty($modSettings['xmlnews_attachments']) && allowedTo('view_attachments', $row['id_board']))
 		{
-			$attach_request = $smcFunc['db_query']('', '
+			$attach_request = $smcFunc['db']->query('', '
 				SELECT
 					a.id_attach, a.filename, COALESCE(a.size, 0) AS filesize, a.mime_type, a.downloads, a.approved, m.id_topic AS topic
 				FROM {db_prefix}attachments AS a
@@ -739,7 +740,7 @@ function getXmlNews($xml_format)
 				if ($attach['approved'])
 					$loaded_attachments['attachment_' . $attach['id_attach']] = $attach;
 			}
-			$smcFunc['db_free_result']($attach_request);
+			$smcFunc['db']->free_result($attach_request);
 
 			// Sort the attachments by size to make things easier below
 			if (!empty($loaded_attachments))
@@ -897,7 +898,7 @@ function getXmlNews($xml_format)
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -922,7 +923,7 @@ function getXmlRecent($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -941,9 +942,9 @@ function getXmlRecent($xml_format)
 			]
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && $smcFunc['db']->num_rows($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -956,13 +957,13 @@ function getXmlRecent($xml_format)
 	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$messages[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($messages))
 		return [];
 
 	// Find the most recent posts this user can see.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.id_topic, t.id_board,
 			b.name AS bname, t.num_replies, m.id_member, mf.id_member AS id_first_member,
@@ -989,8 +990,8 @@ function getXmlRecent($xml_format)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr($smcFunc['substr'](str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(StringLibrary::substr(str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
 
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -1000,7 +1001,7 @@ function getXmlRecent($xml_format)
 		// Do we want to include any attachments?
 		if (!empty($modSettings['attachmentEnable']) && !empty($modSettings['xmlnews_attachments']) && allowedTo('view_attachments', $row['id_board']))
 		{
-			$attach_request = $smcFunc['db_query']('', '
+			$attach_request = $smcFunc['db']->query('', '
 				SELECT
 					a.id_attach, a.filename, COALESCE(a.size, 0) AS filesize, a.mime_type, a.downloads, a.approved, m.id_topic AS topic
 				FROM {db_prefix}attachments AS a
@@ -1020,7 +1021,7 @@ function getXmlRecent($xml_format)
 				if ($attach['approved'])
 					$loaded_attachments['attachment_' . $attach['id_attach']] = $attach;
 			}
-			$smcFunc['db_free_result']($attach_request);
+			$smcFunc['db']->free_result($attach_request);
 
 			// Sort the attachments by size to make things easier below
 			if (!empty($loaded_attachments))
@@ -1178,7 +1179,7 @@ function getXmlRecent($xml_format)
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }

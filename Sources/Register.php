@@ -6,7 +6,7 @@
  * Similarly, it handles account activation as well.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -16,6 +16,7 @@ use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
 use StoryBB\Helper\Verification;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Begin the registration process.
@@ -141,7 +142,7 @@ function Register($reg_errors = [])
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
 			if (isset($_POST[$field]))
-				$cur_profile[$field] = $smcFunc['htmlspecialchars']($_POST[$field]);
+				$cur_profile[$field] = StringLibrary::escape($_POST[$field]);
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
@@ -172,10 +173,10 @@ function Register($reg_errors = [])
 	}
 
 	$context += [
-		'username' => isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '',
-		'real_name' => isset($_POST['real_name']) ? $smcFunc['htmlspecialchars']($_POST['real_name']) : '',
-		'first_char' => isset($_POST['first_char']) ? $smcFunc['htmlspecialchars']($_POST['first_char']) : '',
-		'email' => isset($_POST['email']) ? $smcFunc['htmlspecialchars']($_POST['email']) : '',
+		'username' => isset($_POST['user']) ? StringLibrary::escape($_POST['user']) : '',
+		'real_name' => isset($_POST['real_name']) ? StringLibrary::escape($_POST['real_name']) : '',
+		'first_char' => isset($_POST['first_char']) ? StringLibrary::escape($_POST['first_char']) : '',
+		'email' => isset($_POST['email']) ? StringLibrary::escape($_POST['email']) : '',
 		'notify_announcements' => !empty($_POST['notify_announcements']) ? 1 : 0,
 	];
 
@@ -313,7 +314,7 @@ function Register2()
 			$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $_POST['real_name']));
 
 			// Only set it if we are sure it is good
-			if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)
+			if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && StringLibrary::strlen($_POST['real_name']) < 60)
 				$possible_strings[] = 'real_name';
 		}
 	}
@@ -389,7 +390,7 @@ function Register2()
 	// Include the additional options that might have been filled in.
 	foreach ($possible_strings as $var)
 		if (isset($_POST[$var]))
-			$regOptions['extra_register_vars'][$var] = $smcFunc['htmlspecialchars']($_POST[$var], ENT_QUOTES);
+			$regOptions['extra_register_vars'][$var] = StringLibrary::escape($_POST[$var], ENT_QUOTES);
 	foreach ($possible_ints as $var)
 		if (isset($_POST[$var]))
 			$regOptions['extra_register_vars'][$var] = (int) $_POST[$var];
@@ -409,7 +410,7 @@ function Register2()
 	$regOptions['theme_vars'] = htmlspecialchars__recursive($regOptions['theme_vars']);
 
 	// Check whether we have fields that simply MUST be displayed?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, field_type, field_length, mask, show_reg
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:is_active}
@@ -436,7 +437,7 @@ function Register2()
 		if (!in_array($row['field_type'], ['check', 'select', 'radio']))
 		{
 			// Is it too long?
-			if ($row['field_length'] && $row['field_length'] < $smcFunc['strlen']($value))
+			if ($row['field_length'] && $row['field_length'] < StringLibrary::strlen($value))
 				$custom_field_errors[] = ['custom_field_too_long', [$row['field_name'], $row['field_length']]];
 
 			// Any masks to apply?
@@ -455,7 +456,7 @@ function Register2()
 		if (trim($value) == '' && $row['show_reg'] > 1)
 			$custom_field_errors[] = ['custom_field_empty', [$row['field_name']]];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Process any errors.
 	if (!empty($custom_field_errors))
@@ -554,7 +555,7 @@ function Activate()
 	}
 
 	// Get the code from the database...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, validation_code, member_name, real_name, email_address, is_activated, passwd, lngfile
 		FROM {db_prefix}members' . (empty($_REQUEST['u']) ? '
 		WHERE member_name = {string:email_address} OR email_address = {string:email_address}' : '
@@ -567,7 +568,7 @@ function Activate()
 	);
 
 	// Does this user exist at all?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$context['sub_template'] = 'login_manual_activate';
 		$context['page_title'] = $txt['invalid_userid'];
@@ -577,7 +578,7 @@ function Activate()
 	}
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Change their email address? (they probably tried a fake one first :P.)
 	if (isset($_POST['new_email'], $_REQUEST['passwd']) && hash_password($row['member_name'], $_REQUEST['passwd']) == $row['passwd'] && ($row['is_activated'] == 0 || $row['is_activated'] == 2))
@@ -586,13 +587,13 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		if (!filter_var($_POST['new_email'], FILTER_VALIDATE_EMAIL))
-			fatal_error(sprintf($txt['valid_email_needed'], $smcFunc['htmlspecialchars']($_POST['new_email'])), false);
+			fatal_error(sprintf($txt['valid_email_needed'], StringLibrary::escape($_POST['new_email'])), false);
 
 		// Make sure their email isn't banned.
 		isBannedEmail($_POST['new_email'], 'cannot_register', $txt['ban_register_prohibited']);
 
 		// Ummm... don't even dare try to take someone else's email!!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
@@ -602,9 +603,9 @@ function Activate()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) != 0)
-			fatal_lang_error('email_in_use', false, [$smcFunc['htmlspecialchars']($_POST['new_email'])]);
-		$smcFunc['db_free_result']($request);
+		if ($smcFunc['db']->num_rows($request) != 0)
+			fatal_lang_error('email_in_use', false, [StringLibrary::escape($_POST['new_email'])]);
+		$smcFunc['db']->free_result($request);
 
 		updateMemberData($row['id_member'], ['email_address' => $_POST['new_email']]);
 		$row['email_address'] = $_POST['new_email'];

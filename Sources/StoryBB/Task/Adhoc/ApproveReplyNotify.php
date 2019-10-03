@@ -3,7 +3,7 @@
  * Notifies moderators once their moderation comment is replied to.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -31,7 +31,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		$members = [];
 		$alert_rows = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, email_address, lngfile
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = t.id_member_started)
@@ -47,7 +47,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		require_once($sourcedir . '/Subs-Notify.php');
 		$prefs = getNotifyPrefs($members, 'unapproved_reply', true);

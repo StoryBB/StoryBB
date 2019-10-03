@@ -4,7 +4,7 @@
  * This class handles behaviours for Behat tests within StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -14,6 +14,7 @@ namespace StoryBB\Behat;
 
 use StoryBB\Behat;
 use StoryBB\Behat\Helper;
+use StoryBB\StringLibrary;
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
@@ -120,7 +121,7 @@ class General extends RawMinkContext implements Context
 				else
 				{
 					$possible_groups = [];
-					$request = $smcFunc['db_query']('', '
+					$request = $smcFunc['db']->query('', '
                         SELECT id_group, group_name
                         FROM {db_prefix}membergroups',
 						[]
@@ -134,7 +135,7 @@ class General extends RawMinkContext implements Context
 						}
 						$possible_groups[$row['group_name']] = $row['id_group'];
 					}
-					$smcFunc['db_free_result']($request);
+					$smcFunc['db']->free_result($request);
 
 					$group_name = strtolower($user_to_register['primary group']);
 					if (!isset($possible_groups[$group_name]))
@@ -239,7 +240,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_member, member_name
             FROM {db_prefix}members
             WHERE member_name IN ({array_string:usernames})',
@@ -251,7 +252,7 @@ class General extends RawMinkContext implements Context
 		{
 			$userids[$row['member_name']] = $row['id_member'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $userids;
 	}
@@ -275,7 +276,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_character, character_name
             FROM {db_prefix}characters
             WHERE character_name IN ({array_string:charnames})',
@@ -287,7 +288,7 @@ class General extends RawMinkContext implements Context
 		{
 			$charids[$row['character_name']] = $row['id_character'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $charids;
 	}
@@ -311,7 +312,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_group, group_name
             FROM {db_prefix}membergroups
             WHERE group_name IN ({array_string:groupnames})',
@@ -323,7 +324,7 @@ class General extends RawMinkContext implements Context
 		{
 			$group_ids[$row['group_name']] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $group_ids;
 	}
@@ -354,7 +355,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			$boardOptions = [
-				'board_name' => $smcFunc['htmlspecialchars']($board_to_create['board name'], ENT_QUOTES),
+				'board_name' => StringLibrary::escape($board_to_create['board name'], ENT_QUOTES),
 				'access_groups' => [],
 				'deny_groups' => [],
 				'in_character' => 0,
@@ -364,16 +365,16 @@ class General extends RawMinkContext implements Context
 			if ($board_to_create['board parent'] == 'none')
 			{
 				// We're adding it to the end of the first category, which we need to identify.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT id_cat
                     FROM {db_prefix}categories
                     ORDER BY cat_order
                     LIMIT 1');
-				if ($smcFunc['db_num_rows']($request))
+				if ($smcFunc['db']->num_rows($request))
 				{
 					list($boardOptions['target_category']) = $smcFunc['db_fetch_row']($request);
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_category']))
 				{
 					throw new ExpectationException('No category exists to add board "' . $board_to_create['board name'] . '" to.', $this->getSession());
@@ -384,7 +385,7 @@ class General extends RawMinkContext implements Context
 			else
 			{
 				// We've asked to find a board and attach to that, let's find its details.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT id_board, id_cat
                     FROM {db_prefix}boards
                     WHERE name = {string:board_name}
@@ -393,14 +394,14 @@ class General extends RawMinkContext implements Context
 						'board_name' => $board_to_create['board parent']
 					]
 				);
-				if ($smcFunc['db_num_rows']($request))
+				if ($smcFunc['db']->num_rows($request))
 				{
 					$row = $smcFunc['db_fetch_assoc']($request);
 					$boardOptions['target_category'] = $row['id_cat'];
 					$boardOptions['move_to'] = 'child';
 					$boardOptions['target_board'] = $row['id_board'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_board']))
 				{
 					throw new ExpectationException('Board "' . $board_to_create['board name'] . '" is meant to be a sub-board of "' . $board_to_create['board parent'] . '" but this was not found.', $this->getSession());
@@ -534,7 +535,7 @@ class General extends RawMinkContext implements Context
 			// Groups added in this way inherit regular member permissions - main+board if account, board if character.
 			if ($group_to_create['group level'] == 'account')
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT permission, add_deny
                     FROM {db_prefix}permissions
                     WHERE id_group = {int:copy_from}',
@@ -547,7 +548,7 @@ class General extends RawMinkContext implements Context
 				{
 					$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				if (!empty($inserts))
 				{
@@ -561,7 +562,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			// And now board-profile permissions.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
                 SELECT id_profile, permission, add_deny
                 FROM {db_prefix}board_permissions
                 WHERE id_group = {int:copy_from}',
@@ -574,7 +575,7 @@ class General extends RawMinkContext implements Context
 			{
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($inserts))
 			{

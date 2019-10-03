@@ -4,13 +4,14 @@
  * Find and retrieve information about recently posted topics, messages, and the like.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Get the latest post made on the system
@@ -25,7 +26,7 @@ function getLastPost()
 	global $scripturl, $modSettings, $smcFunc;
 
 	// Find it by the board - better to order by board than sort the entire messages table.
-	$request = $smcFunc['db_query']('substring', '
+	$request = $smcFunc['db']->query('substring', '
 		SELECT ml.poster_time, ml.subject, ml.id_topic, ml.poster_name, SUBSTRING(ml.body, 1, 385) AS body,
 			ml.smileys_enabled
 		FROM {db_prefix}boards AS b
@@ -40,18 +41,18 @@ function getLastPost()
 			'is_approved' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		return [];
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Censor the subject and post...
 	censorText($row['subject']);
 	censorText($row['body']);
 
 	$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled']), ['<br>' => '&#10;']));
-	if ($smcFunc['strlen']($row['body']) > 128)
-		$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
+	if (StringLibrary::strpos($row['body']) > 128)
+		$row['body'] = StringLibrary::substr($row['body'], 0, 128) . '...';
 
 	// Send the data.
 	return [
@@ -90,7 +91,7 @@ function RecentPosts()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:id_cat}
@@ -100,7 +101,7 @@ function RecentPosts()
 				]
 			);
 			list ($name) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (empty($name))
 				fatal_lang_error('no_access', false);
@@ -113,7 +114,7 @@ function RecentPosts()
 
 		$recycling = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:category_list})
@@ -133,7 +134,7 @@ function RecentPosts()
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -157,7 +158,7 @@ function RecentPosts()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -177,7 +178,7 @@ function RecentPosts()
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -197,7 +198,7 @@ function RecentPosts()
 	}
 	elseif (!empty($board))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT num_posts, redirect
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -207,7 +208,7 @@ function RecentPosts()
 			]
 		);
 		list ($total_posts, $redirect) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If this is a redirection board, don't bother counting topics here...
 		if ($redirect != '')
@@ -242,7 +243,7 @@ function RecentPosts()
 		$query_these_boards_params = $query_parameters;
 		unset($query_these_boards_params['max_id_msg']);
 
-		$get_num_posts = $smcFunc['db_query']('', '
+		$get_num_posts = $smcFunc['db']->query('', '
 			SELECT COALESCE(SUM(b.num_posts), 0)
 			FROM {db_prefix}boards AS b
 			WHERE ' . $query_these_boards . '
@@ -253,7 +254,7 @@ function RecentPosts()
 		list($db_num_posts) = $smcFunc['db_fetch_row']($get_num_posts);
 		$num_posts = min(100, $db_num_posts);
 
-		$smcFunc['db_free_result']($get_num_posts);
+		$smcFunc['db']->free_result($get_num_posts);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=recent', $_REQUEST['start'], $num_posts, 10, false);
 	}
@@ -275,7 +276,7 @@ function RecentPosts()
 		{
 			// Find the 10 most recent messages they can *view*.
 			// @todo SLOW This query is really slow still, probably?
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -290,9 +291,9 @@ function RecentPosts()
 				])
 			);
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
-			if (isset($query_parameters['max_id_msg']) && $smcFunc['db_num_rows']($request) < 10)
+			if (isset($query_parameters['max_id_msg']) && $smcFunc['db']->num_rows($request) < 10)
 			{
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				$query_this_board = str_replace('AND m.id_msg >= {int:max_id_msg}', '', $query_this_board);
 				$cache_results = true;
 				unset($query_parameters['max_id_msg']);
@@ -303,7 +304,7 @@ function RecentPosts()
 		$messages = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$messages[] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		if (!empty($cache_results))
 			cache_put_data($key, $messages, 120);
 	}
@@ -316,7 +317,7 @@ function RecentPosts()
 	}
 
 	// Get all the most recent posts.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.id_msg, m.subject, m.smileys_enabled, m.poster_time, m.body, m.id_topic, t.id_board, b.id_cat,
 			b.name AS bname, c.name AS cname, t.num_replies, m.id_member, m2.id_member AS id_first_member,
@@ -400,7 +401,7 @@ function RecentPosts()
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
 		$board_ids['any'][$row['id_board']][] = $row['id_msg'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// There might be - and are - different permissions between any and own.
 	$permissions = [
@@ -510,7 +511,7 @@ function UnreadTopics()
 			$boards[] = (int) $board;
 
 		// The easiest thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.id_parent
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}
@@ -528,7 +529,7 @@ function UnreadTopics()
 			if (in_array($row['id_parent'], $boards))
 				$boards[] = $row['id_board'];
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -549,7 +550,7 @@ function UnreadTopics()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -561,7 +562,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -577,7 +578,7 @@ function UnreadTopics()
 			$_REQUEST['c'][$i] = (int) $c;
 
 		$see_board = isset($_REQUEST['action']) && $_REQUEST['action'] == 'unreadreplies' ? 'query_see_board' : 'query_wanna_see_board';
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . '
@@ -589,7 +590,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -602,7 +603,7 @@ function UnreadTopics()
 	{
 		$see_board = isset($_REQUEST['action']) && $_REQUEST['action'] == 'unreadreplies' ? 'query_see_board' : 'query_wanna_see_board';
 		// Don't bother to show deleted posts!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -614,7 +615,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_available', false);
@@ -656,7 +657,7 @@ function UnreadTopics()
 
 	if (!empty($_REQUEST['c']) && is_array($_REQUEST['c']) && count($_REQUEST['c']) == 1)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT name
 			FROM {db_prefix}categories
 			WHERE id_cat = {int:id_cat}
@@ -666,7 +667,7 @@ function UnreadTopics()
 			]
 		);
 		list ($name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['linktree'][] = [
 			'url' => $scripturl . '#c' . (int) $_REQUEST['c'][0],
@@ -708,7 +709,7 @@ function UnreadTopics()
 	{
 		if (!empty($board))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MIN(id_msg)
 				FROM {db_prefix}log_mark_read
 				WHERE id_member = {int:current_member}
@@ -719,11 +720,11 @@ function UnreadTopics()
 				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MIN(lmr.id_msg)
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
@@ -733,7 +734,7 @@ function UnreadTopics()
 				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// This is needed in case of topics marked unread.
@@ -747,7 +748,7 @@ function UnreadTopics()
 			else
 			{
 				// This query is pretty slow, but it's needed to ensure nothing crucial is ignored.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT MIN(id_msg)
 					FROM {db_prefix}log_topics
 					WHERE id_member = {int:current_member}',
@@ -756,7 +757,7 @@ function UnreadTopics()
 					]
 				);
 				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
 				if ($earliest_msg2 == 0)
@@ -773,14 +774,14 @@ function UnreadTopics()
 
 	if ($modSettings['totalMessages'] > 100000 && $context['showing_all_topics'])
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
 			[
 			]
 		);
 
 		// Let's copy things out of the log_topics table, to reduce searching.
-		$have_temp_table = $smcFunc['db_query']('', '
+		$have_temp_table = $smcFunc['db']->query('', '
 			CREATE TEMPORARY TABLE {db_prefix}log_topics_unread (
 				PRIMARY KEY (id_topic)
 			)
@@ -805,7 +806,7 @@ function UnreadTopics()
 
 	if ($context['showing_all_topics'] && $have_temp_table)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)
@@ -821,7 +822,7 @@ function UnreadTopics()
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -856,7 +857,7 @@ function UnreadTopics()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -888,7 +889,7 @@ function UnreadTopics()
 	}
 	elseif ($is_topics)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t' . (!empty($have_temp_table) ? '
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)' : '
@@ -907,7 +908,7 @@ function UnreadTopics()
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -946,7 +947,7 @@ function UnreadTopics()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -981,13 +982,13 @@ function UnreadTopics()
 	{
 		if ($modSettings['totalMessages'] > 100000)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
 				[
 				]
 			);
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}log_topics_posted_in',
 				[
 				]
@@ -1002,7 +1003,7 @@ function UnreadTopics()
 			];
 
 			// The main benefit of this temporary table is not that it's faster; it's that it avoids locks later.
-			$have_temp_table = $smcFunc['db_query']('', '
+			$have_temp_table = $smcFunc['db']->query('', '
 				CREATE TEMPORARY TABLE {db_prefix}topics_posted_in (
 					id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 					id_board smallint(5) unsigned NOT NULL default {string:string_zero},
@@ -1030,7 +1031,7 @@ function UnreadTopics()
 
 			// If that worked, create a sample of the log_topics table too.
 			if ($have_temp_table)
-				$have_temp_table = $smcFunc['db_query']('', '
+				$have_temp_table = $smcFunc['db']->query('', '
 					CREATE TEMPORARY TABLE {db_prefix}log_topics_posted_in (
 						PRIMARY KEY (id_topic)
 					)
@@ -1047,7 +1048,7 @@ function UnreadTopics()
 
 		if (!empty($have_temp_table))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}topics_posted_in AS pi
 					LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = pi.id_topic)
@@ -1057,11 +1058,11 @@ function UnreadTopics()
 				])
 			);
 			list ($num_topics) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('unread_fetch_topic_count', '
+			$request = $smcFunc['db']->query('unread_fetch_topic_count', '
 				SELECT COUNT(DISTINCT t.id_topic), MIN(t.id_last_msg)
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic)
@@ -1078,7 +1079,7 @@ function UnreadTopics()
 				])
 			);
 			list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -1109,7 +1110,7 @@ function UnreadTopics()
 		}
 
 		if (!empty($have_temp_table))
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT t.id_topic
 				FROM {db_prefix}topics_posted_in AS t
 					LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = t.id_topic)
@@ -1124,7 +1125,7 @@ function UnreadTopics()
 				])
 			);
 		else
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT DISTINCT t.id_topic,'.$_REQUEST['sort'].'
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic AND m.id_member = {int:current_member})' . (strpos($_REQUEST['sort'], 'ms.') === false ? '' : '
@@ -1152,7 +1153,7 @@ function UnreadTopics()
 		$topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topics[] = $row['id_topic'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sanity... where have you gone?
 		if (empty($topics))
@@ -1166,7 +1167,7 @@ function UnreadTopics()
 			return;
 		}
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_topic = t.id_topic AND ms.id_msg = t.id_first_msg)
@@ -1207,11 +1208,11 @@ function UnreadTopics()
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
 			$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), ['<br>' => '&#10;']));
-			if ($smcFunc['strlen']($row['first_body']) > 128)
-				$row['first_body'] = $smcFunc['substr']($row['first_body'], 0, 128) . '...';
+			if (StringLibrary::strpos($row['first_body']) > 128)
+				$row['first_body'] = StringLibrary::substr($row['first_body'], 0, 128) . '...';
 			$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), ['<br>' => '&#10;']));
-			if ($smcFunc['strlen']($row['last_body']) > 128)
-				$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, 128) . '...';
+			if (StringLibrary::strpos($row['last_body']) > 128)
+				$row['last_body'] = StringLibrary::substr($row['last_body'], 0, 128) . '...';
 
 			// Censor the subject and message preview.
 			censorText($row['first_subject']);
@@ -1336,11 +1337,11 @@ function UnreadTopics()
 
 		$context['topics'][$row['id_topic']]['first_post']['started_by'] = sprintf($txt['topic_started_by'], $context['topics'][$row['id_topic']]['first_post']['member']['link'], $context['topics'][$row['id_topic']]['board']['link']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($is_topics && !empty($topic_ids))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})
@@ -1358,7 +1359,7 @@ function UnreadTopics()
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);

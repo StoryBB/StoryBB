@@ -4,7 +4,7 @@
  * Provide an autocomplete handler to match member characters.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -36,7 +36,7 @@ class Character extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_character)
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -44,12 +44,12 @@ class Character extends AbstractCompletable implements Completable
 				AND is_main = 0
 				AND is_activated IN (1, 11)',
 			[
-				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
 	}
@@ -82,7 +82,7 @@ class Character extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.character_name, mem.real_name, mem.email_address, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
@@ -92,7 +92,7 @@ class Character extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
@@ -108,7 +108,7 @@ class Character extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $result;
 	}
@@ -130,7 +130,7 @@ class Character extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
 			WHERE id_character IN ({array_int:default_value})
@@ -143,7 +143,7 @@ class Character extends AbstractCompletable implements Completable
 		{
 			$this->default[$row['id_character']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	/**

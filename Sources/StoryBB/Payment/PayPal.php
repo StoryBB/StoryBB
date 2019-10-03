@@ -4,7 +4,7 @@
  * This file provides functionality for paid subscriptions paid for specifically via PayPal
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -389,7 +389,7 @@ class PayPal implements PaymentProcessor
 		// If it's a subscription record the reference.
 		if ($_POST['txn_type'] == 'subscr_payment' && !empty($_POST['subscr_id']))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}log_subscribed
 				SET vendor_ref = {string:vendor_ref}
 				WHERE id_sublog = {int:current_subscription}',
@@ -418,7 +418,7 @@ class PayPal implements PaymentProcessor
 			return false;
 
 		// Do we have this in the database?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, id_subscribe
 			FROM {db_prefix}log_subscribed
 			WHERE vendor_ref = {string:vendor_ref}
@@ -428,13 +428,13 @@ class PayPal implements PaymentProcessor
 			]
 		);
 		// No joy?
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			// Can we identify them by email?
 			if (!empty($_POST['payer_email']))
 			{
-				$smcFunc['db_free_result']($request);
-				$request = $smcFunc['db_query']('', '
+				$smcFunc['db']->free_result($request);
+				$request = $smcFunc['db']->query('', '
 					SELECT ls.id_member, ls.id_subscribe
 					FROM {db_prefix}log_subscribed AS ls
 						INNER JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
@@ -444,7 +444,7 @@ class PayPal implements PaymentProcessor
 						'payer_email' => $_POST['payer_email'],
 					]
 				);
-				if ($smcFunc['db_num_rows']($request) === 0)
+				if ($smcFunc['db']->num_rows($request) === 0)
 					return false;
 			}
 			else
@@ -452,6 +452,6 @@ class PayPal implements PaymentProcessor
 		}
 		list ($member_id, $subscription_id) = $smcFunc['db_fetch_row']($request);
 		$_POST['item_number'] = $member_id . '+' . $subscription_id;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 }

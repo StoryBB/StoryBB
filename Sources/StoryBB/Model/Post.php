@@ -4,7 +4,7 @@
  * This class handles the database processing for a post.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -59,7 +59,7 @@ class Post
 		// We need to know if the topic is approved. If we're told that's great - if not find out.
 		if (!empty($topicOptions['id']) && !isset($topicOptions['is_approved']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT approved
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
@@ -69,7 +69,7 @@ class Post
 				]
 			);
 			list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// If nothing was filled in as name/e-mail address, try the member table.
@@ -83,7 +83,7 @@ class Post
 			}
 			elseif ($posterOptions['id'] != $user_info['id'])
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT member_name, email_address
 					FROM {db_prefix}members
 					WHERE id_member = {int:id_member}
@@ -93,7 +93,7 @@ class Post
 					]
 				);
 				// Couldn't find the current poster?
-				if ($smcFunc['db_num_rows']($request) == 0)
+				if ($smcFunc['db']->num_rows($request) == 0)
 				{
 					trigger_error('StoryBB\\Model\\Post::create(): Invalid member id ' . $posterOptions['id'], E_USER_NOTICE);
 					$posterOptions['id'] = 0;
@@ -102,7 +102,7 @@ class Post
 				}
 				else
 					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			else
 			{
@@ -153,7 +153,7 @@ class Post
 
 		// Fix the attachments.
 		if (!empty($msgOptions['attachments']))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}attachments
 				SET id_msg = {int:id_msg}
 				WHERE id_attach IN ({array_int:attachment_list})',
@@ -196,7 +196,7 @@ class Post
 			if (empty($topicOptions['id']))
 			{
 				// We should delete the post that did work, though...
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}',
 					[
@@ -208,7 +208,7 @@ class Post
 			}
 
 			// Fix the message with the topic.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}messages
 				SET id_topic = {int:id_topic}
 				WHERE id_msg = {int:id_msg}',
@@ -256,7 +256,7 @@ class Post
 			call_integration_hook('integrate_modify_topic', [&$topics_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions]);
 
 			// Update the number of replies and the lock/sticky status.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}topics
 				SET
 					' . implode(', ', $topics_columns) . '
@@ -270,7 +270,7 @@ class Post
 
 		// Creating is modifying...in a way.
 		// @todo Why not set id_msg_modified on the insert?
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET id_msg_modified = {int:id_msg}
 			WHERE id_msg = {int:id_msg}',
@@ -281,7 +281,7 @@ class Post
 
 		// Increase the number of posts and topics on the board.
 		if ($msgOptions['approved'])
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}boards
 				SET num_posts = num_posts + 1' . ($new_topic ? ', num_topics = num_topics + 1' : '') . '
 				WHERE id_board = {int:id_board}',
@@ -291,7 +291,7 @@ class Post
 			);
 		else
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}boards
 				SET unapproved_posts = unapproved_posts + 1' . ($new_topic ? ', unapproved_topics = unapproved_topics + 1' : '') . '
 				WHERE id_board = {int:id_board}',
@@ -326,7 +326,7 @@ class Post
 			// Since it's likely they *read* it before replying, let's try an UPDATE first.
 			if (!$new_topic)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}log_topics
 					SET id_msg = {int:id_msg}
 					WHERE id_member = {int:current_member}
@@ -442,7 +442,7 @@ class Post
 			// using a custom search index, then lets get the old message so we can update our index as needed
 			if (!empty($modSettings['search_custom_index_config']))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT body
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}',
@@ -451,7 +451,7 @@ class Post
 					]
 				);
 				list ($msgOptions['old_body']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 		}
 		if (!empty($msgOptions['modify_time']))
@@ -524,7 +524,7 @@ class Post
 			return true;
 
 		// Change the post.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET ' . implode(', ', $messages_columns) . '
 			WHERE id_msg = {int:id_msg}',
@@ -534,7 +534,7 @@ class Post
 		// Lock and or sticky the post.
 		if ($topicOptions['sticky_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}topics
 				SET
 					is_sticky = {raw:is_sticky},
@@ -554,7 +554,7 @@ class Post
 		if (!empty($topicOptions['mark_as_read']) && !$user_info['is_guest'])
 		{
 			// Since it's likely they *read* it before editing, let's try an UPDATE first.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}log_topics
 				SET id_msg = {int:id_msg}
 				WHERE id_member = {int:current_member}
@@ -588,7 +588,7 @@ class Post
 		if (isset($msgOptions['subject']))
 		{
 			// Only update the subject if this was the first message in the topic.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_topic
 				FROM {db_prefix}topics
 				WHERE id_first_msg = {int:id_first_msg}
@@ -597,9 +597,9 @@ class Post
 					'id_first_msg' => $msgOptions['id'],
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 1)
+			if ($smcFunc['db']->num_rows($request) == 1)
 				updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Finally, if we are setting the approved state we need to do much more work :(

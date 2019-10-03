@@ -4,7 +4,7 @@
  * This class handles alerts.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -78,7 +78,7 @@ class Alert
 		}
 
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert, id_member
 			FROM {db_prefix}user_alerts
 			WHERE ' . implode(' AND ', $clauses),
@@ -88,7 +88,7 @@ class Alert
 		{
 			$alerts[$row['id_member']][] = (int) $row['id_alert'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $alerts;
 	}
@@ -110,7 +110,7 @@ class Alert
 
 		$toMark = (array) $toMark;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}user_alerts
 			SET is_read = {int:read}
 			WHERE id_alert IN({array_int:toMark})',
@@ -145,7 +145,7 @@ class Alert
 
 		$toDelete = (array) $toDelete;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_alerts
 			WHERE id_alert IN({array_int:toDelete})',
 			[
@@ -179,7 +179,7 @@ class Alert
 		if (empty($memID))
 			return false;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert
 			FROM {db_prefix}user_alerts
 			WHERE id_member = {int:id_member}
@@ -190,8 +190,8 @@ class Alert
 			]
 		);
 
-		$count = $smcFunc['db_num_rows']($request);
-		$smcFunc['db_free_result']($request);
+		$count = $smcFunc['db']->num_rows($request);
+		$smcFunc['db']->free_result($request);
 
 		// Also update the current member's count if we've just calculated it.
 		if ($memID == $user_info['id'])

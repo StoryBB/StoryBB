@@ -4,16 +4,18 @@
  * This file has all the main functions in it that relate to, well, everything.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\App;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 
 /**
@@ -62,7 +64,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			else
 			{
 				// Update the latest activated member (highest id_member) and count.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*), MAX(id_member)
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}',
@@ -71,10 +73,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				// Get the latest activated member's display name.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE id_member = {int:id_member}
@@ -84,10 +86,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['latestRealName']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				// Update the amount of members awaiting approval (either new registration or deletion)
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}members
 				WHERE is_activated IN ({array_int:activation_status})',
@@ -96,7 +98,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 			}
 			updateSettings($changes);
 			break;
@@ -107,7 +109,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			else
 			{
 				// SUM and MAX on a smaller table is better for InnoDB tables.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_posts + unapproved_posts) AS total_messages, MAX(id_last_msg) AS max_msg_id
 				FROM {db_prefix}boards
 				WHERE redirect = {string:blank_redirect}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -118,7 +120,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				updateSettings([
 					'totalMessages' => $row['total_messages'] === null ? 0 : $row['total_messages'],
@@ -129,7 +131,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 		case 'subject':
 			// Remove the previous subject (if any).
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_search_subjects
 			WHERE id_topic = {int:id_topic}',
 				[
@@ -164,7 +166,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			{
 				// Get the number of topics - a SUM is better for InnoDB tables.
 				// We also ignore the recycle bin here because there will probably be a bunch of one-post topics there.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_topics + unapproved_topics) AS total_topics
 				FROM {db_prefix}boards' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 				WHERE id_board != {int:recycle_board}' : ''),
@@ -173,7 +175,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				updateSettings(['totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']]);
 			}
@@ -260,7 +262,7 @@ function updateMemberData($members, $data)
 			else
 			{
 				$member_names = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT member_name
 					FROM {db_prefix}members
 					WHERE ' . $condition,
@@ -268,7 +270,7 @@ function updateMemberData($members, $data)
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$member_names[] = $row['member_name'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			if (!empty($member_names))
@@ -331,7 +333,7 @@ function updateMemberData($members, $data)
 		$parameters['p_' . $var] = $val;
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET' . substr($setString, 0, -1) . '
 		WHERE ' . $condition,
@@ -342,7 +344,7 @@ function updateMemberData($members, $data)
 	// to the main/OOC character.
 	if (isset($data['real_name']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET character_name = {string:p_real_name}
 			WHERE is_main = 1
@@ -411,7 +413,7 @@ function updateCharacterData($char_id, $data)
 		$parameters['p_' . $var] = $val;
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET' . substr($setString, 0, -1) . '
 		WHERE ' . $condition,
@@ -453,7 +455,7 @@ function updateSettings($changeArray, $update = false)
 
 	// Proceed with the deletion.
 	if (!empty($toRemove))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable IN ({array_string:remove})',
 			[
@@ -466,7 +468,7 @@ function updateSettings($changeArray, $update = false)
 	{
 		foreach ($changeArray as $variable => $value)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}settings
 				SET value = {' . ($value === false || $value === true ? 'raw' : 'string') . ':value}
 				WHERE variable = {string:variable}',
@@ -890,11 +892,11 @@ function shorten_subject($subject, $len)
 	global $smcFunc;
 
 	// It was already short enough!
-	if ($smcFunc['strlen']($subject) <= $len)
+	if (StringLibrary::strlen($subject) <= $len)
 		return $subject;
 
 	// Shorten it by the length it was too long, and strip off junk from the end.
-	return $smcFunc['substr']($subject, 0, $len) . '...';
+	return StringLibrary::substr($subject, 0, $len) . '...';
 }
 
 /**
@@ -989,7 +991,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	{
 		// Was the page title set last minute? Also update the HTML safe one.
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = $smcFunc['htmlspecialchars'](un_htmlspecialchars($context['page_title'])) . (!empty($context['current_page']) ? ' - ' . $txt['page'] . ' ' . ($context['current_page'] + 1) : '');
+			$context['page_title_html_safe'] = StringLibrary::escape(un_htmlspecialchars($context['page_title'])) . (!empty($context['current_page']) ? ' - ' . $txt['page'] . ' ' . ($context['current_page'] + 1) : '');
 
 		// Display the screen in the logical order.
 		template_header();
@@ -1248,7 +1250,7 @@ function setupThemeContext($forceload = false)
 
 	$context['in_maintenance'] = !empty($maintenance);
 	$context['current_time'] = timeformat(time(), false);
-	$context['current_action'] = isset($_GET['action']) ? $smcFunc['htmlspecialchars']($_GET['action']) : '';
+	$context['current_action'] = isset($_GET['action']) ? StringLibrary::escape($_GET['action']) : '';
 
 	// Get some news...
 	$context['news_lines'] = array_filter(explode("\n", str_replace("\r", '', trim(addslashes($modSettings['news'])))));
@@ -1347,8 +1349,8 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['page_title'] = '';
 
 	// Set some specific vars.
-	$context['page_title_html_safe'] = $smcFunc['htmlspecialchars'](un_htmlspecialchars($context['page_title'])) . (!empty($context['current_page']) ? ' - ' . $txt['page'] . ' ' . ($context['current_page'] + 1) : '');
-	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? $smcFunc['htmlspecialchars']($modSettings['meta_keywords']) : '';
+	$context['page_title_html_safe'] = StringLibrary::escape(un_htmlspecialchars($context['page_title'])) . (!empty($context['current_page']) ? ' - ' . $txt['page'] . ' ' . ($context['current_page'] + 1) : '');
+	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? StringLibrary::escape($modSettings['meta_keywords']) : '';
 
 	// Content related meta tags, including Open Graph
 	$context['meta_tags'][] = ['property' => 'og:site_name', 'content' => $context['forum_name']];
@@ -1459,14 +1461,10 @@ function template_header()
  */
 function theme_copyright()
 {
-	global $txt, $software_year, $forum_version;
-
-	// Don't display copyright if we don't have the data..
-	if (!isset($forum_version) || !isset($software_year))
-		return;
+	global $txt;
 
 	// Put in the version...
-	return sprintf($txt['copyright'], $forum_version, $software_year);
+	return sprintf($txt['copyright'], App::SOFTWARE_VERSION, App::SOFTWARE_YEAR);
 }
 
 /**
@@ -1770,7 +1768,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, ['<br>' => ' ']));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
-	$words = un_htmlspecialchars($smcFunc['strtolower']($words));
+	$words = un_htmlspecialchars(StringLibrary::toLower($words));
 
 	// Step 3: Ready to split apart and index!
 	$words = explode(' ', $words);
@@ -2108,14 +2106,14 @@ function setupMenuContext()
 	// Show how many errors there are
 	if (allowedTo('admin_forum'))
 	{
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT COUNT(id_error)
 			FROM {db_prefix}log_errors',
 			[]
 		);
 
 		list($errors) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($errors)
 		{
@@ -2123,12 +2121,12 @@ function setupMenuContext()
 			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
 		}
 
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT COUNT(id_message)
 			FROM {db_prefix}contact_form
 			WHERE status = 0');
 		list($contactform) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($contactform)
 		{
@@ -2287,7 +2285,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 	// Is it going to be permanent?
 	if ($permanent)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT value
 			FROM {db_prefix}settings
 			WHERE variable = {string:variable}',
@@ -2296,7 +2294,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 			]
 		);
 		list ($current_functions) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($current_functions))
 		{
@@ -2351,7 +2349,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 	$integration_call = $function;
 
 	// Get the permanent functions.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:variable}',
@@ -2360,7 +2358,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 		]
 	);
 	list ($current_functions) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($current_functions))
 	{
@@ -2409,7 +2407,7 @@ function call_helper($string, $return = false)
 		return false;
 
 	// Stay vitaminized my friends...
-	$string = $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($string));
+	$string = StringLibrary::escape(StringLibrary::htmltrim($string));
 
 	// Loaded file failed
 	if (empty($string))
@@ -2504,7 +2502,7 @@ function prepareLikesContext($topic)
 	if (($temp = cache_get_data($cache_key, $ttl)) === null)
 	{
 		$temp = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT content_id
 			FROM {db_prefix}user_likes AS l
 				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
@@ -2613,29 +2611,6 @@ function fixchar__callback($matches)
 	// <= 0x10FFFF (1114111)
 	else
 		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-}
-
-/**
- * Strips out invalid html entities, replaces others with html style &#123; codes
- *
- * Callback function used of preg_replace_callback in smcFunc $ent_checks, for example
- * strpos, strlen, substr etc
- *
- * @param array $matches An array of matches (relevant info should be the 3rd item in the array)
- * @return string The fixed string
- */
-function entity_fix__callback($matches)
-{
-	if (!isset($matches[2]))
-		return '';
-
-	$num = $matches[2][0] === 'x' ? hexdec(substr($matches[2], 1)) : (int) $matches[2];
-
-	// we don't allow control characters, characters out of range, byte markers, etc
-	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num == 0x202D || $num == 0x202E)
-		return '';
-	else
-		return '&#' . $num . ';';
 }
 
 /**
@@ -2893,7 +2868,7 @@ function build_query_board($userid)
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 				SELECT mem.ignore_boards, mem.id_group, mem.additional_groups
 				FROM {db_prefix}members AS mem
 				WHERE mem.id_member = {int:id_member}
@@ -2924,7 +2899,7 @@ function build_query_board($userid)
 		// What boards are they the moderator of?
 		$boards_mod = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
@@ -2934,10 +2909,10 @@ function build_query_board($userid)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',
@@ -2947,7 +2922,7 @@ function build_query_board($userid)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we've got duplicates here...
 		$boards_mod = array_unique($boards_mod);
@@ -2986,7 +2961,7 @@ function get_main_menu_groups()
 	if (($groups = cache_get_data('char_main_menu_groups', 300)) === null)
 	{
 		$groups = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mg.id_group, mg.group_name
 			FROM {db_prefix}membergroups AS mg
 			INNER JOIN {db_prefix}characters AS chars ON (chars.main_char_group = mg.id_group)
@@ -2997,7 +2972,7 @@ function get_main_menu_groups()
 		{
 			$groups[$row['id_group']] = $row['group_name'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		cache_put_data('char_main_menu_groups', $groups, 300);
 	}
@@ -3049,14 +3024,14 @@ function get_user_possible_characters($id_member, $board_id = 0)
 			$board_in_character = !empty($board_info['in_character']);
 		} else {
 			$board_in_character = false;
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_board, in_character
 				FROM {db_prefix}boards');
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				$boards_ic[$row['id_board']] = $row['in_character'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (isset($boards_ic[$board_id]))
 			{

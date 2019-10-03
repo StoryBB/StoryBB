@@ -3,13 +3,15 @@
  * This file contains core of the code for Mentions
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Helper;
+
+use StoryBB\StringLibrary;
 
 /**
  * This really is a pseudo class, I couldn't justify having instance of it
@@ -34,7 +36,7 @@ class Mentions
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, mem.real_name, mem.email_address, mem.id_group, mem.additional_groups,
 				mem.lngfile, ment.id_member AS id_mentioned_by, ment.real_name AS mentioned_by_name,
 				m.id_character AS dest_chr, chars.character_name AS dest_chr_name, chars.is_main AS dest_is_main,
@@ -74,7 +76,7 @@ class Mentions
 				],
 				'lngfile' => $row['lngfile'],
 			];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $members;
 	}
@@ -144,7 +146,7 @@ class Mentions
 		if (empty($possible_names) || !allowedTo('mention'))
 			return [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
 				chars.is_main, chars.retired
 			FROM {db_prefix}characters AS chars
@@ -164,7 +166,7 @@ class Mentions
 
 			$members[$row['id_character']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $members;
 	}
@@ -240,7 +242,7 @@ class Mentions
 			$count = count($match);
 			
 			for ($i = 1; $i <= $count; $i++)
-				$names[] = $smcFunc['htmlspecialchars']($smcFunc['htmltrim'](implode('', array_slice($match, 0, $i))));
+				$names[] = StringLibrary::escape(StringLibrary::htmltrim(implode('', array_slice($match, 0, $i))));
 		}
 
 		$names = array_unique($names);

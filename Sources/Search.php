@@ -4,24 +4,16 @@
  * Handle all of the searching from here.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
-// @todo fix this
-// This defines two version types for checking the API's are compatible with this version of StoryBB.
-$GLOBALS['search_versions'] = [
-	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'StoryBB 1.0 Alpha 1',
-	// This is the minimum version of StoryBB that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('StoryBB 3+0=Alpha=1', ['+' => '.', '=' => ' ']),
-];
-
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * Ask the user what they want to search for.
@@ -85,7 +77,7 @@ function PlushSearch1()
 		$context['search_params']['search'] = un_htmlspecialchars($_REQUEST['search']);
 
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
+		$context['search_params']['search'] = StringLibrary::escape($context['search_params']['search']);
 	if (isset($context['search_params']['userspec']))
 		$context['search_params']['userspec'] = (int) $context['search_params']['userspec'];
 	if (!empty($context['search_params']['searchtype']))
@@ -118,7 +110,7 @@ function PlushSearch1()
 	}
 
 	// Find all the boards this user is allowed to see.
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_cat, c.name AS cat_name, b.id_board, b.name, b.child_level
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -128,7 +120,7 @@ function PlushSearch1()
 			'empty_string' => '',
 		]
 	);
-	$context['num_boards'] = $smcFunc['db_num_rows']($request);
+	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['boards_check_all'] = true;
 	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -153,7 +145,7 @@ function PlushSearch1()
 		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
 			$context['boards_check_all'] = false;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
@@ -201,7 +193,7 @@ function PlushSearch1()
 			'href' => $scripturl . '?topic=' . $context['search_params']['topic'] . '.0',
 		];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT ms.subject
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -216,11 +208,11 @@ function PlushSearch1()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
 		list ($context['search_topic']['subject']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['search_topic']['link'] = '<a href="' . $context['search_topic']['href'] . '">' . $context['search_topic']['subject'] . '</a>';
 	}
@@ -381,7 +373,7 @@ function PlushSearch2()
 
 	if (!empty($search_params['minage']) || !empty($search_params['maxage']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT ' . (empty($search_params['maxage']) ? '0, ' : 'COALESCE(MIN(id_msg), -1), ') . (empty($search_params['minage']) ? '0' : 'COALESCE(MAX(id_msg), -1)') . '
 			FROM {db_prefix}messages
 			WHERE 1=1
@@ -397,7 +389,7 @@ function PlushSearch2()
 		list ($minMsgID, $maxMsgID) = $smcFunc['db_fetch_row']($request);
 		if ($minMsgID < 0 || $maxMsgID < 0)
 			$context['search_errors']['no_messages_in_time_frame'] = true;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Default the user name to a wildcard matching every user (*).
@@ -423,7 +415,7 @@ function PlushSearch2()
 			$userQuery = '';
 		else
 		{
-			$userQuery = $smcFunc['db_quote'](
+			$userQuery = $smcFunc['db']->quote(
 				'm.id_character IN ({array_int:userspec})',
 				[
 					'userspec' => $search_params['userspec'],
@@ -453,7 +445,7 @@ function PlushSearch2()
 	// Special case for boards: searching just one topic?
 	if (!empty($search_params['topic']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -467,12 +459,12 @@ function PlushSearch2()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
 		$search_params['brd'] = [];
 		list ($search_params['brd'][0]) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
 	elseif ($user_info['is_admin'] && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
@@ -480,7 +472,7 @@ function PlushSearch2()
 	else
 	{
 		$see_board = empty($search_params['advanced']) ? 'query_wanna_see_board' : 'query_see_board';
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {raw:boards_allowed_to_see}
@@ -497,7 +489,7 @@ function PlushSearch2()
 		$search_params['brd'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$search_params['brd'][] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This error should pro'bly only happen for hackers.
 		if (empty($search_params['brd']))
@@ -510,7 +502,7 @@ function PlushSearch2()
 			$search_params['brd'][$k] = (int) $v;
 
 		// If we've selected all boards, this parameter can be left empty.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}boards
 			WHERE redirect = {string:empty_string}',
@@ -519,7 +511,7 @@ function PlushSearch2()
 			]
 		);
 		list ($num_boards) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (count($search_params['brd']) == $num_boards)
 			$boardQuery = '';
@@ -583,7 +575,7 @@ function PlushSearch2()
 	if (!isset($search_params['search']) || $search_params['search'] == '')
 		$context['search_errors']['invalid_search_string'] = true;
 	// Too long?
-	elseif ($smcFunc['strlen']($search_params['search']) > $context['search_string_limit'])
+	elseif (StringLibrary::strlen($search_params['search']) > $context['search_string_limit'])
 	{
 		$context['search_errors']['string_too_long'] = true;
 	}
@@ -592,7 +584,7 @@ function PlushSearch2()
 	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
-	$stripped_query = un_htmlspecialchars($smcFunc['strtolower']($stripped_query));
+	$stripped_query = un_htmlspecialchars(StringLibrary::toLower($stripped_query));
 
 	// This (hidden) setting will do fulltext searching in the most basic way.
 	if (!empty($modSettings['search_simple_fulltext']))
@@ -606,7 +598,7 @@ function PlushSearch2()
 
 	// Remove the phrase parts and extract the words.
 	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']);
-	$wordArray = explode(' ', $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
+	$wordArray = explode(' ', StringLibrary::escape(un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
 	$excludedWords = [];
@@ -653,7 +645,7 @@ function PlushSearch2()
 			unset($searchArray[$index]);
 		}
 		// Don't allow very, very short words.
-		elseif ($smcFunc['strlen']($value) < 2)
+		elseif (StringLibrary::strlen($value) < 2)
 		{
 			$context['search_ignored'][] = $value;
 			unset($searchArray[$index]);
@@ -749,7 +741,7 @@ function PlushSearch2()
 	// Let the user adjust the search query, should they wish?
 	$context['search_params'] = $search_params;
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
+		$context['search_params']['search'] = StringLibrary::escape($context['search_params']['search']);
 
 	// Do we have captcha enabled?
 	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
@@ -980,7 +972,7 @@ function PlushSearch2()
 							foreach ($row as $key => $value)
 								$inserts[$row[1]][] = (int) $row[$key];
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 						$numSubjectResults = count($inserts);
 					}
 					else
@@ -1207,7 +1199,7 @@ function PlushSearch2()
 
 								$inserts[$row[$ind]] = $row;
 							}
-							$smcFunc['db_free_result']($ignoreRequest);
+							$smcFunc['db']->free_result($ignoreRequest);
 							$numSubjectResults = count($inserts);
 						}
 						else
@@ -1305,7 +1297,7 @@ function PlushSearch2()
 
 									$inserts[$row[0]] = $row;
 								}
-								$smcFunc['db_free_result']($ignoreRequest);
+								$smcFunc['db']->free_result($ignoreRequest);
 								$indexedResults = count($inserts);
 							}
 							else
@@ -1439,7 +1431,7 @@ function PlushSearch2()
 							foreach ($row as $key => $value)
 								$inserts[$row[2]][] = (int) $row[$key];
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 
 						// Now put them in!
 						if (!empty($inserts))
@@ -1510,7 +1502,7 @@ function PlushSearch2()
 							$usedIDs[$row[1]] = true;
 							$inserts[] = $row;
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 
 						// Now put them in!
 						if (!empty($inserts))
@@ -1559,7 +1551,7 @@ function PlushSearch2()
 			// By default they didn't participate in the topic!
 			$participants[$row['id_topic']] = false;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$num_results = $_SESSION['search_cache']['num_results'];
 	}
@@ -1583,7 +1575,7 @@ function PlushSearch2()
 		$msg_list = array_keys($context['topics']);
 
 		// Load the posters...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}messages
 			WHERE id_member != {int:no_member}
@@ -1598,7 +1590,7 @@ function PlushSearch2()
 		$posters = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$posters[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		call_integration_hook('integrate_search_message_list', [&$msg_list, &$posters]);
 
@@ -1606,7 +1598,7 @@ function PlushSearch2()
 			loadMemberData(array_unique($posters));
 
 		// Get the messages out for the callback - select enough that it can be made to look just like Display.
-		$messages_request = $smcFunc['db_query']('', '
+		$messages_request = $smcFunc['db']->query('', '
 			SELECT
 				m.id_msg, m.subject, m.poster_name, m.poster_email, m.poster_time, m.id_member,
 				m.poster_ip, m.body, m.smileys_enabled, m.modified_time, m.modified_name,
@@ -1638,13 +1630,13 @@ function PlushSearch2()
 		);
 
 		// If there are no results that means the things in the cache got deleted, so pretend we have no topics anymore.
-		if ($smcFunc['db_num_rows']($messages_request) == 0)
+		if ($smcFunc['db']->num_rows($messages_request) == 0)
 			$context['topics'] = [];
 
 		// If we want to know who participated in what then load this now.
 		if (!$user_info['is_guest'])
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT id_topic
 				FROM {db_prefix}messages
 				WHERE id_topic IN ({array_int:topic_list})
@@ -1659,7 +1651,7 @@ function PlushSearch2()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($result))
 				$participants[$row['id_topic']] = true;
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 	}
 
@@ -1761,10 +1753,10 @@ function prepareSearchContext($reset = false)
 		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], ['</div>' => '<br>', '</li>' => '<br>']), '<br>');
 
-		if ($smcFunc['strlen']($message['body']) > $charLimit)
+		if (StringLibrary::strlen($message['body']) > $charLimit)
 		{
 			if (empty($context['key_words']))
-				$message['body'] = $smcFunc['substr']($message['body'], 0, $charLimit) . '<strong>...</strong>';
+				$message['body'] = StringLibrary::substr($message['body'], 0, $charLimit) . '<strong>...</strong>';
 			else
 			{
 				$matchString = '';
@@ -1772,7 +1764,7 @@ function prepareSearchContext($reset = false)
 				foreach ($context['key_words'] as $keyword)
 				{
 					$keyword = un_htmlspecialchars($keyword);
-					$keyword = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', strtr($keyword, ['\\\'' => '\'', '&' => '&amp;']));
+					$keyword = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], strtr($keyword, ['\\\'' => '\'', '&' => '&amp;']));
 
 					if (preg_match('~[\'\.,/@%&;:(){}\[\]_\-+\\\\]$~', $keyword) != 0 || preg_match('~^[\'\.,/@%&;:(){}\[\]_\-+\\\\]~', $keyword) != 0)
 						$force_partial_word = true;
@@ -1790,13 +1782,13 @@ function prepareSearchContext($reset = false)
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
 				{
-					$match = strtr($smcFunc['htmlspecialchars']($match, ENT_QUOTES), ["\n" => '&nbsp;']);
+					$match = strtr(StringLibrary::escape($match, ENT_QUOTES), ["\n" => '&nbsp;']);
 					$message['body'] .= '<strong>......</strong>&nbsp;' . $match . '&nbsp;<strong>......</strong>';
 				}
 			}
 
 			// Re-fix the international characters.
-			$message['body'] = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $message['body']);
+			$message['body'] = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], $message['body']);
 		}
 	}
 	else
@@ -1911,7 +1903,7 @@ function prepareSearchContext($reset = false)
 		// Fix the international characters in the keyword too.
 		$query = un_htmlspecialchars($query);
 		$query = trim($query, "\*+");
-		$query = strtr($smcFunc['htmlspecialchars']($query), ['\\\'' => '\'']);
+		$query = strtr(StringLibrary::escape($query), ['\\\'' => '\'']);
 
 		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, ['\'' => '&#039;']), '/') . ')/iu', function ($m)
 		{
@@ -1958,8 +1950,8 @@ function prepareSearchContext($reset = false)
 			$is_online = $message['id_character'] == $output['matches'][$match_id]['member']['current_character'];
 			$output['matches'][$match_id]['member']['online'] = [
 				'is_online' => $is_online,
-				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
-				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'text' => StringLibrary::escape($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], StringLibrary::escape($character['character_name'])),
 				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$is_online ? 'online' : 'offline']
@@ -1980,7 +1972,7 @@ function prepareSearchContext($reset = false)
  */
 function findSearchAPI()
 {
-	global $sourcedir, $modSettings, $search_versions, $searchAPI, $txt;
+	global $sourcedir, $modSettings, $searchAPI, $txt;
 
 	require_once($sourcedir . '/Subs-Package.php');
 

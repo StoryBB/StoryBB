@@ -5,13 +5,14 @@
  * as well as allow the administrator to register new members themselves.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Model\Policy;
+use StoryBB\StringLibrary;
 
 /**
  * Entrance point for the registration center, it checks permissions and forwards
@@ -137,7 +138,7 @@ function AdminRegister()
 	// Load the assignable member groups.
 	if (allowedTo('manage_membergroups'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT group_name, id_group
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}' . (allowedTo('admin_forum') ? '' : '
@@ -156,7 +157,7 @@ function AdminRegister()
 		$context['member_groups'] = [0 => $txt['admin_register_group_none']];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['member_groups'][$row['id_group']] = $row['group_name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$context['member_groups'] = [];
@@ -309,7 +310,7 @@ function ManagePolicies()
 				// Policy name is not optional - but if we don't have one, don't overwrite what we already had.
 				if (!empty($_POST['policy_name']))
 				{
-					$policy_details['title'] = $smcFunc['htmlspecialchars']($_POST['policy_name']);
+					$policy_details['title'] = StringLibrary::escape($_POST['policy_name']);
 				}
 				elseif (!empty($policy['versions'][$context['policy_language']]))
 				{
@@ -322,7 +323,7 @@ function ManagePolicies()
 				}
 
 				// Policy description is optional.
-				$policy_details['description'] = isset($_POST['policy_desc']) ? $smcFunc['htmlspecialchars']($_POST['policy_desc'], ENT_QUOTES) : '';
+				$policy_details['description'] = isset($_POST['policy_desc']) ? StringLibrary::escape($_POST['policy_desc'], ENT_QUOTES) : '';
 
 				// Showing on registration is easy.
 				$policy_details['show_reg'] = !empty($_POST['show_reg']);
@@ -335,7 +336,7 @@ function ManagePolicies()
 
 				if (!empty($_POST['message']))
 				{
-					$policy_details['policy_text'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+					$policy_details['policy_text'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 					preparsecode($policy_details['policy_text']);
 					// We need to fix a few of the replacements where we have links as placeholders.
 					$replacements = [
@@ -353,7 +354,7 @@ function ManagePolicies()
 				{
 					// If the policy can be required, let's check if that's a thing.
 					$force_update = !empty($_POST['policy_reagree']);
-					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? $smcFunc['htmlspecialchars']($_POST['policy_edit'], ENT_QUOTES) : '';
+					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? StringLibrary::escape($_POST['policy_edit'], ENT_QUOTES) : '';
 				}
 
 				// Update the policy with the new details.

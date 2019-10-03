@@ -6,13 +6,14 @@
  * and the post box.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Takes a message and parses it, returning nothing.
@@ -247,7 +248,7 @@ function un_preparsecode($message)
 
 	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m) use ($smcFunc)
 	{
-		return "[html]" . strtr($smcFunc['htmlspecialchars']("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
+		return "[html]" . strtr(StringLibrary::escape("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
 	}, $message);
 
 	if (!empty($code_tags))
@@ -531,7 +532,7 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 	{
 		$nextSendTime = time() + 10;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:nextSendTime}
 			WHERE variable = {literal:mail_next_send}
@@ -618,11 +619,11 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		];
 
 	// This is the one that will go in their inbox.
-	$htmlmessage = $smcFunc['htmlspecialchars']($message, ENT_QUOTES);
+	$htmlmessage = StringLibrary::escape($message, ENT_QUOTES);
 	preparsecode($htmlmessage);
-	$htmlsubject = strtr($smcFunc['htmlspecialchars']($subject), ["\r" => '', "\n" => '', "\t" => '']);
-	if ($smcFunc['strlen']($htmlsubject) > 100)
-		$htmlsubject = $smcFunc['substr']($htmlsubject, 0, 100);
+	$htmlsubject = strtr(StringLibrary::escape($subject), ["\r" => '', "\n" => '', "\t" => '']);
+	if (StringLibrary::strlen($htmlsubject) > 100)
+		$htmlsubject = StringLibrary::substr($htmlsubject, 0, 100);
 
 	// Make sure is an array
 	if (!is_array($recipients))
@@ -639,25 +640,25 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		{
 			if (!is_numeric($recipients[$rec_type][$id]))
 			{
-				$recipients[$rec_type][$id] = $smcFunc['strtolower'](trim(preg_replace('~[<>&"\'=\\\]~', '', $recipients[$rec_type][$id])));
+				$recipients[$rec_type][$id] = StringLibrary::toLower(trim(preg_replace('~[<>&"\'=\\\]~', '', $recipients[$rec_type][$id])));
 				$usernames[$recipients[$rec_type][$id]] = 0;
 			}
 		}
 	}
 	if (!empty($usernames))
 	{
-		$request = $smcFunc['db_query']('pm_find_username', '
+		$request = $smcFunc['db']->query('pm_find_username', '
 			SELECT id_member, member_name
 			FROM {db_prefix}members
-			WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name') . ' IN ({array_string:usernames})',
+			WHERE ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name)' : 'member_name') . ' IN ({array_string:usernames})',
 			[
 				'usernames' => array_keys($usernames),
 			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			if (isset($usernames[$smcFunc['strtolower']($row['member_name'])]))
-				$usernames[$smcFunc['strtolower']($row['member_name'])] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+			if (isset($usernames[StringLibrary::toLower($row['member_name'])]))
+				$usernames[StringLibrary::toLower($row['member_name'])] = $row['id_member'];
+		$smcFunc['db']->free_result($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.
 		foreach ($recipients as $rec_type => $rec)
@@ -686,7 +687,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	$all_to = array_merge($recipients['to'], $recipients['bcc']);
 
 	// Check no-one will want it deleted right away!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			id_member, criteria, is_or
 		FROM {db_prefix}pm_rules
@@ -718,14 +719,14 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if ($delete)
 			$deletes[$row['id_member']] = 1;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the membergrounp message limits.
 	// @todo Consider caching this?
 	static $message_limit_cache = [];
 	if (!allowedTo('moderate_forum') && empty($message_limit_cache))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, max_messages
 			FROM {db_prefix}membergroups',
 			[
@@ -733,7 +734,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$message_limit_cache[$row['id_group']] = $row['max_messages'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Load the groups that are allowed to read PMs.
@@ -744,7 +745,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	require_once($sourcedir . '/Subs-Notify.php');
 	$notifyPrefs = getNotifyPrefs($all_to, ['pm_new', 'pm_reply', 'pm_notify'], true);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			member_name, real_name, id_member, email_address, lngfile
 			instant_messages,' . (allowedTo('moderate_forum') ? ' 0' : '
@@ -836,7 +837,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 		$log['sent'][$row['id_member']] = sprintf(isset($txt['pm_successfully_sent']) ? $txt['pm_successfully_sent'] : '', $row['real_name']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Only 'send' the message if there are any recipients left.
 	if (empty($all_to))
@@ -862,7 +863,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	{
 		// If this is new we need to set it part of it's own conversation.
 		if (empty($pm_head))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}personal_messages
 				SET id_pm_head = {int:id_pm_head}
 				WHERE id_pm = {int:id_pm_head}',
@@ -872,7 +873,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			);
 
 		// Some people think manually deleting personal_messages is fun... it's not. We protect against it though :)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}pm_recipients
 			WHERE id_pm = {int:id_pm}',
 			[
@@ -903,7 +904,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	if (empty($modSettings['disallow_sendBody']))
 	{
 		censorText($message);
-		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($smcFunc['htmlspecialchars']($message), false), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
+		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc(StringLibrary::escape($message), false), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
 	}
 	else
 		$message = '';
@@ -911,7 +912,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	$to_names = [];
 	if (count($to_list) > 1)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:to_members})',
@@ -921,7 +922,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$to_names[] = un_htmlspecialchars($row['real_name']);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	$replacements = [
 		'SUBJECT' => $subject,
@@ -982,7 +983,7 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 		$topics = [$topics];
 
 	// Get the subject and body...
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT mf.subject, ml.body, ml.id_member, t.id_last_msg, t.id_topic, t.id_board,
 			COALESCE(mem.real_name, ml.poster_name) AS poster_name, mf.id_msg
 		FROM {db_prefix}topics AS t
@@ -1023,7 +1024,7 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 			'members_only' => $members_only,
 		]);
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	StoryBB\Task::commit_batch_queue();
 }
@@ -1077,7 +1078,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		return false;
 
 	// May as well start at the beginning, working out *what* we need to change.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_msg, m.approved, m.id_topic, m.id_board, t.id_first_msg, t.id_last_msg,
 			m.body, m.subject, COALESCE(mem.real_name, m.poster_name) AS poster_name, m.id_member,
 			t.approved AS topic_approved, b.count_posts, m.id_character
@@ -1180,13 +1181,13 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			$char_post_changes[$row['id_character']] = isset($char_post_changes[$row['id_character']]) ? $char_post_changes[$row['id_character']] + 1 : 1;
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($msgs))
 		return;
 
 	// Now we have the differences make the changes, first the easy one.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET approved = {int:approved_state}
 		WHERE id_msg IN ({array_int:message_list})',
@@ -1199,7 +1200,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	// If we were unapproving find the last msg in the topics...
 	if (!$approve)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic, MAX(id_msg) AS id_last_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})
@@ -1212,12 +1213,12 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_changes[$row['id_topic']]['id_last_msg'] = $row['id_last_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// ... next the topics...
 	foreach ($topic_changes as $id => $changes)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}topics
 			SET approved = {int:approved}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_replies = num_replies + {int:num_replies}, id_last_msg = {int:id_last_msg}
@@ -1233,7 +1234,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 
 	// ... finally the boards...
 	foreach ($board_changes as $id => $changes)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET num_posts = num_posts + {int:num_posts}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_topics = num_topics + {int:num_topics}, unapproved_topics = unapproved_topics + {int:unapproved_topics}
@@ -1274,7 +1275,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		if ($notify)
 			StoryBB\Task::commit_batch_queue();
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}approval_queue
 			WHERE id_msg IN ({array_int:message_list})
 				AND id_attach = {int:id_attach}',
@@ -1334,7 +1335,7 @@ function approveTopics($topics, $approve = true)
 	$approve_type = $approve ? 0 : 1;
 
 	// Just get the messages to be approved and pass through...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})
@@ -1347,7 +1348,7 @@ function approveTopics($topics, $approve = true)
 	$msgs = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$msgs[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return approvePosts($msgs, $approve);
 }
@@ -1379,7 +1380,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	if (!$id_msg)
 	{
 		// Find the latest message on this board (highest id_msg.)
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board, MAX(id_last_msg) AS id_msg
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
@@ -1393,7 +1394,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 		$lastMsg = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$lastMsg[$row['id_board']] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -1464,7 +1465,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	// Now commit the changes!
 	foreach ($parent_updates as $id_msg => $boards)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})
@@ -1477,7 +1478,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	}
 	foreach ($board_updates as $board_data)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})',
@@ -1509,7 +1510,7 @@ function adminNotify($type, $memberID, $member_name = null)
 	if ($member_name == null)
 	{
 		// Get the new user's name....
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT real_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
@@ -1519,7 +1520,7 @@ function adminNotify($type, $memberID, $member_name = null)
 			]
 		);
 		list ($member_name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// This is really just a wrapper for making a new background task to deal with all the fun.

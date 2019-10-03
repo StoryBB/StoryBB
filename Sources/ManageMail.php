@@ -6,11 +6,13 @@
  * @todo refactor as controller-model.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
+
+use StoryBB\StringLibrary;
 
 /**
  * Main dispatcher. This function checks permissions and passes control through to the relevant section.
@@ -66,7 +68,7 @@ function BrowseMailQueue()
 	{
 		checkSession();
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_ids})',
 			[
@@ -76,14 +78,14 @@ function BrowseMailQueue()
 	}
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS queue_size, MIN(time_sent) AS oldest
 		FROM {db_prefix}mail_queue',
 		[
 		]
 	);
 	list ($mailQueueSize, $mailOldest) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['oldest_mail'] = empty($mailOldest) ? $txt['mailqueue_oldest_not_available'] : time_since(time() - $mailOldest);
 	$context['mail_queue_size'] = comma_format($mailQueueSize);
@@ -109,7 +111,7 @@ function BrowseMailQueue()
 				'data' => [
 					'function' => function($rowData) use ($smcFunc)
 					{
-						return $smcFunc['strlen']($rowData['subject']) > 50 ? sprintf('%1$s...', $smcFunc['htmlspecialchars']($smcFunc['substr']($rowData['subject'], 0, 47))) : $smcFunc['htmlspecialchars']($rowData['subject']);
+						return StringLibrary::strlen($rowData['subject']) > 50 ? sprintf('%1$s...', StringLibrary::escape(StringLibrary::substr($rowData['subject'], 0, 47))) : StringLibrary::escape($rowData['subject']);
 					},
 					'class' => 'smalltext',
 				],
@@ -221,7 +223,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			id_mail, time_sent, recipient, priority, private, subject
 		FROM {db_prefix}mail_queue
@@ -242,7 +244,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 
 		$mails[] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $mails;
 }
@@ -257,14 +259,14 @@ function list_getMailQueueSize()
 	global $smcFunc;
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS queue_size
 		FROM {db_prefix}mail_queue',
 		[
 		]
 	);
 	list ($mailQueueSize) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $mailQueueSize;
 }
@@ -382,14 +384,14 @@ function ClearMailQueue()
 	if (!isset($_GET['te']))
 	{
 		// How many items do we have?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*) AS queue_size
 			FROM {db_prefix}mail_queue',
 			[
 			]
 		);
 		list ($_GET['te']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$_GET['te'] = (int) $_GET['te'];

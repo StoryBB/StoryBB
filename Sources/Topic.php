@@ -5,7 +5,7 @@
  * lock/unlock a topic, sticky/unsticky it,
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -35,7 +35,7 @@ function LockTopic()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Find out who started the topic - in case User Topic Locking is enabled.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member_started, locked
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -45,7 +45,7 @@ function LockTopic()
 		]
 	);
 	list ($starter, $locked) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Can you lock topics here, mister?
 	$user_lock = !allowedTo('lock_any');
@@ -68,7 +68,7 @@ function LockTopic()
 		fatal_lang_error('locked_by_admin', 'user');
 
 	// Actually lock the topic in the database with the new value.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET locked = {int:locked}
 		WHERE id_topic = {int:current_topic}',
@@ -115,7 +115,7 @@ function Sticky()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Is this topic already stickied, or no?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT is_sticky
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -125,10 +125,10 @@ function Sticky()
 		]
 	);
 	list ($is_sticky) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Toggle the sticky value.... pretty simple ;).
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET is_sticky = {int:is_sticky}
 		WHERE id_topic = {int:current_topic}',

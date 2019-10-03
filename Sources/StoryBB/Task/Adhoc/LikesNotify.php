@@ -4,7 +4,7 @@
  * This task handles notifying users when something is liked.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -29,7 +29,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		// We need to figure out who the owner of this is.
 		if ($this->_details['content_type'] == 'msg')
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT mem.id_member, mem.id_group, mem.additional_groups, b.member_groups,
 					m.id_character, chars.is_main, mem.pm_ignore_list
 				FROM {db_prefix}messages AS m
@@ -53,7 +53,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 				if (in_array(1, $groups) || count(array_intersect($allowed, $groups)) != 0)
 					$author = $row['id_member'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
@@ -92,7 +92,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 
 		// Don't spam the alerts: if there is an existing unread alert of the
 		// requested type for the target user from the sender, don't make a new one.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert
 			FROM {db_prefix}user_alerts
 			WHERE id_member = {int:id_member}
@@ -108,9 +108,9 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 			return true;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Issue, update, move on.
 		$smcFunc['db_insert']('insert',

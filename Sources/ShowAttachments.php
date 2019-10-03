@@ -4,7 +4,7 @@
  * This file handles avatar and attachment requests. The whole point of this file is to reduce the loaded stuff to show an image.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -84,7 +84,7 @@ function showAttachment($force_attach = false)
 		else
 		{
 			// Make sure this attachment is on this board and load its info while we are at it.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_folder, filename, file_hash, fileext, id_attach, id_thumb, attachment_type, mime_type, approved, id_msg
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:attach}
@@ -96,14 +96,14 @@ function showAttachment($force_attach = false)
 		}
 
 		// No attachment has been found.
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			header('HTTP/1.0 404 File Not Found');
 			die('404 File Not Found');
 		}
 
 		$file = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If theres a message ID stored, we NEED a topic ID.
 		if (!empty($file['id_msg']) && empty($attachTopic) && empty($preview))
@@ -115,7 +115,7 @@ function showAttachment($force_attach = false)
 		// Previews doesn't have this info.
 		if (empty($preview) && !$force_attach)
 		{
-			$request2 = $smcFunc['db_query']('', '
+			$request2 = $smcFunc['db']->query('', '
 				SELECT a.id_msg
 				FROM {db_prefix}attachments AS a
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg AND m.id_topic = {int:current_topic})
@@ -129,13 +129,13 @@ function showAttachment($force_attach = false)
 			);
 
 			// The provided topic must match the one stored in the DB for this particular attachment, also.
-			if ($smcFunc['db_num_rows']($request2) == 0)
+			if ($smcFunc['db']->num_rows($request2) == 0)
 			{
 				header('HTTP/1.0 404 File Not Found');
 				die('404 File Not Found');
 			}
 
-			$smcFunc['db_free_result']($request2);
+			$smcFunc['db']->free_result($request2);
 		}
 
 		// set filePath and ETag time
@@ -149,7 +149,7 @@ function showAttachment($force_attach = false)
 		$thumbFile = [];
 		if (!empty($file['id_thumb']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_character
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:thumb_id}
@@ -160,7 +160,7 @@ function showAttachment($force_attach = false)
 			);
 
 			$thumbFile = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Got something! replace the $file var with the thumbnail info.
 			if ($thumbFile)
@@ -231,7 +231,7 @@ function showAttachment($force_attach = false)
 
 	// Update the download counter (unless it's a thumbnail or resuming an incomplete download).
 	if ($file['attachment_type'] != Attachment::ATTACHMENT_THUMBNAIL && empty($showThumb) && $range === 0)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}attachments
 			SET downloads = downloads + 1
 			WHERE id_attach = {int:id_attach}',

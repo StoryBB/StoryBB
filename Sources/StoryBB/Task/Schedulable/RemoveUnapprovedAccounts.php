@@ -3,7 +3,7 @@
  * Check for and remove accounts that haven't validated.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -53,7 +53,7 @@ class RemoveUnapprovedAccounts implements \StoryBB\Task\Schedulable
 
 		$date_registered = time() - ((int) $modSettings['remove_unapproved_accounts_days'] * 86400);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}members
 			WHERE is_activated IN ({int:unactivated}, {int:unactivatedbanned})
 			AND date_registered <= {int:date_registered}',

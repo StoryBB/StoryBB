@@ -3,7 +3,7 @@
  * Base class for every scheduled task which also functions as a sort of interface as well.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -50,7 +50,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 
 		// Before we go any further, we need the banned IPs so that we can exclude them going forward.
 		$banned_ips = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT ip_low, ip_high
 			FROM {db_prefix}ban_items AS bi
 				INNER JOIN {db_prefix}ban_groups AS bg ON (bi.id_ban_group = bg.id_ban_group)
@@ -63,7 +63,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 		{
 			$banned_ips[] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $banned_ips;
 	}
@@ -85,7 +85,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 		$sensitive_timestamp = $now - ($sensitive_period * 86400);
 
 		// The flood control table keeps IPs - so we have to clean it. Anything more than a day old shouldn't exist anyway...
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_floodcontrol
 			WHERE log_time < {int:log_time}',
 			[
@@ -94,7 +94,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 		);
 
 		// Ditto the online log but because historically admins have done odd things, give it a day plus an hour.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE log_time < {int:log_time}',
 			[
@@ -103,7 +103,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 		);
 
 		// Now fix the error log, first session IDs.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_errors
 			SET session = {empty}
 			WHERE log_time < {int:log_time}',
@@ -143,7 +143,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 
 		// Find any rows that might be relevant, check they're not banned, and add them to the list.
 		$erase = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT {raw:id_column}, {raw:ip_column}
 			FROM {db_prefix}' . $table_name . '
 			WHERE {raw:time_column} < {int:log_time}',
@@ -166,13 +166,13 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 
 			$erase[] = $row[$id_column];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now the actual deletion.
 		if (empty($erase))
 			return;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}' . $table_name . '
 			SET {raw:ip_column} = NULL
 			WHERE {raw:id_column} IN ({array_int:erase})',

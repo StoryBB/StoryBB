@@ -4,13 +4,14 @@
  * Maintains all XML-based interaction (mainly XMLhttp)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * The main handler and designator for AJAX stuff - jumpto and previews
@@ -98,7 +99,7 @@ function newspreview()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	$errors = [];
-	$news = !isset($_POST['news']) ? '' : $smcFunc['htmlspecialchars']($_POST['news'], ENT_QUOTES);
+	$news = !isset($_POST['news']) ? '' : StringLibrary::escape($_POST['news'], ENT_QUOTES);
 	if (empty($news))
 		$errors[] = ['value' => 'no_news'];
 	else
@@ -167,7 +168,7 @@ function sig_preview()
 	$errors = [];
 	if (!empty($user) && $can_change)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT signature
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
@@ -177,7 +178,7 @@ function sig_preview()
 			]
 		);
 		list($current_signature) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		censorText($current_signature);
 		$current_signature = !empty($current_signature) ? Parser::parse_bbc($current_signature, true, 'sig' . $user) : $txt['no_signature_set'];
 
@@ -244,7 +245,7 @@ function warning_preview()
 	if (allowedTo('issue_warning'))
 	{
 		$warning_body = !empty($_POST['body']) ? trim(censorText($_POST['body'])) : '';
-		$context['preview_subject'] = !empty($_POST['title']) ? trim($smcFunc['htmlspecialchars']($_POST['title'])) : '';
+		$context['preview_subject'] = !empty($_POST['title']) ? trim(StringLibrary::escape($_POST['title'])) : '';
 		if (isset($_POST['issuing']))
 		{
 			if (empty($_POST['title']) || empty($_POST['body']))

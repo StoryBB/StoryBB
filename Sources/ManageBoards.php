@@ -4,7 +4,7 @@
  * Manage and maintain the boards and categories of the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * The main dispatcher; doesn't do anything, just delegates.
@@ -156,7 +157,7 @@ function EditCategory()
 		$context['category'] = [
 			'id' => 0,
 			'name' => $txt['mboards_new_cat_name'],
-			'editable_name' => $smcFunc['htmlspecialchars']($txt['mboards_new_cat_name']),
+			'editable_name' => StringLibrary::escape($txt['mboards_new_cat_name']),
 			'description' => '',
 			'can_collapse' => true,
 			'is_new' => true,
@@ -242,8 +243,8 @@ function EditCategory2()
 			$catOptions['move_after'] = (int) $_POST['cat_order'];
 
 		// Change "This & That" to "This &amp; That" but don't change "&cent" to "&amp;cent;"...
-		$catOptions['cat_name'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_name']), false, '', $context['description_allowed_tags']);
-		$catOptions['cat_desc'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_desc']), false, '', $context['description_allowed_tags']);
+		$catOptions['cat_name'] = Parser::parse_bbc(StringLibrary::escape($_POST['cat_name']), false, '', $context['description_allowed_tags']);
+		$catOptions['cat_desc'] = Parser::parse_bbc(StringLibrary::escape($_POST['cat_desc']), false, '', $context['description_allowed_tags']);
 
 		$catOptions['is_collapsible'] = isset($_POST['collapse']);
 
@@ -383,7 +384,7 @@ function EditBoard()
 	$context['groups_post'] = [];
 
 	// Load membergroups.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT group_name, id_group, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group NOT IN ({int:admin_group}, {int:moderator_group})
@@ -406,7 +407,7 @@ function EditBoard()
 			'deny' => in_array($row['id_group'], $curBoard['deny_groups']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
@@ -456,7 +457,7 @@ function EditBoard()
 			'selected' => $catID == $curBoard['category']
 		];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -468,10 +469,10 @@ function EditBoard()
 	$context['board']['moderators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the groups assigned as moderators
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group
 		FROM {db_prefix}moderator_groups
 		WHERE id_board = {int:current_board}',
@@ -482,10 +483,10 @@ function EditBoard()
 	$context['board']['moderator_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderator_groups'][$row['id_group']] = $row['id_group'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the themes...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme AS id, value AS name
 		FROM {db_prefix}themes
 		WHERE variable = {string:name}',
@@ -496,7 +497,7 @@ function EditBoard()
 	$context['themes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['themes'][] = $row;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!isset($_REQUEST['delete']))
 	{
@@ -587,8 +588,8 @@ function EditBoard2()
 			fatal_lang_error('too_many_groups', false);
 
 		// Do not allow HTML tags. Parse the string.
-		$boardOptions['board_name'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['board_name']), false, '', $context['description_allowed_tags']);
-		$boardOptions['board_description'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['desc']), false, '', $context['description_allowed_tags']);
+		$boardOptions['board_name'] = Parser::parse_bbc(StringLibrary::escape($_POST['board_name']), false, '', $context['description_allowed_tags']);
+		$boardOptions['board_description'] = Parser::parse_bbc(StringLibrary::escape($_POST['desc']), false, '', $context['description_allowed_tags']);
 
 		if (isset($_POST['moderators']) && is_array($_POST['moderators']))
 		{
@@ -628,7 +629,7 @@ function EditBoard2()
 		// We need to know what used to be case in terms of redirection.
 		if (!empty($_POST['boardid']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT redirect, num_posts
 				FROM {db_prefix}boards
 				WHERE id_board = {int:current_board}',
@@ -637,7 +638,7 @@ function EditBoard2()
 				]
 			);
 			list ($oldRedirect, $numPosts) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// If we're turning redirection on check the board doesn't have posts in it - if it does don't make it a redirection board.
 			if ($boardOptions['redirect'] && empty($oldRedirect) && $numPosts)
@@ -703,7 +704,7 @@ function EditBoardSettings($return_config = false)
 	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
 
 	// Load the boards list - for the recycle bin!
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -714,7 +715,7 @@ function EditBoardSettings($return_config = false)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($recycle_boards))
 	{

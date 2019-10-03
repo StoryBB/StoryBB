@@ -4,13 +4,14 @@
  * This file contains a couple of functions for the latests posts on forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Get the latest posts of a forum.
@@ -24,7 +25,7 @@ function getLastPosts($latestPostOptions)
 
 	// Find all the posts.  Newer ones will have higher IDs.  (assuming the last 20 * number are accessible...)
 	// @todo SLOW This query is now slow, NEEDS to be fixed.  Maybe break into two?
-	$request = $smcFunc['db_query']('substring', '
+	$request = $smcFunc['db']->query('substring', '
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg,
 			COALESCE(mem.real_name, m.poster_name) AS poster_name, t.id_board, b.name AS board_name,
@@ -55,8 +56,8 @@ function getLastPosts($latestPostOptions)
 		censorText($row['body']);
 
 		$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), ['<br>' => '&#10;']));
-		if ($smcFunc['strlen']($row['body']) > 128)
-			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
+		if (StringLibrary::strlen($row['body']) > 128)
+			$row['body'] = StringLibrary::substr($row['body'], 0, 128) . '...';
 
 		// Build the array.
 		$posts[] = [
@@ -83,7 +84,7 @@ function getLastPosts($latestPostOptions)
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>'
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $posts;
 }

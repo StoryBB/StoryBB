@@ -3,7 +3,7 @@
  * Fetch the latest version info/news from storybb.org.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -44,10 +44,10 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $sourcedir, $txt, $language, $forum_version, $modSettings, $smcFunc, $context;
+		global $sourcedir, $txt, $language, $modSettings, $smcFunc, $context;
 
 		// What files do we want to get
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_file, filename, path, parameters
 			FROM {db_prefix}admin_info_files',
 			[
@@ -61,11 +61,11 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			$js_files[$row['id_file']] = [
 				'filename' => $row['filename'],
 				'path' => $row['path'],
-				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode($forum_version)),
+				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(App::SOFTWARE_VRSION)),
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we run into a problem.
 		loadEssentialThemeData();
@@ -89,7 +89,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			}
 
 			// Save the file to the database.
-			$smcFunc['db_query']('substring', '
+			$smcFunc['db']->query('substring', '
 				UPDATE {db_prefix}admin_info_files
 				SET data = SUBSTRING({string:file_data}, 1, 65534)
 				WHERE id_file = {int:id_file}',

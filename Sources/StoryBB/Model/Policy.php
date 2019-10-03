@@ -4,7 +4,7 @@
  * This class handles policies in the system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -35,7 +35,7 @@ class Policy
 		$versions_in_order = [$user_info['language'], $language, 'en-us'];
 
 		// Fetch all the policies.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pt.policy_type, p.language, p.title
 			FROM {db_prefix}policy_types AS pt
 				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
@@ -51,7 +51,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row['title'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sift out which ones we care about for this user.
 		foreach ($policies as $policy_type => $policy_languages)
@@ -81,7 +81,7 @@ class Policy
 		$policies = [];
 
 		// First, policy types, forming the backbone of what gets returned.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_footer, pt.show_reg, pt.show_help
 			FROM {db_prefix}policy_types AS pt
 			ORDER BY pt.id_policy_type');
@@ -90,10 +90,10 @@ class Policy
 			$row['no_language'] = [];
 			$policies[$row['id_policy_type']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Next up, fetch the different versions that we have.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT p.id_policy, p.policy_type, p.language, p.title, p.description, p.last_revision, pr.last_change
 			FROM {db_prefix}policy AS p
 				INNER JOIN {db_prefix}policy_revision AS pr ON (p.last_revision = pr.id_revision)
@@ -107,7 +107,7 @@ class Policy
 			$row['last_change_format'] = timeformat($row['last_change']);
 			$policies[$row['policy_type']]['versions'][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now identify any ones that don't have a specific language attached.
 		$languages = array_keys(getLanguages());
@@ -136,7 +136,7 @@ class Policy
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_policy, last_change, short_revision_note, revision_text, edit_id_member, edit_member_name
 			FROM {db_prefix}policy_revision
 			WHERE id_revision = {int:revision_id}',
@@ -145,7 +145,7 @@ class Policy
 			]
 		);
 		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($row))
 		{
@@ -166,7 +166,7 @@ class Policy
 		global $smcFunc, $context;
 
 		// First update the stuff at policy-type level.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}policy_types
 			SET show_reg = {int:show_reg},
 				show_help = {int:show_help},
@@ -192,7 +192,7 @@ class Policy
 		}
 		if (!empty($clauses))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}policy
 				SET ' . implode(', ', $clauses) . '
 				WHERE policy_type = {int:policy_type}
@@ -217,7 +217,7 @@ class Policy
 			if (!empty($details['policy_text']))
 			{
 				// First we need to know which policy it is.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_policy
 					FROM {db_prefix}policy
 					WHERE policy_type = {int:policy_type}
@@ -228,7 +228,7 @@ class Policy
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($row))
 				{
 					return;
@@ -262,7 +262,7 @@ class Policy
 					1
 				);
 				// Now update the policy table to point to the new entry.
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}policy
 					SET last_revision = {int:revision_id}
 					WHERE id_policy = {int:id_policy}',
@@ -292,7 +292,7 @@ class Policy
 		$versions_in_order = [$user_info['language'], $language, 'en-us'];
 
 		// Fetch all the policies.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT p.id_policy, pt.policy_type, p.language, p.title, p.last_revision, MAX(pa.id_revision) AS last_acceptance
 			FROM {db_prefix}policy_types AS pt
 				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
@@ -311,7 +311,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Having fetched all possible policies for this user, let's figure out whether they have agreed to anything.
 		foreach ($policies as $policy_type => $languages)
@@ -346,7 +346,7 @@ class Policy
 
 		if (!empty($revisions))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT pt.policy_type, pr.short_revision_note
 				FROM {db_prefix}policy_revision AS pr
 					INNER JOIN {db_prefix}policy AS p ON (pr.id_policy = p.id_policy)
@@ -360,7 +360,7 @@ class Policy
 			{
 				$final_policies[$row['policy_type']]['revision_note'] = $row['short_revision_note'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		return $final_policies;
@@ -387,7 +387,7 @@ class Policy
 		$versions_in_order = [$user_language, 'en-us'];
 
 		// Fetch all the policies.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pt.policy_type, p.id_policy, p.language, p.last_revision
 			FROM {db_prefix}policy_types AS pt
 				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
@@ -405,7 +405,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sift out which ones we care about for this user.
 		foreach ($policies as $policy_type => $policy_languages)
@@ -449,7 +449,7 @@ class Policy
 		// Make sure there is something in the array even if it is harmless.
 		$exclude[] = 0;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET policy_acceptance = {int:previouslyaccepted}
 			WHERE policy_acceptance = {int:currentlyaccepted}
@@ -475,7 +475,7 @@ class Policy
 		{
 			$footer_links = [];
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT p.id_policy, pt.policy_type, p.language, p.title
 				FROM {db_prefix}policy_types AS pt
 					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
@@ -487,7 +487,7 @@ class Policy
 					'title' => $row['title'],
 				];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('footer_links', $footer_links, 300);
 		}

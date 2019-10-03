@@ -4,7 +4,7 @@
  * This file is mainly concerned with the Who's Online list.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -100,7 +100,7 @@ function Who()
 	$conditions[] = $show_methods[$context['show_by']];
 
 	// Get the total amount of members online.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)' . (!empty($conditions) ? '
@@ -109,14 +109,14 @@ function Who()
 		]
 	);
 	list ($totalMembers) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Prepare some page index variables.
 	$context['page_index'] = constructPageIndex($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $modSettings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 
 	// Look for people online, provided they don't mind if you see they are.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lo.log_time, lo.id_member, lo.url, lo.ip AS ip, lo.id_character, COALESCE(chars.character_name, mem.real_name) AS real_name,
 			lo.session, IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, COALESCE(mem.show_online, 1) AS show_online,
@@ -163,7 +163,7 @@ function Who()
 		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name']];
 		$member_ids[] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the user data for these members.
 	loadMemberData($member_ids);
@@ -376,7 +376,7 @@ function determineActions($urls, $preferred_prefix = false)
 				// Find out what message they are accessing.
 				$msgid = (int) (isset($actions['msg']) ? $actions['msg'] : (isset($actions['quote']) ? $actions['quote'] : 0));
 
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 					SELECT m.id_topic, m.subject
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -392,7 +392,7 @@ function determineActions($urls, $preferred_prefix = false)
 				);
 				list ($id_topic, $subject) = $smcFunc['db_fetch_row']($result);
 				$data[$k] = sprintf($txt['whopost_' . $actions['action']], $id_topic, $subject);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				if (empty($id_topic))
 					$data[$k] = $txt['who_hidden'];
@@ -454,7 +454,7 @@ function determineActions($urls, $preferred_prefix = false)
 	// Load topic names.
 	if (!empty($topic_ids))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT t.id_topic, m.subject
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -475,13 +475,13 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($topic_ids[$row['id_topic']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_topic'], censorText($row['subject']));
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	// Load board names.
 	if (!empty($board_ids))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.name
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -498,7 +498,7 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($board_ids[$row['id_board']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_board'], $row['name']);
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	// Load member names for the profile. (is_not_guest permission for viewing their own profile)
@@ -506,7 +506,7 @@ function determineActions($urls, $preferred_prefix = false)
 	$allow_view_any = allowedTo('profile_view');
 	if (!empty($profile_ids) && ($allow_view_any || $allow_view_own))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
@@ -525,7 +525,7 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($profile_ids[$row['id_member']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	foreach ($data as $k => $v)

@@ -4,13 +4,14 @@
  * This file has functions in it to do with authentication, user handling, and the like.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 
 /**
  * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
@@ -224,7 +225,7 @@ function InMaintenance()
 
 	// Basic template stuff..
 	$context['sub_template'] = 'login_maintenance';
-	$context['title'] = $smcFunc['htmlspecialchars']($mtitle);
+	$context['title'] = StringLibrary::escape($mtitle);
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
 }
@@ -304,7 +305,7 @@ function adminLogin_outputPostVars($k, $v)
 
 	if (!is_array($v))
 		return '
-<input type="hidden" name="' . $smcFunc['htmlspecialchars']($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
+<input type="hidden" name="' . StringLibrary::escape($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
 	else
 	{
 		$ret = '';
@@ -378,7 +379,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
-		$names[$i] = trim($smcFunc['strtolower']($name));
+		$names[$i] = trim(StringLibrary::toLower($name));
 
 		$maybe_email |= strpos($name, '@') !== false;
 
@@ -406,15 +407,15 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 		$email_condition = '';
 
 	// Get the case of the columns right - but only if we need to as things like MySQL will go slow needlessly otherwise.
-	$member_name = $smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name';
-	$real_name = $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name';
+	$member_name = $smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name)' : 'member_name';
+	$real_name = $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name';
 
 	// Searches.
 	$member_name_search = $member_name . ' ' . $comparison . ' ' . implode( ' OR ' . $member_name . ' ' . $comparison . ' ', $names_list);
 	$real_name_search = $real_name . ' ' . $comparison . ' ' . implode( ' OR ' . $real_name . ' ' . $comparison . ' ', $names_list);
 
 	// Search by username, display name, and email address.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, email_address
 		FROM {db_prefix}members
 		WHERE (' . $member_name_search . '
@@ -438,7 +439,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Return all the results.
 	return $results;
@@ -464,7 +465,7 @@ function resetPassword($memID, $username = null)
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Get some important details.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT member_name, email_address, lngfile
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
@@ -473,7 +474,7 @@ function resetPassword($memID, $username = null)
 		]
 	);
 	list ($user, $email, $lngfile) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($username !== null)
 	{
@@ -525,7 +526,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 	$errors = [];
 
 	// Don't use too long a name.
-	if ($smcFunc['strlen']($username) > 25)
+	if (StringLibrary::strlen($username) > 25)
 		$errors[] = ['lang', 'error_long_name'];
 
 	// No name?!  How can you register with no name?
@@ -543,7 +544,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 	{
 		require_once($sourcedir . '/Subs-Members.php');
 		if (isReservedName($username, $memID, false))
-			$errors[] = ['done', '(' . $smcFunc['htmlspecialchars']($username) . ') ' . $txt['name_in_use']];
+			$errors[] = ['done', '(' . StringLibrary::escape($username) . ') ' . $txt['name_in_use']];
 	}
 
 	if ($return_error)
@@ -575,7 +576,7 @@ function validatePassword($password, $username, $restrict_in = [])
 	global $modSettings, $smcFunc;
 
 	// Perform basic requirements first.
-	if ($smcFunc['strlen']($password) < (empty($modSettings['password_strength']) ? 4 : 8))
+	if (StringLibrary::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
 		return 'short';
 
 	// Is this enough?
@@ -585,7 +586,7 @@ function validatePassword($password, $username, $restrict_in = [])
 	// Otherwise, perform the medium strength test - checking if password appears in the restricted string.
 	if (preg_match('~\b' . preg_quote($password, '~') . '\b~', implode(' ', $restrict_in)) != 0)
 		return 'restricted_words';
-	elseif ($smcFunc['strpos']($password, $username) !== false)
+	elseif (StringLibrary::strpos($password, $username) !== false)
 		return 'restricted_words';
 
 	// If just medium, we're done.
@@ -594,7 +595,7 @@ function validatePassword($password, $username, $restrict_in = [])
 
 	// Otherwise, hard test next, check for numbers and letters, uppercase too.
 	$good = preg_match('~(\D\d|\d\D)~', $password) != 0;
-	$good &= $smcFunc['strtolower']($password) != $password;
+	$good &= StringLibrary::toLower($password) != $password;
 
 	return $good ? null : 'chars';
 }
@@ -613,7 +614,7 @@ function rebuildModCache()
 
 	if ($group_query == '0=1' && !$user_info['is_guest'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:current_member}',
@@ -624,7 +625,7 @@ function rebuildModCache()
 		$groups = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$groups[] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($groups))
 			$group_query = '0=1';
@@ -649,7 +650,7 @@ function rebuildModCache()
 	$boards_mod = [];
 	if (!$user_info['is_guest'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
@@ -659,10 +660,10 @@ function rebuildModCache()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',
@@ -672,7 +673,7 @@ function rebuildModCache()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we've got duplicates here...
 		$boards_mod = array_unique($boards_mod);
@@ -742,7 +743,7 @@ function hash_password($username, $password, $cost = null)
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
-	return password_hash($smcFunc['strtolower']($username) . $password, PASSWORD_BCRYPT, [
+	return password_hash(StringLibrary::toLower($username) . $password, PASSWORD_BCRYPT, [
 		'cost' => $cost,
 	]);
 }
@@ -771,7 +772,7 @@ function hash_verify_password($username, $password, $hash)
 {
 	global $smcFunc;
 
-	return password_verify($smcFunc['strtolower']($username) . $password, $hash);
+	return password_verify(StringLibrary::toLower($username) . $password, $hash);
 }
 
 /**
