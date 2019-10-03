@@ -86,6 +86,6 @@ class Multiblock extends AbstractBlock implements Block
 
 	public function get_render_template(): string
 	{
-		return 'block__roundframe_titlebg';
+		return !empty($this->config['template']) ? $this->config['template'] : 'block__catbg';
 	}
 }

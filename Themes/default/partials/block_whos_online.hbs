@@ -1,0 +1,14 @@
+<p class="inline">
+	{{#if see_online}}<a href="{{scripturl}}?action=who">{{/if}}
+		<strong>{{txt.online}}:</strong> {{{num_guests}}}, {{{num_users_online}}}{{#if num_hidden}}{{{num_hidden}}}{{/if}}, {{{num_robots}}}
+	{{#if see_online}}</a>{{/if}}
+
+{{#if users_online}}
+	<br>
+	{{textTemplate txt.users_active modSettings.lastActive}}: {{{join list_users_online ',&nbsp;'}}}
+
+	{{#if membergroups}}
+	<div class="membergroups">{{{join membergroups ', '}}}</div>
+	{{/if}}
+{{/if}}
+</p>

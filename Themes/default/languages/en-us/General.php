@@ -632,6 +632,23 @@ $txt['atom'] = 'Atom';
 
 $txt['guest'] = 'Guest';
 $txt['guests'] = 'Guests';
+
+$txt['num_guests'] = [
+	1 => '1 guest',
+	'x' => '%1$s guests',
+];
+$txt['num_users_online'] = [
+	1 => '1 user',
+	'x' => '%1$s users',
+];
+$txt['num_robots'] = [
+	1 => '1 robot',
+	'x' => '%1$s robots',
+];
+$txt['num_hidden'] = [
+	1 => '(1 hidden)',
+	'x' => '%1$s hidden',
+];
 $txt['user'] = 'User';
 $txt['users'] = 'Users';
 $txt['hidden'] = 'Hidden';
