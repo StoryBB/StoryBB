@@ -192,7 +192,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 						$where_string += ' AND ';
 				}
 
-				$request = $smcFunc['db']->query('','
+				$request = $smcFunc['db']->query('', '
 					SELECT `'. $keys[0] . '` FROM ' . $table .'
 					WHERE ' . $where_string . ' LIMIT 1',
 					[]

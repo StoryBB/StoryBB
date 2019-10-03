@@ -1251,7 +1251,7 @@ function EditCustomProfiles()
 			redirectexit('action=admin;area=featuresettings;sa=profile'); // @todo implement an error handler
 
 		// All good, proceed.
-		$smcFunc['db']->query('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:old_order}
 			WHERE field_order = {int:new_order}',
@@ -1260,7 +1260,7 @@ function EditCustomProfiles()
 				'old_order' => $context['field']['order'],
 			]
 		);
-		$smcFunc['db']->query('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:new_order}
 			WHERE id_field = {int:id_field}',
@@ -1541,7 +1541,7 @@ function EditCustomProfiles()
 		);
 
 		// Re-arrange the order.
-		$smcFunc['db']->query('','
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}custom_fields
 			SET field_order = field_order - 1
 			WHERE field_order > {int:current_order}',
