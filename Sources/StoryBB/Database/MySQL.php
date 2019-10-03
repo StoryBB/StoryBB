@@ -455,6 +455,7 @@ class MySQL implements DatabaseAdapter
 	 * @return resource|bool Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed
 	 */
 	public function query($identifier, $db_string, $db_values = [])
+	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
 		global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
 
@@ -604,16 +605,16 @@ class MySQL implements DatabaseAdapter
 
 		if (empty($db_unbuffered))
 		{
-			$ret = @mysqli_query($connection, $db_string);
+			$ret = @mysqli_query($this->connection, $db_string);
 		}
 		else
 		{
-			$ret = @mysqli_query($connection, $db_string, MYSQLI_USE_RESULT);
+			$ret = @mysqli_query($this->connection, $db_string, MYSQLI_USE_RESULT);
 		}
 
 		if ($ret === false && empty($db_values['db_error_skip']))
 		{
-			$ret = $this->error($db_string, $connection);
+			$ret = $this->error($db_string, $this->connection);
 		}
 
 		// Debugging.
@@ -634,7 +635,6 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function quote($db_string, $db_values)
 	{
-
 		// Do the quoting and escaping
 		return preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', function($matches) use ($db_values)
 		{

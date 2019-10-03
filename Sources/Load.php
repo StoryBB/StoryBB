@@ -42,7 +42,9 @@ function reloadSettings()
 		);
 		$modSettings = [];
 		if (!$request)
+		{
 			display_db_error();
+		}
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db']->free_result($request);

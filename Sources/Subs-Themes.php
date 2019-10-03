@@ -195,7 +195,7 @@ function get_theme_info($path)
 	}
 
 	// The theme isn't compatible with the current StoryBB version.
-	if (!matchPackageVersionApp::SOFTWARE_VERSION, $theme_info['storybb_version']))
+	if (!matchPackageVersion(App::SOFTWARE_VERSION, $theme_info['storybb_version']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_theme_not_compatible', false, App::SOFTWARE_VERSION);
