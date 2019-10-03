@@ -40,7 +40,7 @@ foreach ($ignoreFiles as $if)
 $indexFile = fopen('./StoryBB/App.php', 'r');
 $indexContents = fread($indexFile, 850);
 
-if (!preg_match('~const SOFTWARE_VERSION = \'StoryBB ([^\']+)\';~i', $indexContents, $versionResults))
+if (!preg_match('~const SOFTWARE_VERSION = \'([^\']+)\';~i', $indexContents, $versionResults))
 	die('Error: Could not locate SOFTWARE_VERSION' . "\n");
 $currentVersion = $versionResults[1];
 
