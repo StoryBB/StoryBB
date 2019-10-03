@@ -27,7 +27,7 @@ class Manager
 		{
 			static::$block_instances = [];
 
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT id_instance, class, visibility, configuration, region, position, active
 				FROM {db_prefix}block_instances
 			');
@@ -42,7 +42,7 @@ class Manager
 				}
 				static::$block_instances[$row['region']][$row['id_instance']] = $row;
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			foreach (static::$block_instances as $region => $instances)
 			{
