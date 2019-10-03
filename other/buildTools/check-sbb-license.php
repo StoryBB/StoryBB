@@ -37,7 +37,7 @@ foreach ($ignoreFiles as $if)
 		die;
 
 // Lets get the main application for version and year.
-$indexFile = fopen('./StoryBB/App.php', 'r');
+$indexFile = fopen('./Sources/StoryBB/App.php', 'r');
 $indexContents = fread($indexFile, 850);
 
 if (!preg_match('~const SOFTWARE_VERSION = \'([^\']+)\';~i', $indexContents, $versionResults))
