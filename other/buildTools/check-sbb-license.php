@@ -44,7 +44,7 @@ if (!preg_match('~const SOFTWARE_VERSION = \'([^\']+)\';~i', $indexContents, $ve
 	die('Error: Could not locate SOFTWARE_VERSION' . "\n");
 $currentVersion = $versionResults[1];
 
-if (!preg_match('~const SOFTWARE_YEAR = \'(\d{4})\';~i', $indexContents, $yearResults))
+if (!preg_match('~const SOFTWARE_YEAR = (\d{4});~i', $indexContents, $yearResults))
 	die('Error: Could not locate SOFTWARE_YEAR' . "\n");
 $currentSoftwareYear = (int) $yearResults[1];
 
