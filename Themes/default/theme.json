@@ -48,10 +48,6 @@
 
         },
         {
-            "id": "show_stats_index",
-            "label": "show_stats_index"
-        },
-        {
             "id": "show_latest_member",
             "label": "latest_members"
         },

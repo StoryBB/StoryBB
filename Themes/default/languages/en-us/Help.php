@@ -181,8 +181,7 @@ $helptxt['enableAllMessages'] = 'Set this to the <em>maximum</em> number of post
 $helptxt['allow_guestAccess'] = 'Unchecking this box will stop guests from doing anything but very basic actions on your forum - login, register, password reminder, etc. - on your forum. This is not the same as disallowing guest access to boards.';
 $helptxt['userLanguage'] = 'Turning this setting on will allow users to select which language file they use. It will not affect the
 		default selection.';
-$helptxt['trackStats'] = 'Stats:<br>This will allow users to see the latest posts and the most popular topics on your forum.
-		It will also show several statistics, like the most members online, new members, and new topics.<hr>
+$helptxt['trackStats'] = 'Stats:<br>This will track show several statistics, like the most members online, new members, and new topics.<hr>
 		Page views:<br>Adds another column to the stats page with the number of pageviews on your forum.';
 $helptxt['todayMod'] = 'This will show &quot;Today&quot; or &quot;Yesterday&quot; instead of the date.<br><br>
 		<strong>Examples:</strong><br><br>

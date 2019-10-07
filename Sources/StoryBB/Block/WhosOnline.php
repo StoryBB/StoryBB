@@ -62,6 +62,12 @@ class WhosOnline extends AbstractBlock implements Block
 			$membergroups = cache_quick_get('membergroup_list', null, [$this, 'cache_membergroup_key'], []);
 		}
 
+		if (!empty($modSettings['trackStats']))
+		{
+			$this->track_online($stats['num_guests'] + $stats['num_robots'] + $stats['num_users_online']);
+		}
+		
+
 		$this->content = $this->render('block_whos_online', [
 			'users_online' => $stats['users_online'],
 			'list_users_online' => $stats['list_users_online'],
@@ -108,7 +114,7 @@ class WhosOnline extends AbstractBlock implements Block
 
 		// Not allowed sort method? Bang! Error!
 		elseif (!in_array($membersOnlineOptions['sort'], $allowed_sort_options))
-			trigger_error('Sort method for getMembersOnlineStats() function is not allowed', E_USER_NOTICE);
+			trigger_error('Sort method for WhosOnline::get_online_numbers() function is not allowed', E_USER_NOTICE);
 
 		// Initialize the array that'll be returned later on.
 		$membersOnlineStats = [
@@ -261,6 +267,75 @@ class WhosOnline extends AbstractBlock implements Block
 		$membersOnlineStats['num_users_online'] = count($membersOnlineStats['users_online']) + $membersOnlineStats['num_users_hidden'] - count($robot_finds);
 
 		return $membersOnlineStats;
+	}
+
+	/**
+	 * Check if the number of users online is a record and store it.
+	 * @param int $total_users_online The total number of members online
+	 */
+	public function track_online($total_users_online)
+	{
+		global $modSettings, $smcFunc;
+
+		$settingsToUpdate = [];
+
+		// More members on now than ever were?  Update it!
+		if (!isset($modSettings['mostOnline']) || $total_users_online >= $modSettings['mostOnline'])
+			$settingsToUpdate = [
+				'mostOnline' => $total_users_online,
+				'mostDate' => time()
+			];
+
+		$date = strftime('%Y-%m-%d', forum_time(false));
+
+		// No entry exists for today yet?
+		if (!isset($modSettings['mostOnlineUpdated']) || $modSettings['mostOnlineUpdated'] != $date)
+		{
+			$request = $smcFunc['db']->query('', '
+				SELECT most_on
+				FROM {db_prefix}log_activity
+				WHERE date = {date:date}
+				LIMIT 1',
+				[
+					'date' => $date,
+				]
+			);
+
+			// The log_activity hasn't got an entry for today?
+			if ($smcFunc['db']->num_rows($request) === 0)
+			{
+				$smcFunc['db_insert']('ignore',
+					'{db_prefix}log_activity',
+					['date' => 'date', 'most_on' => 'int'],
+					[$date, $total_users_online],
+					['date']
+				);
+			}
+			// There's an entry in log_activity on today...
+			else
+			{
+				list ($modSettings['mostOnlineToday']) = $smcFunc['db_fetch_row']($request);
+
+				if ($total_users_online > $modSettings['mostOnlineToday'])
+					trackStats(['most_on' => $total_users_online]);
+
+				$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
+			}
+			$smcFunc['db']->free_result($request);
+
+			$settingsToUpdate['mostOnlineUpdated'] = $date;
+			$settingsToUpdate['mostOnlineToday'] = $total_users_online;
+		}
+
+		// Highest number of users online today?
+		elseif ($total_users_online > $modSettings['mostOnlineToday'])
+		{
+			trackStats(['most_on' => $total_users_online]);
+			$settingsToUpdate['mostOnlineToday'] = $total_users_online;
+		}
+
+		if (!empty($settingsToUpdate))
+			updateSettings($settingsToUpdate);
 	}
 
 	public function cache_membergroup_key(): array

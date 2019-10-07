@@ -373,7 +373,6 @@ $txt['total_boards'] = 'Total Boards';
 
 $txt['valid_email'] = 'This must be a valid email address.';
 
-$txt['info_center_title'] = '%1$s - Info Center';
 $txt['info_center'] = 'Info Center';
 
 $txt['watch'] = 'Watch';
@@ -816,8 +815,6 @@ $txt['attachments_no_msg_associated'] = 'No message is associated with this atta
 // Accessibility
 $txt['hide_category'] = 'Hide Category';
 $txt['show_category'] = 'Show Category';
-$txt['hide_infocenter'] = 'Hide Info Center';
-$txt['show_infocenter'] = 'Show Info Center';
 $txt['hide_toggleable'] = 'Hide "%1$s"';
 $txt['show_toggleable'] = 'Show "%1$s"';
 

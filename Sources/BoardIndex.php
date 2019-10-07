@@ -39,30 +39,6 @@ function BoardIndex()
 	];
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
-	// Now set up for the info center.
-	$context['info_center'] = [];
-
-	// And stats.
-	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
-	if ($settings['show_stats_index'])
-		$context['info_center'][] = 'board_ic_stats';
-
-	// Now the online stuff
-	require_once($sourcedir . '/Subs-MembersOnline.php');
-	$membersOnlineOptions = [
-		'show_hidden' => allowedTo('moderate_forum'),
-		'sort' => 'log_time',
-		'reverse_sort' => true,
-	];
-	$context += getMembersOnlineStats($membersOnlineOptions);
-	$context['show_buddies'] = !empty($user_info['buddies']);
-	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-	$context['info_center'][] = 'board_ic_online';
-
-	// Track most online statistics? (Subs-MembersOnline.php)
-	if (!empty($modSettings['trackStats']))
-		trackStatsUsersOnline($context['num_guests'] + $context['num_robots'] + $context['num_users_online']);
-
 	// And back to normality.
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 

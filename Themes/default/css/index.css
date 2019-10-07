@@ -4333,24 +4333,8 @@ dl.stats dd span {
 	font-weight: bold;
 }
 
-/* 33# Info Center 
+/* 33# Info Center / Typical base blocks styling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#info_center {
-	clear: both;
-}
-
-#info_center .sub_bar {
-	border-top: 1px solid #dcdcdc;
-}
-
-#info_center .sub_bar:first-child {
-	border-top: none;
-}
-
-#upshrinkHeaderIC {
-	margin-top: 4px;
-}
 
 .blocktype_recentposts {
 	line-height: 1.6em;
@@ -4395,23 +4379,6 @@ dl.stats dd span {
 
 .blocktype_recentposts .windowbg {
 	background: none;
-}
-
-#upshrinkHeaderIC p.inline {
-	border: none;
-	margin: 0;
-	padding: 2px 29px;
-	line-height: 1.6em;
-	font-size: 0.9em;
-}
-
-#upshrinkHeaderIC p.inline span {
-	margin: 0;
-	padding: 4px 0 0 0;
-}
-
-#upshrinkHeaderIC span.membergroups {
-	display: block;
 }
 
 .block:not(.blocktype_multiblock) .block_content {
