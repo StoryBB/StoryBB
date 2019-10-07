@@ -4352,49 +4352,48 @@ dl.stats dd span {
 	margin-top: 4px;
 }
 
-#ic_recentposts {
+.blocktype_recentposts {
 	line-height: 1.6em;
 	width: 98%;
-	margin: -2px 0 0 23px;
 	font-size: 0.9em;
 }
 
-#ic_recentposts th {
+.blocktype_recentposts th {
 	text-align: left;
-	padding: 0 4px 0 0;
+	padding: 4px 8px;
 }
 
-#ic_recentposts td {
+.blocktype_recentposts td {
 	border-top: 1px solid #eaeaea;
-	padding: 0 4px 0 0;
+	padding: 4px 8px;
 	vertical-align: top;
 }
 
-#ic_recentposts tr:first-child td {
+.blocktype_recentposts tr:first-child td {
 	border-top: none;
 }
 
-#ic_recentposts .recentpost strong {
+.blocktype_recentposts .recentpost strong {
 	width: 40%;
 }
 
-#ic_recentposts .recentposter {
+.blocktype_recentposts .recentposter {
 	width: 15%;
 }
 
-#ic_recentposts .recentboard {
+.blocktype_recentposts .recentboard {
 	width: 20%;
 }
 
-#ic_recentposts .recenttime {
+.blocktype_recentposts .recenttime {
 	width: 25%;
 }
 
-#ic_recentposts .recenttime strong {
+.blocktype_recentposts .recenttime strong {
 	color: #555;
 }
 
-#ic_recentposts .windowbg {
+.blocktype_recentposts .windowbg {
 	background: none;
 }
 
@@ -4413,6 +4412,19 @@ dl.stats dd span {
 
 #upshrinkHeaderIC span.membergroups {
 	display: block;
+}
+
+.block:not(.blocktype_multiblock) .block_content {
+	line-height: 1.6em;
+	padding: 2px 29px;
+}
+
+.blocktype_multiblock .sub_bar {
+    border-top: 1px solid #ccc;
+}
+
+.blocktype_multiblock .block:first-of-type .sub_bar {
+    border-top: 0;
 }
 
 /* 34# Autocomplete
