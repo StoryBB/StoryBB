@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Block;
+use StoryBB\Model\Group;
 
 /**
  * The recent posts block.
@@ -262,7 +263,7 @@ class WhosOnline extends AbstractBlock implements Block
 		return $membersOnlineStats;
 	}
 
-	public function cache_membergroup_key($latestPostOptions): array
+	public function cache_membergroup_key(): array
 	{
 		global $scripturl, $smcFunc;
 
