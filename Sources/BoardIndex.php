@@ -63,10 +63,6 @@ function BoardIndex()
 	if (!empty($modSettings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_robots'] + $context['num_users_online']);
 
-	// Are we showing all membergroups on the board index?
-	if (!empty($settings['show_group_key']))
-		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups.php', 'cache_getMembergroupList', []);
-
 	// And back to normality.
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 

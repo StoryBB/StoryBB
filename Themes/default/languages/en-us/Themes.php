@@ -80,7 +80,6 @@ $txt['site_slogan'] = 'Site slogan';
 $txt['site_slogan_desc'] = 'Add your own text for a slogan here. It will replace the StoryBB logo.';
 
 $txt['enable_random_news'] = 'Enable random news line in the forum header';
-$txt['show_group_key'] = 'Show group key on board index';
 $txt['allow_no_censored'] = 'Allow users to turn off word censoring';
 $txt['who_display_viewing'] = 'Show who is viewing the board index and posts';
 $txt['who_display_viewing_off'] = 'Don\'t show';

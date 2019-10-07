@@ -38,12 +38,6 @@
             "type": "number"
         },
         {
-            "id": "number_recent_posts",
-            "label": "number_recent_posts",
-            "description": "zero_to_disable",
-            "type": "number"
-        },
-        {
             "id": "sub_boards_columns",
             "label": "sub_boards_columns",
             "options": {
@@ -60,10 +54,6 @@
         {
             "id": "show_latest_member",
             "label": "latest_members"
-        },
-        {
-            "id": "show_group_key",
-            "label": "show_group_key"
         },
         {
             "id": "display_who_viewing",
