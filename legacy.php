@@ -18,6 +18,7 @@
  */
 
 use StoryBB\Hook\Mutatable;
+use StoryBB\StringLibrary;
 
 // Get everything started up...
 define('STORYBB', 1);
@@ -209,6 +210,8 @@ function sbb_main()
 		}
 		redirectexit();
 	}
+
+	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = [
