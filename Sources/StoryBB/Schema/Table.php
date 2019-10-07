@@ -209,9 +209,9 @@ class Table
 		}
 
 		$parameters = [];
-		if (!empty($opts['prefer_engine']))
+		if (!empty($this->opts['prefer_engine']))
 		{
-			$parameters['engine'] = $this->get_engine($opts['prefer_engine']);
+			$parameters['engine'] = $this->get_engine($this->opts['prefer_engine']);
 		}
 		else
 		{
@@ -225,6 +225,10 @@ class Table
 		if ($safe_mode)
 		{
 			$parameters['safe_mode'] = true;
+			if (isset($this->opts['on_create']) && is_callable($this->opts['on_create']))
+			{
+				$parameters['on_create_table'] = $this->opts['on_create'](true);
+			}
 			return $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 		}
 		else
@@ -233,6 +237,11 @@ class Table
 			if ($result)
 			{
 				self::$table_cache[] = $db_prefix . $this->table_name;
+
+				if (isset($this->opts['on_create']) && is_callable($this->opts['on_create']))
+				{
+					$this->opts['on_create'](false);
+				}
 			}
 			return $result;
 		}
