@@ -1830,7 +1830,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], ['actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'theme_dir', 'theme_id', 'theme_url']))
+			if ($row['id_member'] != 0 && in_array($row['variable'], ['actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'theme_dir', 'theme_id', 'theme_url']))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -3062,7 +3062,10 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	*/
 	if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
-		require_once($sourcedir . '/' . $file);
+		if (!empty($file))
+		{
+			require_once($sourcedir . '/' . $file);
+		}
 		$cache_block = call_user_func_array($function, $params);
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= $level)

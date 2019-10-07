@@ -1248,6 +1248,8 @@ function setupThemeContext($forceload = false)
 
 	$loaded = true;
 
+	$context['page_blocks'] = \StoryBB\Block\Manager::load_blocks();
+
 	$context['in_maintenance'] = !empty($maintenance);
 	$context['current_time'] = timeformat(time(), false);
 	$context['current_action'] = isset($_GET['action']) ? StringLibrary::escape($_GET['action']) : '';

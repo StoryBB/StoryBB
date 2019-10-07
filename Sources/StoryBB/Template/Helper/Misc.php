@@ -30,6 +30,7 @@ class Misc
 			'json' => 'StoryBB\\Template\\Helper\\Misc::json',
 			'breakRow' => 'StoryBB\\Template\\Helper\\Misc::breakrow',
 			'is_numeric' => 'StoryBB\\Template\\Helper\\Misc::is_numeric',
+			'block_region' => 'StoryBB\\Template\\Helper\\Misc::block_region',
 		]);
 	}
 
@@ -108,5 +109,16 @@ class Misc
 	public static function is_numeric($x)
 	{
 		return is_numeric($x);
+	}
+
+	/**
+	 * Outputs the blocks known to be relevant in the named section of the page.
+	 *
+	 * @param string $region The name of the block region
+	 * @return string The HTML to be inserted into the block region
+	 */
+	public static function block_region($region)
+	{
+		return \StoryBB\Block\Manager::render_region($region);
 	}
 }

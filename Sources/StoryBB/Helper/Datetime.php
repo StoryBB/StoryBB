@@ -256,7 +256,20 @@ class Datetime
 	public static function list_dateformats()
 	{
 		global $txt;
-		loadLanguage('Profile');
+		if (function_exists('loadLanguage'))
+		{
+			loadLanguage('Profile');
+		}
+		else
+		{
+			$txt += [
+				'timeformat_easy1' => 'January 1, 2000, 12:00:00am',
+				'timeformat_easy2' => 'January 1, 2000, 00:00:00',
+				'timeformat_easy3' => '2000-01-01, 00:00:00',
+				'timeformat_easy4' => '1 January 2000, 00:00:00',
+				'timeformat_easy5' => '1-January-2000, 00:00:00',
+			];
+		}
 
 		return [
 			'%B %d, %Y, %I:%M:%S %p' => $txt['timeformat_easy1'], // January 1, 2000, 12:00:00am

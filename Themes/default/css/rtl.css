@@ -385,9 +385,6 @@ div#admin_menu {
 
 /* Styles for generic tables.
 ------------------------------------------------------- */
-#info_center .cat_bar, .table_grid tr.catbg th {
-	text-align: right;
-}
 .message_index_title {
 	margin-left: 40px;
 }

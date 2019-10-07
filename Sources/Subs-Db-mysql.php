@@ -88,14 +88,13 @@ function sbb_db_get_server_info($connection = null)
  * @param array $data The data to insert
  * @param array $keys The keys for the table
  * @param int returnmode 0 = nothing(default), 1 = last row id, 2 = all rows id as array
- * @param object $connection The connection to use (if null, $db_connection is used)
  * @return mixed value of the first key, behavior based on returnmode. null if no data.
  */
-function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, $connection = null)
+function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
 {
 	global $smcFunc, $db_connection, $db_prefix;
 
-	$connection = $connection === null ? $db_connection : $connection;
+	$connection = $db_connection;
 	
 	$return_var = null;
 
@@ -145,7 +144,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	if (!$with_returning || $method != 'ingore')
 	{
 		// Do the insert.
-		$smcFunc['db']->query('', '
+		$result = $smcFunc['db']->query('', '
 			' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
 			VALUES
 				' . implode(',
@@ -153,9 +152,14 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			[
 				'security_override' => true,
 				'db_error_skip' => $table === $db_prefix . 'log_errors',
+				'safe_mode' => $safe_mode
 			],
 			$connection
 		);
+		if ($safe_mode)
+		{
+			return $result;
+		}
 	}
 	else //special way for ignore method with returning
 	{
@@ -165,16 +169,21 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 		{
 			$old_id = $smcFunc['db']->inserted_id();
 			
-			$smcFunc['db']->query('', '
+			$result = $smcFunc['db']->query('', '
 				' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
 				VALUES
 					' . $insertRows[$i],
 				[
 					'security_override' => true,
 					'db_error_skip' => $table === $db_prefix . 'log_errors',
+					'safe_mode' => $safe_mode,
 				],
 				$connection
 			);
+			if ($safe_mode)
+			{
+				return $result;
+			}
 			$new_id = $smcFunc['db']->inserted_id();
 			
 			if ($last_id != $new_id) //the inserted value was new

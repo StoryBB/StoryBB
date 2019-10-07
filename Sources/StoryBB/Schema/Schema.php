@@ -120,6 +120,73 @@ class Schema
 					Index::key(['ip_low', 'ip_high']),
 				]
 			),
+			Table::make('block_instances',
+				[
+					'id_instance' => Column::mediumint()->auto_increment(),
+					'class' => Column::varchar(255),
+					'visibility' => Column::text(),
+					'configuration' => Column::text(),
+					'region' => Column::varchar(255),
+					'position' => Column::smallint(),
+					'active' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_instance']),
+				],
+				[
+					'on_create' => function($safe_mode = false)
+					{
+						global $smcFunc, $incontext;
+
+						$visibility = [
+							'action' => ['forum'],
+						];
+						$configuration = [
+							'title' => 'txt.info_center',
+							'template' => 'block__roundframe_titlebg',
+							'subblock_template' => 'block__subbg',
+							'collapsible' => true,
+							'blocks' => [
+								[
+									'class' => 'StoryBB\\Block\\RecentPosts',
+									'config' => [
+										'number_recent_posts' => 10,
+										'icon' => 'history',
+									],
+								],
+								[
+									'class' => 'StoryBB\\Block\\MiniStats',
+									'config' => [
+										'show_latest_member' => true,
+										'icon' => 'stats',
+									],
+								],
+								[
+									'class' => 'StoryBB\\Block\\WhosOnline',
+									'config' => [
+										'show_group_key' => true,
+										'icon' => 'people',
+									],
+								]
+							]
+						];
+
+						$smcFunc['db_insert']('insert',
+							'{db_prefix}block_instances',
+							['class' => 'string', 'visibility' => 'string', 'configuration' => 'string', 'region' => 'string', 'position' => 'int', 'active' => 'int'],
+							['StoryBB\\Block\\Multiblock', json_encode($visibility), json_encode($configuration), 'after-content', 1, 1],
+							['id_instance'],
+							0,
+							(bool) $safe_mode
+						);
+						// And fix the stats for the installer.
+						if (isset($incontext['sql_results']['inserts']))
+						{
+							$incontext['sql_results']['inserts']++;
+						}
+					}
+				]
+			),
 			Table::make('board_permissions',
 				[
 					'id_group' => Column::smallint()->signed(),

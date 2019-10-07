@@ -80,7 +80,6 @@ $txt['site_slogan'] = 'Site slogan';
 $txt['site_slogan_desc'] = 'Add your own text for a slogan here. It will replace the StoryBB logo.';
 
 $txt['enable_random_news'] = 'Enable random news line in the forum header';
-$txt['show_group_key'] = 'Show group key on board index';
 $txt['allow_no_censored'] = 'Allow users to turn off word censoring';
 $txt['who_display_viewing'] = 'Show who is viewing the board index and posts';
 $txt['who_display_viewing_off'] = 'Don\'t show';
@@ -89,13 +88,11 @@ $txt['who_display_viewing_names'] = 'Show member names';
 $txt['disable_recent_posts'] = 'Disable recent posts';
 $txt['enable_single_post'] = 'Enable single post';
 $txt['enable_multiple_posts'] = 'Enable multiple posts';
-$txt['show_stats_index'] = 'Show statistics on board index';
 $txt['latest_members'] = 'Show latest member on board index';
 $txt['news_fader'] = 'Show news fader on board index';
 $txt['member_list_bar'] = 'Show members list bar on board index';
 $txt['header_logo_url'] = 'Logo image URL';
 $txt['header_logo_url_desc'] = '(leave blank to show forum name or default logo.)';
-$txt['number_recent_posts'] = 'Number of recent posts to display on board index';
 $txt['sub_boards_columns'] = 'Display sub-boards in how many columns';
 
 $txt['theme_adding_title'] = 'Obtaining Themes';

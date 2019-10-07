@@ -212,9 +212,9 @@ function load_lang_file()
 		$dir = dir($langpath);
 		while ($entry = $dir->read())
 		{
-			if (is_dir($langpath . '/' . $entry) && file_exists($langpath . '/' . $entry . '/Install.php') && file_exists($lang_path . '/' . $entry . '/' . $entry . '.json'))
+			if (is_dir($langpath . '/' . $entry) && file_exists($langpath . '/' . $entry . '/Install.php') && file_exists($langpath . '/' . $entry . '/' . $entry . '.json'))
 			{
-				$json = @json_decode(file_get_contents($langpath . '/' . $entry . '/' . $entry . '.json'));
+				$json = @json_decode(file_get_contents($langpath . '/' . $entry . '/' . $entry . '.json'), true);
 				if (!empty($json) && !empty($json['native_name']))
 				{
 					$incontext['detected_languages'][$entry] = $json['native_name'];
@@ -497,8 +497,6 @@ function CheckFilesWritable()
 					$failed_files[] = $file;
 			}
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
 	}
 	// Windows is trickier.  Let's try opening for r+...
 	else
@@ -524,8 +522,6 @@ function CheckFilesWritable()
 
 			@fclose($fp);
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
 	}
 
 	$failure = count($failed_files) >= 1;
@@ -1416,7 +1412,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_sbb_version, $databases, $boarddir, $sourcedir, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_sbb_version, $databases, $boarddir, $sourcedir, $modSettings, $user_info, $db_type, $boardurl, $language;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
