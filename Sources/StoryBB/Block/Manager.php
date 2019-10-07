@@ -102,4 +102,70 @@ class Manager
 
 		return static::$block_instances;
 	}
+
+	public static function render_region(string $region)
+	{
+		global $context, $options;
+
+		if (empty($context['page_blocks'][$region]))
+		{
+			return '';
+		}
+
+		$block_context = [
+			'region' => $region,
+			'instances' => [],
+		];
+
+		$template_cache = [];
+		$compiled_cache = [];
+
+		foreach ($context['page_blocks'][$region] as $instance_id => $instance)
+		{
+			$partial_name = $instance->get_render_template();
+
+			if (!isset($template_cache[$partial_name]))
+			{
+				$template_cache[$partial_name] = \StoryBB\Template::load_partial($partial_name);
+			}
+			$template = $template_cache[$partial_name];
+
+			if (!isset($compiled_cache[$partial_name]))
+			{
+				$compiled_cache[$partial_name] = \StoryBB\Template::compile($template, [], $partial_name . \StoryBB\Template::get_theme_id('partials', $partial_name));
+			}
+			$phpStr = $compiled_cache[$partial_name];
+
+			$block_config = $instance->get_configuration();
+
+			$toggle = false;
+			if (!empty($block_config['collapsible']))
+			{
+				$toggle = new \StoryBB\Helper\Toggleable($instance->get_block_title());
+				$toggle->addCollapsible('#block_' . $instance_id . ' .block_content');
+				$toggle->addImageToggle('block_' . $instance_id . ' .img_toggle');
+				$toggle->userOption('collapse_block_' . $instance_id);
+				$toggle->cookieName('cb_' . $instance_id);
+				$toggle->attach();
+			}
+
+			$block_context['instances'][] = \StoryBB\Template::prepare($phpStr, [
+				'instance' => $instance_id,
+				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
+				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
+				'blocktype' => strtolower(basename(get_class($instance))),
+				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
+				'collapsible' => !empty($toggle),
+				'collapsed' => $toggle && $toggle->currently_collapsed(),
+			]);
+		}
+
+		$template_region = \StoryBB\Template::load_partial('block_region');
+		$phpStr = \StoryBB\Template::compile($template_region, [], 'block_region' . \StoryBB\Template::get_theme_id('partials', 'block_region'));
+
+		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
+			'region' => $region,
+			'instances' => $block_context['instances'],
+		]));
+	}
 }
