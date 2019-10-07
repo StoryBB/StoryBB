@@ -78,6 +78,7 @@ class Multiblock extends AbstractBlock implements Block
 				'instance' => 'multiblock' . static::$instancecount++,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
+				'blocktype' => strtolower(basename(get_class($instance))),
 			]);
 		}
 
