@@ -19,6 +19,13 @@ use StoryBB\Template;
  */
 abstract class AbstractBlock
 {
+	protected $config;
+
+	public function get_configuration(): array
+	{
+		return $this->config;
+	}
+
 	protected function render(string $partialname, array $blockcontext): string
 	{
 		$template = Template::load_partial($partialname);

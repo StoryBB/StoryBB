@@ -150,11 +150,14 @@ class Misc
 			}
 			$phpStr = $compiled_cache[$partial_name];
 
+			$block_config = $instance->get_configuration();
+
 			$block_context['instances'][] = \StoryBB\Template::prepare($phpStr, [
 				'instance' => $instance_id,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
 				'blocktype' => strtolower(basename(get_class($instance))),
+				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
 			]);
 		}
 
