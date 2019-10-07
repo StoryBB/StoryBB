@@ -726,15 +726,15 @@ smc_Toggle.prototype.init = function ()
 
 			// Display the image in case it was hidden.
 			$('#' + this.opt.aSwapImages[i].sId).show();
-			var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
-			if (typeof(oImage) == 'object' && oImage != null)
+			var oImage = $('#' + this.opt.aSwapImages[i].sId);
+			var that = this;
+			if (oImage.length > 0)
 			{
-				oImage.instanceRef = this;
-				oImage.onclick = function () {
-					this.instanceRef.toggle();
-					this.blur();
-				}
-				oImage.style.cursor = 'pointer';
+				oImage.on('click', function() {
+					that.toggle();
+					$(this).blur();
+				});
+				oImage.css('cursor', 'pointer');
 			}
 		}
 	}
@@ -799,8 +799,8 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 			}
 			else
 			{
-				var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
-				if (typeof(oImage) == 'object' && oImage != null)
+				var oImage = $('#' + this.opt.aSwapImages[i].sId);
+				if (oImage.length > 0)
 				{
 					// Only (re)load the image if it's changed.
 					var sTargetSource = bCollapse ? this.opt.aSwapImages[i].srcCollapsed : this.opt.aSwapImages[i].srcExpanded;
@@ -818,8 +818,8 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 	{
 		for (var i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
 		{
-			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
-			if (typeof(oLink) == 'object' && oLink != null)
+			var oLink = $('#' + this.opt.aSwapLinks[i].sId);
+			if (oLink.length > 0)
 				setInnerHTML(oLink, bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
 		}
 	}
@@ -830,8 +830,8 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		if (this.opt.aSwappableContainers[i] == null)
 			continue;
 
-		var oContainer = document.getElementById(this.opt.aSwappableContainers[i]);
-		if (typeof(oContainer) == 'object' && oContainer != null)
+		var oContainer = $(this.opt.aSwappableContainers[i]);
+		if (oContainer.length > 0)
 		{
 			if (!!this.opt.bNoAnimate || bInit)
 			{

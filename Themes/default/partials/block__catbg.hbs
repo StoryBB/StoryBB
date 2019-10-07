@@ -1,10 +1,11 @@
-	<div class="block block_{{blocktype}}" id="block_{{instance}}">
-		<div class="cat_bar">
-			<h3 class="catbg{{#if icon}} main_icons {{icon}}{{/if}}">
+	<div class="block blocktype_{{blocktype}}" id="block_{{instance}}">
+		<div class="cat_bar block_title_container">
+			<h3 class="block_title catbg{{#if icon}} main_icons {{icon}}{{/if}}">
+				{{#if collapsible}} <span class="toggle_up floatright img_toggle"></span>{{/if}}
 				{{title}}
 			</h3>
 		</div>
-		<div class="information">
+		<div class="information block_content"{{#if collapsed}} style="display:none"{{/if}}>
 			{{content}}
 		</div>
 	</div>

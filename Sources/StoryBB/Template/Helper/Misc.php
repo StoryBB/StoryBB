@@ -119,7 +119,7 @@ class Misc
 	 */
 	public static function block_region($region)
 	{
-		global $context;
+		global $context, $options;
 
 		if (empty($context['page_blocks'][$region]))
 		{
@@ -152,12 +152,25 @@ class Misc
 
 			$block_config = $instance->get_configuration();
 
+			$toggle = false;
+			if (!empty($block_config['collapsible']))
+			{
+				$toggle = new \StoryBB\Helper\Toggleable($instance->get_block_title());
+				$toggle->addCollapsible('#block_' . $instance_id . ' .block_content');
+				$toggle->addImageToggle('block_' . $instance_id . ' .img_toggle');
+				$toggle->userOption('collapse_block_' . $instance_id);
+				$toggle->cookieName('cb_' . $instance_id);
+				$toggle->attach();
+			}
+
 			$block_context['instances'][] = \StoryBB\Template::prepare($phpStr, [
 				'instance' => $instance_id,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
 				'blocktype' => strtolower(basename(get_class($instance))),
 				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
+				'collapsible' => !empty($toggle),
+				'collapsed' => $toggle && $toggle->currently_collapsed(),
 			]);
 		}
 
