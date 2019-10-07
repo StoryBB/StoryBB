@@ -11,6 +11,7 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use StoryBB\App;
 use GuzzleHttp\Client;
 
 /**
@@ -61,7 +62,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			$js_files[$row['id_file']] = [
 				'filename' => $row['filename'],
 				'path' => $row['path'],
-				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(App::SOFTWARE_VRSION)),
+				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(App::SOFTWARE_VERSION)),
 			];
 		}
 

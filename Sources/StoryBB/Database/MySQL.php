@@ -452,7 +452,7 @@ class MySQL implements DatabaseAdapter
 	 * @param string $identifier An identifier.
 	 * @param string $db_string The database string
 	 * @param array $db_values = [] The values to be inserted into the string
-	 * @return resource|bool Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed
+	 * @return mixed Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed, or the fixed up string if in safe mode
 	 */
 	public function query($identifier, $db_string, $db_values = [])
 	{
@@ -601,6 +601,11 @@ class MySQL implements DatabaseAdapter
 			{
 				$this->error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
 			}
+		}
+
+		if (!empty($db_values['safe_mode']))
+		{
+			return $db_string;
 		}
 
 		if (empty($db_unbuffered))
