@@ -487,7 +487,7 @@ img#sbblogo {
 
 .mark_read {
 	margin: -5px 0 16px 0;
-	float: right;
+	text-align: right;
 }
 
 .mark_read .buttonlist {
@@ -4338,8 +4338,11 @@ dl.stats dd span {
 
 .blocktype_recentposts {
 	line-height: 1.6em;
-	width: 98%;
 	font-size: 0.9em;
+}
+
+.blocktype_recentposts .block_content {
+	width:100%;
 }
 
 .blocktype_recentposts th {
