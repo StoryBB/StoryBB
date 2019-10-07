@@ -95,7 +95,6 @@ $txt['news_fader'] = 'Show news fader on board index';
 $txt['member_list_bar'] = 'Show members list bar on board index';
 $txt['header_logo_url'] = 'Logo image URL';
 $txt['header_logo_url_desc'] = '(leave blank to show forum name or default logo.)';
-$txt['number_recent_posts'] = 'Number of recent posts to display on board index';
 $txt['sub_boards_columns'] = 'Display sub-boards in how many columns';
 
 $txt['theme_adding_title'] = 'Obtaining Themes';

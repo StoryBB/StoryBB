@@ -952,7 +952,6 @@ function makeThemeChanges($memID, $id_theme)
 		'default_theme_url',
 		'default_template',
 		'images_url',
-		'number_recent_posts',
 		'theme_dir',
 		'theme_id',
 		'theme_url',

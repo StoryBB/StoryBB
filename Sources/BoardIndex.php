@@ -42,24 +42,6 @@ function BoardIndex()
 	// Now set up for the info center.
 	$context['info_center'] = [];
 
-	// Retrieve the latest posts if the theme settings require it.
-	if (!empty($settings['number_recent_posts']))
-	{
-		if ($settings['number_recent_posts'] > 1)
-		{
-			$latestPostOptions = [
-				'number_posts' => $settings['number_recent_posts'],
-			];
-			$context['latest_posts'] = cache_quick_get('boardindex-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', [$latestPostOptions]);
-		}
-
-		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
-		{
-			$context['info_center'][] = 'board_ic_recent';
-			$settings['number_recent_posts'] = (int) $settings['number_recent_posts'];
-		}
-	}
-
 	// And stats.
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	if ($settings['show_stats_index'])
