@@ -4390,11 +4390,11 @@ dl.stats dd span {
 }
 
 .blocktype_multiblock .sub_bar {
-    border-top: 1px solid #ccc;
+	border-top: 1px solid #ccc;
 }
 
 .blocktype_multiblock .block:first-of-type .sub_bar {
-    border-top: 0;
+	border-top: 0;
 }
 
 /* 34# Autocomplete

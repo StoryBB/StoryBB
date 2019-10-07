@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Block;
+
 use StoryBB\Model\Group;
 
 /**

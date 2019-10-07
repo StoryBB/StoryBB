@@ -46,7 +46,10 @@ class Manager
 
 			foreach (static::$block_instances as $region => $instances)
 			{
-				uasort($instances, function($a, $b) { return $a['position'] <=> $b['position']; });
+				uasort($instances, function($a, $b)
+				{
+					return $a['position'] <=> $b['position'];
+				});
 				static::$block_instances[$region] = $instances;
 			}
 		}

@@ -19,7 +19,7 @@ use StoryBB\Template;
  */
 class Multiblock extends AbstractBlock implements Block
 {
-	static $instancecount = 1;
+	protected static $instancecount = 1;
 	protected $config;
 	protected $content;
 
