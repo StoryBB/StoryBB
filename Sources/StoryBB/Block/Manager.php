@@ -21,7 +21,7 @@ class Manager
 
 	public static function load_blocks($current_context = true)
 	{
-		global $smcFunc;
+		global $smcFunc, $user_info, $context;
 
 		if (static::$block_instances === null)
 		{
@@ -63,9 +63,35 @@ class Manager
 						continue;
 					}
 
-					// @todo Apply visibility.
+					// Apply visibility.
+					if (!empty($instance['visibility']))
+					{
+						// Unbundle the JSON. If we can't unbundle it, assume it's not visible.
+						$visibility = @json_decode($instance['visibility'], true);
+						if (empty($visibility))
+						{
+							continue;
+						}
 
-					// @todo Apply filtering to current setup.
+						// Does this block require groups? Do you have any of those groups?
+						if (!empty($visibility['groups_include']) && count(array_intersect($visibility['groups_include'], $user_info['groups'])) === 0)
+						{
+							continue;
+						}
+
+						// Does this block exclude any groups? Do you have any of those?
+						if (!empty($visibility['groups_exclude']) && count(array_intersect($visibility['groups_exclude'], $user_info['groups'])) > 0)
+						{
+							continue;
+						}
+					}
+
+					// Apply filtering to current setup.
+					// Is this filtered to a (legacy) action? If so, check it's on the list.
+					if (!empty($visibility['action']) && !in_array($context['current_action'], $visibility['action']))
+					{
+						continue;
+					}
 
 					$block_instances[$region][$instance_id] = $instance['object'];
 				}
