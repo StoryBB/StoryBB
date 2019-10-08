@@ -833,6 +833,28 @@ class MySQL implements DatabaseAdapter
 	}
 
 	/**
+	 * Function which constructs an optimize custom order string
+	 * as an improved alternative to find_in_set()
+	 *
+	 * @param string $field name
+	 * @param array $array_values Field values sequenced in array via order priority. Must cast to int.
+	 * @param boolean $desc default false
+	 * @return string case field when ... then ... end
+	 */
+	public function custom_order($field, $array_values, $desc = false)
+	{
+		$return = 'CASE '. $field . ' ';
+		$count = count($array_values);
+		$then = ($desc ? ' THEN -' : ' THEN ');
+
+		for ($i = 0; $i < $count; $i++)
+			$return .= 'WHEN ' . (int) $array_values[$i] . $then . $i . ' ';
+
+		$return .= 'END';
+		return $return;
+	}
+
+	/**
 	 *  Get the MySQL version number.
 	 *  @return string The version
 	 */

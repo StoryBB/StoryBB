@@ -1620,7 +1620,7 @@ function PlushSearch2()
 				LEFT JOIN {db_prefix}members AS last_mem ON (last_mem.id_member = first_m.id_member)
 			WHERE m.id_msg IN ({array_int:message_list})
 				AND m.approved = {int:is_approved}
-			ORDER BY ' . $smcFunc['db_custom_order']('m.id_msg', $msg_list) . '
+			ORDER BY ' . $smcFunc['db']->custom_order('m.id_msg', $msg_list) . '
 			LIMIT {int:limit}',
 			[
 				'message_list' => $msg_list,

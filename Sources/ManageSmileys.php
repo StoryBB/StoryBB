@@ -475,8 +475,8 @@ function EditSmileys()
 						},
 					],
 					'sort' => [
-						'default' => $smcFunc['db_custom_order']('hidden', array_keys($smiley_locations)) ,
-						'reverse' => $smcFunc['db_custom_order']('hidden', array_keys($smiley_locations), true),
+						'default' => $smcFunc['db']->custom_order('hidden', array_keys($smiley_locations)) ,
+						'reverse' => $smcFunc['db']->custom_order('hidden', array_keys($smiley_locations), true),
 					],
 				],
 				'tooltip' => [
