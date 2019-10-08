@@ -332,7 +332,7 @@ function processAttachments()
 					'attachment_type' => 0,
 				]
 			);
-			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
+			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -550,7 +550,7 @@ function attachmentChecks($attachID)
 					'type' => 1,
 				]
 			);
-			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db_fetch_row']($request);
+			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		$context['dir_size'] += $_SESSION['temp_attachments'][$attachID]['size'];

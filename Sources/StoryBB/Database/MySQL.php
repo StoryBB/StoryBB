@@ -266,7 +266,7 @@ class MySQL implements DatabaseAdapter
 			]
 		);
 		$tables = [];
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$tables[] = $row[0];
 		$this->free_result($request);
 
@@ -838,6 +838,11 @@ class MySQL implements DatabaseAdapter
 		return mysqli_fetch_assoc($result);
 	}
 
+	public function fetch_row(mysqli_result $result)
+	{
+		return mysqli_fetch_row($result);
+	}
+
 	/**
 	 * Function which constructs an optimize custom order string
 	 * as an improved alternative to find_in_set()
@@ -874,7 +879,7 @@ class MySQL implements DatabaseAdapter
 		global $smcFunc;
 
 		$request = $this->query('', 'SELECT VERSION()');
-		list ($ver) = $smcFunc['db_fetch_row']($request);
+		list ($ver) = $smcFunc['db']->fetch_row($request);
 		$this->free_result($request);
 
 		return $ver;
@@ -894,7 +899,7 @@ class MySQL implements DatabaseAdapter
 			return $db_type;
 
 		$request = $this->query('', 'SELECT @@version_comment');
-		list ($comment) = $smcFunc['db_fetch_row']($request);
+		list ($comment) = $smcFunc['db']->fetch_row($request);
 		$this->free_result($request);
 
 		// Skip these if we don't have a comment.
@@ -1011,7 +1016,7 @@ class MySQL implements DatabaseAdapter
 				'table' => $table,
 			]
 		);
-		list (, $create) = $smcFunc['db_fetch_row']($result);
+		list (, $create) = $smcFunc['db']->fetch_row($result);
 		$this->free_result($result);
 
 		$create = preg_split('/[\n\r]/', $create);

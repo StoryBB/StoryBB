@@ -33,7 +33,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	if (!isset($smcFunc['db_fetch_all']))
 	{
 		$smcFunc += [
-			'db_fetch_row'              => 'mysqli_fetch_row',
 			'db_insert'                 => 'sbb_db_insert',
 			'db_data_seek'              => 'mysqli_data_seek',
 			'db_escape_string'          => 'addslashes',

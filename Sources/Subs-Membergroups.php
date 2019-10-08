@@ -527,7 +527,7 @@ function removeCharactersFromGroups($characters, $groups)
 			]
 		);
 		$protected = [];
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 		{
 			$protected[] = $row[0];
 		}
@@ -728,7 +728,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 				'limit' => 1,
 			]
 		);
-		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		list ($is_protected) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Is it protected?
@@ -848,7 +848,7 @@ function addCharactersToGroup($characters, $group)
 				'limit' => 1,
 			]
 		);
-		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		list ($is_protected) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Is it protected?

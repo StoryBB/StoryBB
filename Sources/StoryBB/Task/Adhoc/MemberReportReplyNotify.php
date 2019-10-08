@@ -38,7 +38,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 				'last_comment' => $this->_details['comment_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$possible_members[] = $row[0];
 		$smcFunc['db']->free_result($request);
 

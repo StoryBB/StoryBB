@@ -1519,7 +1519,7 @@ function adminNotify($type, $memberID, $member_name = null)
 				'id_member' => $memberID,
 			]
 		);
-		list ($member_name) = $smcFunc['db_fetch_row']($request);
+		list ($member_name) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 

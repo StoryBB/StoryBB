@@ -231,7 +231,7 @@ function setPassword2()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('invalid_userid', false);
 
-	list ($realCode, $username, $email, $flood_value) = $smcFunc['db_fetch_row']($request);
+	list ($realCode, $username, $email, $flood_value) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Is the password actually valid?

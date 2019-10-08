@@ -553,7 +553,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
 		]
 	);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$maxPerPage = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
@@ -712,7 +712,7 @@ function showPMDrafts($memID = -1)
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
 		]
 	);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$maxPerPage = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];

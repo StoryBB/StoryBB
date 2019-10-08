@@ -177,7 +177,7 @@ function sig_preview()
 				'id_member' => $user,
 			]
 		);
-		list($current_signature) = $smcFunc['db_fetch_row']($request);
+		list($current_signature) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		censorText($current_signature);
 		$current_signature = !empty($current_signature) ? Parser::parse_bbc($current_signature, true, 'sig' . $user) : $txt['no_signature_set'];

@@ -58,7 +58,7 @@ class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$topics[] = $row[0];
 		$smcFunc['db']->free_result($request);
 

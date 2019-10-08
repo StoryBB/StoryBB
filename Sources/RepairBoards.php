@@ -1519,7 +1519,7 @@ function findForumErrors($do_fix = false)
 				[
 				]
 			);
-			list ($step_max) = $smcFunc['db_fetch_row']($request);
+			list ($step_max) = $smcFunc['db']->fetch_row($request);
 
 			$total_queries++;
 			$smcFunc['db']->free_result($request);
@@ -1548,7 +1548,7 @@ function findForumErrors($do_fix = false)
 
 			// Does it need a fix?
 			if (!empty($test['check_type']) && $test['check_type'] == 'count')
-				list ($needs_fix) = $smcFunc['db_fetch_row']($request);
+				list ($needs_fix) = $smcFunc['db']->fetch_row($request);
 			else
 				$needs_fix = $smcFunc['db']->num_rows($request);
 
@@ -1719,7 +1719,7 @@ function createSalvageArea()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($salvageCatID) = $smcFunc['db_fetch_row']($result);
+		list ($salvageCatID) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($salvageCatID))
@@ -1752,7 +1752,7 @@ function createSalvageArea()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($salvageBoardID) = $smcFunc['db_fetch_row']($result);
+		list ($salvageBoardID) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($salvageBoardID))

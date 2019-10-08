@@ -158,7 +158,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 					'report' => $this->_details['report_id'],
 				]
 			);
-			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
+			list ($subject, $poster_name, $comment) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Third, iterate through each language, load the relevant templates and set up sending.

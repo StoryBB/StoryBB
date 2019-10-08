@@ -637,7 +637,7 @@ function EditBoard2()
 					'current_board' => $_POST['boardid'],
 				]
 			);
-			list ($oldRedirect, $numPosts) = $smcFunc['db_fetch_row']($request);
+			list ($oldRedirect, $numPosts) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// If we're turning redirection on check the board doesn't have posts in it - if it does don't make it a redirection board.

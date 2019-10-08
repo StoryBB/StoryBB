@@ -74,7 +74,7 @@ function ShowXmlFeed()
 					'current_category' => (int) $_REQUEST['c'][0],
 				]
 			);
-			list ($feed_meta['title']) = $smcFunc['db_fetch_row']($request);
+			list ($feed_meta['title']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			$feed_meta['title'] = ' - ' . strip_tags($feed_meta['title']);
@@ -158,7 +158,7 @@ function ShowXmlFeed()
 				'current_board' => $board,
 			]
 		);
-		list ($total_posts) = $smcFunc['db_fetch_row']($request);
+		list ($total_posts) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$feed_meta['title'] = ' - ' . strip_tags($board_info['name']);

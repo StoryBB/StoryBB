@@ -51,7 +51,7 @@ function MessageMain()
 				'is_not_character' => 0,
 			]
 		);
-		list ($maxMessage, $minMessage) = $smcFunc['db_fetch_row']($request);
+		list ($maxMessage, $minMessage) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['message_limit'] = $minMessage == 0 ? 0 : $maxMessage;
@@ -390,7 +390,7 @@ function MessagePopup()
 		]
 	);
 	$pms = [];
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$pms[] = $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -551,7 +551,7 @@ function MessageFolder()
 				'not_deleted' => 0,
 			]
 		);
-	list ($max_messages) = $smcFunc['db_fetch_row']($request);
+	list ($max_messages) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Only show the button if there are messages to delete.
@@ -609,7 +609,7 @@ function MessageFolder()
 					]
 				);
 
-			list ($_GET['start']) = $smcFunc['db_fetch_row']($request);
+			list ($_GET['start']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// To stop the page index's being abnormal, start the page on the page the message would normally be located on...
@@ -1429,7 +1429,7 @@ function MessageSearch2()
 			'not_deleted' => 0,
 		])
 	);
-	list ($numResults) = $smcFunc['db_fetch_row']($request);
+	list ($numResults) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Get all the matching messages... using standard search only (No caching and the like!)
@@ -1674,7 +1674,7 @@ function MessagePost()
 				'msgtime' => time() - 3600,
 			]
 		);
-		list ($postCount) = $smcFunc['db_fetch_row']($request);
+		list ($postCount) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($postCount) && $postCount >= $modSettings['pm_posts_per_hour'])
@@ -2160,7 +2160,7 @@ function MessagePost2()
 				'msgtime' => time() - 3600,
 			]
 		);
-		list ($postCount) = $smcFunc['db_fetch_row']($request);
+		list ($postCount) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($postCount) && $postCount >= $modSettings['pm_posts_per_hour'])
@@ -2740,7 +2740,7 @@ function MessagePrune()
 				'msgtime' => $deleteTime,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$toDelete[] = $row[0];
 		$smcFunc['db']->free_result($request);
 
@@ -3468,7 +3468,7 @@ function ReportMessage()
 		// Can only be a hacker here!
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		list ($subject, $body, $time, $memberFromID, $memberFromName) = $smcFunc['db_fetch_row']($request);
+		list ($subject, $body, $time, $memberFromID, $memberFromName) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Remove the line breaks...
@@ -3709,7 +3709,7 @@ function ManageRules()
 					loadLanguage('Errors');
 					fatal_lang_error('invalid_username', false);
 				}
-				list ($memID) = $smcFunc['db_fetch_row']($request);
+				list ($memID) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				$criteria[] = ['t' => 'mid', 'v' => $memID];

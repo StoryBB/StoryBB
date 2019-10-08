@@ -47,7 +47,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 				'search' => $this->escape_term($this->term),
 			]
 		);
-		list ($count) = $smcFunc['db_fetch_row']($request);
+		list ($count) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		return (int) $count;

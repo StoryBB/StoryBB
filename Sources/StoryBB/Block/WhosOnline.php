@@ -315,7 +315,7 @@ class WhosOnline extends AbstractBlock implements Block
 			// There's an entry in log_activity on today...
 			else
 			{
-				list ($modSettings['mostOnlineToday']) = $smcFunc['db_fetch_row']($request);
+				list ($modSettings['mostOnlineToday']) = $smcFunc['db']->fetch_row($request);
 
 				if ($total_users_online > $modSettings['mostOnlineToday'])
 					trackStats(['most_on' => $total_users_online]);

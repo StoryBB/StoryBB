@@ -110,7 +110,7 @@ function Display()
 			}
 
 			// Now you can be sure $topic is the id_topic to view.
-			list ($topic) = $smcFunc['db_fetch_row']($request);
+			list ($topic) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			$context['current_topic'] = $topic;
@@ -225,7 +225,7 @@ function Display()
 				'current_member' => $user_info['id'],
 			]
 		);
-		list ($myUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
+		list ($myUnapprovedPosts) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($context['topicinfo']['approved'] ? 1 : 0);
@@ -263,7 +263,7 @@ function Display()
 						'current_topic' => $topic,
 					]
 				);
-				list ($new_from) = $smcFunc['db_fetch_row']($request);
+				list ($new_from) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// Fall through to the next if statement.
@@ -293,7 +293,7 @@ function Display()
 						'timestamp' => $timestamp,
 					]
 				);
-				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
+				list ($context['start_from']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// Handle view_newest_first options, and get the correct start value.
@@ -326,7 +326,7 @@ function Display()
 						'no_member' => 0,
 					]
 				);
-				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
+				list ($context['start_from']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 
@@ -554,7 +554,7 @@ function Display()
 				'not_guest' => 0,
 			]
 		);
-		list ($pollinfo['total']) = $smcFunc['db_fetch_row']($request);
+		list ($pollinfo['total']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Total voters needs to include guest voters
@@ -893,7 +893,7 @@ function Display()
 					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
 				]
 			);
-			list ($numNewTopics) = $smcFunc['db_fetch_row']($request);
+			list ($numNewTopics) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// If there're no real new topics in this board, mark the board as seen.
@@ -1153,7 +1153,7 @@ function Display()
 			]
 		);
 
-		list ($lastPostTime) = $smcFunc['db_fetch_row']($request);
+		list ($lastPostTime) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
@@ -1680,7 +1680,7 @@ function QuickInTopicModeration()
 				'message' => min($messages),
 			]
 		);
-		list($subname) = $smcFunc['db_fetch_row']($request);
+		list($subname) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		$_SESSION['split_selection'][$topic] = $messages;
 		redirectexit('action=splittopics;sa=selectTopics;topic=' . $topic . '.0;subname_enc=' . urlencode($subname) . ';' . $context['session_var'] . '=' . $context['session_id']);
@@ -1701,7 +1701,7 @@ function QuickInTopicModeration()
 				'current_topic' => $topic,
 			]
 		);
-		list ($starter) = $smcFunc['db_fetch_row']($request);
+		list ($starter) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$allowed_all = $starter == $user_info['id'];
@@ -1748,7 +1748,7 @@ function QuickInTopicModeration()
 			'current_topic' => $topic,
 		]
 	);
-	list ($first_message, $last_message) = $smcFunc['db_fetch_row']($request);
+	list ($first_message, $last_message) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Delete all the messages we know they can delete. ($messages)

@@ -450,7 +450,7 @@ class PayPal implements PaymentProcessor
 			else
 				return false;
 		}
-		list ($member_id, $subscription_id) = $smcFunc['db_fetch_row']($request);
+		list ($member_id, $subscription_id) = $smcFunc['db']->fetch_row($request);
 		$_POST['item_number'] = $member_id . '+' . $subscription_id;
 		$smcFunc['db']->free_result($request);
 	}

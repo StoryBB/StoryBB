@@ -38,7 +38,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				'last_comment' => $this->_details['comment_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$possible_members[] = $row[0];
 		$smcFunc['db']->free_result($request);
 
@@ -184,7 +184,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 					'report' => $this->_details['report_id'],
 				]
 			);
-			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
+			list ($subject, $poster_name, $comment) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Third, iterate through each language, load the relevant templates and set up sending.

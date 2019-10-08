@@ -386,7 +386,7 @@ function AddMembergroup()
 						'limit' => 1,
 					]
 				);
-				list ($copy_type) = $smcFunc['db_fetch_row']($request);
+				list ($copy_type) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// Protected groups are... well, protected!
@@ -679,7 +679,7 @@ function EditMembergroup()
 				'limit' => 1,
 			]
 		);
-		list ($_REQUEST['group']) = $smcFunc['db_fetch_row']($request);
+		list ($_REQUEST['group']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -703,7 +703,7 @@ function EditMembergroup()
 	);
 
 	// Why don't we have a $smcFunc['db_result'] function?
-	$result = $smcFunc['db_fetch_row']($request);
+	$result = $smcFunc['db']->fetch_row($request);
 	$context['is_moderator_group'] = ($result[0] > 0);
 	$smcFunc['db']->free_result($request);
 
@@ -757,7 +757,7 @@ function EditMembergroup()
 					'limit' => 1,
 				]
 			);
-			list ($inherit_type) = $smcFunc['db_fetch_row']($request);
+			list ($inherit_type) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -925,7 +925,7 @@ function EditMembergroup()
 					'non_joinable' => 1,
 				]
 			);
-			list ($have_joinable) = $smcFunc['db_fetch_row']($request);
+			list ($have_joinable) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Do we need to update the setting?

@@ -152,7 +152,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		);
 		if ($smcFunc['db']->num_rows($request))
 		{
-			list ($char_id) = $smcFunc['db_fetch_row']($request);
+			list ($char_id) = $smcFunc['db']->fetch_row($request);
 		}
 		$smcFunc['db']->free_result($request);
 

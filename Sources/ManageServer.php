@@ -1120,7 +1120,7 @@ function saveDBSettings(&$config_vars)
 				$request = $smcFunc['db']->query('', '
 					SELECT id_board
 					FROM {db_prefix}boards');
-				while ($row = $smcFunc['db_fetch_row']($request))
+				while ($row = $smcFunc['db']->fetch_row($request))
 					$board_list[$row[0]] = true;
 
 				$smcFunc['db']->free_result($request);

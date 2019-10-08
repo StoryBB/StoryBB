@@ -613,7 +613,7 @@ function showPosts($memID)
 				'id_msg' => (int) $_GET['delete'],
 			]
 		);
-		$info = $smcFunc['db_fetch_row']($request);
+		$info = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Trying to remove a message that doesn't exist.
@@ -664,7 +664,7 @@ function showPosts($memID)
 				'board' => $board,
 			]
 		);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -679,7 +679,7 @@ function showPosts($memID)
 			'board' => $board,
 		]
 	);
-	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
+	list ($min_msg_member, $max_msg_member) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$range_limit = '';
@@ -1110,7 +1110,7 @@ function list_getNumAttachments($boardsAllowed, $memID)
 			'board' => $board,
 		]
 	);
-	list ($attachCount) = $smcFunc['db_fetch_row']($request);
+	list ($attachCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $attachCount;
@@ -1325,7 +1325,7 @@ function list_getNumUnwatched($memID)
 			'current_member' => $memID,
 		]
 	);
-	list ($unwatchedCount) = $smcFunc['db_fetch_row']($request);
+	list ($unwatchedCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $unwatchedCount;
@@ -1380,7 +1380,7 @@ function statPanel($memID)
 			'no_poll' => 0,
 		]
 	);
-	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Number polls voted in.
@@ -1392,7 +1392,7 @@ function statPanel($memID)
 			'current_member' => $memID,
 		]
 	);
-	list ($context['num_votes']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_votes']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Format the numbers...
@@ -1695,7 +1695,7 @@ function trackActivity($memID)
 				'current_member' => $memID,
 			]
 		);
-		list ($max_msg_member) = $smcFunc['db_fetch_row']($request);
+		list ($max_msg_member) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// There's no point worrying ourselves with messages made yonks ago, just get recent ones!
@@ -1823,7 +1823,7 @@ function list_getUserErrorCount($where, $where_vars = [])
 		WHERE ' . $where,
 		$where_vars
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -1893,7 +1893,7 @@ function list_getIPMessageCount($where, $where_vars = [])
 		WHERE {query_see_board} AND ' . $where,
 		$where_vars
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -2336,7 +2336,7 @@ function list_getLoginCount($where, $where_vars = [])
 			'id_member' => $where_vars['current_member'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -2498,7 +2498,7 @@ function list_getProfileEditCount($memID)
 			'owner' => $memID,
 		]
 	);
-	list ($edit_count) = $smcFunc['db_fetch_row']($request);
+	list ($edit_count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $edit_count;
@@ -2704,7 +2704,7 @@ function list_getGroupRequestsCount($memID)
 			'memID' => $memID,
 		]
 	);
-	list ($report_count) = $smcFunc['db_fetch_row']($request);
+	list ($report_count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $report_count;

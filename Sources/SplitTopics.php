@@ -86,7 +86,7 @@ function SplitIndex()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('cant_find_messages');
-	list ($_REQUEST['subname'], $num_replies, $unapproved_posts, $id_first_msg, $approved) = $smcFunc['db_fetch_row']($request);
+	list ($_REQUEST['subname'], $num_replies, $unapproved_posts, $id_first_msg, $approved) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// If not approved validate they can see it.
@@ -518,7 +518,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			'id_topic' => $split1_ID_TOPIC,
 		]
 	);
-	list ($id_board, $split1_approved) = $smcFunc['db_fetch_row']($request);
+	list ($id_board, $split1_approved) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Find the new first and last not in the list. (old topic)
@@ -877,7 +877,7 @@ function MergeIndex()
 			'is_approved' => 1,
 		]
 	);
-	list ($topiccount) = $smcFunc['db_fetch_row']($request);
+	list ($topiccount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Make the page list.
@@ -900,7 +900,7 @@ function MergeIndex()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	list ($subject) = $smcFunc['db_fetch_row']($request);
+	list ($subject) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Tell the template a few things..
@@ -1337,8 +1337,8 @@ function MergeExecute($topics = [])
 			'last_msg' => $last_msg,
 		]
 	);
-	list ($member_started) = $smcFunc['db_fetch_row']($request);
-	list ($member_updated) = $smcFunc['db_fetch_row']($request);
+	list ($member_started) = $smcFunc['db']->fetch_row($request);
+	list ($member_updated) = $smcFunc['db']->fetch_row($request);
 	// First and last message are the same, so only row was returned.
 	if ($member_updated === null)
 		$member_updated = $member_started;
@@ -1354,7 +1354,7 @@ function MergeExecute($topics = [])
 		[
 			'topic_list' => $topics,
 	]);
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$affected_msgs[] = $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -1618,7 +1618,7 @@ function MergeExecute($topics = [])
 			'id_topic' => $id_topic,
 		]
 	);
-	list($id_board) = $smcFunc['db_fetch_row']($request);
+	list($id_board) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Again, only do this if we're redirecting - otherwise delete

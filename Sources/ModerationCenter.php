@@ -424,7 +424,7 @@ function ModBlockNotes()
 			[
 			]
 		);
-		list ($moderator_notes_total) = $smcFunc['db_fetch_row']($request);
+		list ($moderator_notes_total) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		cache_put_data('moderator_notes_total', $moderator_notes_total, 240);
@@ -716,7 +716,7 @@ function ReportedMembers()
 
 		// Set up the data for the log...
 		$extra = ['report' => $_GET['rid']];
-		list($extra['member'], $extra['membername']) = $smcFunc['db_fetch_row']($request);
+		list($extra['member'], $extra['membername']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Stick this in string format for consistency
@@ -802,7 +802,7 @@ function ReportedMembers()
 			'not_a_reported_post' => 0,
 		]
 	);
-	list ($context['total_reports']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_reports']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// So, that means we can page index, yes?
@@ -933,7 +933,7 @@ function ShowNotice()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
-	list ($context['notice_body'], $context['notice_subject']) = $smcFunc['db_fetch_row']($request);
+	list ($context['notice_body'], $context['notice_subject']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['notice_body'] = Parser::parse_bbc($context['notice_body'], false);
@@ -1173,7 +1173,7 @@ function list_getWatchedUserCount($approve_query)
 			'warning_watch' => $modSettings['warning_watch'],
 		]
 	);
-	list ($totalMembers) = $smcFunc['db_fetch_row']($request);
+	list ($totalMembers) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalMembers;
@@ -1306,7 +1306,7 @@ function list_getWatchedUserPostsCount($approve_query)
 			'warning_watch' => $modSettings['warning_watch'],
 		]
 	);
-	list ($totalMemberPosts) = $smcFunc['db_fetch_row']($request);
+	list ($totalMemberPosts) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalMemberPosts;
@@ -1580,7 +1580,7 @@ function list_getWarningCount()
 			'warning' => 'warning',
 		]
 	);
-	list ($totalWarns) = $smcFunc['db_fetch_row']($request);
+	list ($totalWarns) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalWarns;
@@ -1802,7 +1802,7 @@ function list_getWarningTemplateCount()
 			'current_member' => $user_info['id'],
 		]
 	);
-	list ($totalWarns) = $smcFunc['db_fetch_row']($request);
+	list ($totalWarns) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalWarns;

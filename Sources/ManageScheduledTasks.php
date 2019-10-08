@@ -584,7 +584,7 @@ function list_getNumTaskLogEntries()
 		[
 		]
 	);
-	list ($num_entries) = $smcFunc['db_fetch_row']($request);
+	list ($num_entries) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $num_entries;

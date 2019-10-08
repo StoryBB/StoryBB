@@ -92,7 +92,7 @@ function markBoardsRead($boards, $unread = false)
 			'current_member' => $user_info['id'],
 		]
 	);
-	list ($lowest_topic) = $smcFunc['db_fetch_row']($result);
+	list ($lowest_topic) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($lowest_topic))
@@ -242,7 +242,7 @@ function MarkRead()
 					'member' => $user_info['id'],
 				]
 			);
-			list ($earlyMsg) = $smcFunc['db_fetch_row']($result);
+			list ($earlyMsg) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			$earlyMsg--;
@@ -405,7 +405,7 @@ function getMsgMemberID($messageID)
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) > 0)
-		list ($memberID) = $smcFunc['db_fetch_row']($result);
+		list ($memberID) = $smcFunc['db']->fetch_row($result);
 	// The message doesn't even exist.
 	else
 		$memberID = 0;
@@ -572,7 +572,7 @@ function modifyBoard($board_id, &$boardOptions)
 					'board_parent' => (int) $board_parent,
 				]
 			);
-			list ($boardOptions['profile']) = $smcFunc['db_fetch_row']($request);
+			list ($boardOptions['profile']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 	}

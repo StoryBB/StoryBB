@@ -390,7 +390,7 @@ function MembergroupMembers()
 			'group' => $_REQUEST['group'],
 		]
 	);
-	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$context['total_members'] = comma_format($context['total_members']);
 
@@ -734,7 +734,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 		array_merge($where_parameters, [
 		])
 	);
-	list ($totalRequests) = $smcFunc['db_fetch_row']($request);
+	list ($totalRequests) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalRequests;

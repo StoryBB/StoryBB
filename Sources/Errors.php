@@ -486,7 +486,7 @@ function log_error_online($error, $sprintf = [])
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
 	{
-		list ($url) = $smcFunc['db_fetch_row']($request);
+		list ($url) = $smcFunc['db']->fetch_row($request);
 		$url = sbb_json_decode($url, true);
 
 		$error = trim($error);

@@ -110,7 +110,7 @@ function DisplayStats()
 		[
 		]
 	);
-	list ($context['users_online']) = $smcFunc['db_fetch_row']($result);
+	list ($context['users_online']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Statistics such as number of boards, categories, etc.
@@ -122,7 +122,7 @@ function DisplayStats()
 			'blank_redirect' => '',
 		]
 	);
-	list ($context['num_boards']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_boards']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	$result = $smcFunc['db']->query('', '
@@ -131,7 +131,7 @@ function DisplayStats()
 		[
 		]
 	);
-	list ($context['num_categories']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_categories']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Format the numbers nicely.
@@ -160,7 +160,7 @@ function DisplayStats()
 			'today_date' => $date,
 		]
 	);
-	list ($context['online_today']) = $smcFunc['db_fetch_row']($result);
+	list ($context['online_today']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	$context['online_today'] = comma_format((int) $context['online_today']);

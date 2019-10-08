@@ -257,7 +257,7 @@ function loadProfileFields($force_reload = false)
 						'variable' => 'name',
 					]
 				);
-				list ($name) = $smcFunc['db_fetch_row']($request);
+				list ($name) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				$context['member']['theme'] = [
@@ -1909,7 +1909,7 @@ function alert_configuration($memID)
 			]
 		);
 
-		list ($can_mod) = $smcFunc['db_fetch_row']($request);
+		list ($can_mod) = $smcFunc['db']->fetch_row($request);
 
 		if (!isset($perms_cache['manage_membergroups']))
 		{
@@ -2472,7 +2472,7 @@ function list_getTopicNotificationCount($memID)
 			'is_approved' => 1,
 		]
 	);
-	list ($totalNotifications) = $smcFunc['db_fetch_row']($request);
+	list ($totalNotifications) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $totalNotifications;
@@ -2959,7 +2959,7 @@ function profileSaveGroups(&$value)
 		SELECT id_group
 		FROM {db_prefix}membergroups
 		WHERE is_character = 1');
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$char_groups[] = $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -3023,7 +3023,7 @@ function profileSaveGroups(&$value)
 					'selected_member' => $context['id_member'],
 				]
 			);
-			list ($another) = $smcFunc['db_fetch_row']($request);
+			list ($another) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (empty($another))
@@ -3737,7 +3737,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 				'limit' => 1,
 			]
 		);
-		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		list ($is_protected) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if ($is_protected == 1)
@@ -3809,7 +3809,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 				'admin_forum' => 'admin_forum',
 			]
 		);
-		list ($disallow) = $smcFunc['db_fetch_row']($request);
+		list ($disallow) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if ($disallow)

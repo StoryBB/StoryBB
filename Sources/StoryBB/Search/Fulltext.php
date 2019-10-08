@@ -118,7 +118,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 		);
 		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
-			list (, $min_word_length) = $smcFunc['db_fetch_row']($request);
+			list (, $min_word_length) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		// 4 is the MySQL default...

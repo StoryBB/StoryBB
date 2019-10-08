@@ -210,7 +210,7 @@ function character_profile($memID)
 			'variable' => 'name',
 		]
 	);
-	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
+	list ($context['character']['theme_name']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
@@ -271,7 +271,7 @@ function char_create()
 					'new_name' => $context['character']['character_name'],
 				]
 			);
-			list ($matching_names) = $smcFunc['db_fetch_row']($result);
+			list ($matching_names) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
@@ -436,7 +436,7 @@ function char_edit()
 					'char' => $context['character']['id_character'],
 				]
 			);
-			list ($matching_names) = $smcFunc['db_fetch_row']($result);
+			list ($matching_names) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
@@ -626,7 +626,7 @@ function char_delete()
 			'char' => $context['character']['id_character'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($result);
+	list ($count) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if ($count > 0)
@@ -643,7 +643,7 @@ function char_delete()
 			'member' => $context['id_member'],
 		]
 	);
-	list ($current_character) = $smcFunc['db_fetch_row']($result);
+	list ($current_character) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 	if ($current_character == $context['character']['id_character'])
 	{
@@ -854,7 +854,7 @@ function char_posts()
 				'board' => $board,
 			]
 		);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -869,7 +869,7 @@ function char_posts()
 			'board' => $board,
 		]
 	);
-	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
+	list ($min_msg_member, $max_msg_member) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$reverse = false;
@@ -1220,7 +1220,7 @@ function char_stats()
 			'recycle_board' => $modSettings['recycle_board'],
 		]
 	);
-	list ($context['num_topics']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_topics']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 	$context['num_topics'] = comma_format($context['num_topics']);
 
@@ -1942,7 +1942,7 @@ function char_sheet_approve()
 			'character' => $context['character']['id_character'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if ($count > 0)
@@ -2135,7 +2135,7 @@ function char_merge_account($memID)
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_merge_not_found', false);
 
-		list ($dest) = $smcFunc['db_fetch_row']($request);
+		list ($dest) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
@@ -2360,7 +2360,7 @@ function char_move_account()
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_move_not_found', false);
 
-		list ($dest) = $smcFunc['db_fetch_row']($request);
+		list ($dest) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
@@ -2424,7 +2424,7 @@ function move_char_accounts($source_chr, $dest_acct)
 			'source_chr' => $source_chr,
 		]
 	);
-	list ($is_online) = $smcFunc['db_fetch_row']($request);
+	list ($is_online) = $smcFunc['db']->fetch_row($request);
 	if ($is_online)
 	{
 		return 'online';
@@ -2637,7 +2637,7 @@ function CharacterList()
 		WHERE ' . implode(' AND ', $clauses),
 		$vars
 	);
-	list($context['char_count']) = $smcFunc['db_fetch_row']($request);
+	list($context['char_count']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['items_per_page'] = 12;

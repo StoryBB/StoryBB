@@ -478,7 +478,7 @@ function ModifySignatureSettings($return_config = false)
 			[
 			]
 		);
-		list ($context['max_member']) = $smcFunc['db_fetch_row']($request);
+		list ($context['max_member']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		while (!$done)
@@ -1125,7 +1125,7 @@ function list_getProfileFieldSize()
 		]
 	);
 
-	list ($numProfileFields) = $smcFunc['db_fetch_row']($request);
+	list ($numProfileFields) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $numProfileFields;
@@ -1612,7 +1612,7 @@ function custFieldsMaxOrder()
 			[]
 		);
 
-	list ($order_count) = $smcFunc['db_fetch_row']($result);
+	list ($order_count) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	return (int) $order_count;

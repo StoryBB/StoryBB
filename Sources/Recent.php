@@ -100,7 +100,7 @@ function RecentPosts()
 					'id_cat' => $_REQUEST['c'][0],
 				]
 			);
-			list ($name) = $smcFunc['db_fetch_row']($request);
+			list ($name) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (empty($name))
@@ -207,7 +207,7 @@ function RecentPosts()
 				'current_board' => $board,
 			]
 		);
-		list ($total_posts, $redirect) = $smcFunc['db_fetch_row']($request);
+		list ($total_posts, $redirect) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// If this is a redirection board, don't bother counting topics here...
@@ -251,7 +251,7 @@ function RecentPosts()
 			array_merge($query_these_boards_params, ['empty' => ''])
 		);
 
-		list($db_num_posts) = $smcFunc['db_fetch_row']($get_num_posts);
+		list($db_num_posts) = $smcFunc['db']->fetch_row($get_num_posts);
 		$num_posts = min(100, $db_num_posts);
 
 		$smcFunc['db']->free_result($get_num_posts);
@@ -666,7 +666,7 @@ function UnreadTopics()
 				'id_cat' => (int) $_REQUEST['c'][0],
 			]
 		);
-		list ($name) = $smcFunc['db_fetch_row']($request);
+		list ($name) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['linktree'][] = [
@@ -719,7 +719,7 @@ function UnreadTopics()
 					'current_member' => $user_info['id'],
 				]
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
+			list ($earliest_msg) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -733,7 +733,7 @@ function UnreadTopics()
 					'current_member' => $user_info['id'],
 				]
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
+			list ($earliest_msg) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -756,7 +756,7 @@ function UnreadTopics()
 						'current_member' => $user_info['id'],
 					]
 				);
-				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
+				list ($earliest_msg2) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
@@ -821,7 +821,7 @@ function UnreadTopics()
 				'is_approved' => 1,
 			])
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -907,7 +907,7 @@ function UnreadTopics()
 				'is_approved' => 1,
 			])
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -1057,7 +1057,7 @@ function UnreadTopics()
 				array_merge($query_parameters, [
 				])
 			);
-			list ($num_topics) = $smcFunc['db_fetch_row']($request);
+			list ($num_topics) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -1078,7 +1078,7 @@ function UnreadTopics()
 					'is_approved' => 1,
 				])
 			);
-			list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+			list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 

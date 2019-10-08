@@ -79,7 +79,7 @@ function Post($post_errors = [])
 		if ($smcFunc['db']->num_rows($request) != 1)
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
-			list ($topic) = $smcFunc['db_fetch_row']($request);
+			list ($topic) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -102,7 +102,7 @@ function Post($post_errors = [])
 				'current_topic' => $topic,
 			]
 		);
-		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db_fetch_row']($request);
+		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
@@ -262,7 +262,7 @@ function Post($post_errors = [])
 					'approved' => 1,
 				]
 			);
-			list ($context['new_replies']) = $smcFunc['db_fetch_row']($request);
+			list ($context['new_replies']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (!empty($context['new_replies']))
@@ -684,7 +684,7 @@ function Post($post_errors = [])
 			);
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
-			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db_fetch_row']($request);
+			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
@@ -2106,7 +2106,7 @@ function AnnouncementSelectMembergroup()
 			'current_topic' => $topic,
 		]
 	);
-	list ($context['topic_subject']) = $smcFunc['db_fetch_row']($request);
+	list ($context['topic_subject']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	censorText($context['announce_topic']['subject']);
@@ -2156,7 +2156,7 @@ function AnnouncementSend()
 			'current_topic' => $topic,
 		]
 	);
-	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db_fetch_row']($request);
+	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	censorText($context['topic_subject']);

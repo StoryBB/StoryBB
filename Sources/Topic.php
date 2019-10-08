@@ -44,7 +44,7 @@ function LockTopic()
 			'current_topic' => $topic,
 		]
 	);
-	list ($starter, $locked) = $smcFunc['db_fetch_row']($request);
+	list ($starter, $locked) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Can you lock topics here, mister?
@@ -124,7 +124,7 @@ function Sticky()
 			'current_topic' => $topic,
 		]
 	);
-	list ($is_sticky) = $smcFunc['db_fetch_row']($request);
+	list ($is_sticky) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Toggle the sticky value.... pretty simple ;).

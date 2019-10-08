@@ -372,7 +372,7 @@ class General extends RawMinkContext implements Context
                     LIMIT 1');
 				if ($smcFunc['db']->num_rows($request))
 				{
-					list($boardOptions['target_category']) = $smcFunc['db_fetch_row']($request);
+					list($boardOptions['target_category']) = $smcFunc['db']->fetch_row($request);
 				}
 				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_category']))

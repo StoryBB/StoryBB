@@ -1301,7 +1301,7 @@ function AdminAccount()
 		);
 		if ($smcFunc['db']->num_rows($result) != 0)
 		{
-			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db_fetch_row']($result);
+			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			$incontext['account_existed'] = $txt['error_user_settings_taken'];
@@ -1463,7 +1463,7 @@ function DeleteInstall()
 	// Only proceed if we can load the data.
 	if ($request)
 	{
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1482,7 +1482,7 @@ function DeleteInstall()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
+		list ($db_sessions) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($db_sessions))

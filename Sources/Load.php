@@ -45,7 +45,7 @@ function reloadSettings()
 		{
 			display_db_error();
 		}
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db']->free_result($request);
 
@@ -444,7 +444,7 @@ function loadUserSettings()
 					'id_msg' => $user_settings['id_msg_last_visit'],
 				]
 			);
-			list ($visitTime) = $smcFunc['db_fetch_row']($result);
+			list ($visitTime) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
@@ -705,7 +705,7 @@ function loadBoard()
 			// So did it find anything?
 			if ($smcFunc['db']->num_rows($request))
 			{
-				list ($topic) = $smcFunc['db_fetch_row']($request);
+				list ($topic) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 				// Save save save.
 				cache_put_data('msg_topic-' . $_REQUEST['msg'], $topic, 120);
@@ -852,7 +852,7 @@ function loadBoard()
 					]
 				);
 
-				list ($board_info['unapproved_user_topics']) = $smcFunc['db_fetch_row']($request);
+				list ($board_info['unapproved_user_topics']) = $smcFunc['db']->fetch_row($request);
 			}
 
 			if (!empty($modSettings['cache_enable']) && (empty($topic) || $modSettings['cache_enable'] >= 3))

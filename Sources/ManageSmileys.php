@@ -222,7 +222,7 @@ function AddSmiley()
 					'first_row' => 0,
 				]
 			);
-			list ($smiley_order) = $smcFunc['db_fetch_row']($request);
+			list ($smiley_order) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (empty($smiley_order))
@@ -675,7 +675,7 @@ function list_getNumSmileys()
 		FROM {db_prefix}smileys',
 		[]
 	);
-	list($numSmileys) = $smcFunc['db_fetch_row'];
+	list($numSmileys) = $smcFunc['db']->fetch_row;
 	$smcFunc['db']->free_result($request);
 
 	return $numSmileys;
@@ -717,7 +717,7 @@ function EditSmileyOrder()
 			);
 			if ($smcFunc['db']->num_rows($request) != 1)
 				fatal_lang_error('smiley_not_found');
-			list ($smiley_row, $smiley_order, $smileyLocation) = $smcFunc['db_fetch_row']($request);
+			list ($smiley_row, $smiley_order, $smileyLocation) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else

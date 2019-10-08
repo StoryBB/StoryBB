@@ -285,7 +285,7 @@ function theme_install($to_install = [])
 		[
 		]
 	);
-	list ($id_theme) = $smcFunc['db_fetch_row']($result);
+	list ($id_theme) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// This will be theme number...

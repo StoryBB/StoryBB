@@ -85,7 +85,7 @@ function ReportToModerator()
 		);
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_board', false);
-		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db_fetch_row']($result);
+		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 
@@ -110,7 +110,7 @@ function ReportToModerator()
 
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_user', false);
-		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db_fetch_row']($result);
+		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db']->fetch_row($result);
 
 		$context['current_user'] = $_REQUEST['u'];
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
@@ -259,7 +259,7 @@ function reportPost($msg, $reason)
 		]
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
-		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
+		list ($id_report, $ignore) = $smcFunc['db']->fetch_row($request);
 
 	$smcFunc['db']->free_result($request);
 
@@ -379,7 +379,7 @@ function reportUser($id_member, $reason)
 		]
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
-		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
+		list ($id_report, $ignore) = $smcFunc['db']->fetch_row($request);
 
 	$smcFunc['db']->free_result($request);
 

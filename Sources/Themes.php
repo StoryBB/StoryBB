@@ -1029,7 +1029,7 @@ function PickTheme()
 				'current_member' => $context['current_member'],
 			]
 		);
-		list ($context['current_theme']) = $smcFunc['db_fetch_row']($request);
+		list ($context['current_theme']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 

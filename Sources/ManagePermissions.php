@@ -97,7 +97,7 @@ function PermissionIndex()
 			'regular_group' => 0,
 		]
 	);
-	list ($num_members) = $smcFunc['db_fetch_row']($request);
+	list ($num_members) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Fill the context variable with 'Guests' and 'Regular Members'.
@@ -741,7 +741,7 @@ function ModifyMembergroup()
 				'current_group' => $context['group']['id'],
 			]
 		);
-		list ($context['group']['name'], $parent) = $smcFunc['db_fetch_row']($result);
+		list ($context['group']['name'], $parent) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		// Cannot edit an inherited group!
@@ -936,7 +936,7 @@ function ModifyMembergroup2()
 				'current_group' => $_GET['group'],
 			]
 		);
-		list ($parent) = $smcFunc['db_fetch_row']($result);
+		list ($parent) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 	}
 
@@ -1327,7 +1327,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 				'moderator_group' => 3,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_row']($query))
+		while ($row = $smcFunc['db']->fetch_row($query))
 		{
 			$group = $row[0];
 

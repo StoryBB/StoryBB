@@ -233,7 +233,7 @@ class Attachments
 					'attachment_type' => 0,
 				]
 			);
-			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
+			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 

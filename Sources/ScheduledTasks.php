@@ -121,7 +121,7 @@ function AutoTask()
 		if ($smcFunc['db']->num_rows($request) === 0)
 			$nextEvent = time() + 86400;
 		else
-			list ($nextEvent) = $smcFunc['db_fetch_row']($request);
+			list ($nextEvent) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		updateSettings(['next_task_time' => $nextEvent]);

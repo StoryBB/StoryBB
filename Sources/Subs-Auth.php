@@ -473,7 +473,7 @@ function resetPassword($memID, $username = null)
 			'id_member' => $memID,
 		]
 	);
-	list ($user, $email, $lngfile) = $smcFunc['db_fetch_row']($request);
+	list ($user, $email, $lngfile) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if ($username !== null)

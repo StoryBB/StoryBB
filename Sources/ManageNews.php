@@ -386,7 +386,7 @@ function SelectMailingMembers()
 		[
 		]
 	);
-	list ($context['groups'][3]['member_count']) = $smcFunc['db_fetch_row']($request);
+	list ($context['groups'][3]['member_count']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['can_send_pm'] = allowedTo('pm_send');
@@ -641,7 +641,7 @@ function ComposeMailing()
 		[
 		]
 	);
-	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Clean up the arrays.
@@ -697,7 +697,7 @@ function SendMailing($clean_only = false)
 			[
 			]
 		);
-		list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+		list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else

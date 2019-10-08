@@ -103,7 +103,7 @@ function ViewErrorLog()
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
 		]
 	);
-	list ($num_errors) = $smcFunc['db_fetch_row']($result);
+	list ($num_errors) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// If this filter is empty...
@@ -133,7 +133,7 @@ function ViewErrorLog()
 			[]
 		);
 
-		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
+		list($context['num_errors']) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 	}
 

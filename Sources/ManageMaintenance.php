@@ -371,7 +371,7 @@ function ConvertMsgBody()
 			FROM {db_prefix}messages',
 			[]
 		);
-		list($max_msgs) = $smcFunc['db_fetch_row']($request);
+		list($max_msgs) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Try for as much time as possible.
@@ -575,7 +575,7 @@ function AdminBoardRecount()
 		[
 		]
 	);
-	list ($max_topics) = $smcFunc['db_fetch_row']($request);
+	list ($max_topics) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$increment = min(max(50, ceil($max_topics / 4)), 2000);
@@ -1265,7 +1265,7 @@ function MaintainReattributePosts()
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
-		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
+		list ($memID, $characterID) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1392,7 +1392,7 @@ function MaintainRemoveOldDrafts()
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$drafts[] = (int) $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -1485,7 +1485,7 @@ function MaintainMassMoveTopics()
 			$conditions,
 			$params
 		);
-		list ($total_topics) = $smcFunc['db_fetch_row']($request);
+		list ($total_topics) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else
@@ -1611,7 +1611,7 @@ function MaintainRecountPosts()
 		);
 
 		// save it so we don't do this again for this task
-		list ($_SESSION['total_members']) = $smcFunc['db_fetch_row']($request);
+		list ($_SESSION['total_members']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else

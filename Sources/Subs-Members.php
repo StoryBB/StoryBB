@@ -588,7 +588,7 @@ function registerMember(&$regOptions, $return_errors = false)
 				'new_name' => $regOptions['extra_register_vars']['first_char'],
 			]
 		);
-		list ($matching_names) = $smcFunc['db_fetch_row']($result);
+		list ($matching_names) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		if ($matching_names)
@@ -1107,7 +1107,7 @@ function groupsAllowedTo($permission, $board_id = null)
 			);
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board');
-			list ($profile_id) = $smcFunc['db_fetch_row']($request);
+			list ($profile_id) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -1261,7 +1261,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			]
 		);
-		list ($email, $membername) = $smcFunc['db_fetch_row']($request);
+		list ($email, $membername) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1277,7 +1277,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			]
 		);
-		list ($characterID) = $smcFunc['db_fetch_row']($request);
+		list ($characterID) = $smcFunc['db']->fetch_row($request);
 	}
 
 	// If they want the post count restored then we need to do some research.
@@ -1302,7 +1302,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'recycled_board' => $recycle_board,
 			]
 		);
-		list ($messageCount) = $smcFunc['db_fetch_row']($request);
+		list ($messageCount) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		updateMemberData($memID, ['posts' => 'posts + ' . $messageCount]);
@@ -1489,7 +1489,7 @@ function list_getNumMembers($where, $where_params = [])
 			array_merge($where_params, [
 			])
 		);
-		list ($num_members) = $smcFunc['db_fetch_row']($request);
+		list ($num_members) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1635,7 +1635,7 @@ function generateValidationCode()
 		]
 	);
 
-	list ($dbRand) = $smcFunc['db_fetch_row']($request);
+	list ($dbRand) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);

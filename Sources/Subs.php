@@ -72,7 +72,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'is_activated' => 1,
 					]
 				);
-				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 
 				// Get the latest activated member's display name.
@@ -85,7 +85,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'id_member' => (int) $changes['latestMember'],
 					]
 				);
-				list ($changes['latestRealName']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['latestRealName']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 
 				// Update the amount of members awaiting approval (either new registration or deletion)
@@ -97,7 +97,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'activation_status' => [3, 4],
 					]
 				);
-				list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['unapprovedMembers']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 			}
 			updateSettings($changes);
@@ -2114,7 +2114,7 @@ function setupMenuContext()
 			[]
 		);
 
-		list($errors) = $smcFunc['db_fetch_row']($query);
+		list($errors) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 
 		if ($errors)
@@ -2127,7 +2127,7 @@ function setupMenuContext()
 			SELECT COUNT(id_message)
 			FROM {db_prefix}contact_form
 			WHERE status = 0');
-		list($contactform) = $smcFunc['db_fetch_row']($query);
+		list($contactform) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 
 		if ($contactform)
@@ -2295,7 +2295,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 				'variable' => $hook,
 			]
 		);
-		list ($current_functions) = $smcFunc['db_fetch_row']($request);
+		list ($current_functions) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($current_functions))
@@ -2359,7 +2359,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 			'variable' => $hook,
 		]
 	);
-	list ($current_functions) = $smcFunc['db_fetch_row']($request);
+	list ($current_functions) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if (!empty($current_functions))

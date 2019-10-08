@@ -68,7 +68,7 @@ class Post
 					'id_topic' => $topicOptions['id'],
 				]
 			);
-			list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
+			list ($topicOptions['is_approved']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -101,7 +101,7 @@ class Post
 					$posterOptions['email'] = '';
 				}
 				else
-					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db_fetch_row']($request);
+					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 			else
@@ -450,7 +450,7 @@ class Post
 						'id_msg' => $msgOptions['id'],
 					]
 				);
-				list ($msgOptions['old_body']) = $smcFunc['db_fetch_row']($request);
+				list ($msgOptions['old_body']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 		}
