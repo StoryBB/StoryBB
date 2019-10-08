@@ -62,8 +62,8 @@ class Toggleable
 		global $txt;
 		$this->config['link_toggles'][] = [
 			'sId' => $selector,
-			'msgExpanded' => !empty($expanded) ? $expanded : sprintf($txt['hide_toggleable'], $this->config['name']),
-			'msgCollapsed' => !empty($collapsed) ? $collapsed : sprintf($txt['show_toggleable'], $this->config['name']),
+			'msgExpanded' => !empty($expanded) ? $expanded : $this->config['name'],
+			'msgCollapsed' => !empty($collapsed) ? $collapsed : $this->config['name'],
 		];
 		return $this;
 	}

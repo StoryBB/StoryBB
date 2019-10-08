@@ -724,12 +724,12 @@ smc_Toggle.prototype.init = function ()
 				smc_preCacheImage(this.opt.aSwapImages[i].srcCollapsed);
 			}
 
-			// Display the image in case it was hidden.
-			$('#' + this.opt.aSwapImages[i].sId).show();
-			var oImage = $('#' + this.opt.aSwapImages[i].sId);
+			var oImage = $(this.opt.aSwapImages[i].sId);
 			var that = this;
 			if (oImage.length > 0)
 			{
+				// Display the image in case it was hidden.
+				oImage.show();
 				oImage.on('click', function() {
 					that.toggle();
 					$(this).blur();
@@ -744,19 +744,17 @@ smc_Toggle.prototype.init = function ()
 	{
 		for (var i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
 		{
-			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
-			if (typeof(oLink) == 'object' && oLink != null)
+			var oLink = $(this.opt.aSwapLinks[i].sId);
+			var that = this;
+			if (oLink.length > 0)
 			{
 				// Display the link in case it was hidden.
-				if (oLink.style.display == 'none')
-					oLink.style.display = '';
-
-				oLink.instanceRef = this;
-				oLink.onclick = function () {
-					this.instanceRef.toggle();
-					this.blur();
-					return false;
-				}
+				oLink.show();
+				oLink.on('click', function(e) {
+					e.preventDefault();
+					that.toggle();
+					$(this).blur();
+				});
 			}
 		}
 	}
@@ -795,11 +793,11 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		{
 			if (this.opt.aSwapImages[i].isCSS)
 			{
-				$('#' + this.opt.aSwapImages[i].sId).toggleClass(this.opt.aSwapImages[i].cssCollapsed, bCollapse).toggleClass(this.opt.aSwapImages[i].cssExpanded, !bCollapse).attr('title', bCollapse ? this.opt.aSwapImages[i].altCollapsed : this.opt.aSwapImages[i].altExpanded);
+				$(this.opt.aSwapImages[i].sId).toggleClass(this.opt.aSwapImages[i].cssCollapsed, bCollapse).toggleClass(this.opt.aSwapImages[i].cssExpanded, !bCollapse).attr('title', bCollapse ? this.opt.aSwapImages[i].altCollapsed : this.opt.aSwapImages[i].altExpanded);
 			}
 			else
 			{
-				var oImage = $('#' + this.opt.aSwapImages[i].sId);
+				var oImage = $(this.opt.aSwapImages[i].sId);
 				if (oImage.length > 0)
 				{
 					// Only (re)load the image if it's changed.
@@ -818,7 +816,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 	{
 		for (var i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
 		{
-			var oLink = $('#' + this.opt.aSwapLinks[i].sId);
+			var oLink = $(this.opt.aSwapLinks[i].sId);
 			if (oLink.length > 0)
 				setInnerHTML(oLink, bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
 		}
