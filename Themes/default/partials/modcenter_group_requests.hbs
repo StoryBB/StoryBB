@@ -30,18 +30,18 @@
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: {{#if (eq context.admin_prefs.mcgr '1')}}true{{else}}false{{/if}},
 			aSwappableContainers: [
-				'group_requests_panel'
+				'#group_requests_panel'
 			],
 			aSwapImages: [
 				{
-					sId: 'group_requests_toggle',
+					sId: '#group_requests_toggle',
 					altExpanded: {{{json txt.hide}}},
 					altCollapsed: {{{json txt.show}}}
 				}
 			],
 			aSwapLinks: [
 				{
-					sId: 'group_requests_link',
+					sId: '#group_requests_link',
 					msgExpanded: {{{json txt.mc_group_requests}}},
 					msgCollapsed: {{{json txt.mc_group_requests}}}
 				}

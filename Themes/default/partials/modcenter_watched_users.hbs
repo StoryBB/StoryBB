@@ -32,18 +32,18 @@
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: {{#if (eq context.admin_prefs.mcwu '1')}}true{{else}}false{{/if}},
 			aSwappableContainers: [
-				'watched_users_panel'
+				'#watched_users_panel'
 			],
 			aSwapImages: [
 				{
-					sId: 'watched_users_toggle',
+					sId: '#watched_users_toggle',
 					altExpanded: {{{json txt.hide}}},
 					altCollapsed: {{{json txt.show}}}
 				}
 			],
 			aSwapLinks: [
 				{
-					sId: 'watched_users_link',
+					sId: '#watched_users_link',
 					msgExpanded: {{{json txt.mc_watched_users}}},
 					msgCollapsed: {{{json txt.mc_watched_users}}}
 				}
