@@ -108,7 +108,7 @@ class TLD
 					{
 						for ($k = strlen($prefix); $k < $delim_pos; ++$k)
 						{
-							$decoded[] = ord($encoded{$k});
+							$decoded[] = ord($encoded[$k]);
 						}
 					}
 
@@ -119,7 +119,7 @@ class TLD
 					{
 						for ($old_idx = $idx, $w = 1, $k = $base; 1; $k += $base)
 						{
-							$cp = ord($encoded{$enco_idx++});
+							$cp = ord($encoded[$enco_idx++]);
 							$digit = ($cp - 48 < 10) ? $cp - 22 : (($cp - 65 < 26) ? $cp - 65 : (($cp - 97 < 26) ? $cp - 97 : $base));
 							$idx += $digit * $w;
 							$t = ($k <= $bias) ? $tmin : (($k >= $bias + $tmax) ? $tmax : ($k - $bias));

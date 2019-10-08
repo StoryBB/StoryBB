@@ -581,9 +581,9 @@ if (!function_exists('imagecreatefrombmp'))
 		$n = 0;
 		for ($j = 0; $j < $palette_size; $j++)
 		{
-			$b = ord($palettedata{$j++});
-			$g = ord($palettedata{$j++});
-			$r = ord($palettedata{$j++});
+			$b = ord($palettedata[$j++]);
+			$g = ord($palettedata[$j++]);
+			$r = ord($palettedata[$j++]);
 
 			$palette[$n++] = imagecolorallocate($dst_img, $r, $g, $b);
 		}
@@ -850,7 +850,7 @@ function showCodeImage($code)
 	for ($i = 0, $n = strlen($code); $i < $n; $i++)
 	{
 		$characters[$i] = [
-			'id' => $code{$i},
+			'id' => $code[$i],
 			'font' => array_rand($font_list),
 		];
 
