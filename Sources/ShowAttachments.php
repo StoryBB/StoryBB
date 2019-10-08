@@ -78,7 +78,7 @@ function showAttachment($force_attach = false)
 		// Do we have a hook wanting to use our attachment system? We use $attachRequest to prevent accidental usage of $request.
 		$attachRequest = null;
 		call_integration_hook('integrate_download_request', [&$attachRequest]);
-		if (!is_null($attachRequest) && $smcFunc['db_is_resource']($attachRequest))
+		if (!is_null($attachRequest) && $smcFunc['db']->is_query_result($attachRequest))
 			$request = $attachRequest;
 
 		else

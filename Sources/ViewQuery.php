@@ -157,7 +157,7 @@ function ViewQuery()
 				<th>', array_keys($row)) . '</th>
 			</tr>';
 
-			$smcFunc['db_data_seek']($result, 0);
+			$smcFunc['db']->seek($result, 0);
 			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				echo '

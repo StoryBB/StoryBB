@@ -1045,6 +1045,45 @@ class MySQL implements DatabaseAdapter
 		return stripslashes($string);
 	}
 
+	public function seek($result, $offset)
+	{
+		return mysqli_data_seek($result, $offset);
+	}
+
+	/**
+	 * Escape the LIKE wildcards so that they match the character and not the wildcard.
+	 *
+	 * @param string $string The string to escape
+	 * @param bool $translate_human_wildcards If true, turns human readable wildcards into SQL wildcards.
+	 * @return string The escaped string
+	 */
+	public function escape_wildcard_string($string, $translate_human_wildcards = false)
+	{
+		$replacements = [
+			'%' => '\%',
+			'_' => '\_',
+			'\\' => '\\\\',
+		];
+
+		if ($translate_human_wildcards)
+			$replacements += [
+				'*' => '%',
+			];
+
+		return strtr($string, $replacements);
+	}
+
+	/**
+	 * Validates whether the resource is a valid mysqli_result instance.
+	 *
+	 * @param mixed $result The string to test
+	 * @return bool True if it is, false otherwise
+	 */
+	public function is_query_result($result)
+	{
+		return $result instanceof mysqli_result;
+	}
+
 	/**
 	 * Function which constructs an optimize custom order string
 	 * as an improved alternative to find_in_set()

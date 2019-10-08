@@ -949,7 +949,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 
 	// Reset the data?
 	if ($reset == true)
-		return @$smcFunc['db_data_seek']($messages_request, 0);
+		return @$smcFunc['db']->seek($messages_request, 0);
 
 	// Get the next one... bail if anything goes wrong.
 	$message = $smcFunc['db']->fetch_assoc($messages_request);

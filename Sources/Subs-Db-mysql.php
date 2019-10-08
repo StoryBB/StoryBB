@@ -33,11 +33,8 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	if (!isset($smcFunc['db_fetch_all']))
 	{
 		$smcFunc += [
-			'db_data_seek'              => 'mysqli_data_seek',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
-			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
-			'db_is_resource'            => 'sbb_is_resource',
 			'db_fetch_all'              => 'sbb_db_fetch_all',
 		];
 	}
@@ -57,44 +54,6 @@ function db_extend($type = 'packages')
 	require_once($sourcedir . '/Db' . strtoupper($type[0]) . substr($type, 1) . '-mysql.php');
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
-}
-
-/**
- * Escape the LIKE wildcards so that they match the character and not the wildcard.
- *
- * @param string $string The string to escape
- * @param bool $translate_human_wildcards If true, turns human readable wildcards into SQL wildcards.
- * @return string The escaped string
- */
-function sbb_db_escape_wildcard_string($string, $translate_human_wildcards = false)
-{
-	$replacements = [
-		'%' => '\%',
-		'_' => '\_',
-		'\\' => '\\\\',
-	];
-
-	if ($translate_human_wildcards)
-		$replacements += [
-			'*' => '%',
-		];
-
-	return strtr($string, $replacements);
-}
-
-/**
- * Validates whether the resource is a valid mysqli instance.
- * Mysqli uses objects rather than resource. https://bugs.php.net/bug.php?id=42797
- *
- * @param mixed $result The string to test
- * @return bool True if it is, false otherwise
- */
-function sbb_is_resource($result)
-{
-	if ($result instanceof mysqli_result)
-		return true;
-
-	return false;
 }
 
 /**

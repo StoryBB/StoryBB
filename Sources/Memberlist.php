@@ -200,10 +200,10 @@ function MLAll()
 
 			for ($i = 0, $n = $smcFunc['db']->num_rows($request); $i < $n; $i += $cache_step_size)
 			{
-				$smcFunc['db_data_seek']($request, $i);
+				$smcFunc['db']->seek($request, $i);
 				list($memberlist_cache['index'][$i]) = $smcFunc['db']->fetch_row($request);
 			}
-			$smcFunc['db_data_seek']($request, $memberlist_cache['num_members'] - 1);
+			$smcFunc['db']->seek($request, $memberlist_cache['num_members'] - 1);
 			list ($memberlist_cache['index'][$i]) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 

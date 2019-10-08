@@ -1711,7 +1711,7 @@ function prepareSearchContext($reset = false)
 
 	// Start from the beginning...
 	if ($reset)
-		return @$smcFunc['db_data_seek']($messages_request, 0);
+		return @$smcFunc['db']->seek($messages_request, 0);
 
 	// Attempt to get the next message.
 	$message = $smcFunc['db']->fetch_assoc($messages_request);
