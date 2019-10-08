@@ -54,7 +54,7 @@ class Multiblock extends AbstractBlock implements Block
 
 		if (empty($this->config['blocks']))
 		{
-			return;
+			return '';
 		}
 
 		$subblock_template = !empty($this->config['subblock_template']) ? $this->config['subblock_template'] : 'block__subbg';
