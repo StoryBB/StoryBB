@@ -55,9 +55,9 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
  * Extend the database functionality. It calls the respective file's init
  * to add the implementations in that file to $smcFunc array.
  *
- * @param string $type Indicates which additional file to load. ('extra', 'packages')
+ * @param string $type Indicates which additional file to load. ('search', 'packages')
  */
-function db_extend($type = 'extra')
+function db_extend($type = 'packages')
 {
 	global $sourcedir;
 

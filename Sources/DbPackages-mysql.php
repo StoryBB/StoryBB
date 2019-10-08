@@ -51,9 +51,6 @@ function db_packages_init()
 		$table_name = $table->get_table_name();
 		$reservedTables[] = strtolower($db_prefix . $table_name);
 	}
-
-	// We in turn may need the extra stuff.
-	db_extend('extra');
 }
 
 /**

@@ -330,7 +330,7 @@ class Behat extends RawMinkContext implements Context
 		$pristine_tables = preg_grep('/^behat_/i', $tables);
 		foreach ($pristine_tables as $table)
 		{
-			$smcFunc['db_backup_table']($table, str_replace('behat_', '', $table));
+			$smcFunc['db']->backup_table($table, str_replace('behat_', '', $table));
 			set_time_limit(60);
 		}
 

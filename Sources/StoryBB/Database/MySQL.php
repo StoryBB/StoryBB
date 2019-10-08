@@ -831,4 +831,237 @@ class MySQL implements DatabaseAdapter
 			}
 		}, $db_string);
 	}
+
+	/**
+	 *  Get the MySQL version number.
+	 *  @return string The version
+	 */
+	public function get_version()
+	{
+		static $ver;
+
+		if (!empty($ver))
+			return $ver;
+
+		global $smcFunc;
+
+		$request = $this->query('', 'SELECT VERSION()');
+		list ($ver) = $smcFunc['db_fetch_row']($request);
+		$this->free_result($request);
+
+		return $ver;
+	}
+
+	/**
+	 * Figures out if we are using MySQL, Percona or MariaDB
+	 *
+	 * @return string The database engine we are using
+	*/
+	public function get_server()
+	{
+		global $smcFunc;
+		static $db_type;
+
+		if (!empty($db_type))
+			return $db_type;
+
+		$request = $this->query('', 'SELECT @@version_comment');
+		list ($comment) = $smcFunc['db_fetch_row']($request);
+		$this->free_result($request);
+
+		// Skip these if we don't have a comment.
+		if (!empty($comment))
+		{
+			if (stripos($comment, 'percona') !== false)
+				return 'Percona';
+			if (stripos($comment, 'mariadb') !== false)
+				return 'MariaDB';
+		}
+		else
+			return '(unknown)';
+
+		return 'MySQL';
+	}
+
+	/**
+	 * This function optimizes a table.
+	 * @param string $table The table to be optimized
+	 * @return int How much space was gained
+	 */
+	public function optimize_table($table)
+	{
+		global $smcFunc, $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// Get how much overhead there is.
+		$request = $this->query('', '
+			SHOW TABLE STATUS LIKE {string:table_name}',
+			[
+				'table_name' => str_replace('_', '\_', $table),
+			]
+		);
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$this->free_result($request);
+
+		$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
+		$request = $this->query('', '
+			OPTIMIZE TABLE `{raw:table}`',
+			[
+				'table' => $table,
+			]
+		);
+		if (!$request)
+		{
+			return -1;
+		}
+
+		// How much left?
+		$request = $this->query('', '
+			SHOW TABLE STATUS LIKE {string:table}',
+			[
+				'table' => str_replace('_', '\_', $table),
+			]
+		);
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$this->free_result($request);
+
+		$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
+
+		return $total_change;
+	}
+
+	/**
+	 * Backup $table to $backup_table.
+	 * @param string $table The name of the table to backup
+	 * @param string $backup_table The name of the backup table for this table
+	 * @return resource -the request handle to the table creation query
+	 */
+	public function backup_table($table, $backup_table)
+	{
+		global $smcFunc, $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// First, get rid of the old table.
+		$this->query('', '
+			DROP TABLE IF EXISTS {raw:backup_table}',
+			[
+				'backup_table' => $backup_table,
+			]
+		);
+
+		// Can we do this the quick way?
+		$result = $this->query('', '
+			CREATE TABLE {raw:backup_table} LIKE {raw:table}',
+			[
+				'backup_table' => $backup_table,
+				'table' => $table
+			]
+		);
+		// If this failed, we go old school.
+		if ($result)
+		{
+			$request = $this->query('', '
+				INSERT INTO {raw:backup_table}
+				SELECT *
+				FROM {raw:table}',
+				[
+					'backup_table' => $backup_table,
+					'table' => $table
+				]);
+
+			// Old school or no school?
+			if ($request)
+				return $request;
+		}
+
+		// At this point, the quick method failed.
+		$result = $this->query('', '
+			SHOW CREATE TABLE {raw:table}',
+			[
+				'table' => $table,
+			]
+		);
+		list (, $create) = $smcFunc['db_fetch_row']($result);
+		$this->free_result($result);
+
+		$create = preg_split('/[\n\r]/', $create);
+
+		$auto_inc = '';
+		// Default engine type.
+		$engine = 'MyISAM';
+		$charset = '';
+		$collate = '';
+
+		foreach ($create as $k => $l)
+		{
+			// Get the name of the auto_increment column.
+			if (strpos($l, 'auto_increment'))
+				$auto_inc = trim($l);
+
+			// For the engine type, see if we can work out what it is.
+			if (strpos($l, 'ENGINE') !== false || strpos($l, 'TYPE') !== false)
+			{
+				// Extract the engine type.
+				preg_match('~(ENGINE|TYPE)=(\w+)(\sDEFAULT)?(\sCHARSET=(\w+))?(\sCOLLATE=(\w+))?~', $l, $match);
+
+				if (!empty($match[1]))
+					$engine = $match[1];
+
+				if (!empty($match[2]))
+					$engine = $match[2];
+
+				if (!empty($match[5]))
+					$charset = $match[5];
+
+				if (!empty($match[7]))
+					$collate = $match[7];
+			}
+
+			// Skip everything but keys...
+			if (strpos($l, 'KEY') === false)
+				unset($create[$k]);
+		}
+
+		if (!empty($create))
+			$create = '(
+				' . implode('
+				', $create) . ')';
+		else
+			$create = '';
+
+		$request = $this->query('', '
+			CREATE TABLE {raw:backup_table} {raw:create}
+			ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
+			SELECT *
+			FROM {raw:table}',
+			[
+				'backup_table' => $backup_table,
+				'table' => $table,
+				'create' => $create,
+				'engine' => $engine,
+				'charset' => empty($charset) ? '' : $charset,
+				'collate' => empty($collate) ? '' : $collate,
+			]
+		);
+
+		if ($auto_inc != '')
+		{
+			if (preg_match('~\`(.+?)\`\s~', $auto_inc, $match) != 0 && substr($auto_inc, -1, 1) == ',')
+				$auto_inc = substr($auto_inc, 0, -1);
+
+			$this->query('', '
+				ALTER TABLE {raw:backup_table}
+				CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
+				[
+					'backup_table' => $backup_table,
+					'column_detail' => $match[1],
+					'auto_inc' => $auto_inc,
+				]
+			);
+		}
+
+		return $request;
+	}
 }

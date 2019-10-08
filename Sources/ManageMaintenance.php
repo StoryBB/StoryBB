@@ -463,7 +463,6 @@ function OptimizeTables()
 		validateToken('admin-optimize', 'post', false);
 
 	ignore_user_abort(true);
-	db_extend();
 
 	$context['page_title'] = $txt['database_optimize'];
 	$context['sub_template'] = 'admin_maintain_database_optimize';
@@ -515,7 +514,7 @@ function OptimizeTables()
 		}
 
 		// Optimize the table!  We use backticks here because it might be a custom table.
-		$data_freed = $smcFunc['db_optimize_table']($tables[$key]['table_name']);
+		$data_freed = $smcFunc['db']->optimize_table($tables[$key]['table_name']);
 
 		if ($data_freed > 0)
 			$_SESSION['optimized_tables'][] = [

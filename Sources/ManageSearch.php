@@ -205,7 +205,6 @@ function EditSearchMethod()
 		checkSession('get');
 		validateToken('admin-msm', 'get');
 
-		db_extend();
 		$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
@@ -408,7 +407,6 @@ function CreateMessageIndex()
 
 		if ($context['start'] === 0)
 		{
-			db_extend();
 			$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
@@ -622,9 +620,6 @@ function detectFulltextIndex()
 {
 	global $smcFunc, $context, $db_prefix;
 
-	// We need this for db_get_version
-	db_extend();
-
 	$request = $smcFunc['db']->query('', '
 		SHOW INDEX
 		FROM {db_prefix}messages',
@@ -665,7 +660,7 @@ function detectFulltextIndex()
 	if ($request !== false)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db_get_version'](), '5.6.4', '>=')))
+		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db']->get_version(), '5.6.4', '>=')))
 			$context['cannot_create_fulltext'] = true;
 		$smcFunc['db']->free_result($request);
 	}
