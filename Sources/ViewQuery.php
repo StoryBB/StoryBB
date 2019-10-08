@@ -141,7 +141,7 @@ function ViewQuery()
 			{
 				echo '
 		<table>
-			<tr><td>', $smcFunc['db_error']($db_connection), '</td></tr>
+			<tr><td>', $smcFunc['db']->error_message($db_connection), '</td></tr>
 		</table>';
 				continue;
 			}

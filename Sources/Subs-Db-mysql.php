@@ -33,8 +33,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	if (!isset($smcFunc['db_fetch_all']))
 	{
 		$smcFunc += [
-			'db_error'                  => 'mysqli_error',
-			'db_errno'                  => 'mysqli_errno',
 			'db_fetch_all'              => 'sbb_db_fetch_all',
 		];
 	}

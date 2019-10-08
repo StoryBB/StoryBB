@@ -480,6 +480,16 @@ class MySQL implements DatabaseAdapter
 		mysqli_stmt_execute ($mysql_error_data_prep);
 	}
 
+	public function error_message()
+	{
+		return mysqli_error($this->connection);
+	}
+
+	public function error_code()
+	{
+		return mysqli_errno($this->connection);
+	}
+
 	/**
 	 * Do a query.  Takes care of errors too.
 	 *
@@ -519,7 +529,7 @@ class MySQL implements DatabaseAdapter
 			catch (\Exception $e)
 			{
 				// We're not connected, guess we're going nowhere.
-				$this->error_backtrace('No longer connected to database.', $smcFunc['db_error'](), true, __FILE__, __LINE__);
+				$this->error_backtrace('No longer connected to database.', $smcFunc['db']->error_message(), true, __FILE__, __LINE__);
 			}
 		}
 

@@ -786,7 +786,7 @@ function DatabaseSettings()
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
 		if ($db_connection === null)
 		{
-			$db_error = @$smcFunc['db_error']();
+			$db_error = @$smcFunc['db']->error_message();
 
 			$options = [
 				'non_fatal' => true,
@@ -1042,7 +1042,7 @@ function DatabasePopulation()
 			}
 			else
 			{
-				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection);
 			}
 		}
 		else
@@ -1087,7 +1087,7 @@ function DatabasePopulation()
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
 				// MySQLi requires a connection object.
-				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection);
 			}
 		}
 		else

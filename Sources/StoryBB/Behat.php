@@ -94,7 +94,7 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc['db']->connect($options);
 
 		if (empty($db_connection)) {
-			die('Database could not be connected - error given: ' . $smcFunc['db_error']());
+			die('Database could not be connected - error given: ' . $smcFunc['db']->error_message());
 		}
 		db_extend('packages');
 
@@ -238,7 +238,7 @@ class Behat extends RawMinkContext implements Context
 				elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 				{
 					// MySQLi requires a connection object.
-					$incontext['failures'][$count] = $smcFunc['db_error']($db_connection) . "\n" . $current_statement;
+					$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection) . "\n" . $current_statement;
 				}
 			}
 			else
