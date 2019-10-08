@@ -759,7 +759,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	}
 
 	// Register them into the database.
-	$memberID = $smcFunc['db_insert']('',
+	$memberID = $smcFunc['db']->insert('',
 		'{db_prefix}members',
 		$column_names,
 		$values,
@@ -774,7 +774,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	// So at this point we've created the account, and we're going to be creating
 	// a character. More accurately, two - one for the 'main' and one for the 'character'.
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}characters',
 		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
@@ -793,7 +793,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	if (!empty($regOptions['extra_register_vars']['first_char']))
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
@@ -834,7 +834,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$inserts = [];
 		foreach ($theme_vars as $var => $val)
 			$inserts[] = [$memberID, $var, $val];
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}themes',
 			['id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 			$inserts,

@@ -156,7 +156,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 		$smcFunc['db']->free_result($request);
 
-		$this->_details['id_attach'] = $smcFunc['db_insert']('',
+		$this->_details['id_attach'] = $smcFunc['db']->insert('',
 			'{db_prefix}attachments',
 			[
 				'id_folder' => 'int', 'id_msg' => 'int', 'id_character' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40',
@@ -173,7 +173,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		);
 
 		// Create the entry in the export table.
-		$this->_details['export_id'] = $smcFunc['db_insert']('',
+		$this->_details['export_id'] = $smcFunc['db']->insert('',
 			'{db_prefix}user_exports',
 			[
 				'id_attach' => 'int', 'id_member' => 'int', 'id_requester' => 'int', 'requested_on' => 'int',
@@ -668,7 +668,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Add the alerts.
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}user_alerts',
 			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],

@@ -2657,7 +2657,7 @@ function MessageActionsApply()
 				foreach ($labels_to_apply as $label)
 					$inserts[] = [$row['id_pm'], $label];
 
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}pm_labeled_messages',
 					['id_pm' => 'int', 'id_label' => 'int'],
 					$inserts,
@@ -3183,7 +3183,7 @@ function ManageLabels()
 			foreach ($labels_to_add AS $label)
 				$inserts[] = [$user_info['id'], $label];
 
-			$smcFunc['db_insert']('', '{db_prefix}pm_labels', ['id_member' => 'int', 'name' => 'string-30'], $inserts, []);
+			$smcFunc['db']->insert('', '{db_prefix}pm_labels', ['id_member' => 'int', 'name' => 'string-30'], $inserts, []);
 		}
 
 		// Update existing labels as needed
@@ -3748,7 +3748,7 @@ function ManageRules()
 
 		// Create the rule?
 		if (empty($context['rid']))
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}pm_rules',
 				[
 					'id_member' => 'int', 'rule_name' => 'string', 'criteria' => 'string', 'actions' => 'string',
@@ -3921,7 +3921,7 @@ function ApplyRules($all_messages = false)
 			foreach ($realLabels as $a_label)
 				$inserts[] = [$pm, $a_label];
 
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}pm_labeled_messages',
 				['id_pm' => 'int', 'id_label' => 'int'],
 				$inserts,

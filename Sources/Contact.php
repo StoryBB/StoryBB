@@ -77,7 +77,7 @@ function Contact()
 		if (empty($context['contact']['errors']))
 		{
 			// No errors, that means we're good here. Save the result and go home.
-			$message = $smcFunc['db_insert']('insert',
+			$message = $smcFunc['db']->insert('insert',
 				'{db_prefix}contact_form',
 				[
 					'id_member' => 'int', 'contact_name' => 'string-255', 'contact_email' => 'string-255',
@@ -113,7 +113,7 @@ function Contact()
 
 			if (!empty($alert_rows))
 			{
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}user_alerts',
 					['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 						'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],

@@ -1319,7 +1319,7 @@ function addTriggers($group_id = 0, $triggers = [], $logs = [])
 	if (!empty($context['ban_errors']))
 		return false;
 
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}ban_items',
 		$insertKeys,
 		$insertTriggers,
@@ -1543,7 +1543,7 @@ function insertBanGroup($ban_info = [])
 		return;
 
 	// Yes yes, we're ready to add now.
-	$ban_info['id'] = $smcFunc['db_insert']('',
+	$ban_info['id'] = $smcFunc['db']->insert('',
 		'{db_prefix}ban_groups',
 		[
 			'name' => 'string-20', 'ban_time' => 'int', 'expire_time' => 'raw', 'cannot_access' => 'int', 'cannot_register' => 'int',

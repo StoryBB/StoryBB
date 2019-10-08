@@ -450,7 +450,7 @@ function updateAdminPreferences()
 	);
 
 	// Update the themes table.
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}themes',
 		['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 		[$user_info['id'], 1, 'admin_preferences', $options['admin_preferences']],

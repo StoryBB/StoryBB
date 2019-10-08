@@ -150,7 +150,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					$inserts[] = [$word, $parameter1];
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_subjects',
 						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
@@ -504,7 +504,7 @@ function updateSettings($changeArray, $update = false)
 	if (empty($replaceArray))
 		return;
 
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}settings',
 		['variable' => 'string-255', 'value' => 'string-65534'],
 		$replaceArray,

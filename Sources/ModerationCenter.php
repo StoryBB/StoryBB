@@ -340,7 +340,7 @@ function ModBlockNotes()
 		if (!empty($_POST['new_note']))
 		{
 			// Insert it into the database then!
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}log_comments',
 				[
 					'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',
@@ -1964,7 +1964,7 @@ function ModifyWarningTemplate()
 			}
 			else
 			{
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}log_comments',
 					[
 						'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int',

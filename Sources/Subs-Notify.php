@@ -79,7 +79,7 @@ function setNotifyPrefs($memID, $prefs = [])
 	foreach ($prefs as $k => $v)
 		$update_rows[] = [$memID, $k, $v];
 
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}user_alerts_prefs',
 		['id_member' => 'int', 'alert_pref' => 'string', 'alert_value' => 'int'],
 		$update_rows,

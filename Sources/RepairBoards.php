@@ -257,7 +257,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
 				$memberUpdatedID = (int) getMsgMemberID($row['myid_last_msg']);
 
-				$newTopicID = $smcFunc['db_insert']('',
+				$newTopicID = $smcFunc['db']->insert('',
 					'{db_prefix}topics',
 					[
 						'id_board' => 'int',
@@ -364,7 +364,7 @@ function loadForumTests()
 				}
 
 				if(empty($row['id_topic'])) {
-					$newMessageID = $smcFunc['db_insert']('',
+					$newMessageID = $smcFunc['db']->insert('',
 						'{db_prefix}messages',
 						[
 							'id_board' => 'int',
@@ -396,7 +396,7 @@ function loadForumTests()
 						1
 					);
 
-					$row['id_topic'] = $smcFunc['db_insert']('',
+					$row['id_topic'] = $smcFunc['db']->insert('',
 						'{db_prefix}topics',
 						[
 							'id_board' => 'int',
@@ -434,7 +434,7 @@ function loadForumTests()
 					updateStats('subject', $row['id_topic'], $txt['salvaged_poll_topic_name']);
 				}
 
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}polls',
 					[
 						'id_poll' => 'int',
@@ -496,7 +496,7 @@ function loadForumTests()
 
 				$row['poster_name'] = !empty($row['poster_name']) ? $row['poster_name'] : $txt['guest'];
 
-				$newMessageID = $smcFunc['db_insert']('',
+				$newMessageID = $smcFunc['db']->insert('',
 					'{db_prefix}messages',
 					[
 						'id_board' => 'int',
@@ -528,7 +528,7 @@ function loadForumTests()
 					1
 				);
 
-				$newTopicID = $smcFunc['db_insert']('',
+				$newTopicID = $smcFunc['db']->insert('',
 					'{db_prefix}topics',
 					[
 						'id_board' => 'int',
@@ -753,7 +753,7 @@ function loadForumTests()
 				$row['my_num_topics'] = (int) $row['my_num_topics'];
 				$row['my_num_posts'] = (int) $row['my_num_posts'];
 
-				$newBoardID = $smcFunc['db_insert']('',
+				$newBoardID = $smcFunc['db']->insert('',
 					'{db_prefix}boards',
 					['id_cat' => 'int', 'name' => 'string', 'description' => 'string', 'num_topics' => 'int', 'num_posts' => 'int', 'member_groups' => 'string'],
 					[$salvageCatID, $txt['salvaged_board_name'], $txt['salvaged_board_description'], $row['my_num_topics'], $row['my_num_posts'], '1'],
@@ -1224,7 +1224,7 @@ function loadForumTests()
 						$inserts[] = [$word, $row['id_topic']];
 					if (count($inserts) > 500)
 					{
-						$smcFunc['db_insert']('ignore',
+						$smcFunc['db']->insert('ignore',
 							'{db_prefix}log_search_subjects',
 							['word' => 'string', 'id_topic' => 'int'],
 							$inserts,
@@ -1236,7 +1236,7 @@ function loadForumTests()
 				}
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_subjects',
 						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
@@ -1724,7 +1724,7 @@ function createSalvageArea()
 
 	if (empty($salvageCatID))
 	{
-		$salvageCatID = $smcFunc['db_insert']('',
+		$salvageCatID = $smcFunc['db']->insert('',
 			'{db_prefix}categories',
 			['name' => 'string-255', 'cat_order' => 'int'],
 			[$txt['salvaged_category_name'], -1],
@@ -1757,7 +1757,7 @@ function createSalvageArea()
 
 	if (empty($salvageBoardID))
 	{
-		$salvageBoardID = $smcFunc['db_insert']('',
+		$salvageBoardID = $smcFunc['db']->insert('',
 			'{db_prefix}boards',
 			['name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'],
 			[$txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''],

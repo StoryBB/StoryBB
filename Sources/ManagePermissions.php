@@ -566,7 +566,7 @@ function SetQuickGroups()
 			if (!empty($inserts))
 			{
 				// ..and insert the new ones.
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}permissions',
 					[
 						'permission' => 'string', 'id_group' => 'int', 'add_deny' => 'int',
@@ -619,7 +619,7 @@ function SetQuickGroups()
 		if (!empty($inserts))
 		{
 			// ..and insert the new ones.
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}board_permissions',
 				['permission' => 'string', 'id_group' => 'int', 'id_profile' => 'int', 'add_deny' => 'int'],
 				$inserts,
@@ -686,7 +686,7 @@ function SetQuickGroups()
 			if (!empty($permChange))
 			{
 				if ($permissionType == 'membergroup')
-					$smcFunc['db_insert']('replace',
+					$smcFunc['db']->insert('replace',
 						'{db_prefix}permissions',
 						['permission' => 'string', 'id_group' => 'int', 'add_deny' => 'int'],
 						$permChange,
@@ -694,7 +694,7 @@ function SetQuickGroups()
 					);
 				// Board permissions go into the other table.
 				else
-					$smcFunc['db_insert']('replace',
+					$smcFunc['db']->insert('replace',
 						'{db_prefix}board_permissions',
 						['permission' => 'string', 'id_group' => 'int', 'id_profile' => 'int', 'add_deny' => 'int'],
 						$permChange,
@@ -987,7 +987,7 @@ function ModifyMembergroup2()
 
 		if (!empty($givePerms['membergroup']))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}permissions',
 				['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 				$givePerms['membergroup'],
@@ -1011,7 +1011,7 @@ function ModifyMembergroup2()
 	{
 		foreach ($givePerms['board'] as $k => $v)
 			$givePerms['board'][$k][] = $profileid;
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}board_permissions',
 			['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int', 'id_profile' => 'int'],
 			$givePerms['board'],
@@ -1249,7 +1249,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		foreach ($groupLevels['global'][$level] as $permission)
 			$groupInserts[] = [$group, $permission];
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}permissions',
 			['id_group' => 'int', 'permission' => 'string'],
 			$groupInserts,
@@ -1260,7 +1260,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		foreach ($groupLevels['board'][$level] as $permission)
 			$boardInserts[] = [1, $group, $permission];
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}board_permissions',
 			['id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'],
 			$boardInserts,
@@ -1292,7 +1292,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			foreach ($groupLevels['board'][$level] as $permission)
 				$boardInserts[] = [$profile, $group, $permission];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}board_permissions',
 				['id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'],
 				$boardInserts,
@@ -1335,7 +1335,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			foreach ($boardLevels[$level] as $permission)
 				$boardInserts[] = [$profile, $group, $permission];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}board_permissions',
 				['id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'],
 				$boardInserts,
@@ -1349,7 +1349,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		foreach ($boardLevels[$level] as $permission)
 			$boardInserts[] = [$profile, 0, $permission];
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 				'{db_prefix}board_permissions',
 				['id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string'],
 				$boardInserts,
@@ -1766,7 +1766,7 @@ function save_inline_permissions($permissions)
 
 	// ...and replace them with new ones.
 	if (!empty($insertRows))
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}permissions',
 			['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 			$insertRows,
@@ -1834,7 +1834,7 @@ function EditPermissionProfiles()
 		$_POST['profile_name'] = StringLibrary::escape($_POST['profile_name']);
 
 		// Insert the profile itself.
-		$profile_id = $smcFunc['db_insert']('',
+		$profile_id = $smcFunc['db']->insert('',
 			'{db_prefix}permission_profiles',
 			[
 				'profile_name' => 'string',
@@ -1861,7 +1861,7 @@ function EditPermissionProfiles()
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($inserts))
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}board_permissions',
 				['id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 				$inserts,
@@ -2039,7 +2039,7 @@ function updateChildPermissions($parents, $profile = null)
 		// Finally insert.
 		if (!empty($permissions))
 		{
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}permissions',
 				['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 				$permissions,
@@ -2083,7 +2083,7 @@ function updateChildPermissions($parents, $profile = null)
 		// Do the insert.
 		if (!empty($permissions))
 		{
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}board_permissions',
 				['id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 				$permissions,

@@ -985,7 +985,7 @@ function PlushSearch2()
 				// If there's data to be inserted for non-IGNORE databases do it here!
 				if (!empty($inserts))
 				{
-					$smcFunc['db_insert']('',
+					$smcFunc['db']->insert('',
 						'{db_prefix}log_search_results',
 						['id_search' => 'int', 'id_topic' => 'int', 'relevance' => 'int', 'id_msg' => 'int', 'num_matches' => 'int'],
 						$inserts,
@@ -1212,7 +1212,7 @@ function PlushSearch2()
 					// Got some non-MySQL data to plonk in?
 					if (!empty($inserts))
 					{
-						$smcFunc['db_insert']('',
+						$smcFunc['db']->insert('',
 							('{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics'),
 							$createTemporary ? ['id_topic' => 'int'] : ['id_search' => 'int', 'id_topic' => 'int'],
 							$inserts,
@@ -1311,7 +1311,7 @@ function PlushSearch2()
 					// More non-MySQL stuff needed?
 					if (!empty($inserts))
 					{
-						$smcFunc['db_insert']('',
+						$smcFunc['db']->insert('',
 							'{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_messages',
 							$createTemporary ? ['id_msg' => 'int'] : ['id_msg' => 'int', 'id_search' => 'int'],
 							$inserts,
@@ -1440,7 +1440,7 @@ function PlushSearch2()
 							foreach ($main_query['select'] as $k => $v)
 								$query_columns[$k] = 'int';
 
-							$smcFunc['db_insert']('',
+							$smcFunc['db']->insert('',
 								'{db_prefix}log_search_results',
 								$query_columns,
 								$inserts,
@@ -1507,7 +1507,7 @@ function PlushSearch2()
 						// Now put them in!
 						if (!empty($inserts))
 						{
-							$smcFunc['db_insert']('',
+							$smcFunc['db']->insert('',
 								'{db_prefix}log_search_results',
 								['id_search' => 'int', 'id_topic' => 'int', 'relevance' => 'float', 'id_msg' => 'int', 'num_matches' => 'int'],
 								$inserts,

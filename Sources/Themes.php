@@ -215,7 +215,7 @@ function ThemeList()
 
 		if (!empty($setValues))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$setValues,
@@ -369,7 +369,7 @@ function SetThemeOptions()
 					]
 				);
 
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$setValues,
@@ -714,7 +714,7 @@ function SetThemeSettings()
 		// If we're actually inserting something..
 		if (!empty($inserts))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$inserts,
@@ -914,7 +914,7 @@ function PickTheme()
 			// A variants to save for the user?
 			if (!empty($_GET['vrt']))
 			{
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}themes',
 					['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 					[$_GET['th'], $user_info['id'], 'theme_variant', $_GET['vrt']],
@@ -931,7 +931,7 @@ function PickTheme()
 		// If changing members or guests - and there's a variant - assume changing default variant.
 		if (!empty($_GET['vrt']) && ($_REQUEST['u'] == '0' || $_REQUEST['u'] == '-1'))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				[$_GET['th'], 0, 'default_variant', $_GET['vrt']],
@@ -981,7 +981,7 @@ function PickTheme()
 
 			if (!empty($_GET['vrt']))
 			{
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}themes',
 					['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 					[$_GET['th'], (int) $_REQUEST['u'], 'theme_variant', $_GET['vrt']],
@@ -1446,7 +1446,7 @@ function SetJavaScript()
 	}
 
 	// Update the option.
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}themes',
 		['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 		[$settings['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']],

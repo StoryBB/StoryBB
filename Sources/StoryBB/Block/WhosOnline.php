@@ -305,7 +305,7 @@ class WhosOnline extends AbstractBlock implements Block
 			// The log_activity hasn't got an entry for today?
 			if ($smcFunc['db']->num_rows($request) === 0)
 			{
-				$smcFunc['db_insert']('ignore',
+				$smcFunc['db']->insert('ignore',
 					'{db_prefix}log_activity',
 					['date' => 'date', 'most_on' => 'int'],
 					[$date, $total_users_online],

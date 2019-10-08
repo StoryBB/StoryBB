@@ -171,7 +171,7 @@ class Schema
 							]
 						];
 
-						$smcFunc['db_insert']('insert',
+						$smcFunc['db']->insert('insert',
 							'{db_prefix}block_instances',
 							['class' => 'string', 'visibility' => 'string', 'configuration' => 'string', 'region' => 'string', 'position' => 'int', 'active' => 'int'],
 							['StoryBB\\Block\\Multiblock', json_encode($visibility), json_encode($configuration), 'after-content', 1, 1],

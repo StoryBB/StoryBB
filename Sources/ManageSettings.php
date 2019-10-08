@@ -1495,7 +1495,7 @@ function EditCustomProfiles()
 			// Gotta figure it out the order.
 			$new_order = $order_count > 1 ? ($order_count + 1) : 1;
 
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}custom_fields',
 				[
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',

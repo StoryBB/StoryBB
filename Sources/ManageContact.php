@@ -252,7 +252,7 @@ function ReplyContact()
 	}
 
 	// Insert it into the database.
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}contact_form_response',
 		['id_message' => 'int', 'id_member' => 'int', 'response' => 'string', 'time_sent' => 'int'],
 		[$msg, $context['user']['id'], $message, time()],

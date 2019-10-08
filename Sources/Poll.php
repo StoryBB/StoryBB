@@ -169,7 +169,7 @@ function Vote()
 	}
 
 	// Add their vote to the tally.
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}log_polls',
 		['id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'],
 		$inserts,
@@ -739,7 +739,7 @@ function EditPoll2()
 	else
 	{
 		// Create the poll.
-		$bcinfo['id_poll'] = $smcFunc['db_insert']('',
+		$bcinfo['id_poll'] = $smcFunc['db']->insert('',
 			'{db_prefix}polls',
 			[
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
@@ -813,7 +813,7 @@ function EditPoll2()
 				]
 			);
 		else
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}poll_choices',
 				[
 					'id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255', 'votes' => 'int',

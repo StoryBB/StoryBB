@@ -166,7 +166,7 @@ function sessionWrite($session_id, $data)
 
 	// If that didn't work, try inserting a new one.
 	if ($smcFunc['db']->affected_rows() == 0)
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}sessions',
 			['session_id' => 'string', 'data' => 'string', 'last_update' => 'int'],
 			[$session_id, $data, time()],

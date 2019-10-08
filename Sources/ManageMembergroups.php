@@ -346,7 +346,7 @@ function AddMembergroup()
 
 		call_integration_hook('integrate_pre_add_membergroup', []);
 
-		$id_group = $smcFunc['db_insert']('',
+		$id_group = $smcFunc['db']->insert('',
 			'{db_prefix}membergroups',
 			[
 				'description' => 'string', 'group_name' => 'string-80',
@@ -418,7 +418,7 @@ function AddMembergroup()
 				$smcFunc['db']->free_result($request);
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('insert',
+					$smcFunc['db']->insert('insert',
 						'{db_prefix}permissions',
 						['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 						$inserts,
@@ -440,7 +440,7 @@ function AddMembergroup()
 			$smcFunc['db']->free_result($request);
 
 			if (!empty($inserts))
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}board_permissions',
 					['id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 					$inserts,
@@ -989,7 +989,7 @@ function EditMembergroup()
 				foreach ($group_moderators as $moderator)
 					$mod_insert[] = [$_REQUEST['group'], $moderator];
 
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}group_moderators',
 					['id_group' => 'int', 'id_member' => 'int'],
 					$mod_insert,

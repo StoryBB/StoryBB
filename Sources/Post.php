@@ -1806,7 +1806,7 @@ function Post2()
 	if (isset($_REQUEST['poll']))
 	{
 		// Create the poll.
-		$id_poll = $smcFunc['db_insert']('',
+		$id_poll = $smcFunc['db']->insert('',
 			'{db_prefix}polls',
 			[
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
@@ -1829,7 +1829,7 @@ function Post2()
 			$i++;
 		}
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}poll_choices',
 			['id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255'],
 			$pollOptions,
@@ -1939,7 +1939,7 @@ function Post2()
 	// Turn notification on or off.  (note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && !$context['user']['is_guest'])
 	{
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}log_notify',
 			['id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'],
 			[$user_info['id'], $topic, 0],

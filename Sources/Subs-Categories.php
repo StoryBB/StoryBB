@@ -154,7 +154,7 @@ function createCategory($catOptions)
 	call_integration_hook('integrate_create_category', [&$catOptions, &$cat_columns, &$cat_parameters]);
 
 	// Add the category to the database.
-	$category_id = $smcFunc['db_insert']('',
+	$category_id = $smcFunc['db']->insert('',
 		'{db_prefix}categories',
 		$cat_columns,
 		$cat_parameters,

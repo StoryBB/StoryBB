@@ -605,7 +605,7 @@ function MessageIndex()
 	// Mark current and parent boards as seen.
 	if (!$user_info['is_guest'])
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			[$modSettings['maxMsgID'], $user_info['id'], $board],
@@ -1263,7 +1263,7 @@ function QuickModeration()
 		foreach ($markCache as $topic)
 			$markArray[] = [$modSettings['maxMsgID'], $user_info['id'], $topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			$markArray,

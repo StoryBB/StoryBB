@@ -44,7 +44,7 @@ function BoardNotify()
 
 		if ($mode > 1)
 			// Turn notification on.  (note this just blows smoke if it's already on.)
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}log_notify',
 				['id_member' => 'int', 'id_board' => 'int'],
 				[$user_info['id'], $board],
@@ -134,7 +134,7 @@ function TopicNotify()
 				$log['unwatched'] = empty($mode) ? 1 : 0;
 			}
 
-			$smcFunc['db_insert']($insert ? 'insert' : 'replace',
+			$smcFunc['db']->insert($insert ? 'insert' : 'replace',
 				'{db_prefix}log_topics',
 				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
@@ -149,7 +149,7 @@ function TopicNotify()
 			if ($mode > 1)
 			{
 				// Turn notification on.  (note this just blows smoke if it's already on.)
-				$smcFunc['db_insert']('ignore',
+				$smcFunc['db']->insert('ignore',
 					'{db_prefix}log_notify',
 					['id_member' => 'int', 'id_topic' => 'int'],
 					[$user_info['id'], $log['id_topic']],

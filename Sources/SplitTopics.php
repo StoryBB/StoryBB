@@ -630,7 +630,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		fatal_lang_error('split_first_post', false);
 
 	// We're off to insert the new topic!  Use 0 for now to avoid UNIQUE errors.
-	$split2_ID_TOPIC = $smcFunc['db_insert']('',
+	$split2_ID_TOPIC = $smcFunc['db']->insert('',
 			'{db_prefix}topics',
 			[
 				'id_board' => 'int',
@@ -769,7 +769,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$replaceEntries[] = [$row['id_member'], $split2_ID_TOPIC, $row['id_msg'], $row['unwatched']];
 
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}log_topics',
 			['id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$replaceEntries,
@@ -1504,7 +1504,7 @@ function MergeExecute($topics = [])
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$replaceEntries[] = [$row['id_member'], $id_topic, $row['new_id_msg'], $row['unwatched']];
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$replaceEntries,
@@ -1542,7 +1542,7 @@ function MergeExecute($topics = [])
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$replaceEntries[] = [$row['id_member'], $id_topic, 0, $row['sent']];
 
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 					'{db_prefix}log_notify',
 					['id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'sent' => 'int'],
 					$replaceEntries,

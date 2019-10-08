@@ -1167,7 +1167,7 @@ function DatabasePopulation()
 
 	if (!empty($newSettings))
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}settings',
 			['variable' => 'string-255', 'value' => 'string-65534'],
 			$newSettings,
@@ -1340,7 +1340,7 @@ function AdminAccount()
 
 			$_POST['password1'] = hash_password(stripslashes($_POST['username']), stripslashes($_POST['password1']));
 
-			$incontext['member_id'] = $smcFunc['db_insert']('',
+			$incontext['member_id'] = $smcFunc['db']->insert('',
 				$db_prefix . 'members',
 				[
 					'member_name' => 'string-25', 'real_name' => 'string-25', 'passwd' => 'string', 'email_address' => 'string',
@@ -1366,7 +1366,7 @@ function AdminAccount()
 				1
 			);
 
-			$incontext['character_id'] = $smcFunc['db_insert']('',
+			$incontext['character_id'] = $smcFunc['db']->insert('',
 				$db_prefix . 'characters',
 				[
 					'id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
@@ -1445,7 +1445,7 @@ function DeleteInstall()
 		);
 
 	// As track stats is by default enabled let's add some activity.
-	$smcFunc['db_insert']('ignore',
+	$smcFunc['db']->insert('ignore',
 		'{db_prefix}log_activity',
 		['date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'],
 		[strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
@@ -1491,7 +1491,7 @@ function DeleteInstall()
 	{
 		$_SERVER['HTTP_USER_AGENT'] = substr($_SERVER['HTTP_USER_AGENT'], 0, 211);
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}sessions',
 			[
 				'session_id' => 'string', 'last_update' => 'int', 'data' => 'string',

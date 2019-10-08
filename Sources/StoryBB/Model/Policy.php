@@ -205,7 +205,7 @@ class Policy
 			if ($smcFunc['db']->affected_rows() == 0)
 			{
 				// Hmm, we didn't change a row? Guess we're adding a new language we didn't already have.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}policy',
 					['policy_type' => 'int', 'language' => 'string', 'title' => 'string', 'description' => '', 'last_revision' => 'int'],
 					[$policy_type, $language, !empty($details['title']) ? $details['title'] : '', !empty($details['description']) ? $details['description'] : '', 0],
@@ -248,7 +248,7 @@ class Policy
 				}
 
 				// Now insert the new revision.
-				$revision_id = $smcFunc['db_insert']('insert',
+				$revision_id = $smcFunc['db']->insert('insert',
 					'{db_prefix}policy_revision',
 					[
 						'id_policy' => 'int', 'last_change' => 'int', 'short_revision_note' => 'string', 'revision_text' => 'string',
@@ -428,7 +428,7 @@ class Policy
 		}
 		if (!empty($rows))
 		{
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}policy_acceptance',
 				['id_policy' => 'int', 'id_member' => 'int', 'id_revision' => 'int', 'acceptance_time' => 'int'],
 				$rows,

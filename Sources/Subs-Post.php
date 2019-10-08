@@ -513,7 +513,7 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 		$cur_insert_len = 0;
 
 		// Dump the data...
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}mail_queue',
 			[
 				'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
@@ -558,7 +558,7 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 		if ($this_insert_len + $cur_insert_len > 1000000)
 		{
 			// Flush out what we have so far.
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}mail_queue',
 				[
 					'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
@@ -844,7 +844,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		return $log;
 
 	// Insert the message itself and then grab the last insert id.
-	$id_pm = $smcFunc['db_insert']('',
+	$id_pm = $smcFunc['db']->insert('',
 		'{db_prefix}personal_messages',
 		[
 			'id_pm_head' => 'int', 'id_member_from' => 'int', 'deleted_by_sender' => 'int',
@@ -890,7 +890,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 				$to_list[] = $to;
 		}
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}pm_recipients',
 			[
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
@@ -1292,7 +1292,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		foreach ($msgs as $msg)
 			$msgInserts[] = [$msg];
 
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}approval_queue',
 			['id_msg' => 'int'],
 			$msgInserts,

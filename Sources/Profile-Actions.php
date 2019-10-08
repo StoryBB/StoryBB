@@ -392,7 +392,7 @@ function issueWarning($memID)
 				sendpm(['to' => [$memID], 'bcc' => []], $_POST['warn_sub'], $_POST['warn_body'], false, $from);
 
 				// Log the notice!
-				$id_notice = $smcFunc['db_insert']('',
+				$id_notice = $smcFunc['db']->insert('',
 					'{db_prefix}log_member_notices',
 					[
 						'subject' => 'string-255', 'body' => 'string-65534',
@@ -417,7 +417,7 @@ function issueWarning($memID)
 		{
 			// Log what we've done!
 			if (!$context['user']['is_owner'])
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}log_comments',
 					[
 						'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int', 'recipient_name' => 'string-255',
@@ -1270,7 +1270,7 @@ function subscriptions($memID)
 		else
 		{
 			$pending_details = json_encode([$new_data]);
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}log_subscribed',
 				[
 					'id_subscribe' => 'int', 'id_member' => 'int', 'status' => 'int', 'payments_pending' => 'int', 'pending_details' => 'string-65534',

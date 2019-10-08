@@ -513,7 +513,7 @@ function DoLogin()
 
 	// Log this entry, only if we have it enabled.
 	if (!empty($modSettings['loginHistoryDays']))
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}member_logins',
 			[
 				'id_member' => 'int', 'time' => 'int', 'ip' => 'inet', 'ip2' => 'inet',

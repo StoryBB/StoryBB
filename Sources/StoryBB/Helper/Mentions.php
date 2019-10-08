@@ -99,7 +99,7 @@ class Mentions
 		call_integration_hook('mention_insert_' . $content_type, [$content_id, &$members]);
 
 		foreach ($members as $member)
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}mentions',
 				['content_id' => 'int', 'content_type' => 'string', 'id_member' => 'int', 'id_mentioned' => 'int', 'id_character' => 'int', 'mentioned_chr' => 'int', 'time' => 'int'],
 				[(int) $content_id, $content_type, $id_member, $member['id_member'], $id_character, $member['id_character'], time()],

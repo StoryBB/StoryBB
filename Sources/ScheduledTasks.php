@@ -299,7 +299,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	if (!empty($failed_emails))
 	{
 		// Update the failed attempts check.
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}settings',
 			['variable' => 'string', 'value' => 'string'],
 			['mail_failed_attempts', empty($modSettings['mail_failed_attempts']) ? 1 : ++$modSettings['mail_failed_attempts']],
@@ -319,7 +319,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			]);
 
 		// Add our email back to the queue, manually.
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}mail_queue',
 			['recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'time_sent' => 'string', 'private' => 'int'],
 			$failed_emails,

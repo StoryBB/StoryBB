@@ -571,7 +571,7 @@ function ModifySubscription()
 		// Is it new?!
 		if ($context['action_type'] == 'add')
 		{
-			$id_subscribe = $smcFunc['db_insert']('',
+			$id_subscribe = $smcFunc['db']->insert('',
 				'{db_prefix}subscriptions',
 				[
 					'name' => 'string-60', 'description' => 'string-255', 'active' => 'int', 'length' => 'string-4', 'cost' => 'string',
@@ -1120,7 +1120,7 @@ function ModifyUserSubscription()
 				addSubscription($context['sub_id'], $id_member, 0, $starttime, $endtime);
 			else
 			{
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}log_subscribed',
 					[
 						'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
@@ -1658,7 +1658,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	else
 		$starttime = $forceStartTime;
 
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}log_subscribed',
 		[
 			'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',

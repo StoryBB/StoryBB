@@ -798,7 +798,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 		// Insert a new topic in the recycle board if $id_recycle_topic is empty.
 		if (empty($id_recycle_topic))
-			$id_topic = $smcFunc['db_insert']('',
+			$id_topic = $smcFunc['db']->insert('',
 				'{db_prefix}topics',
 				[
 					'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
@@ -849,7 +849,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 			// Mark recycled topic as read.
 			if (!$user_info['is_guest'])
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}log_topics',
 					['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 					[$topicID, $user_info['id'], $modSettings['maxMsgID'], 0],
@@ -858,7 +858,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 			// Mark recycle board as seen, if it was marked as seen before.
 			if (!empty($isRead) && !$user_info['is_guest'])
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}log_boards',
 					['id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
 					[$modSettings['recycle_board'], $user_info['id'], $modSettings['maxMsgID']],

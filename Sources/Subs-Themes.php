@@ -304,7 +304,7 @@ function theme_install($to_install = [])
 	}
 
 	if (!empty($inserts))
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}themes',
 			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 			$inserts,

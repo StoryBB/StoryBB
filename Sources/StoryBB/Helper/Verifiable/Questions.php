@@ -399,7 +399,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 		if (!empty($changes['insert']))
 		{
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}qanda',
 				['lngfile' => 'string-50', 'question' => 'string-255', 'answers' => 'string-65534'],
 				$changes['insert'],

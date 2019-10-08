@@ -65,14 +65,14 @@ function markBoardsRead($boards, $unread = false)
 			$markRead[] = [$modSettings['maxMsgID'], $user_info['id'], $board];
 
 		// Update log_mark_read and log_boards.
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_mark_read',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			$markRead,
 			['id_board', 'id_member']
 		);
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			$markRead,
@@ -193,7 +193,7 @@ function MarkRead()
 		foreach ($topics as $id_topic)
 			$markRead[] = [$modSettings['maxMsgID'], $user_info['id'], $id_topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			$markRead,
@@ -249,7 +249,7 @@ function MarkRead()
 		}
 
 		// Blam, unread!
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			[$earlyMsg, $user_info['id'], $topic, $topicinfo['unwatched']],
@@ -360,7 +360,7 @@ function MarkRead()
 				while ($row = $smcFunc['db']->fetch_assoc($result))
 					$logBoardInserts[] = [$modSettings['maxMsgID'], $user_info['id'], $row['id_board']];
 
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}log_boards',
 					['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 					$logBoardInserts,
@@ -724,7 +724,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderators'] as $moderator)
 				$inserts[] = [$board_id, $moderator];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}moderators',
 				['id_board' => 'int', 'id_member' => 'int'],
 				$inserts,
@@ -791,7 +791,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderator_groups'] as $moderator_group)
 				$inserts[] = [$board_id, $moderator_group];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}moderator_groups',
 				['id_board' => 'int', 'id_group' => 'int'],
 				$inserts,
@@ -856,7 +856,7 @@ function createBoard($boardOptions)
 	call_integration_hook('integrate_create_board', [&$boardOptions, &$board_columns, &$board_parameters]);
 
 	// Insert a board, the settings are dealt with later.
-	$board_id = $smcFunc['db_insert']('',
+	$board_id = $smcFunc['db']->insert('',
 		'{db_prefix}boards',
 		$board_columns,
 		$board_parameters,

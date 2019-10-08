@@ -176,7 +176,7 @@ function char_template_save()
 
 	if (empty($template_id)) {
 		// New insertion
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}character_sheet_templates',
 			['template_name' => 'string', 'template' => 'string', 'position' => 'int'],
 			[$template_name, $template, 0],

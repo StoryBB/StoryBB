@@ -281,7 +281,7 @@ function char_create()
 		if (empty($context['form_errors']))
 		{
 			// So no errors, we can save this new character, yay!
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}characters',
 				['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
@@ -301,7 +301,7 @@ function char_create()
 			if (!empty($context['character']['sheet']))
 			{
 				// Also gotta insert this.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_versions',
 					['sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
 						'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'],
@@ -544,7 +544,7 @@ function char_edit()
 					];
 				}
 				if (!empty($rows)) {
-					$smcFunc['db_insert']('insert',
+					$smcFunc['db']->insert('insert',
 						'{db_prefix}log_actions',
 						['id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
 							'ip' => 'inet', 'action' => 'string', 'id_board' => 'int',
@@ -1157,7 +1157,7 @@ function char_retire()
 		'id_character' => $context['character']['id_character'],
 		'character_name' => $context['character']['character_name'],
 	];
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}log_actions',
 		['id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
 			'ip' => 'inet', 'action' => 'string', 'id_board' => 'int',
@@ -1394,7 +1394,7 @@ function char_sheet()
 			if (!empty($message))
 			{
 				// WE GAHT ONE!!!!!!!!!
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_comments',
 					['id_character' => 'int', 'id_author' => 'int', 'time_posted' => 'int', 'sheet_comment' => 'string'],
 					[$context['character']['id_character'], $context['user']['id'], time(), $message],
@@ -1688,7 +1688,7 @@ function char_sheet_edit()
 			if (empty($context['character']['sheet_details']['sheet_text']) || $message != $context['character']['sheet_details']['sheet_text'])
 			{
 				// It's different, good. So insert it, making it await approval.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_versions',
 					[
 						'sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
@@ -1876,7 +1876,7 @@ function char_sheet_approval()
 
 	if (!empty($alert_rows))
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}user_alerts',
 			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
@@ -1974,7 +1974,7 @@ function char_sheet_approve()
 	);
 
 	// And send the character sheet owner an alert.
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}user_alerts',
 		['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 			'chars_src' => 'int', 'chars_dest' => 'int',
@@ -2298,7 +2298,7 @@ function merge_char_accounts($source, $dest)
 	$smcFunc['db']->free_result($request);
 	if (!empty($rows))
 	{
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}pm_recipients',
 			[
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'is_read' => 'int',

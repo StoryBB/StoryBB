@@ -104,7 +104,7 @@ function SaveDraft(&$post_errors)
 	// otherwise creating a new draft
 	else
 	{
-		$id_draft = $smcFunc['db_insert']('',
+		$id_draft = $smcFunc['db']->insert('',
 			'{db_prefix}user_drafts',
 			[
 				'id_topic' => 'int',
@@ -242,7 +242,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// otherwise creating a new PM draft.
 	else
 	{
-		$id_pm_draft = $smcFunc['db_insert']('',
+		$id_pm_draft = $smcFunc['db']->insert('',
 			'{db_prefix}user_drafts',
 			[
 				'id_reply' => 'int',

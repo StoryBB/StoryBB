@@ -209,7 +209,7 @@ class General extends RawMinkContext implements Context
 			];
 		}
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
@@ -518,7 +518,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			// Inserting the new group.
-			$id_group = $smcFunc['db_insert']('',
+			$id_group = $smcFunc['db']->insert('',
 				'{db_prefix}membergroups',
 				[
 					'description' => 'string', 'group_name' => 'string-80',
@@ -552,7 +552,7 @@ class General extends RawMinkContext implements Context
 
 				if (!empty($inserts))
 				{
-					$smcFunc['db_insert']('insert',
+					$smcFunc['db']->insert('insert',
 						'{db_prefix}permissions',
 						['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 						$inserts,
@@ -579,7 +579,7 @@ class General extends RawMinkContext implements Context
 
 			if (!empty($inserts))
 			{
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}board_permissions',
 					['id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 					$inserts,

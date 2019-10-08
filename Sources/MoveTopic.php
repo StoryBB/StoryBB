@@ -453,7 +453,7 @@ function moveTopics($topics, $toBoard)
 		// Prevent queries from getting too big. Taking some steam off.
 		if (count($log_topics) > 500)
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}log_topics',
 				['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 				$log_topics,
@@ -469,7 +469,7 @@ function moveTopics($topics, $toBoard)
 	if (!empty($log_topics))
 	{
 		// Insert that information into the database!
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$log_topics,
@@ -651,7 +651,7 @@ function moveTopics($topics, $toBoard)
 
 	if (!empty($isSeen) && !$user_info['is_guest'])
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
 			[$toBoard, $user_info['id'], $modSettings['maxMsgID']],

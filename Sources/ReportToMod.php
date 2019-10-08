@@ -284,7 +284,7 @@ function reportPost($msg, $reason)
 		if (empty($message['real_name']))
 			$message['real_name'] = $message['poster_name'];
 
-		$id_report = $smcFunc['db_insert']('',
+		$id_report = $smcFunc['db']->insert('',
 			'{db_prefix}log_reported',
 			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -303,7 +303,7 @@ function reportPost($msg, $reason)
 	// Now just add our report...
 	if ($id_report)
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_reported_comments',
 			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -401,7 +401,7 @@ function reportUser($id_member, $reason)
 	// Otherwise, we shall make one!
 	else
 	{
-		$id_report = $smcFunc['db_insert']('',
+		$id_report = $smcFunc['db']->insert('',
 			'{db_prefix}log_reported',
 			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -420,7 +420,7 @@ function reportUser($id_member, $reason)
 	// Now just add our report...
 	if ($id_report)
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_reported_comments',
 			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',

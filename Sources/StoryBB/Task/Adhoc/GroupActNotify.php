@@ -140,7 +140,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 
 			// Insert the alerts if any
 			if (!empty($alert_rows))
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}user_alerts',
 					[
 						'alert_time' => 'int', 'id_member' => 'int', 'content_type' => 'string',

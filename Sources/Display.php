@@ -182,7 +182,7 @@ function Display()
 		if (!$user_info['is_guest'] && $context['topicinfo']['new_from'] != $context['topicinfo']['id_first_msg'])
 		{
 			// Mark this as read first
-			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
+			$smcFunc['db']->insert($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
@@ -820,7 +820,7 @@ function Display()
 			$mark_at_msg = $modSettings['maxMsgID'];
 		if ($mark_at_msg >= $context['topicinfo']['new_from'])
 		{
-			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
+			$smcFunc['db']->insert($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
@@ -909,7 +909,7 @@ function Display()
 		// Mark board as seen if we came using last post link from BoardIndex. (or other places...)
 		if (isset($_REQUEST['boardseen']))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}log_boards',
 				['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 				[$modSettings['maxMsgID'], $user_info['id'], $board],

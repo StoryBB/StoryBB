@@ -586,7 +586,7 @@ function saveModComment($report_id, $data)
 
 	$data = array_merge([$user_info['id'], $user_info['name'], 'reportc', ''], $data);
 
-	$last_comment = $smcFunc['db_insert']('',
+	$last_comment = $smcFunc['db']->insert('',
 		'{db_prefix}log_comments',
 		[
 			'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',

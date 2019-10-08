@@ -492,7 +492,7 @@ function CreateMessageIndex()
 				$context['start'] += $forced_break ? $number_processed : $messages_per_batch;
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_words',
 						['id_word' => 'int', 'id_msg' => 'int'],
 						$inserts,

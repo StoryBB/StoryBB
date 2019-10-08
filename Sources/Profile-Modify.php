@@ -1018,7 +1018,7 @@ function makeThemeChanges($memID, $id_theme)
 	{
 		if (!empty($themeSetArray))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$themeSetArray,
@@ -1254,7 +1254,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	// Make those changes!
 	if (!empty($changes) && empty($context['password_auth_failed']) && empty($errors))
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}themes',
 			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'],
 			$changes,
@@ -3258,7 +3258,7 @@ function profileSaveAvatarData(&$value)
 				// Remove previous attachments this member might have had.
 				removeAttachments(['id_character' => $context['character']['id_character']]);
 
-				$cur_profile['id_attach'] = $smcFunc['db_insert']('',
+				$cur_profile['id_attach'] = $smcFunc['db']->insert('',
 					'{db_prefix}attachments',
 					[
 						'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
@@ -3836,7 +3836,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		$smcFunc['db']->free_result($request);
 
 		// Log the request.
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_group_requests',
 			[
 				'id_member' => 'int', 'id_group' => 'int', 'time_applied' => 'int', 'reason' => 'string-65534',

@@ -49,7 +49,7 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 
 	$id_folder = 1;
 	$avatar_hash = '';
-	$attachID = $smcFunc['db_insert']('',
+	$attachID = $smcFunc['db']->insert('',
 		'{db_prefix}attachments',
 		[
 			'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-255', 'fileext' => 'string-8', 'size' => 'int',

@@ -113,7 +113,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		$smcFunc['db']->free_result($request);
 
 		// Issue, update, move on.
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}user_alerts',
 			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'chars_src' => 'int', 'chars_dest' => 'int',

@@ -43,7 +43,7 @@ class BuddyNotify extends \StoryBB\Task\Adhoc
 				'extra' => '',
 			];
 
-			$smcFunc['db_insert']('insert', '{db_prefix}user_alerts',
+			$smcFunc['db']->insert('insert', '{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$alert_row, []

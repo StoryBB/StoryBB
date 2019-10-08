@@ -21,7 +21,7 @@ class Scheduler
 	{
 		global $smcFunc;
 
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_scheduled_tasks',
 			['id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'],
 			[$task_id, time(), $time_taken],

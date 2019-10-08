@@ -229,7 +229,7 @@ function AddSmiley()
 				$smiley_order = '0';
 		}
 
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}smileys',
 			[
 				'code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'hidden' => 'int', 'smiley_order' => 'int',
