@@ -246,8 +246,6 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function list_tables($filter = null, $db = null)
 	{
-		global $smcFunc;
-
 		$db = $db === null ? $this->db_name : $db;
 		$db = trim($db);
 		$filter = $filter === null ? '' : ' LIKE \'' . $filter . '\'';
@@ -262,7 +260,7 @@ class MySQL implements DatabaseAdapter
 			]
 		);
 		$tables = [];
-		while ($row = $smcFunc['db']->fetch_row($request))
+		while ($row = $this->fetch_row($request))
 			$tables[] = $row[0];
 		$this->free_result($request);
 
@@ -497,7 +495,7 @@ class MySQL implements DatabaseAdapter
 	public function query($identifier, $db_string, $db_values = [])
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
-		global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
+		global $db_unbuffered, $db_callback, $modSettings;
 
 		// Comments that are allowed in a query are preg_removed.
 		static $allowed_comments_from = [
@@ -525,7 +523,7 @@ class MySQL implements DatabaseAdapter
 			catch (\Exception $e)
 			{
 				// We're not connected, guess we're going nowhere.
-				$this->error_backtrace('No longer connected to database.', $smcFunc['db']->error_message(), true, __FILE__, __LINE__);
+				$this->error_backtrace('No longer connected to database.', $this->error_message(), true, __FILE__, __LINE__);
 			}
 		}
 
@@ -885,7 +883,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
 	{
-		global $smcFunc, $db_prefix;
+		global $db_prefix;
 		
 		$return_var = null;
 
@@ -959,7 +957,7 @@ class MySQL implements DatabaseAdapter
 			{
 				$old_id = $this->inserted_id();
 				
-				$result = $smcFunc['db']->query('', '
+				$result = $this->query('', '
 					' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
 					VALUES
 						' . $insertRows[$i],
@@ -1119,10 +1117,8 @@ class MySQL implements DatabaseAdapter
 		if (!empty($ver))
 			return $ver;
 
-		global $smcFunc;
-
 		$request = $this->query('', 'SELECT VERSION()');
-		list ($ver) = $smcFunc['db']->fetch_row($request);
+		list ($ver) = $this->fetch_row($request);
 		$this->free_result($request);
 
 		return $ver;
@@ -1135,14 +1131,13 @@ class MySQL implements DatabaseAdapter
 	*/
 	public function get_server()
 	{
-		global $smcFunc;
 		static $db_type;
 
 		if (!empty($db_type))
 			return $db_type;
 
 		$request = $this->query('', 'SELECT @@version_comment');
-		list ($comment) = $smcFunc['db']->fetch_row($request);
+		list ($comment) = $this->fetch_row($request);
 		$this->free_result($request);
 
 		// Skip these if we don't have a comment.
@@ -1215,7 +1210,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function backup_table($table, $backup_table)
 	{
-		global $smcFunc, $db_prefix;
+		global $db_prefix;
 
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
 
@@ -1259,7 +1254,7 @@ class MySQL implements DatabaseAdapter
 				'table' => $table,
 			]
 		);
-		list (, $create) = $smcFunc['db']->fetch_row($result);
+		list (, $create) = $this->fetch_row($result);
 		$this->free_result($result);
 
 		$create = preg_split('/[\n\r]/', $create);
