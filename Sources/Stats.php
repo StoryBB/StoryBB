@@ -89,7 +89,7 @@ function DisplayStats()
 		[
 		]
 	);
-	$row = $smcFunc['db_fetch_assoc']($result);
+	$row = $smcFunc['db']->fetch_assoc($result);
 	$smcFunc['db']->free_result($result);
 
 	// This would be the amount of time the forum has been up... in days...
@@ -184,7 +184,7 @@ function DisplayStats()
 		'data' => [],
 	];
 	$max_num_posts = 1;
-	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
+	while ($row_members = $smcFunc['db']->fetch_assoc($members_result))
 	{
 		$context['stats_blocks']['posters']['data'][] = [
 			'name' => $row_members['real_name'],
@@ -225,7 +225,7 @@ function DisplayStats()
 		'data' => [],
 	];
 	$max_num_posts = 1;
-	while ($row_board = $smcFunc['db_fetch_assoc']($boards_result))
+	while ($row_board = $smcFunc['db']->fetch_assoc($boards_result))
 	{
 		$context['stats_blocks']['boards']['data'][] = [
 			'id' => $row_board['id_board'],
@@ -262,7 +262,7 @@ function DisplayStats()
 			]
 		);
 		$topic_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -293,7 +293,7 @@ function DisplayStats()
 		'data' => [],
 	];
 	$max_num_replies = 1;
-	while ($row_topic_reply = $smcFunc['db_fetch_assoc']($topic_reply_result))
+	while ($row_topic_reply = $smcFunc['db']->fetch_assoc($topic_reply_result))
 	{
 		censorText($row_topic_reply['subject']);
 
@@ -336,7 +336,7 @@ function DisplayStats()
 			]
 		);
 		$topic_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -367,7 +367,7 @@ function DisplayStats()
 		'data' => [],
 	];
 	$max_num = 1;
-	while ($row_topic_views = $smcFunc['db_fetch_assoc']($topic_view_result))
+	while ($row_topic_views = $smcFunc['db']->fetch_assoc($topic_view_result))
 	{
 		censorText($row_topic_views['subject']);
 
@@ -411,7 +411,7 @@ function DisplayStats()
 			]
 		);
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[$row['id_member_started']] = $row['hits'];
 		$smcFunc['db']->free_result($request);
 
@@ -437,7 +437,7 @@ function DisplayStats()
 		'data' => [],
 	];
 	$max_num = 1;
-	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
+	while ($row_members = $smcFunc['db']->fetch_assoc($members_result))
 	{
 		$i = array_search($row_members['id_member'], array_keys($members));
 		$context['stats_blocks']['starters']['data'][$i] = [
@@ -479,7 +479,7 @@ function DisplayStats()
 	];
 	$temp2 = [];
 	$max_time_online = 1;
-	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
+	while ($row_members = $smcFunc['db']->fetch_assoc($members_result))
 	{
 		$temp2[] = (int) $row_members['id_member'];
 		if (count($context['stats_blocks']['time_online']['data']) >= 10)
@@ -544,7 +544,7 @@ function DisplayStats()
 			]
 		);
 
-		while ($row_liked_message = $smcFunc['db_fetch_assoc']($liked_messages))
+		while ($row_liked_message = $smcFunc['db']->fetch_assoc($liked_messages))
 		{
 			censorText($row_liked_message['subject']);
 
@@ -587,7 +587,7 @@ function DisplayStats()
 			]
 		);
 
-		while ($row_liked_users = $smcFunc['db_fetch_assoc']($liked_users))
+		while ($row_liked_users = $smcFunc['db']->fetch_assoc($liked_users))
 		{
 			$context['stats_blocks']['liked_users']['data'][] = [
 				'id' => $row_liked_users['liked_user'],
@@ -617,7 +617,7 @@ function DisplayStats()
 	);
 
 	$context['yearly'] = [];
-	while ($row_months = $smcFunc['db_fetch_assoc']($months_result))
+	while ($row_months = $smcFunc['db']->fetch_assoc($months_result))
 	{
 		$ID_MONTH = $row_months['stats_year'] . sprintf('%02d', $row_months['stats_month']);
 		$expanded = !empty($_SESSION['expanded_stats'][$row_months['stats_year']]) && in_array($row_months['stats_month'], $_SESSION['expanded_stats'][$row_months['stats_year']]);
@@ -729,7 +729,7 @@ function getDailyStats($condition_string, $condition_parameters = [])
 		ORDER BY stats_day ASC',
 		$condition_parameters
 	);
-	while ($row_days = $smcFunc['db_fetch_assoc']($days_result))
+	while ($row_days = $smcFunc['db']->fetch_assoc($days_result))
 		$context['yearly'][$row_days['stats_year']]['months'][(int) $row_days['stats_month']]['days'][] = [
 			'day' => sprintf('%02d', $row_days['stats_day']),
 			'month' => sprintf('%02d', $row_days['stats_month']),

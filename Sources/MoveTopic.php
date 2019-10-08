@@ -320,7 +320,7 @@ function MoveTopic2()
 			]
 		);
 		$posters = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($posters[$row['id_member']]))
 				$posters[$row['id_member']] = 0;
@@ -406,7 +406,7 @@ function moveTopics($topics, $toBoard)
 	// Num of rows = 0 -> no topics found. Num of rows > 1 -> topics are on multiple boards.
 	if ($smcFunc['db']->num_rows($request) == 0)
 		return;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($fromBoards[$row['id_board']]['num_posts']))
 		{
@@ -446,7 +446,7 @@ function moveTopics($topics, $toBoard)
 		]
 	);
 	$log_topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$log_topics[] = [$row['id_topic'], $row['id_member'], $row['id_msg'], (is_null($row['unwatched']) ? 0 : $row['unwatched'])];
 
@@ -552,7 +552,7 @@ function moveTopics($topics, $toBoard)
 			]
 		);
 		$approval_msgs = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$approval_msgs[] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 
@@ -578,7 +578,7 @@ function moveTopics($topics, $toBoard)
 			]
 		);
 		$topicMaxMin = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$topicMaxMin[$row['id_topic']] = [
 				'min' => $row['id_first_msg'],
@@ -597,7 +597,7 @@ function moveTopics($topics, $toBoard)
 				'topics' => $topics,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If not, update.
 			if ($row['first_msg'] != $topicMaxMin[$row['id_topic']]['min'] || $row['last_msg'] != $topicMaxMin[$row['id_topic']]['max'])

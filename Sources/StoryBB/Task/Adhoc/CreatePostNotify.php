@@ -73,7 +73,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$watched = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groups = array_merge([$row['id_group']], (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 			if (!in_array(1, $groups) && count(array_intersect($groups, explode(',', $row['member_groups']))) == 0)
@@ -373,7 +373,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($posterOptions['id'] == $row['id_member'])
 				continue;

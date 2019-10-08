@@ -622,7 +622,7 @@ function EditSmileys()
 		);
 		if ($smcFunc['db']->num_rows($request) != 1)
 			fatal_lang_error('smiley_not_found');
-		$context['current_smiley'] = $smcFunc['db_fetch_assoc']($request);
+		$context['current_smiley'] = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['current_smiley']['code'] = StringLibrary::escape($context['current_smiley']['code']);
@@ -655,7 +655,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 		]
 	);
 	$smileys = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$smileys[] = $row;
 	$smcFunc['db']->free_result($request);
 
@@ -776,7 +776,7 @@ function EditSmileyOrder()
 			'rows' => [],
 		],
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$location = empty($row['hidden']) ? 'postform' : 'popup';
 		$context['smileys'][$location]['rows'][$row['smiley_row']][] = [

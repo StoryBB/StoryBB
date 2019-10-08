@@ -158,7 +158,7 @@ function SplitExecute()
 				'split_at' => $_POST['at'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$messagesToBeSplit[] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -259,7 +259,7 @@ function SplitSelectTopics()
 		// You can't split the last message off.
 		if (empty($context['not_selected']['start']) && $smcFunc['db']->num_rows($request) <= 1 && $_REQUEST['move'] == 'down')
 			$_REQUEST['move'] = '';
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$original_msgs['not_selected'][] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 		if (!empty($_SESSION['split_selection'][$topic]))
@@ -280,7 +280,7 @@ function SplitSelectTopics()
 					'messages_per_page' => $context['messages_per_page'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$original_msgs['selected'][] = $row['id_msg'];
 			$smcFunc['db']->free_result($request);
 		}
@@ -315,7 +315,7 @@ function SplitSelectTopics()
 			]
 		);
 		$_SESSION['split_selection'][$topic] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$_SESSION['split_selection'][$topic][] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -333,7 +333,7 @@ function SplitSelectTopics()
 			'is_approved' => 1,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context[empty($row['is_selected']) || $row['is_selected'] == 'f' ? 'not_selected' : 'selected']['num_messages'] = $row['num_messages'];
 	$smcFunc['db']->free_result($request);
 
@@ -365,7 +365,7 @@ function SplitSelectTopics()
 		]
 	);
 	$context['messages'] = [];
-	for ($counter = 0; $row = $smcFunc['db_fetch_assoc']($request); $counter++)
+	for ($counter = 0; $row = $smcFunc['db']->fetch_assoc($request); $counter++)
 	{
 		censorText($row['subject']);
 		censorText($row['body']);
@@ -405,7 +405,7 @@ function SplitSelectTopics()
 			]
 		);
 		$context['messages'] = [];
-		for ($counter = 0; $row = $smcFunc['db_fetch_assoc']($request); $counter++)
+		for ($counter = 0; $row = $smcFunc['db']->fetch_assoc($request); $counter++)
 		{
 			censorText($row['subject']);
 			censorText($row['body']);
@@ -544,7 +544,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	$split1_first_msg = null;
 	$split1_last_msg = null;
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Get the right first and last message dependant on approved state...
 		if (empty($split1_first_msg) || $row['myid_first_msg'] < $split1_first_msg)
@@ -587,7 +587,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			'id_topic' => $split1_ID_TOPIC,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// As before get the right first and last message dependant on approved state...
 		if (empty($split2_first_msg) || $row['myid_first_msg'] < $split2_first_msg)
@@ -766,7 +766,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$replaceEntries = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$replaceEntries[] = [$row['id_member'], $split2_ID_TOPIC, $row['id_msg'], $row['unwatched']];
 
 		$smcFunc['db_insert']('ignore',
@@ -956,7 +956,7 @@ function MergeIndex()
 		]
 	);
 	$context['topics'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		censorText($row['subject']);
 
@@ -1054,7 +1054,7 @@ function MergeExecute($topics = [])
 	$context['is_approved'] = 1;
 	$lowestTopicId = 0;
 	$lowestTopicBoard = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Sorry, redirection topics can't be merged
 		if (!empty($row['id_redirect_topic']))
@@ -1189,7 +1189,7 @@ function MergeExecute($topics = [])
 					'limit' => count($polls),
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['polls'][] = [
 					'id' => $row['id_poll'],
 					'topic' => [
@@ -1214,7 +1214,7 @@ function MergeExecute($topics = [])
 					'limit' => count($boards),
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['boards'][] = [
 					'id' => $row['id_board'],
 					'name' => $row['name'],
@@ -1275,7 +1275,7 @@ function MergeExecute($topics = [])
 	);
 	$topic_approved = 1;
 	$first_msg = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// If this is approved, or is fully unapproved.
 		if ($row['approved'] || !empty($first_msg))
@@ -1501,7 +1501,7 @@ function MergeExecute($topics = [])
 	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$replaceEntries = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$replaceEntries[] = [$row['id_member'], $id_topic, $row['new_id_msg'], $row['unwatched']];
 
 		$smcFunc['db_insert']('replace',
@@ -1539,7 +1539,7 @@ function MergeExecute($topics = [])
 		if ($smcFunc['db']->num_rows($request) > 0)
 		{
 			$replaceEntries = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$replaceEntries[] = [$row['id_member'], $id_topic, 0, $row['sent']];
 
 			$smcFunc['db_insert']('replace',

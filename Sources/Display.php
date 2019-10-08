@@ -172,7 +172,7 @@ function Display()
 
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('not_a_topic', false, 404);
-	$context['topicinfo'] = $smcFunc['db_fetch_assoc']($request);
+	$context['topicinfo'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Is this a moved or merged topic that we are redirecting to?
@@ -377,7 +377,7 @@ function Display()
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['id_member']))
 				continue;
@@ -541,7 +541,7 @@ function Display()
 				'id_poll' => $context['topicinfo']['id_poll'],
 			]
 		);
-		$pollinfo = $smcFunc['db_fetch_assoc']($request);
+		$pollinfo = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db']->query('', '
@@ -575,7 +575,7 @@ function Display()
 		$pollOptions = [];
 		$realtotal = 0;
 		$pollinfo['has_voted'] = false;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			censorText($row['label']);
 			$pollOptions[$row['id_choice']] = $row;
@@ -781,7 +781,7 @@ function Display()
 
 	$messages = [];
 	$all_posters = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['id_member']))
 			$all_posters[$row['id_msg']] = $row['id_member'];
@@ -846,7 +846,7 @@ function Display()
 			]
 		);
 		$do_once = true;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Find if this topic is marked for notification...
 			if (!empty($row['id_topic']))
@@ -959,7 +959,7 @@ function Display()
 				]
 			);
 			$temp = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 					continue;
@@ -1404,7 +1404,7 @@ function prepareDisplayContext($reset = false)
 		return @$smcFunc['db_data_seek']($messages_request, 0);
 
 	// Attempt to get the next message.
-	$message = $smcFunc['db_fetch_assoc']($messages_request);
+	$message = $smcFunc['db']->fetch_assoc($messages_request);
 	if (!$message)
 	{
 		$smcFunc['db']->free_result($messages_request);
@@ -1729,7 +1729,7 @@ function QuickInTopicModeration()
 		]
 	);
 	$messages = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!$allowed_all && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
 			continue;

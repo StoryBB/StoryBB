@@ -30,10 +30,9 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	global $smcFunc;
 
 	// Map some database specific functions, only do this once.
-	if (!isset($smcFunc['db_fetch_assoc']))
+	if (!isset($smcFunc['db_fetch_all']))
 	{
 		$smcFunc += [
-			'db_fetch_assoc'            => 'mysqli_fetch_assoc',
 			'db_fetch_row'              => 'mysqli_fetch_row',
 			'db_insert'                 => 'sbb_db_insert',
 			'db_data_seek'              => 'mysqli_data_seek',
@@ -195,7 +194,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 				
 				if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 				{
-					$row = $smcFunc['db_fetch_assoc']($request);
+					$row = $smcFunc['db']->fetch_assoc($request);
 					$ai = $row[$keys[0]];
 				}
 			}

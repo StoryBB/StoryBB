@@ -971,7 +971,7 @@ function makeThemeChanges($memID, $id_theme)
 		]
 	);
 	$custom_fields = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$custom_fields[] = $row['col_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -1155,7 +1155,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	);
 	$changes = [];
 	$log_changes = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		/* This means don't save if:
 			- The user is NOT an admin.
@@ -1422,7 +1422,7 @@ function editBuddies($memID)
 
 	$context['custom_pf'] = [];
 	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		if (!isset($disabled_fields[$row['col_name']]))
 			$context['custom_pf'][$row['col_name']] = [
 				'label' => $row['field_name'],
@@ -1446,7 +1446,7 @@ function editBuddies($memID)
 				'buddy_list_count' => substr_count($user_profile[$memID]['buddy_list'], ',') + 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$buddies[] = $row['id_member'];
 		$smcFunc['db']->free_result($result);
 	}
@@ -1605,7 +1605,7 @@ function editIgnoreList($memID)
 				'ignore_list_count' => substr_count($user_profile[$memID]['pm_ignore_list'], ',') + 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$ignored[] = $row['id_member'];
 		$smcFunc['db']->free_result($result);
 	}
@@ -2525,7 +2525,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		]
 	);
 	$notification_topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		censorText($row['subject']);
 
@@ -2583,7 +2583,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 		]
 	);
 	$notification_boards = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$notification_boards[] = [
 			'id' => $row['id_board'],
 			'name' => $row['name'],
@@ -2629,7 +2629,7 @@ function loadThemeOptions($memID)
 			]
 		);
 		$temp = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['id_member'] == -1)
 			{
@@ -2680,7 +2680,7 @@ function ignoreboards($memID)
 	);
 	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['categories'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
@@ -2796,7 +2796,7 @@ function profileLoadGroups()
 			'is_protected' => 1,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We should skip the administrator group if they don't have the admin_forum permission!
 		if ($row['id_group'] == 1 && !allowedTo('admin_forum'))
@@ -2946,7 +2946,7 @@ function profileSaveGroups(&$value)
 			]
 		);
 		$protected_groups = [1];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$protected_groups[] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 
@@ -3639,7 +3639,7 @@ function groupMembership($memID)
 		'member' => [],
 		'available' => []
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Can they edit their primary group?
 		if (($row['id_group'] == $context['primary_group'] && $row['group_type'] > 1) || ($row['hidden'] != 2 && $context['primary_group'] == 0 && in_array($row['id_group'], $groups)))
@@ -3754,7 +3754,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			'current_group' => $old_profile['id_group'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Is this the new group?
 		if ($row['id_group'] == $group_id)

@@ -88,7 +88,7 @@ class Language
 				'file_id' => $file_id,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if ($row['is_multi'])
 			{

@@ -269,7 +269,7 @@ function EditSearchMethod()
 		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$context['table_info']['data_length'] = $row['Data_length'];
 			$context['table_info']['index_length'] = $row['Index_length'];
 			$context['table_info']['fulltext_length'] = $row['Index_length'];
@@ -298,7 +298,7 @@ function EditSearchMethod()
 		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
 			$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
 			$smcFunc['db']->free_result($request);
@@ -441,7 +441,7 @@ function CreateMessageIndex()
 				'starting_id' => $context['start'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$num_messages[empty($row['todo']) ? 'done' : 'todo'] = $row['num_messages'];
 
 		if (empty($num_messages['todo']))
@@ -470,7 +470,7 @@ function CreateMessageIndex()
 				);
 				$forced_break = false;
 				$number_processed = 0;
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					// In theory it's possible for one of these to take friggin ages so add more timeout protection.
 					if ($stop < time())
@@ -539,7 +539,7 @@ function CreateMessageIndex()
 						'minimum_messages' => $max_messages,
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$stop_words[] = $row['id_word'];
 				$smcFunc['db']->free_result($request);
 
@@ -629,7 +629,7 @@ function detectFulltextIndex()
 	$context['fulltext_index'] = [];
 	if ($request !== false || $smcFunc['db']->num_rows($request) != 0)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
 			$context['fulltext_index'][] = $row['Key_name'];
 		$smcFunc['db']->free_result($request);
@@ -659,7 +659,7 @@ function detectFulltextIndex()
 
 	if ($request !== false)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db']->get_version(), '5.6.4', '>=')))
 			$context['cannot_create_fulltext'] = true;
 		$smcFunc['db']->free_result($request);

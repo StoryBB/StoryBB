@@ -73,7 +73,7 @@ function ListContact()
 						'limit' => $items_per_page,
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$rows[$row['id_message']] = $row;
 				}
@@ -178,7 +178,7 @@ function ViewContact()
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
-	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact'] = $smcFunc['db']->fetch_assoc($request);
 	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
 	$smcFunc['db']->free_result($request);
 
@@ -197,7 +197,7 @@ function ViewContact()
 			'msg' => $msg,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['time_sent_format'] = timeformat($row['time_sent']);
 		$context['contact']['previous'][] = $row;
@@ -241,7 +241,7 @@ function ReplyContact()
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
-	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Nothing entered?

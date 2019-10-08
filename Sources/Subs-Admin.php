@@ -35,7 +35,7 @@ function getAdminFile(string $filename, string $path = '')
 		]
 	);
 	$data = null;
-	if ($row = $smcFunc['db_fetch_assoc']($request))
+	if ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$data = $row['data'];
 		switch ($row['filetype'])
@@ -495,7 +495,7 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 		]
 	);
 	$emails_sent = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($prefs[$row['id_member']]['announcements']))
 			continue;

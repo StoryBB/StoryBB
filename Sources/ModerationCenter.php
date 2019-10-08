@@ -300,7 +300,7 @@ function ModBlockWatchedUsers()
 			]
 		);
 		$watched_users = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$watched_users[] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -447,7 +447,7 @@ function ModBlockNotes()
 			]
 		);
 		$moderator_notes = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$moderator_notes[] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -516,7 +516,7 @@ function ModBlockReportedPosts()
 			]
 		);
 		$reported_posts = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$reported_posts[] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -572,7 +572,7 @@ function ModBlockGroupRequests()
 			'status_open' => 0,
 		]
 	);
-	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
 	{
 		$context['group_requests'][] = [
 			'id' => $row['id_request'],
@@ -629,7 +629,7 @@ function ModBlockReportedMembers()
 			]
 		);
 		$reported_users = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$reported_users[] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -754,7 +754,7 @@ function ReportedMembers()
 			);
 
 			$logs = [];
-			while ($reports = $smcFunc['db_fetch_assoc']($request))
+			while ($reports = $smcFunc['db']->fetch_assoc($request))
 			{
 				$logs[] = [
 					'action' => 'close_user_report',
@@ -828,7 +828,7 @@ function ReportedMembers()
 	);
 	$context['reports'] = [];
 	$report_ids = [];
-	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
 	{
 		$report_ids[] = $row['id_report'];
 		$context['reports'][$row['id_report']] = [
@@ -863,7 +863,7 @@ function ReportedMembers()
 				'report_list' => $report_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$context['reports'][$row['id_report']]['comments'][] = [
 				'id' => $row['id_comment'],
@@ -1207,7 +1207,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 	);
 	$watched_users = [];
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$watched_users[$row['id_member']] = [
 			'id' => $row['id_member'],
@@ -1238,7 +1238,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			]
 		);
 		$latest_posts = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$latest_posts[$row['id_member']] = $row['last_post_id'];
 
 		if (!empty($latest_posts))
@@ -1252,7 +1252,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 					'message_list' => $latest_posts,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$watched_users[$row['id_member']]['last_post'] = timeformat($row['poster_time']);
 				$watched_users[$row['id_member']]['last_post_id'] = $latest_posts[$row['id_member']];
@@ -1273,7 +1273,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 				'is_approved' => 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$watched_users[$row['id_member']]['last_post'] = timeformat($row['last_post']);
 			$watched_users[$row['id_member']]['last_post_id'] = $row['last_post_id'];
@@ -1344,7 +1344,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 		]
 	);
 	$member_posts = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['subject'] = censorText($row['subject']);
 		$row['body'] = censorText($row['body']);
@@ -1616,7 +1616,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 		]
 	);
 	$warnings = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$warnings[] = [
 			'issuer_link' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['member_name_col'] . '</a>') : $row['member_name_col'],
@@ -1661,7 +1661,7 @@ function ViewWarningTemplates()
 				'current_member' => $user_info['id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			logAction('delete_warn_template', ['template' => $row['recipient_name']]);
 		$smcFunc['db']->free_result($request);
 
@@ -1837,7 +1837,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 		]
 	);
 	$templates = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$templates[] = [
 			'id_comment' => $row['id_comment'],
@@ -1891,7 +1891,7 @@ function ModifyWarningTemplate()
 				'current_member' => $user_info['id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$context['template_data'] = [
 				'title' => $row['template_title'],

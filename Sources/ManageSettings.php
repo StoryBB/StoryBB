@@ -496,7 +496,7 @@ function ModifySignatureSettings($return_config = false)
 					'step' => $_GET['step'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				// Apply all the rules we can realistically do.
 				$sig = strtr($row['signature'], ['<br>' => "\n"]);
@@ -1102,7 +1102,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 				'items_per_page' => $items_per_page,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$list[] = $row;
 		$smcFunc['db']->free_result($request);
 	}
@@ -1173,7 +1173,7 @@ function EditCustomProfiles()
 			]
 		);
 		$context['field'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['field_type'] == 'textarea')
 				@list ($rows, $cols) = @explode(',', $row['default_value']);
@@ -1363,7 +1363,7 @@ function EditCustomProfiles()
 			$request = $smcFunc['db']->query('', '
 				SELECT id_field, col_name
 				FROM {db_prefix}custom_fields');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$current_fields[$row['id_field']] = $row['col_name'];
 			$smcFunc['db']->free_result($request);
 
@@ -1573,7 +1573,7 @@ function EditCustomProfiles()
 		);
 
 		$fields = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$fields[] = [
 				'col_name' => strtr($row['col_name'], ['|' => '', ';' => '']),

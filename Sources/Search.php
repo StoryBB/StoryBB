@@ -123,7 +123,7 @@ function PlushSearch1()
 	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['boards_check_all'] = true;
 	$context['categories'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
@@ -487,7 +487,7 @@ function PlushSearch2()
 			]
 		);
 		$search_params['brd'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$search_params['brd'][] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -1541,7 +1541,7 @@ function PlushSearch2()
 				'max' => $modSettings['search_results_per_page'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$context['topics'][$row['id_msg']] = [
 				'relevance' => round($row['relevance'] / 10, 1) . '%',
@@ -1588,7 +1588,7 @@ function PlushSearch2()
 			]
 		);
 		$posters = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$posters[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -1649,7 +1649,7 @@ function PlushSearch2()
 					'limit' => count($participants),
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 				$participants[$row['id_topic']] = true;
 			$smcFunc['db']->free_result($result);
 		}
@@ -1714,7 +1714,7 @@ function prepareSearchContext($reset = false)
 		return @$smcFunc['db_data_seek']($messages_request, 0);
 
 	// Attempt to get the next message.
-	$message = $smcFunc['db_fetch_assoc']($messages_request);
+	$message = $smcFunc['db']->fetch_assoc($messages_request);
 	if (!$message)
 		return false;
 

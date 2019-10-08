@@ -98,7 +98,7 @@ class Character extends AbstractCompletable implements Completable
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$result[] = [
 				'id' => $row['id_character'],
@@ -139,7 +139,7 @@ class Character extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$this->default[$row['id_character']] = $row;
 		}

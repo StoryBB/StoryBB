@@ -420,7 +420,7 @@ function Register2()
 		]
 	);
 	$custom_field_errors = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Don't allow overriding of the theme variables.
 		if (isset($regOptions['theme_vars'][$row['col_name']]))
@@ -577,7 +577,7 @@ function Activate()
 		return;
 	}
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Change their email address? (they probably tried a fake one first :P.)

@@ -65,7 +65,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				'current_board' => $this->_details['board_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -83,7 +83,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -166,7 +166,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 					'members' => $notifies['email'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (empty($row['lngfile']))
 					$row['lngfile'] = $language;

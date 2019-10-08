@@ -332,7 +332,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 		return false;
 
 	// load up the data
-	$draft_info = $smcFunc['db_fetch_assoc']($request);
+	$draft_info = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Load it up for the templates as well
@@ -447,7 +447,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 	);
 
 	// add them to the draft array for display
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($row['subject']))
 			$row['subject'] = $txt['no_subject'];
@@ -598,7 +598,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor....
 		if (empty($row['body']))
@@ -753,7 +753,7 @@ function showPMDrafts($memID = -1)
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor....
 		if (empty($row['body']))
@@ -792,7 +792,7 @@ function showPMDrafts($memID = -1)
 					'member_list' => $allRecipients,
 				]
 			);
-			while ($result = $smcFunc['db_fetch_assoc']($request_2))
+			while ($result = $smcFunc['db']->fetch_assoc($request_2))
 			{
 				$recipientType = in_array($result['id_member'], $recipient_ids['bcc']) ? 'bcc' : 'to';
 				$recipients[$recipientType][] = $result['real_name'];

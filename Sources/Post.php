@@ -449,10 +449,10 @@ function Post($post_errors = [])
 			// @todo Change this error message?
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board', false);
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 
 			$attachment_stuff = [$row];
-			while ($row2 = $smcFunc['db_fetch_assoc']($request))
+			while ($row2 = $smcFunc['db']->fetch_assoc($request))
 				$attachment_stuff[] = $row2;
 			$smcFunc['db']->free_result($request);
 
@@ -491,7 +491,7 @@ function Post($post_errors = [])
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					if ($row['filesize'] <= 0)
 						continue;
@@ -521,7 +521,7 @@ function Post($post_errors = [])
 						'id_msg' => (int) $_REQUEST['msg'],
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($request);
+				$row = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 
 				if (empty($row['id_member']))
@@ -566,10 +566,10 @@ function Post($post_errors = [])
 		// The message they were trying to edit was most likely deleted.
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_message', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 
 		$attachment_stuff = [$row];
-		while ($row2 = $smcFunc['db_fetch_assoc']($request))
+		while ($row2 = $smcFunc['db']->fetch_assoc($request))
 			$attachment_stuff[] = $row2;
 		$smcFunc['db']->free_result($request);
 
@@ -1271,7 +1271,7 @@ function Post2()
 				'current_topic' => $topic,
 			]
 		);
-		$topic_info = $smcFunc['db_fetch_assoc']($request);
+		$topic_info = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Though the topic should be there, it might have vanished.
@@ -1438,7 +1438,7 @@ function Post2()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
@@ -2073,7 +2073,7 @@ function AnnouncementSelectMembergroup()
 			'newbie_id_group' => 4,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
@@ -2092,7 +2092,7 @@ function AnnouncementSelectMembergroup()
 			'group_list' => $groups,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['groups'][$row['id_group']]['name'] = $row['group_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -2201,7 +2201,7 @@ function AnnouncementSend()
 	$announcements = [];
 	// Loop through all members that'll receive an announcement in this batch.
 	$rows = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$rows[$row['id_member']] = $row;
 	}
@@ -2296,7 +2296,7 @@ function getTopic()
 	);
 	$context['previous_posts'] = [];
 	$context['ignored_posts'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
@@ -2361,7 +2361,7 @@ function QuoteFast()
 		]
 	);
 	$context['close_window'] = $smcFunc['db']->num_rows($request) == 0;
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['sub_template'] = 'xml_quotefast';
@@ -2478,7 +2478,7 @@ function JavaScriptModify()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Change either body or subject requires permissions to modify messages.

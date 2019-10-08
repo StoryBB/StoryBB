@@ -58,7 +58,7 @@ function deleteMembergroups($groups)
 				'is_protected' => 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$protected_groups[] = $row['id_group'];
 		}
@@ -78,7 +78,7 @@ function deleteMembergroups($groups)
 		SELECT id_subscribe, name, id_group, add_groups
 		FROM {db_prefix}subscriptions
 		ORDER BY name');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (in_array($row['id_group'], $groups))
 		{
@@ -111,7 +111,7 @@ function deleteMembergroups($groups)
 			'group_list' => $groups,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		logAction('delete_group', ['group' => $row['group_name']], 'admin');
 	}
@@ -200,7 +200,7 @@ function deleteMembergroups($groups)
 		]
 	);
 	$updates = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	}
@@ -221,7 +221,7 @@ function deleteMembergroups($groups)
 		]
 	);
 	$updates = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$updates[$row['member_groups']][] = $row['id_board'];
 	}
@@ -359,7 +359,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		]
 	);
 	$group_names = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
@@ -380,7 +380,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			]
 		);
 		$protected_groups = [Group::ADMINISTRATOR];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$protected_groups[] = $row['id_group'];
 		}
@@ -408,7 +408,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			'member_list' => $members,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$log_inserts[] = ['group' => $group_names[$row['id_group']], 'member' => $row['id_member']];
 	}
@@ -440,7 +440,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		]
 	);
 	$updates = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// What log entries must we make for this one, eh?
 		foreach (explode(',', $row['additional_groups']) as $group)
@@ -548,7 +548,7 @@ function removeCharactersFromGroups($characters, $groups)
 		]
 	);
 	$group_names = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
@@ -566,7 +566,7 @@ function removeCharactersFromGroups($characters, $groups)
 			'char_list' => $characters,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$log_inserts[] = ['group' => $group_names[$row['main_char_group']], 'member' => $row['id_member'], 'character' => $row['character_name']];
 	$smcFunc['db']->free_result($request);
 
@@ -595,7 +595,7 @@ function removeCharactersFromGroups($characters, $groups)
 		]
 	);
 	$updates = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// What log entries must we make for this one, eh?
 		foreach (explode(',', $row['char_groups']) as $id_group)
@@ -698,7 +698,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 		]
 	);
 	$group_names = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
@@ -883,7 +883,7 @@ function addCharactersToGroup($characters, $group)
 			'char_list' => $characters,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$members[$row['id_character']] = $row;
 	}
@@ -898,7 +898,7 @@ function addCharactersToGroup($characters, $group)
 		]
 	);
 	$group_names = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
@@ -937,7 +937,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 		]
 	);
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$members[$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 	}
@@ -974,7 +974,7 @@ function cache_getMembergroupList()
 		]
 	);
 	$groupCache = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 	}
@@ -1020,7 +1020,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 	$groups = [];
 	$group_ids = [];
 	$context['can_moderate'] = allowedTo('manage_membergroups');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We only list the groups they can see.
 		if ($row['hidden'] && !$row['can_moderate'] && !allowedTo('manage_membergroups'))
@@ -1059,7 +1059,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				'group_list' => $group_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
+		while ($row = $smcFunc['db']->fetch_assoc($query))
 		{
 			if (isset($groups[$row['id_group']]))
 			{
@@ -1078,7 +1078,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				'group_list' => $group_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
+		while ($row = $smcFunc['db']->fetch_assoc($query))
 		{
 			if (isset($groups[$row['main_char_group']]))
 			{
@@ -1101,7 +1101,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 					'group_list' => $group_ids,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($query))
+			while ($row = $smcFunc['db']->fetch_assoc($query))
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
@@ -1123,7 +1123,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 					'group_list' => $group_ids,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($query))
+			while ($row = $smcFunc['db']->fetch_assoc($query))
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
@@ -1139,7 +1139,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				'group_list' => $group_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
+		while ($row = $smcFunc['db']->fetch_assoc($query))
 		{
 			$groups[$row['id_group']]['moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		}

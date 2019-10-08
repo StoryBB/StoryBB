@@ -145,7 +145,7 @@ class Behat extends RawMinkContext implements Context
 			// Figure out storage engines - what do we have, etc.
 			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
 
-			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
+			while ($row = $smcFunc['db']->fetch_assoc($get_engines))
 			{
 				if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
 					$engines[] = $row['Engine'];

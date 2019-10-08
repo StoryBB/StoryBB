@@ -40,7 +40,7 @@ function char_template_list()
 		SELECT id_template, template_name, position
 		FROM {db_prefix}character_sheet_templates
 		ORDER BY position ASC');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['char_templates'][$row['id_template']] = $row;
 	}
@@ -128,7 +128,7 @@ function char_template_edit()
 			'template' => $template_id,
 		]
 	);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	if (empty($row))
 	{
 		redirectexit('action=admin;area=templates');
@@ -230,7 +230,7 @@ function CharacterSheets()
 						'sort' => $sort,
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					// If it's not actually pending approval (strict mode makes this complicated), skip it.
 					if (empty($row['approval_state']))
@@ -252,7 +252,7 @@ function CharacterSheets()
 							'ids' => array_keys($rows),
 						]
 					);
-					while ($row = $smcFunc['db_fetch_assoc']($request))
+					while ($row = $smcFunc['db']->fetch_assoc($request))
 					{
 						$rows[$row['id_character']] = array_merge($rows[$row['id_character']], $row);
 					}

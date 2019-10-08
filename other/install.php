@@ -980,7 +980,7 @@ function DatabasePopulation()
 	$modSettings = [];
 	if ($result !== false)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$modSettings[$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($result);
 
@@ -1182,7 +1182,7 @@ function DatabasePopulation()
 	// Find database user privileges.
 	$privs = [];
 	$get_privs = $smcFunc['db']->query('', 'SHOW PRIVILEGES', []);
-	while ($row = $smcFunc['db_fetch_assoc']($get_privs))
+	while ($row = $smcFunc['db']->fetch_assoc($get_privs))
 	{
 		if ($row['Privilege'] == 'Alter')
 			$privs[] = $row['Privilege'];

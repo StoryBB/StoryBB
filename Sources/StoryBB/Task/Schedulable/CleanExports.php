@@ -61,7 +61,7 @@ class CleanExports implements \StoryBB\Task\Schedulable
 				'expired_timestamp' => time() - (86400 * 7),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Log all the ids.
 			$exports[] = $row['id_export'];

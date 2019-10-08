@@ -35,7 +35,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 			]
 		);
 		$moderators = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$moderators[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -109,7 +109,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$replacements = [
 						'RECPNAME' => $row['member_name'],

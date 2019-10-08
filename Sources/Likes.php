@@ -483,7 +483,7 @@ class Likes
 				'like_type' => $this->_type,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['likers'][$row['id_member']] = ['timestamp' => $row['like_time']];
 
 		// Now to get member data, including avatars and so on.

@@ -206,7 +206,7 @@ function MessageIndex()
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['id_member']))
 				continue;
@@ -328,7 +328,7 @@ function MessageIndex()
 			$message_pre_index_parameters
 		);
 		$topic_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
 	}
 
@@ -392,7 +392,7 @@ function MessageIndex()
 		);
 
 		// Begin 'printing' the message index for current board.
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 				continue;
@@ -647,7 +647,7 @@ function MessageIndex()
 			]
 		);
 		$context['is_marked_notify'] = false; // this is for the *board* only
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!empty($row['id_board']))
 			{
@@ -874,7 +874,7 @@ function QuickModeration()
 				'limit' => count($_REQUEST['actions']),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!empty($board))
 			{
@@ -972,7 +972,7 @@ function QuickModeration()
 		);
 		$stickyCacheBoards = [];
 		$stickyCacheStatus = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$stickyCacheBoards[$row['id_topic']] = $row['id_board'];
 			$stickyCacheStatus[$row['id_topic']] = empty($row['is_sticky']);
@@ -1000,7 +1000,7 @@ function QuickModeration()
 		$moveTos = [];
 		$moveCache2 = [];
 		$countPosts = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$to = $moveCache[1][$row['id_topic']];
 
@@ -1041,7 +1041,7 @@ function QuickModeration()
 				]
 			);
 
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$cp = empty($row['count_posts']);
 
@@ -1073,7 +1073,7 @@ function QuickModeration()
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					if (!isset($members[$row['id_member']]))
 						$members[$row['id_member']] = 0;
@@ -1113,7 +1113,7 @@ function QuickModeration()
 
 		$removeCache = [];
 		$removeCacheBoards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$removeCache[] = $row['id_topic'];
 			$removeCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1154,7 +1154,7 @@ function QuickModeration()
 		);
 		$approveCache = [];
 		$approveCacheMembers = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$approveCache[] = $row['id_topic'];
 			$approveCacheMembers[$row['id_topic']] = $row['id_member_started'];
@@ -1197,7 +1197,7 @@ function QuickModeration()
 			);
 			$lockCache = [];
 			$lockCacheBoards = [];
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$lockCache[] = $row['id_topic'];
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1218,7 +1218,7 @@ function QuickModeration()
 				]
 			);
 			$lockCacheBoards = [];
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1255,7 +1255,7 @@ function QuickModeration()
 			]
 		);
 		$logged_topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$logged_topics[$row['id_topic']] = $row['unwatched'];
 		$smcFunc['db']->free_result($request);
 

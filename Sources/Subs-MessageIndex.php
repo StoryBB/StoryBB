@@ -62,7 +62,7 @@ function getBoardList($boardListOptions = [])
 	$return_value = [];
 	if ($smcFunc['db']->num_rows($request) !== 0)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($return_value[$row['id_cat']]))
 				$return_value[$row['id_cat']] = [

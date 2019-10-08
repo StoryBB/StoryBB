@@ -41,7 +41,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 					'msg' => $this->_details['content_id'],
 				]
 			);
-			if ($row = $smcFunc['db_fetch_assoc']($request))
+			if ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				// Before we assign the author, let's just check that the author can see the board this is in...
 				// as it'd suck to notify someone their post was liked when in a board they can't see.

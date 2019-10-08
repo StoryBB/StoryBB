@@ -126,7 +126,7 @@ class General extends RawMinkContext implements Context
                         FROM {db_prefix}membergroups',
 						[]
 					);
-					while ($row = $smcFunc['db_fetch_assoc']($request))
+					while ($row = $smcFunc['db']->fetch_assoc($request))
 					{
 						$row['group_name'] = strtolower($row['group_name']);
 						if (isset($possible_groups[$row['group_name']]))
@@ -248,7 +248,7 @@ class General extends RawMinkContext implements Context
 				'usernames' => array_keys($userids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$userids[$row['member_name']] = $row['id_member'];
 		}
@@ -284,7 +284,7 @@ class General extends RawMinkContext implements Context
 				'charnames' => array_keys($charids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$charids[$row['character_name']] = $row['id_character'];
 		}
@@ -320,7 +320,7 @@ class General extends RawMinkContext implements Context
 				'groupnames' => array_keys($group_ids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$group_ids[$row['group_name']] = $row['id_group'];
 		}
@@ -396,7 +396,7 @@ class General extends RawMinkContext implements Context
 				);
 				if ($smcFunc['db']->num_rows($request))
 				{
-					$row = $smcFunc['db_fetch_assoc']($request);
+					$row = $smcFunc['db']->fetch_assoc($request);
 					$boardOptions['target_category'] = $row['id_cat'];
 					$boardOptions['move_to'] = 'child';
 					$boardOptions['target_board'] = $row['id_board'];
@@ -544,7 +544,7 @@ class General extends RawMinkContext implements Context
 					]
 				);
 				$inserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
 				}
@@ -571,7 +571,7 @@ class General extends RawMinkContext implements Context
 				]
 			);
 			$inserts = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
 			}

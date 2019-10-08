@@ -44,7 +44,7 @@ function getNotifyPrefs($members, $prefs = '', $process_default = false)
 			'prefs' => $prefs,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$result[$row['id_member']][$row['alert_pref']] = $row['alert_value'];
 	}

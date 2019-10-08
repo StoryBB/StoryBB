@@ -43,7 +43,7 @@ function AutoTask()
 		if ($smcFunc['db']->num_rows($request) != 0)
 		{
 			// The two important things really...
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 
 			// When should this next be run?
 			$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
@@ -218,7 +218,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	);
 	$ids = [];
 	$emails = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We want to delete these from the database ASAP, so just get the data and go.
 		$ids[] = $row['id_mail'];
@@ -379,7 +379,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		]
 	);
 	$tasks = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
 
@@ -498,7 +498,7 @@ function loadEssentialThemeData()
 			'theme_guests' => !empty($modSettings['theme_guests']) ? $modSettings['theme_guests'] : 1,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$settings[$row['variable']] = $row['value'];
 

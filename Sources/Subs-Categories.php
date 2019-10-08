@@ -47,7 +47,7 @@ function modifyCategory($category_id, $catOptions)
 			[
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['id_cat'] != $category_id)
 				$cats[] = $row['id_cat'];
@@ -204,7 +204,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 			]
 		);
 		$boards_inside = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_inside[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 

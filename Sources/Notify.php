@@ -116,7 +116,7 @@ function TopicNotify()
 					'current_topic' => $topic,
 				]
 			);
-			$log = $smcFunc['db_fetch_assoc']($request);
+			$log = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 			if (empty($log))
 			{

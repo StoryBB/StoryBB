@@ -63,7 +63,7 @@ function get_single_theme($id)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$single[$row['variable']] = $row['value'];
 
@@ -130,7 +130,7 @@ function get_all_themes($enable_only = false)
 
 	$context['themes'] = [];
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['themes'][$row['id_theme']]['id'] = (int) $row['id_theme'];
 
@@ -246,7 +246,7 @@ function theme_install($to_install = [])
 			]
 		);
 
-		$to_update = $smcFunc['db_fetch_assoc']($request);
+		$to_update = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Got something, lets figure it out what to do next.

@@ -91,7 +91,7 @@ function ShowXmlFeed()
 		);
 		$total_cat_posts = 0;
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
@@ -130,7 +130,7 @@ function ShowXmlFeed()
 
 		$total_posts = 0;
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($num_boards == 1)
 				$feed_meta['title'] = ' - ' . strip_tags($row['name']);
@@ -570,7 +570,7 @@ function getXmlMembers($xml_format)
 		]
 	);
 	$data = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Create a GUID for each member using the tag URI scheme
 		$guid = 'tag:' . parse_url($scripturl, PHP_URL_HOST) . ',' . gmdate('Y-m-d', $row['date_registered']) . ':member=' . $row['id_member'];
@@ -706,7 +706,7 @@ function getXmlNews($xml_format)
 			$done = true;
 	}
 	$data = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
 		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
@@ -734,7 +734,7 @@ function getXmlNews($xml_format)
 				]
 			);
 			$loaded_attachments = [];
-			while ($attach = $smcFunc['db_fetch_assoc']($attach_request))
+			while ($attach = $smcFunc['db']->fetch_assoc($attach_request))
 			{
 				// Include approved attachments only
 				if ($attach['approved'])
@@ -955,7 +955,7 @@ function getXmlRecent($xml_format)
 			$done = true;
 	}
 	$messages = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$messages[] = $row['id_msg'];
 	$smcFunc['db']->free_result($request);
 
@@ -987,7 +987,7 @@ function getXmlRecent($xml_format)
 		]
 	);
 	$data = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
 		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
@@ -1015,7 +1015,7 @@ function getXmlRecent($xml_format)
 				]
 			);
 			$loaded_attachments = [];
-			while ($attach = $smcFunc['db_fetch_assoc']($attach_request))
+			while ($attach = $smcFunc['db']->fetch_assoc($attach_request))
 			{
 				// Include approved attachments only
 				if ($attach['approved'])

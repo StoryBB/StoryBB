@@ -87,7 +87,7 @@ function html_to_bbc($text)
 				]
 			);
 			$mappings = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$mappings[$row['filename']] = StringLibrary::escape($row['code']);
 			$smcFunc['db']->free_result($request);
 
@@ -1634,7 +1634,7 @@ function create_control_richedit($editorOptions)
 				[
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$row['filename'] = StringLibrary::escape($row['filename']);
 				$row['description'] = StringLibrary::escape($row['description']);
@@ -1731,7 +1731,7 @@ function AutoSuggest_Search_Member()
 			'children' => [],
 		],
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['real_name'] = strtr($row['real_name'], ['&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;']);
 
@@ -1780,7 +1780,7 @@ function AutoSuggest_Search_MemberChar()
 			'children' => [],
 		],
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['real_name'] = strtr($row['real_name'], ['&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;']);
 
@@ -1806,7 +1806,7 @@ function AutoSuggest_Search_MemberChar()
 			'search' => $_REQUEST['search'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Don't fetch when we already have the matching parent account.
 		if (isset($xml_data['items']['children'][$row['id_member']])) {

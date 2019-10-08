@@ -58,7 +58,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 				'time_now' => time(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			removeSubscription($row['id_subscribe'], $row['id_member']);
 		}
@@ -83,7 +83,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		);
 		$subs_reminded = [];
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If this is the first one load the important bits.
 			if (empty($subs_reminded))

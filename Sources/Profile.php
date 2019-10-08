@@ -1006,7 +1006,7 @@ function loadCustomFields($memID, $area = 'summary')
 	);
 	$context['custom_fields'] = [];
 	$context['custom_fields_required'] = false;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Shortcut.
 		$exists = $memID && isset($user_profile[$memID], $user_profile[$memID]['options'][$row['col_name']]);

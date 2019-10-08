@@ -153,7 +153,7 @@ function ViewErrorLog()
 	$context['errors'] = [];
 	$members = [];
 
-	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
 	{
 		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db_escape_wildcard_string']($row['message']));
 		if ($search_message == $filter['value']['sql'])
@@ -216,7 +216,7 @@ function ViewErrorLog()
 				'members' => count($members),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[$row['id_member']] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -285,7 +285,7 @@ function ViewErrorLog()
 			'critical_type' => 'critical',
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Total errors so far?
 		$sum += $row['num_errors'];

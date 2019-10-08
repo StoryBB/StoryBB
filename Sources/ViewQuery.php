@@ -149,7 +149,7 @@ function ViewQuery()
 			echo '
 		<table>';
 
-			$row = $smcFunc['db_fetch_assoc']($result);
+			$row = $smcFunc['db']->fetch_assoc($result);
 
 			echo '
 			<tr>
@@ -158,7 +158,7 @@ function ViewQuery()
 			</tr>';
 
 			$smcFunc['db_data_seek']($result, 0);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				echo '
 			<tr>

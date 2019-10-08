@@ -1218,7 +1218,7 @@ function loadForumTests()
 				global $smcFunc;
 
 				$inserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($result))
+				while ($row = $smcFunc['db']->fetch_assoc($result))
 				{
 					foreach (text2words($row['subject']) as $word)
 						$inserts[] = [$word, $row['id_topic']];
@@ -1568,7 +1568,7 @@ function findForumErrors($do_fix = false)
 					// One per row!
 					elseif (isset($test['messages']))
 					{
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 						{
 							$variables = $test['messages'];
 							foreach ($variables as $k => $v)
@@ -1587,7 +1587,7 @@ function findForumErrors($do_fix = false)
 					{
 						// Find out if there are actually errors.
 						$found_errors = false;
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$found_errors |= $test['message_function']($row);
 					}
 
@@ -1603,7 +1603,7 @@ function findForumErrors($do_fix = false)
 					if (isset($test['fix_collect']))
 					{
 						$ids = [];
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$ids[] = $row[$test['fix_collect']['index']];
 						if (!empty($ids))
 						{
@@ -1623,7 +1623,7 @@ function findForumErrors($do_fix = false)
 					// Do we have some processing to do?
 					elseif (isset($test['fix_processing']))
 					{
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$test['fix_processing']($row);
 					}
 

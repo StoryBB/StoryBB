@@ -104,7 +104,7 @@ function MessageMain()
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$context['labels'][-1]['messages'] = $row['total'];
 			$context['labels'][-1]['unread_messages'] = $row['total'] - $row['num_read'];
@@ -125,7 +125,7 @@ function MessageMain()
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$context['labels'][$row['id_label']] = [
 				'id' => $row['id_label'],
@@ -417,7 +417,7 @@ function MessagePopup()
 				'id_pms' => $pms,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!empty($row['id_member_from']))
 				$senders[] = $row['id_member_from'];
@@ -684,7 +684,7 @@ function MessageFolder()
 	$posters = $context['folder'] == 'sent' ? [$user_info['id']] : [];
 	$recipients = [];
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($recipients[$row['id_pm']]))
 		{
@@ -734,7 +734,7 @@ function MessageFolder()
 				'not_deleted' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// This is, frankly, a joke. We will put in a workaround for people sending to themselves - yawn!
 			if ($context['folder'] == 'sent' && $row['id_member_from'] == $user_info['id'] && $row['deleted_by_sender'] == 1)
@@ -769,7 +769,7 @@ function MessageFolder()
 		$context['message_labels'] = [];
 		$context['message_replied'] = [];
 		$context['message_unread'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
 			{
@@ -793,7 +793,7 @@ function MessageFolder()
 					]
 				);
 
-				while ($row2 = $smcFunc['db_fetch_assoc']($request2))
+				while ($row2 = $smcFunc['db']->fetch_assoc($request2))
 				{
 					$l_id = $row2['id_label'];
 					if (isset($context['labels'][$l_id]))
@@ -911,7 +911,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	// Process the data for multiple messages.
 	if ($subjects_request && $type == 'subject')
 	{
-		$subject = $smcFunc['db_fetch_assoc']($subjects_request);
+		$subject = $smcFunc['db']->fetch_assoc($subjects_request);
 		if (!$subject)
 		{
 			$smcFunc['db']->free_result($subjects_request);
@@ -952,7 +952,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		return @$smcFunc['db_data_seek']($messages_request, 0);
 
 	// Get the next one... bail if anything goes wrong.
-	$message = $smcFunc['db_fetch_assoc']($messages_request);
+	$message = $smcFunc['db']->fetch_assoc($messages_request);
 	if (!$message)
 	{
 		if ($type != 'subject')
@@ -1217,7 +1217,7 @@ function MessageSearch2()
 			else
 			{
 				$memberlist = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$memberlist[] = $row['id_member'];
 				$userQuery = 'AND (pm.id_member_from IN ({array_int:member_list}) OR (pm.id_member_from = 0 AND ({raw:pm_from_name} LIKE {raw:guest_user_name_implode})))';
 				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
@@ -1460,7 +1460,7 @@ function MessageSearch2()
 	$foundMessages = [];
 	$posters = [];
 	$head_pms = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$foundMessages[] = $row['id_pm'];
 		$posters[] = $row['id_member_from'];
@@ -1488,7 +1488,7 @@ function MessageSearch2()
 			]
 		);
 		$real_pm_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$real_pm_ids[$row['id_pm_head']] = $row['id_pm'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1517,7 +1517,7 @@ function MessageSearch2()
 				'message_list' => $foundMessages,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
 				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
@@ -1538,7 +1538,7 @@ function MessageSearch2()
 					]
 				);
 
-				while ($row2 = $smcFunc['db_fetch_assoc']($request2))
+				while ($row2 = $smcFunc['db']->fetch_assoc($request2))
 				{
 					$l_id = $row2['id_label'];
 					if (isset($context['labels'][$l_id]))
@@ -1576,7 +1576,7 @@ function MessageSearch2()
 			]
 		);
 		$counter = 0;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If there's no message subject, use the default.
 			$row['subject'] = $row['subject'] == '' ? $txt['no_subject'] : $row['subject'];
@@ -1727,7 +1727,7 @@ function MessagePost()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('pm_not_yours', false);
-		$row_quoted = $smcFunc['db_fetch_assoc']($request);
+		$row_quoted = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Censor the message.
@@ -1824,7 +1824,7 @@ function MessagePost()
 					'not_bcc' => 0,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['recipients']['to'][] = [
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
@@ -1849,7 +1849,7 @@ function MessagePost()
 					'limit' => count($_REQUEST['u']),
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['recipients']['to'][] = [
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
@@ -1984,7 +1984,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 				'member_list' => $allRecipients,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$recipientType = in_array($row['id_member'], $recipient_ids['bcc']) ? 'bcc' : 'to';
 			$context['recipients'][$recipientType][] = [
@@ -2029,7 +2029,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 			else
 				$error_types[] = 'pm_not_yours';
 		}
-		$row_quoted = $smcFunc['db_fetch_assoc']($request);
+		$row_quoted = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		censorText($row_quoted['subject']);
@@ -2448,7 +2448,7 @@ function MessageActionsApply()
 			]
 		);
 		$pm_heads = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$pm_heads[$row['id_pm_head']] = $row['id_pm'];
 		$smcFunc['db']->free_result($request);
 
@@ -2461,7 +2461,7 @@ function MessageActionsApply()
 			]
 		);
 		// Copy the action from the single to PM to the others.
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (isset($pm_heads[$row['id_pm_head']]) && isset($_REQUEST['pm_actions'][$pm_heads[$row['id_pm_head']]]))
 				$_REQUEST['pm_actions'][$row['id_pm']] = $_REQUEST['pm_actions'][$pm_heads[$row['id_pm_head']]];
@@ -2521,7 +2521,7 @@ function MessageActionsApply()
 			]
 		);
 
-		while ($other_pms = $smcFunc['db_fetch_assoc']($get_pms))
+		while ($other_pms = $smcFunc['db']->fetch_assoc($get_pms))
 		{
 			$to_label[$other_pms['id_pm']] = $to_label[$other_pms['id_pm_head']];
 		}
@@ -2541,7 +2541,7 @@ function MessageActionsApply()
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Get the labels as well, but only if we're not dealing with the inbox
 			if ($to_label[$row['id_pm']] != '-1')
@@ -2559,7 +2559,7 @@ function MessageActionsApply()
 					]
 				);
 
-				while ($row2 = $smcFunc['db_fetch_assoc']($request2))
+				while ($row2 = $smcFunc['db']->fetch_assoc($request2))
 				{
 					$labels[$row2['id_label']] = $row2['id_label'];
 				}
@@ -2583,7 +2583,7 @@ function MessageActionsApply()
 				);
 
 				// How many labels do you have?
-				list ($num_labels) = $smcFunc['db_fetch_assoc']($request2);
+				list ($num_labels) = $smcFunc['db']->fetch_assoc($request2);
 
 				if ($num_labels > 0);
 					$context['can_remove_inbox'] = true;
@@ -2758,7 +2758,7 @@ function MessagePrune()
 				'msgtime' => $deleteTime,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$toDelete[] = $row['id_pm'];
 		$smcFunc['db']->free_result($request);
 
@@ -2842,7 +2842,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			]
 		);
 		// ...And update the statistics accordingly - now including unread messages!.
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['is_read'])
 				updateMemberData($row['id_member'], ['instant_messages' => $where == '' ? 0 : 'instant_messages - ' . $row['num_deleted_messages']]);
@@ -2888,7 +2888,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($get_labels))
+		while ($row = $smcFunc['db']->fetch_assoc($get_labels))
 		{
 			$labels[] = $row['id_label'];
 		}
@@ -2922,7 +2922,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 		]
 	);
 	$remove_pms = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$remove_pms[] = $row['sender'];
 	$smcFunc['db']->free_result($request);
 
@@ -2987,7 +2987,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($get_messages))
+		while ($row = $smcFunc['db']->fetch_assoc($get_messages))
 		{
 			$personal_messages[] = $row['id_pm'];
 		}
@@ -3036,7 +3036,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 			]
 		);
 		$total_unread = 0;
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$total_unread += $row['num'];
 
@@ -3058,7 +3058,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 				]
 			);
 
-			while ($row2 = $smcFunc['db_fetch_assoc']($result2))
+			while ($row2 = $smcFunc['db']->fetch_assoc($result2))
 			{
 				$this_labels[] = $row2['id_label'];
 			}
@@ -3241,7 +3241,7 @@ function ManageLabels()
 			);
 
 			$stranded_messages = [];
-			while ($row = $smcFunc['db_fetch_assoc']($get_stranded_pms))
+			while ($row = $smcFunc['db']->fetch_assoc($get_stranded_pms))
 			{
 				$stranded_messages[] = $row['id_pm'];
 			}
@@ -3436,7 +3436,7 @@ function ReportMessage()
 			]
 		);
 		$context['admins'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['admins'][$row['id_member']] = $row['real_name'];
 		$smcFunc['db']->free_result($request);
 
@@ -3488,7 +3488,7 @@ function ReportMessage()
 		);
 		$recipients = [];
 		$hidden_recipients = 0;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If it's hidden still don't reveal their names - privacy after all ;)
 			if ($row['bcc'])
@@ -3523,7 +3523,7 @@ function ReportMessage()
 		// Prepare the message storage array.
 		$messagesToSend = [];
 		// Loop through each admin, and add them to the right language pile...
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Need to send in the correct language!
 			$cur_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
@@ -3602,7 +3602,7 @@ function ManageRules()
 		]
 	);
 	$context['groups'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Hide hidden groups!
 		if ($row['hidden'] && !$row['can_moderate'] && !allowedTo('manage_membergroups'))
@@ -3652,7 +3652,7 @@ function ManageRules()
 						'member_list' => array_keys($members),
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$context['rule']['criteria'][$members[$row['id_member']]]['v'] = $row['member_name'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -3838,7 +3838,7 @@ function ApplyRules($all_messages = false)
 		]
 	);
 	$actions = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		foreach ($context['rules'] as $rule)
 		{
@@ -3954,7 +3954,7 @@ function LoadRules($reload = false)
 	);
 	$context['rules'] = [];
 	// Simply fill in the data!
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['rules'][$row['id_rule']] = [
 			'id' => $row['id_rule'],
@@ -4003,7 +4003,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 		return false;
 	}
 
-	$validationResult = $smcFunc['db_fetch_assoc']($request);
+	$validationResult = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	switch ($validFor)

@@ -102,7 +102,7 @@ function showAttachment($force_attach = false)
 			die('404 File Not Found');
 		}
 
-		$file = $smcFunc['db_fetch_assoc']($request);
+		$file = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// If theres a message ID stored, we NEED a topic ID.
@@ -159,7 +159,7 @@ function showAttachment($force_attach = false)
 				]
 			);
 
-			$thumbFile = $smcFunc['db_fetch_assoc']($request);
+			$thumbFile = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
 			// Got something! replace the $file var with the thumbnail info.

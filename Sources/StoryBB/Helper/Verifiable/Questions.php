@@ -62,7 +62,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				'langs' => [],
 			];
 			// This is like Captain Kirk climbing a mountain in some ways. This is L's fault, mkay? :P
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$id_question = $row['id_question'];
 				unset ($row['id_question']);
@@ -206,7 +206,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 			FROM {db_prefix}qanda'
 		);
 		$questions = 1;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$lang = strtr($row['lngfile'], ['-utf8' => '']);
 			if (!isset($context['question_answers'][$lang_id]))

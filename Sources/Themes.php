@@ -263,7 +263,7 @@ function SetThemeOptions()
 			]
 		);
 		$context['themes'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($context['themes'][$row['id_theme']]))
 				$context['themes'][$row['id_theme']] = [
@@ -284,7 +284,7 @@ function SetThemeOptions()
 				'guest_member' => -1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_default_options'] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -296,7 +296,7 @@ function SetThemeOptions()
 			]
 		);
 		$customFields = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$customFields[] = $row['col_name'];
 		$smcFunc['db']->free_result($request);
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
@@ -312,7 +312,7 @@ function SetThemeOptions()
 				'custom_fields' => empty($customFields) ? [] : $customFields,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_members'] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -515,7 +515,7 @@ function SetThemeOptions()
 				]
 			);
 			$customFields = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$customFields[] = $row['col_name'];
 			$smcFunc['db']->free_result($request);
 		}
@@ -567,7 +567,7 @@ function SetThemeOptions()
 			]
 		);
 		$context['theme_options'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -1057,7 +1057,7 @@ function PickTheme()
 				'enable_themes' => explode(',', $modSettings['enableThemes']),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($context['available_themes'][$row['id_theme']]))
 				$context['available_themes'][$row['id_theme']] = [
@@ -1089,7 +1089,7 @@ function PickTheme()
 		[
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Figure out which theme it is they are REALLY using.
 		if (!empty($modSettings['knownThemes']) && !in_array($row['id_theme'], explode(',', $modSettings['knownThemes'])))
@@ -1119,7 +1119,7 @@ function PickTheme()
 				'id_member' => isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? [-1, $context['current_member']] : [-1],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$variant_preferences[$row['id_theme']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 	}

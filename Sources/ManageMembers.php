@@ -59,7 +59,7 @@ function ViewMembers()
 	$context['activation_numbers'] = [];
 	$context['awaiting_activation'] = 0;
 	$context['awaiting_approval'] = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['activation_numbers'][$row['is_activated']] = $row['total_members'];
 	$smcFunc['db']->free_result($request);
 
@@ -188,7 +188,7 @@ function ViewMemberlist()
 				'moderator_group' => 3,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['is_character'])
 				$context['charactergroups'][] = [
@@ -441,7 +441,7 @@ function ViewMemberlist()
 				WHERE ' . implode(' OR ', $cg_query_parts),
 				$cg_where_params
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$character_owners[$row['id_member']] = true;
 			}
@@ -692,7 +692,7 @@ function SearchMembers()
 			'moderator_group' => 3,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['is_character'])
 			$context['charactergroups'][] = [
@@ -1130,7 +1130,7 @@ function AdminApprove()
 	$member_info = [];
 	$members = [];
 	// Fill the info array.
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$members[] = $row['id_member'];
 		$member_info[] = [

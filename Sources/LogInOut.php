@@ -268,7 +268,7 @@ function Login2()
 		return;
 	}
 
-	$user_settings = $smcFunc['db_fetch_assoc']($request);
+	$user_settings = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Bad password!  Thought you could fool the database?!

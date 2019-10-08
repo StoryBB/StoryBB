@@ -243,7 +243,7 @@ function reportPost($msg, $reason)
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$message = $smcFunc['db_fetch_assoc']($request);
+	$message = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -359,7 +359,7 @@ function reportUser($id_member, $reason)
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_user', false);
-	$user = $smcFunc['db_fetch_assoc']($request);
+	$user = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$user_name = un_htmlspecialchars($user['real_name']) . ($user['real_name'] != $user['member_name'] ? ' (' . $user['member_name'] . ')' : '');

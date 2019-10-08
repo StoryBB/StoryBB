@@ -57,7 +57,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 
 		$js_files = [];
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$js_files[$row['id_file']] = [
 				'filename' => $row['filename'],

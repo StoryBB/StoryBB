@@ -310,7 +310,7 @@ function loadUserSettings()
 					'id_member' => $id_member,
 				]
 			);
-			$user_settings = $smcFunc['db_fetch_assoc']($request);
+			$user_settings = $smcFunc['db']->fetch_assoc($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
 			$user_settings['avatar'] = $user_settings['char_avatar'];
 			$smcFunc['db']->free_result($request);
@@ -409,7 +409,7 @@ function loadUserSettings()
 						'full_groups' => $full_groups,
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($request);
+				$row = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 			}
 			else
@@ -771,7 +771,7 @@ function loadBoard()
 		// If there aren't any, skip.
 		if ($smcFunc['db']->num_rows($request) > 0)
 		{
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 
 			// Set the current board.
 			if (!empty($row['id_board']))
@@ -828,7 +828,7 @@ function loadBoard()
 						'link' => '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_moderator_group'] . '">' . $row['group_name'] . '</a>'
 					];
 			}
-			while ($row = $smcFunc['db_fetch_assoc']($request));
+			while ($row = $smcFunc['db']->fetch_assoc($request));
 
 			// If the board only contains unapproved posts and the user isn't an approver then they can't see any topics.
 			// If that is the case do an additional check to see if they have any topics waiting to be approved.
@@ -1005,7 +1005,7 @@ function loadPermissions()
 			]
 		);
 		$removals = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
@@ -1035,7 +1035,7 @@ function loadPermissions()
 				'id_profile' => $board_info['profile'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
@@ -1214,7 +1214,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			]
 		);
 		$new_loaded_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If the image proxy is enabled, we still want the original URL when they're editing the profile...
 			$row['avatar_original'] = !empty($row['avatar']) ? $row['avatar'] : '';
@@ -1266,7 +1266,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'loaded_ids' => $new_loaded_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Take care of proxying avatar if required, do this here for maximum reach
 			$row['avatar_original'] = !empty($row['avatar']) ? $row['avatar'] : '';
@@ -1340,7 +1340,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'loaded_ids' => $new_loaded_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$user_profile[$row['id_member']]['options'][$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1386,7 +1386,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 					'moderator_group' => 3,
 				]
 			);
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
 			cache_put_data('moderator_group_info', $row, 480);
@@ -1668,7 +1668,7 @@ function loadMemberCustomFields($users, $params)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$fieldOptions = [];
 		$currentKey = 0;
@@ -1827,7 +1827,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			]
 		);
 		// Pick between $settings and $options depending on whose data it is.
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
 			if ($row['id_member'] != 0 && in_array($row['variable'], ['actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'theme_dir', 'theme_id', 'theme_url']))
@@ -2703,7 +2703,7 @@ function getBoardParents($id_parent)
 			// In the EXTREMELY unlikely event this happens, give an error message.
 			if ($smcFunc['db']->num_rows($result) == 0)
 				fatal_lang_error('parent_not_found', 'critical');
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				if (!isset($boards[$row['id_board']]))
 				{
@@ -3216,7 +3216,7 @@ function get_char_membergroup_data()
 			FROM {db_prefix}membergroups
 			WHERE hidden != 2
 			ORDER BY badge_order');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['parsed_icons'] = '';
 			if (!empty($row['icons']))

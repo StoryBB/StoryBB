@@ -304,7 +304,7 @@ function list_getBans($start, $items_per_page, $sort)
 		]
 	);
 	$bans = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$bans[] = $row;
 
 	$smcFunc['db']->free_result($request);
@@ -613,7 +613,7 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('ban_not_found', false);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($context['ban']))
 		{
@@ -764,7 +764,7 @@ function banLoadAdditionalIPsMember($member_id)
 			'current_user' => $member_id,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$message_ips[] = inet_dtop($row['poster_ip']);
 	$smcFunc['db']->free_result($request);
 
@@ -792,7 +792,7 @@ function banLoadAdditionalIPsError($member_id)
 			'current_user' => $member_id,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$error_ips[] = inet_dtop($row['ip']);
 	$smcFunc['db']->free_result($request);
 
@@ -970,7 +970,7 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 	);
 
 	// Get all the info for the log
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['id_ban']))
 		{
@@ -1651,7 +1651,7 @@ function BanEditTrigger()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('ban_not_found', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['ban_trigger'] = [
@@ -1903,7 +1903,7 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 		]
 	);
 	$ban_triggers = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$ban_triggers[] = $row;
 	$smcFunc['db']->free_result($request);
 
@@ -2124,7 +2124,7 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 		]
 	);
 	$log_entries = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['ip'] = $row['ip'] === null ? $dash : inet_dtop($row['ip']);
 		$log_entries[] = $row;
@@ -2228,7 +2228,7 @@ function updateBanMembers()
 	$memberIDs = [];
 	$memberEmails = [];
 	$memberEmailWild = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['id_member'])
 			$memberIDs[$row['id_member']] = $row['id_member'];
@@ -2272,7 +2272,7 @@ function updateBanMembers()
 			WHERE ' . implode(' OR ', $queryPart),
 			$queryValues
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!in_array($row['id_member'], $allMembers))
 			{
@@ -2312,7 +2312,7 @@ function updateBanMembers()
 			'ban_flag' => 10,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Don't do this twice!
 		if (!in_array($row['id_member'], $allMembers))

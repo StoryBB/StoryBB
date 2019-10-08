@@ -216,7 +216,7 @@ function RemoveOldTopics2()
 		$condition_params
 	);
 	$topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$topics[] = $row['id_topic'];
 	$smcFunc['db']->free_result($request);
 
@@ -272,7 +272,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		);
 		if ($smcFunc['db']->num_rows($requestMembers) > 0)
 		{
-			while ($rowMembers = $smcFunc['db_fetch_assoc']($requestMembers))
+			while ($rowMembers = $smcFunc['db']->fetch_assoc($requestMembers))
 			{
 				updateMemberData($rowMembers['id_member'], ['posts' => 'posts - ' . $rowMembers['posts']]);
 				updateCharacterData($rowMembers['id_character'], ['posts' => 'posts - ' . $rowMembers['posts']]);
@@ -300,7 +300,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		{
 			// Get topics that will be recycled.
 			$recycleTopics = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (function_exists('apache_reset_timeout'))
 					@apache_reset_timeout();
@@ -373,7 +373,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($adjustBoards[$row['id_board']]['num_posts']))
 		{
@@ -437,7 +437,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		]
 	);
 	$polls = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$polls[] = $row['id_poll'];
 	$smcFunc['db']->free_result($request);
 
@@ -489,7 +489,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'topics' => $topics,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (function_exists('apache_reset_timeout'))
 				@apache_reset_timeout();
@@ -598,7 +598,7 @@ function removeMessage($message, $decreasePostCount = true)
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		return false;
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	if (empty($board) || $row['id_board'] != $board)
@@ -723,7 +723,7 @@ function removeMessage($message, $decreasePostCount = true)
 				'id_msg' => $message,
 			]
 		);
-		$row2 = $smcFunc['db_fetch_assoc']($request);
+		$row2 = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		$smcFunc['db']->query('', '
@@ -1058,7 +1058,7 @@ function RestoreTopic()
 
 		$actioned_messages = [];
 		$previous_topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Restoring the first post means topic.
 			if ($row['id_msg'] == $row['id_first_msg'] && $row['id_previous_topic'] == $row['id_topic'])
@@ -1110,7 +1110,7 @@ function RestoreTopic()
 				]
 			);
 			$previous_topics = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$previous_topics[$row['id_topic']] = [
 					'board' => $row['id_board'],
 					'subject' => $row['subject'],
@@ -1165,7 +1165,7 @@ function RestoreTopic()
 				'topics' => $topics_to_restore,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// We can only restore if the previous board is set.
 			if (empty($row['id_previous_board']))
@@ -1204,7 +1204,7 @@ function RestoreTopic()
 					]
 				);
 
-				while ($member = $smcFunc['db_fetch_assoc']($request2))
+				while ($member = $smcFunc['db']->fetch_assoc($request2))
 				{
 					updateMemberData($member['id_member'], ['posts' => 'posts + ' . $member['post_count']]);
 					updateCharacterData($member['id_character'], ['posts' => 'posts + ' . $member['post_count']]);
@@ -1288,7 +1288,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			updateMemberData($row['id_member'], ['posts' => '+']);
 	}
 
@@ -1323,7 +1323,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 			'target_topic' => $target_topic,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['id_first_msg'] < $target_topic_data['id_first_msg'])
 			$target_topic_data['id_first_msg'] = $row['id_first_msg'];
@@ -1388,7 +1388,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 				'from_topic' => $from_topic,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['id_first_msg'] < $source_topic_data['id_first_msg'])
 				$source_topic_data['id_first_msg'] = $row['id_first_msg'];
@@ -1475,7 +1475,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 				'first_messages' => $cache_updates,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			updateStats('subject', $row['id_topic'], $row['subject']);
 		$smcFunc['db']->free_result($request);
 	}

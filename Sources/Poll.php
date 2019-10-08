@@ -49,7 +49,7 @@ function Vote()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('poll_error', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If this is a guest can they vote?
@@ -326,7 +326,7 @@ function EditPoll()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	// Get the poll information.
-	$pollinfo = $smcFunc['db_fetch_assoc']($request);
+	$pollinfo = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If we are adding a new poll - make sure that there isn't already a poll there.
@@ -379,7 +379,7 @@ function EditPoll()
 				]
 			);
 			$context['choices'] = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				// Get the highest id so we can add more without reusing.
 				if ($row['id_choice'] >= $last_id)
@@ -506,7 +506,7 @@ function EditPoll()
 			);
 			$context['choices'] = [];
 			$number = 1;
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				censorText($row['label']);
 
@@ -621,7 +621,7 @@ function EditPoll2()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	$bcinfo = $smcFunc['db_fetch_assoc']($request);
+	$bcinfo = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Check their adding/editing is valid.
@@ -775,7 +775,7 @@ function EditPoll2()
 		]
 	);
 	$choices = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$choices[] = $row['id_choice'];
 	$smcFunc['db']->free_result($request);
 

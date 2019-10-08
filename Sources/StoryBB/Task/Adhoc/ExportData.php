@@ -221,7 +221,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		// @todo appropriate setlocale call here
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['is_main'])
 			{
@@ -249,7 +249,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 					'member' => $this->_details['id_member'],
 				]
 			);
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
 			$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -271,7 +271,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 					'admin_only' => 3,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$exports[$main_char]['custom_fields'][$row['field_name']] = $row['value'];
 			}
@@ -381,7 +381,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'member' => $this->_details['id_member'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($exports[$row['id_character']]))
 			{
@@ -444,7 +444,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Now begin the export.
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$content = 'Board: ' . $row['board_name'] . "\r\n";
 			$content .= 'Topic: ' . $row['subject'] . "\r\n";
@@ -530,7 +530,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			throw new Exception("Could not open export data for user " . $this->_details['id_member'] . ". Permissions for the attachments folder may need to be checked.");
 		}
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$path = 'posts/';
 			$path .= $this->_exportable_character_name($row['character_name'], (int) $row['id_character']) . '/';
@@ -631,7 +631,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'member' => $this->_details['id_member'],
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Issue an alert to the owner to indicate they're good to go.

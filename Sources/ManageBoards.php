@@ -394,7 +394,7 @@ function EditBoard()
 			'moderator_group' => 3,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($_REQUEST['sa'] == 'newboard')
 			$curBoard['member_groups'][] = $row['id_group'];
@@ -467,7 +467,7 @@ function EditBoard()
 		]
 	);
 	$context['board']['moderators'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -481,7 +481,7 @@ function EditBoard()
 		]
 	);
 	$context['board']['moderator_groups'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['board']['moderator_groups'][$row['id_group']] = $row['id_group'];
 	$smcFunc['db']->free_result($request);
 
@@ -495,7 +495,7 @@ function EditBoard()
 		]
 	);
 	$context['themes'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['themes'][] = $row;
 	$smcFunc['db']->free_result($request);
 
@@ -713,7 +713,7 @@ function EditBoardSettings($return_config = false)
 			'empty_string' => '',
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
 	$smcFunc['db']->free_result($request);
 

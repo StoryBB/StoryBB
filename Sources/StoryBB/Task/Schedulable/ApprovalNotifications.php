@@ -58,7 +58,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		);
 		$notices = [];
 		$profiles = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If this is no longer around we'll ignore it.
 			if (empty($row['id_topic']))
@@ -108,7 +108,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		);
 		$perms = [];
 		$addGroups = [1];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Sorry guys, but we have to ignore guests AND members - it would be too many otherwise.
 			if ($row['id_group'] < 2)
@@ -133,7 +133,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				[
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$mods[$row['id_member']][$row['id_board']] = true;
 				// Make sure they get included in the big loop.
@@ -159,7 +159,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			]
 		);
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$members[$row['id_member']] = [
 				'id' => $row['id_member'],

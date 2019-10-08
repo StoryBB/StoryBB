@@ -48,7 +48,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 
 		// Group them by languages.
 		$birthdays = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if (!isset($birthdays[$row['lngfile']]))
 				$birthdays[$row['lngfile']] = [];

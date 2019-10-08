@@ -1004,7 +1004,7 @@ function getRawAttachInfo($attachIDs)
 	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$return[$row['id_attach']] = [
 			'name' => StringLibrary::escape($row['filename']),
 			'size' => $row['size'],
@@ -1047,7 +1047,7 @@ function getAttachMsgInfo($attachID)
 	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	return $row;
@@ -1084,7 +1084,7 @@ function getAttachsByMsg($msgID = 0)
 			]
 		);
 		$temp = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 				continue;

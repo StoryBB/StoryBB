@@ -47,7 +47,7 @@ function ShowHelp()
 			'languages' => [$language, $user_info['language']],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$subActions[$row['policy_type']] = 'HelpPolicy';
 		if (!isset($context['manual_sections'][$row['policy_type']]))
@@ -125,7 +125,7 @@ function HelpPolicy()
 			'policy' => $context['manual_sections'][$context['subaction']]['id_policy'],
 		]
 	);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 
 	$context['policy_name'] = $context['manual_sections'][$context['subaction']]['title'];
 
@@ -166,7 +166,7 @@ function HelpSmileys()
 		SELECT code, filename, description
 		FROM {db_prefix}smileys
 		ORDER BY smiley_row, smiley_order, hidden');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($context['smileys'][$row['filename']]))
 		{

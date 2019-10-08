@@ -428,7 +428,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			'limit' => $max,
 		])
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$results[$row['id_member']] = [
 			'id' => $row['id_member'],
@@ -623,7 +623,7 @@ function rebuildModCache()
 			]
 		);
 		$groups = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$groups[] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 
@@ -658,7 +658,7 @@ function rebuildModCache()
 				'current_member' => $user_info['id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -671,7 +671,7 @@ function rebuildModCache()
 				'groups' => $user_info['groups'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 

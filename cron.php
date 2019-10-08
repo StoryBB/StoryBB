@@ -143,7 +143,7 @@ function fetch_task()
 			'claim_limit' => time() - MAX_CLAIM_THRESHOLD,
 		]
 	);
-	if ($row = $smcFunc['db_fetch_assoc']($request))
+	if ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We found one. Let's try and claim it immediately.
 		$smcFunc['db']->free_result($request);

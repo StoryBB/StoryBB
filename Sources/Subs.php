@@ -119,7 +119,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'blank_redirect' => '',
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($result);
+				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
 
 				updateSettings([
@@ -174,7 +174,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($result);
+				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
 
 				updateSettings(['totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']]);
@@ -268,7 +268,7 @@ function updateMemberData($members, $data)
 					WHERE ' . $condition,
 					$parameters
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$member_names[] = $row['member_name'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -2516,7 +2516,7 @@ function prepareLikesContext($topic)
 				'topic' => $topic,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$temp[] = (int) $row['content_id'];
 
 		cache_put_data($cache_key, $temp, $ttl);
@@ -2880,7 +2880,7 @@ function build_query_board($userid)
 				]
 			);
 
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 
 		if (empty($row['additional_groups']))
 			$groups = [$row['id_group']];
@@ -2909,7 +2909,7 @@ function build_query_board($userid)
 				'current_member' => $userid,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -2922,7 +2922,7 @@ function build_query_board($userid)
 				'groups' => $groups,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -2970,7 +2970,7 @@ function get_main_menu_groups()
 			WHERE chars.char_sheet != 0
 			GROUP BY mg.id_group, mg.group_name, mg.badge_order
 			ORDER BY mg.badge_order, mg.group_name');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groups[$row['id_group']] = $row['group_name'];
 		}
@@ -3029,7 +3029,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 			$request = $smcFunc['db']->query('', '
 				SELECT id_board, in_character
 				FROM {db_prefix}boards');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$boards_ic[$row['id_board']] = $row['in_character'];
 			}

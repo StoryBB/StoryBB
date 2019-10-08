@@ -562,7 +562,7 @@ function sbb_db_table_structure(string $table_name): Table
 			'table_name' => substr($real_table_name, 0, 1) == '`' ? $real_table_name : '`' . $real_table_name . '`',
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (preg_match('~(.+?)\s*\((\d+)\)(?:(?:\s*)?(unsigned))?~i', $row['Type'], $matches) === 1)
 		{
@@ -679,7 +679,7 @@ function sbb_db_table_structure(string $table_name): Table
 	);
 	$indexlist = [];
 	$indexfunc = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (empty($row['Sub_part']))
 		{
@@ -1107,7 +1107,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 		]
 	);
 	$columns = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (!$detail)
 		{
@@ -1175,7 +1175,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 		]
 	);
 	$indexes = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (!$detail)
 			$indexes[] = $row['Key_name'];

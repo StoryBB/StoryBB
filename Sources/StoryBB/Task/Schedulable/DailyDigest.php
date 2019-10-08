@@ -74,7 +74,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 		$members = [];
 		$langs = [];
 		$notify = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($members[$row['id_member']]))
 			{
@@ -109,7 +109,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			]
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[$row['id_board']] = $row['name'];
 		$smcFunc['db']->free_result($request);
 
@@ -132,7 +132,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			]
 		);
 		$types = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($types[$row['note_type']][$row['id_board']]))
 				$types[$row['note_type']][$row['id_board']] = [

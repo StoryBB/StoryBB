@@ -12,6 +12,7 @@
 
 namespace StoryBB\Database;
 
+use mysqli_result;
 use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Database\Exception\ConnectionFailedException;
 use StoryBB\Database\Exception\CouldNotSelectDatabaseException;
@@ -832,6 +833,11 @@ class MySQL implements DatabaseAdapter
 		}, $db_string);
 	}
 
+	public function fetch_assoc(mysqli_result $result)
+	{
+		return mysqli_fetch_assoc($result);
+	}
+
 	/**
 	 * Function which constructs an optimize custom order string
 	 * as an improved alternative to find_in_set()
@@ -912,7 +918,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function optimize_table($table)
 	{
-		global $smcFunc, $db_prefix;
+		global $db_prefix;
 
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
 
@@ -923,7 +929,7 @@ class MySQL implements DatabaseAdapter
 				'table_name' => str_replace('_', '\_', $table),
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $this->fetch_assoc($request);
 		$this->free_result($request);
 
 		$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
@@ -945,7 +951,7 @@ class MySQL implements DatabaseAdapter
 				'table' => str_replace('_', '\_', $table),
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $this->fetch_assoc($request);
 		$this->free_result($request);
 
 		$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;

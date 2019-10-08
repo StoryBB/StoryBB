@@ -32,7 +32,7 @@ class Manager
 				FROM {db_prefix}block_instances
 			');
 
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$row['object'] = null;
 				if (class_exists($row['class']))

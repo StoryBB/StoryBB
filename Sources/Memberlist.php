@@ -395,7 +395,7 @@ function MLSearch()
 		]
 	);
 	$context['custom_search_fields'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['custom_search_fields'][$row['col_name']] = [
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
@@ -607,7 +607,7 @@ function printMemberListRows($request)
 		$most_posts = 1;
 
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$members[] = $row['id_member'];
 
 	// Load all the members for display.
@@ -677,7 +677,7 @@ function getCustFieldsMList()
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Get all the data we're gonna need.
 		$cpf['columns'][$row['col_name']] = [

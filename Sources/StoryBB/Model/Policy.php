@@ -47,7 +47,7 @@ class Policy
 				'language' => $versions_in_order,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row['title'];
 		}
@@ -85,7 +85,7 @@ class Policy
 			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_footer, pt.show_reg, pt.show_help
 			FROM {db_prefix}policy_types AS pt
 			ORDER BY pt.id_policy_type');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['no_language'] = [];
 			$policies[$row['id_policy_type']] = $row;
@@ -98,7 +98,7 @@ class Policy
 			FROM {db_prefix}policy AS p
 				INNER JOIN {db_prefix}policy_revision AS pr ON (p.last_revision = pr.id_revision)
 			ORDER BY p.id_policy');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($policies[$row['policy_type']]))
 			{
@@ -144,7 +144,7 @@ class Policy
 				'revision_id' => $revision_id,
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		if (empty($row))
@@ -227,7 +227,7 @@ class Policy
 						'language' => $language,
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($request);
+				$row = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 				if (empty($row))
 				{
@@ -307,7 +307,7 @@ class Policy
 				'language' => $versions_in_order,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
@@ -356,7 +356,7 @@ class Policy
 					'revisions' => $revisions,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$final_policies[$row['policy_type']]['revision_note'] = $row['short_revision_note'];
 			}
@@ -401,7 +401,7 @@ class Policy
 				'agreed' => $agreed,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
@@ -480,7 +480,7 @@ class Policy
 				FROM {db_prefix}policy_types AS pt
 					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
 				WHERE pt.show_footer = 1');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$footer_links[$row['policy_type']][$row['language']] = [
 					'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],

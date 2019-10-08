@@ -662,7 +662,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 		);
 	}
 	$files = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$files[] = $row;
 	$smcFunc['db']->free_result($request);
 
@@ -1063,7 +1063,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 		WHERE ' . $condition,
 		$query_parameter
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Figure out the "encrypted" filename and unlink it ;).
 		if ($row['attachment_type'] == 1)
@@ -1127,7 +1127,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			logAction(
 				'remove_attach',
 				[
@@ -1238,7 +1238,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				// Only do anything once... just in case
 				if (!isset($to_remove[$row['id_attach']]))
@@ -1308,7 +1308,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_update[] = $row['id_attach'];
 				$context['repair_errors']['parent_missing_thumbnail']++;
@@ -1362,7 +1362,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				// Get the filename.
 				if ($row['attachment_type'] == 1)
@@ -1517,7 +1517,7 @@ function RepairAttachments()
 					'export' => Attachment::ATTACHMENT_EXPORT,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['avatar_no_member']++;
@@ -1596,7 +1596,7 @@ function RepairAttachments()
 				]
 			);
 			
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['attachment_no_msg']++;
@@ -1811,7 +1811,7 @@ function ApproveAttach()
 				'attachment_type' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$attachments[] = $row['id_attach'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1839,7 +1839,7 @@ function ApproveAttach()
 		]
 	);
 	$attachments = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We can only add it if we can approve in this board!
 		if ($allowed_boards = [0] || in_array($row['id_board'], $allowed_boards))
@@ -1895,7 +1895,7 @@ function ApproveAttachments($attachments)
 		]
 	);
 	$attachments = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Update the thumbnail too...
 		if (!empty($row['id_thumb']))
@@ -1932,7 +1932,7 @@ function ApproveAttachments($attachments)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		logAction(
 			'approve_attach',
 			[
@@ -2501,7 +2501,7 @@ function list_getAttachDirs()
 
 	$expected_files = [];
 	$expected_size = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$expected_files[$row['id_folder']] = $row['num_attach'];
 		$expected_size[$row['id_folder']] = $row['size_attach'];
@@ -2772,7 +2772,7 @@ function TransferAttachments()
 
 			// Move them
 			$moved = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$source = Attachment::get_filename($row['filename'], $row['id_attach'], $row['id_folder'], $row['file_hash']);
 				$dest = $modSettings['attachmentUploadDir'][$new_dir] . '/' . basename($source);

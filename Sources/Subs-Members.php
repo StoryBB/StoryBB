@@ -85,7 +85,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 	$admins = [];
 	$user_log_details = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['is_admin'])
 			$admins[] = $row['id_member'];
@@ -140,7 +140,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$characters[$row['id_character']] = $row['character_name'];
 	}
@@ -432,7 +432,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'buddy_list' => implode(', buddy_list) != 0 OR FIND_IN_SET(', $users),
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET
@@ -700,7 +700,7 @@ function registerMember(&$regOptions, $return_errors = false)
 					'is_protected' => 1,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$unassignableGroups[] = $row['id_group'];
 			}
@@ -1083,7 +1083,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1123,7 +1123,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 
@@ -1146,7 +1146,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				]
 			);
 
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$moderator_groups[] = $row['id_group'];
 			}
@@ -1219,7 +1219,7 @@ function membersAllowedTo($permission, $board_id = null)
 		]
 	);
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$members[] = $row['id_member'];
 	$smcFunc['db']->free_result($request);
 
@@ -1449,7 +1449,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	);
 
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['member_ip'] = inet_dtop($row['member_ip']);
 		$row['member_ip2'] = inet_dtop($row['member_ip2']);
@@ -1537,7 +1537,7 @@ function populateDuplicateMembers(&$members)
 	);
 	$duplicate_members = [];
 	$duplicate_ids = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		//$duplicate_ids[] = $row['id_member'];
 		$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -1575,7 +1575,7 @@ function populateDuplicateMembers(&$members)
 	);
 
 	$had_ips = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['poster_ip'] = inet_dtop($row['poster_ip']);
 

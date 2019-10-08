@@ -655,7 +655,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 				'usernames' => array_keys($usernames),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			if (isset($usernames[StringLibrary::toLower($row['member_name'])]))
 				$usernames[StringLibrary::toLower($row['member_name'])] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
@@ -700,7 +700,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	);
 	$deletes = [];
 	// Check whether we have to apply anything...
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$criteria = sbb_json_decode($row['criteria'], true);
 		// Note we don't check the buddy status, cause deletion from buddy = madness!
@@ -732,7 +732,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			[
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$message_limit_cache[$row['id_group']] = $row['max_messages'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -768,7 +768,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		]
 	);
 	$notifications = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Don't do anything for members to be deleted!
 		if (isset($deletes[$row['id_member']]))
@@ -920,7 +920,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 				'to_members' => $to_list,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$to_names[] = un_htmlspecialchars($row['real_name']);
 		$smcFunc['db']->free_result($request);
 	}
@@ -997,7 +997,7 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 		]
 	);
 	$task_rows = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		// Clean it up.
 		censorText($row['subject']);
@@ -1101,7 +1101,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	$notification_posts = [];
 	$member_post_changes = [];
 	$char_post_changes = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Easy...
 		$msgs[] = $row['id_msg'];
@@ -1211,7 +1211,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 				'approved' => 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topic_changes[$row['id_topic']]['id_last_msg'] = $row['id_last_msg'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1346,7 +1346,7 @@ function approveTopics($topics, $approve = true)
 		]
 	);
 	$msgs = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$msgs[] = $row['id_msg'];
 	$smcFunc['db']->free_result($request);
 
@@ -1392,7 +1392,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 			]
 		);
 		$lastMsg = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$lastMsg[$row['id_board']] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 	}

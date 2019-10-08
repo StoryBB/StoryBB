@@ -42,7 +42,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$watched = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;

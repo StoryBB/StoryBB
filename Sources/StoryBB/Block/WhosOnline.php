@@ -147,7 +147,7 @@ class WhosOnline extends AbstractBlock implements Block
 				'reg_mem_group' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['real_name']))
 			{
@@ -355,7 +355,7 @@ class WhosOnline extends AbstractBlock implements Block
 			]
 		);
 		$groupCache = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 		}

@@ -410,7 +410,7 @@ function AddMembergroup()
 					]
 				);
 				$inserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
 						$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
@@ -435,7 +435,7 @@ function AddMembergroup()
 				]
 			);
 			$inserts = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
 			$smcFunc['db']->free_result($request);
 
@@ -459,7 +459,7 @@ function AddMembergroup()
 						'copy_from' => $copy_id,
 					]
 				);
-				$group_info = $smcFunc['db_fetch_assoc']($request);
+				$group_info = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 
 				// ...and update the new membergroup with it.
@@ -559,7 +559,7 @@ function AddMembergroup()
 	$context['groups'] = [];
 	$context['character_groups'] = [];
 	$context['account_groups'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['groups'][] = [
 			'id' => $row['id_group'],
@@ -583,7 +583,7 @@ function AddMembergroup()
 	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 
 	$context['categories'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
@@ -814,7 +814,7 @@ function EditMembergroup()
 				$request = $smcFunc['db']->query('', '
 					SELECT id_board
 					FROM {db_prefix}boards');
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$accesses[(int) $row['id_board']] = 'allow';
 				$smcFunc['db']->free_result($request);
 			}
@@ -839,7 +839,7 @@ function EditMembergroup()
 						'column' => $board_action == 'allow' ? 'member_groups' : 'deny_member_groups',
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}boards
 						SET {raw:column} = {string:member_group_access}
@@ -886,7 +886,7 @@ function EditMembergroup()
 					]
 				);
 				$updates = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$updates[$row['additional_groups']][] = $row['id_member'];
 				$smcFunc['db']->free_result($request);
 
@@ -974,7 +974,7 @@ function EditMembergroup()
 						'num_moderators' => count($moderators),
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$group_moderators[] = $row['id_member'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -1021,7 +1021,7 @@ function EditMembergroup()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$row['icons'] = explode('#', $row['icons']);
@@ -1057,7 +1057,7 @@ function EditMembergroup()
 		]
 	);
 	$context['group']['moderators'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['group']['moderators'][$row['id_member']] = $row['real_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -1078,7 +1078,7 @@ function EditMembergroup()
 			]
 		);
 		$context['categories'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// This category hasn't been set up yet..
 			if (!isset($context['categories'][$row['id_cat']]))
@@ -1169,7 +1169,7 @@ function EditMembergroup()
 		]
 	);
 	$context['inheritable_groups'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['inheritable_groups'][$row['id_group']] = $row['group_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -1221,7 +1221,7 @@ function MembergroupBadges()
 			'moderator_group' => 3
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['parsed_icons'] = '';
 		if (!empty($row['icons']))

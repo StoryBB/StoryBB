@@ -283,7 +283,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// First check to see if it points to a subfolder of $boardurl
 		if (BoardurlMatch($row['value']))

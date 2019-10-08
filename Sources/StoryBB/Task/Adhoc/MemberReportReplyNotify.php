@@ -132,7 +132,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 					'members' => $notifies['email'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (empty($row['lngfile']))
 					$row['lngfile'] = $language;

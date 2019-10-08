@@ -127,7 +127,7 @@ function UnapprovedPosts()
 		);
 		$toAction = [];
 		$details = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If it's not within what our view is ignore it...
 			if (($row['id_msg'] == $row['id_first_msg'] && $context['current_view'] != 'topics') || ($row['id_msg'] != $row['id_first_msg'] && $context['current_view'] != 'replies'))
@@ -257,7 +257,7 @@ function UnapprovedPosts()
 		]
 	);
 	$context['unapproved_items'] = [];
-	for ($i = 1; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	for ($i = 1; $row = $smcFunc['db']->fetch_assoc($request); $i++)
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
 		if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == [0] || in_array($row['id_board'], $delete_own_boards)))
@@ -368,7 +368,7 @@ function UnapprovedAttachments()
 			]
 		);
 		$attachments = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$attachments[] = $row['id_attach'];
 		$smcFunc['db']->free_result($request);
 
@@ -573,7 +573,7 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 	);
 
 	$unapproved_items = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$unapproved_items[] = [
 			'id' => $row['id_attach'],
