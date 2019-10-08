@@ -116,7 +116,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
-		$smcFunc['db_error_insert']($error_info);
+		$smcFunc['db']->error_insert($error_info);
 		$last_error = $error_info;
 	}
 

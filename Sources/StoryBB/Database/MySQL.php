@@ -448,6 +448,39 @@ class MySQL implements DatabaseAdapter
 	}
 
 	/**
+	 * Function to save errors in database in a safe way
+	 *
+	 * @param array with keys in this order id_member, log_time, ip, url, message, session, error_type, file, line
+	 * @return void
+	 */
+	public function error_insert($error_array)
+	{
+		static $mysql_error_data_prep;
+
+		if (empty($mysql_error_data_prep))
+		{
+			$mysql_error_data_prep = mysqli_prepare($this->connection,
+				'INSERT INTO ' . $this->db_prefix . 'log_errors(id_member, log_time, ip, url, message, session, error_type, file, line)
+				VALUES(?, ?, unhex(?), ?, ?, ?, ?, ?, ?)'
+			);
+		}
+
+		if (filter_var($error_array[2], FILTER_VALIDATE_IP) !== false)
+		{
+			$error_array[2] = bin2hex(inet_pton($error_array[2]));
+		}
+		else
+		{
+			$error_array[2] = null;
+		}
+
+		mysqli_stmt_bind_param($mysql_error_data_prep, 'iissssssi', 
+			$error_array[0], $error_array[1], $error_array[2], $error_array[3], $error_array[4], $error_array[5], $error_array[6],
+			$error_array[7], $error_array[8]);
+		mysqli_stmt_execute ($mysql_error_data_prep);
+	}
+
+	/**
 	 * Do a query.  Takes care of errors too.
 	 *
 	 * @param string $identifier An identifier.
