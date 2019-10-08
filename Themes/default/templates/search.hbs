@@ -147,18 +147,18 @@
 				bToggleEnabled: true,
 				bCurrentlyCollapsed: {{#if context.boards_check_all}}true{{else}}false{{/if}},
 				aSwappableContainers: [
-					'advanced_panel_div'
+					'#advanced_panel_div'
 				],
 				aSwapImages: [
 					{
-						sId: 'advanced_panel_toggle',
+						sId: '#advanced_panel_toggle',
 						altExpanded: {{{json txt.hide}}},
 						altCollapsed: {{{json txt.show}}}
 					}
 				],
 				aSwapLinks: [
 					{
-						sId: 'advanced_panel_link',
+						sId: '#advanced_panel_link',
 						msgExpanded: {{{json txt.choose_board}}},
 						msgCollapsed: {{{json txt.choose_board}}}
 					}

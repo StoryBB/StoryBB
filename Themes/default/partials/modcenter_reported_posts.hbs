@@ -30,18 +30,18 @@
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: {{#if (eq context.admin_prefs.mcrp '1')}}true{{else}}false{{/if}},
 			aSwappableContainers: [
-				'reported_posts_panel'
+				'#reported_posts_panel'
 			],
 			aSwapImages: [
 				{
-					sId: 'reported_posts_toggle',
+					sId: '#reported_posts_toggle',
 					altExpanded: {{{json txt.hide}}},
 					altCollapsed: {{{json txt.show}}}
 				}
 			],
 			aSwapLinks: [
 				{
-					sId: 'reported_posts_link',
+					sId: '#reported_posts_link',
 					msgExpanded: {{{json txt.mc_recent_reports}}},
 					msgCollapsed: {{{json txt.mc_recent_reports}}}
 				}

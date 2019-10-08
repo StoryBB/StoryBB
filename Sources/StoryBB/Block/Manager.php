@@ -146,7 +146,8 @@ class Manager
 			{
 				$toggle = new \StoryBB\Helper\Toggleable($instance->get_block_title());
 				$toggle->addCollapsible('#block_' . $instance_id . ' .block_content');
-				$toggle->addImageToggle('block_' . $instance_id . ' .img_toggle');
+				$toggle->addImageToggle('#block_' . $instance_id . ' .img_toggle');
+				$toggle->addLinkToggle('#block_' . $instance_id . ' .block_title a');
 				$toggle->userOption('collapse_block_' . $instance_id);
 				$toggle->cookieName('cb_' . $instance_id);
 				$toggle->attach();

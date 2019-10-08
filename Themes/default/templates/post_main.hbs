@@ -552,12 +552,12 @@
 						bToggleEnabled: true,
 						bCurrentlyCollapsed: true,
 						aSwappableContainers: [
-							'msg_' + ignored_replies[i] + '_body',
-							'msg_' + ignored_replies[i] + '_quote',
+							'#msg_' + ignored_replies[i] + '_body',
+							'#msg_' + ignored_replies[i] + '_quote',
 						],
 						aSwapLinks: [
 							{
-								sId: 'msg_' + ignored_replies[i] + '_ignored_link',
+								sId: '#msg_' + ignored_replies[i] + '_ignored_link',
 								msgExpanded: '',
 								msgCollapsed: '{{txt.show_ignore_user_post}}'
 							}
@@ -582,18 +582,18 @@
 				document.getElementById('additional_options').value = '1';
 			},
 			aSwappableContainers: [
-				'postAdditionalOptions',
+				'#postAdditionalOptions',
 			],
 			aSwapImages: [
 				{
-					sId: 'postMoreExpandLink',
+					sId: '#postMoreExpandLink',
 					altExpanded: '-',
 					altCollapsed: '+'
 				}
 			],
 			aSwapLinks: [
 				{
-					sId: 'postMoreExpandLink',
+					sId: '#postMoreExpandLink',
 					msgExpanded: {{#if context.can_post_attachment}}{{{json txt.post_additionalopt_attach}}}{{else}}{{{json txt.post_additionalopt}}}{{/if}},
 					msgCollapsed: {{#if context.can_post_attachment}}{{{json txt.post_additionalopt_attach}}}{{else}}{{{json txt.post_additionalopt}}}{{/if}}
 				}
@@ -605,18 +605,18 @@
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: true,
 			aSwappableContainers: [
-				'postDraftOptions',
+				'#postDraftOptions',
 			],
 			aSwapImages: [
 				{
-					sId: 'postDraftExpand',
+					sId: '#postDraftExpand',
 					altExpanded: '-',
 					altCollapsed: '+'
 				}
 			],
 			aSwapLinks: [
 				{
-					sId: 'postDraftExpandLink',
+					sId: '#postDraftExpandLink',
 					msgExpanded: {{{json txt.draft_hide}}},
 					msgCollapsed: {{{json txt.draft_load}}}
 				}
@@ -677,12 +677,12 @@
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: true,
 			aSwappableContainers: [
-				'msg_{{.}}_body',
-				'msg_{{.}}_quote',
+				'#msg_{{.}}_body',
+				'#msg_{{.}}_quote',
 			],
 			aSwapLinks: [
 					{
-						sId: 'msg_{{.}}_ignored_link',
+						sId: '#msg_{{.}}_ignored_link',
 						msgExpanded: '',
 						msgCollapsed: {{{jsEscape ../txt.show_ignore_user_post}}}
 					}

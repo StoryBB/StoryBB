@@ -1,8 +1,12 @@
 	<div class="block blocktype_{{blocktype}}" id="block_{{instance}}">
 		<div class="block_title_container sub_bar">
 			<h3 class="block_title subbg{{#if icon}} main_icons {{icon}}{{/if}}">
-				{{#if collapsible}} <span class="toggle_up floatright img_toggle"></span>{{/if}}
-				{{title}}
+				{{#if collapsible}}
+					<span class="toggle_up floatright img_toggle"></span>
+					<a href="#">{{title}}</a>
+				{{else}}
+					{{title}}
+				{{/if}}
 			</h3>
 		</div>
 		<div class="block_content"{{#if collapsed}} style="display:none"{{/if}}>

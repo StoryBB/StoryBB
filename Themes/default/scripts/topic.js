@@ -700,18 +700,18 @@ function ignore_toggles(msgids, text)
 			bToggleEnabled: true,
 			bCurrentlyCollapsed: true,
 			aSwappableContainers: [
-				'msg_' + msgid + '_extra_info',
-				'msg_' + msgid,
-				'msg_' + msgid + '_footer',
-				'msg_' + msgid + '_quick_mod',
-				'modify_button_' + msgid,
-				'msg_' + msgid + '_signature',
-				'msg_' + msgid + '_likes'
+				'#msg_' + msgid + '_extra_info',
+				'#msg_' + msgid,
+				'#msg_' + msgid + '_footer',
+				'#msg_' + msgid + '_quick_mod',
+				'#modify_button_' + msgid,
+				'#msg_' + msgid + '_signature',
+				'#msg_' + msgid + '_likes'
 
 			],
 			aSwapLinks: [
 				{
-					sId: 'msg_' + msgid + '_ignored_link',
+					sId: '#msg_' + msgid + '_ignored_link',
 					msgExpanded: '',
 					msgCollapsed: text
 				}
