@@ -802,10 +802,10 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 				{
 					// Only (re)load the image if it's changed.
 					var sTargetSource = bCollapse ? this.opt.aSwapImages[i].srcCollapsed : this.opt.aSwapImages[i].srcExpanded;
-					if (oImage.src != sTargetSource)
-						oImage.src = sTargetSource;
+					if (oImage.attr('src') != sTargetSource)
+						oImage.attr('src', sTargetSource);
 
-					oImage.alt = oImage.title = bCollapse ? this.opt.aSwapImages[i].altCollapsed : this.opt.aSwapImages[i].altExpanded;
+					oImage.attr('alt', oImage.title = bCollapse ? this.opt.aSwapImages[i].altCollapsed : this.opt.aSwapImages[i].altExpanded);
 				}
 			}
 		}

@@ -60,7 +60,7 @@ sbb_StatsCenter.prototype.init = function ()
 				],
 				aSwapImages: [
 					{
-						sId: this.opt.sYearImageIdPrefix + sYearId,
+						sId: '#' + this.opt.sYearImageIdPrefix + sYearId,
 						srcExpanded: sbb_images_url + '/' + this.opt.sYearImageExpanded,
 						altExpanded: '-',
 						srcCollapsed: sbb_images_url + '/' + this.opt.sYearImageCollapsed,
@@ -69,7 +69,7 @@ sbb_StatsCenter.prototype.init = function ()
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sYearLinkIdPrefix + sYearId,
+						sId: '#' + this.opt.sYearLinkIdPrefix + sYearId,
 						msgExpanded: sYearId,
 						msgCollapsed: sYearId
 					}
@@ -112,7 +112,7 @@ sbb_StatsCenter.prototype.init = function ()
 				],
 				aSwapImages: [
 					{
-						sId: this.opt.sMonthImageIdPrefix + sMonthId,
+						sId: '#' + this.opt.sMonthImageIdPrefix + sMonthId,
 						srcExpanded: sbb_images_url + '/' + this.opt.sMonthImageExpanded,
 						altExpanded: '-',
 						srcCollapsed: sbb_images_url + '/' + this.opt.sMonthImageCollapsed,
@@ -121,14 +121,14 @@ sbb_StatsCenter.prototype.init = function ()
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sMonthLinkIdPrefix + sMonthId,
+						sId: '#' + this.opt.sMonthLinkIdPrefix + sMonthId,
 						msgExpanded: sLinkText,
 						msgCollapsed: sLinkText
 					}
 				]
 			});
 
-			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = aRows[i].id;
+			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = '#' + aRows[i].id;
 		}
 
 		else if((aResults = this.opt.reDayPattern.exec(aRows[i].id)) != null)
@@ -224,8 +224,8 @@ sbb_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 			}
 
 			// Add these day rows to the toggle objects in case of collapse.
-			this.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers[this.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers.length] = oCurRow.id;
-			this.oYears[sYearId].oToggle.opt.aSwappableContainers[this.oYears[sYearId].oToggle.opt.aSwappableContainers.length] = oCurRow.id;
+			this.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers[this.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers.length] = '#' + oCurRow.id;
+			this.oYears[sYearId].oToggle.opt.aSwappableContainers[this.oYears[sYearId].oToggle.opt.aSwappableContainers.length] = '#' + oCurRow.id;
 		}
 	}
 
