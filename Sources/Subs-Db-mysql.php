@@ -28,15 +28,3 @@ function db_extend($type = 'packages')
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
 }
-
-/**
- * Fetches all rows from a result as an array 
- *
- * @param resource $request A MySQL result resource
- * @return array An array that contains all rows (records) in the result resource
- */
-function sbb_db_fetch_all($request)
-{
-	// Return the right row.
-	return mysqli_fetch_all($request);
-}
