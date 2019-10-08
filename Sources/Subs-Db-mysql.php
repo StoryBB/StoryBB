@@ -39,7 +39,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_data_seek'              => 'mysqli_data_seek',
 			'db_escape_string'          => 'addslashes',
 			'db_unescape_string'        => 'stripslashes',
-			'db_server_info'            => 'sbb_db_get_server_info',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
 			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
@@ -65,18 +64,6 @@ function db_extend($type = 'packages')
 	require_once($sourcedir . '/Db' . strtoupper($type[0]) . substr($type, 1) . '-mysql.php');
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
-}
-
-/**
- * Wrap mysqli_get_server_info so the connection does not need to be specified
- *
- * @param object $connection The connection to use (if null, $db_connection is used)
- * @return string The server info
- */
-function sbb_db_get_server_info($connection = null)
-{
-	global $db_connection;
-	return mysqli_get_server_info($connection === null ? $db_connection : $connection);
 }
 
 /**
