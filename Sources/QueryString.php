@@ -306,7 +306,7 @@ function cleanRequest()
 		$_SERVER['REQUEST_URL'] = $_SERVER['REQUEST_URI'];
 
 	// And make sure HTTP_USER_AGENT is set.
-	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? StringLibrary::escape($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
+	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? StringLibrary::escape($smcFunc['db']->unescape_string($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
 
 	// Some final checking.
 	if (!IP::is_valid($_SERVER['BAN_CHECK_IP']))
@@ -416,6 +416,7 @@ function matchIPtoCIDR($ip_address, $cidr_address)
  * - calls itself recursively if necessary.
  *
  * @param array|string $var A string or array of strings to escape
+ * @deprecated Is this even called?
  * @return array|string The escaped string or array of escaped strings
  */
 function escapestring__recursive($var)
@@ -423,14 +424,14 @@ function escapestring__recursive($var)
 	global $smcFunc;
 
 	if (!is_array($var))
-		return $smcFunc['db_escape_string']($var);
+		return $smcFunc['db']->escape_string($var);
 
 	// Reindex the array with slashes.
 	$new_var = [];
 
 	// Add slashes to every element, even the indexes!
 	foreach ($var as $k => $v)
-		$new_var[$smcFunc['db_escape_string']($k)] = escapestring__recursive($v);
+		$new_var[$smcFunc['db']->escape_string($k)] = escapestring__recursive($v);
 
 	return $new_var;
 }
@@ -500,14 +501,14 @@ function unescapestring__recursive($var)
 	global $smcFunc;
 
 	if (!is_array($var))
-		return $smcFunc['db_unescape_string']($var);
+		return $smcFunc['db']->unescape_string($var);
 
 	// Reindex the array without slashes, this time.
 	$new_var = [];
 
 	// Strip the slashes from every element.
 	foreach ($var as $k => $v)
-		$new_var[$smcFunc['db_unescape_string']($k)] = unescapestring__recursive($v);
+		$new_var[$smcFunc['db']->unescape_string($k)] = unescapestring__recursive($v);
 
 	return $new_var;
 }

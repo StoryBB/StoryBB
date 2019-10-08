@@ -1002,8 +1002,8 @@ function DatabasePopulation()
 	$replaces = [
 		'{$db_prefix}' => $db_prefix,
 		'{$language}' => $language,
-		'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($attachdir)]),
-		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
+		'{$attachdir}' => json_encode([1 => $smcFunc['db']->escape_string($attachdir)]),
+		'{$boarddir}' => $smcFunc['db']->escape_string(dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 		'{$sbb_version}' => $GLOBALS['current_sbb_version'],
@@ -1016,7 +1016,7 @@ function DatabasePopulation()
 	foreach ($txt as $key => $value)
 	{
 		if (substr($key, 0, 8) == 'default_')
-			$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
+			$replaces['{$' . $key . '}'] = $smcFunc['db']->escape_string($value);
 	}
 	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 

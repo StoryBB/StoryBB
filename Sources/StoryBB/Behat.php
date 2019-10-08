@@ -119,8 +119,8 @@ class Behat extends RawMinkContext implements Context
 
 		$replaces = [
 			'{$db_prefix}' => 'behat_' . $db_prefix,
-			'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($boarddir . '/attachments')]),
-			'{$boarddir}' => $smcFunc['db_escape_string']($boarddir),
+			'{$attachdir}' => json_encode([1 => $smcFunc['db']->escape_string($boarddir . '/attachments')]),
+			'{$boarddir}' => $smcFunc['db']->escape_string($boarddir),
 			'{$boardurl}' => $boardurl,
 			'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 			'{$sbb_version}' => 'Behat',
@@ -132,7 +132,7 @@ class Behat extends RawMinkContext implements Context
 		foreach ($txt as $key => $value)
 		{
 			if (substr($key, 0, 8) == 'default_')
-				$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
+				$replaces['{$' . $key . '}'] = $smcFunc['db']->escape_string($value);
 		}
 		$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 

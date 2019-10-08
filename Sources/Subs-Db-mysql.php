@@ -34,8 +34,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	{
 		$smcFunc += [
 			'db_data_seek'              => 'mysqli_data_seek',
-			'db_escape_string'          => 'addslashes',
-			'db_unescape_string'        => 'stripslashes',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
 			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',

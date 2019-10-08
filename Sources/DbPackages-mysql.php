@@ -340,7 +340,7 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
 	$smcFunc['db']->query('', '
 		ALTER TABLE ' . $table_name . '
 		CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db_escape_string']($column_info['default']) . '\'') . ' ' .
+			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db']->escape_string($column_info['default']) . '\'') . ' ' .
 			(empty($column_info['auto']) ? '' : 'auto_increment') . ' ',
 		[
 			'security_override' => true,
@@ -1229,7 +1229,7 @@ function sbb_db_create_query_column($column)
 		$default = 'auto_increment';
 	}
 	elseif (isset($column['default']) && $column['default'] !== null)
-		$default = 'default \'' . $smcFunc['db_escape_string']($column['default']) . '\'';
+		$default = 'default \'' . $smcFunc['db']->escape_string($column['default']) . '\'';
 	else
 		$default = '';
 

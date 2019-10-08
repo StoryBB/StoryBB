@@ -1035,6 +1035,16 @@ class MySQL implements DatabaseAdapter
 		return mysqli_fetch_row($result);
 	}
 
+	public function escape_string($string)
+	{
+		return addslashes($string);
+	}
+
+	public function unescape_string($string)
+	{
+		return stripslashes($string);
+	}
+
 	/**
 	 * Function which constructs an optimize custom order string
 	 * as an improved alternative to find_in_set()
