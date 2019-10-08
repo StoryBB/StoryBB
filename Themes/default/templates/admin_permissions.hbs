@@ -109,8 +109,7 @@
 {{#if context.can_modify}}
 				<div class="cat_bar">
 					<h3 class="catbg">
-						<span id="permissions_panel_toggle" class="{{#if context.show_advanced_options}}toggle_up{{else}}toggle_down{{/if}} floatright" style="display: none;"></span>
-						<a href="#" id="permissions_panel_link">{{{txt.permissions_advanced_options}}}</a>
+						{{{txt.permissions_advanced_options}}}
 					</h3>
 				</div>
 				<div id="permissions_panel_advanced" class="windowbg noup">
@@ -183,36 +182,6 @@
 				</div>
 
 				<script>
-					var oPermissionsPanelToggle = new smc_Toggle({
-						bToggleEnabled: true,
-						bCurrentlyCollapsed: {{#unless context.show_advanced_options}}true{{else}}false{{/unless}},
-						aSwappableContainers: [
-							'permissions_panel_advanced'
-						],
-						aSwapImages: [
-							{
-								sId: 'permissions_panel_toggle',
-								altExpanded: {{{json txt.hide}}},
-								altCollapsed: {{{json txt.show}}}
-							}
-						],
-						aSwapLinks: [
-							{
-								sId: 'permissions_panel_link',
-								msgExpanded: {{{json txt.permissions_advanced_options}}},
-								msgCollapsed: {{{json txt.permissions_advanced_options}}}
-							}
-						],
-						oThemeOptions: {
-							bUseThemeSettings: true,
-							sOptionName: 'admin_preferences',
-							sSessionVar: sbb_session_var,
-							sSessionId: sbb_session_id,
-							sThemeId: '1',
-							sAdditionalVars: ';admin_key=app'
-						}
-					});
-
 					function checkSubmit()
 					{
 						if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
