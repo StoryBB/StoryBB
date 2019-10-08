@@ -57,7 +57,7 @@ function getAdminFile(string $filename, string $path = '')
  */
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
+	global $txt, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
 
 	loadLanguage('Admin');
 
@@ -72,7 +72,7 @@ function getServerVersions($checkFor)
 	// Now lets check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
-		if (!isset($db_connection) || $db_connection === false)
+		if (!$smcFunc['db']->is_connected())
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 		{

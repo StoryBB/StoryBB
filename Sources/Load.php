@@ -3000,7 +3000,7 @@ function template_include($filename, $once = false)
  */
 function loadDatabase()
 {
-	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
+	global $db_persist, $db_server, $db_user, $db_passwd;
 	global $db_type, $db_name, $sourcedir, $db_prefix, $db_port, $smcFunc;
 
 	if (empty($smcFunc))
@@ -3023,8 +3023,6 @@ function loadDatabase()
 
 	try {
 		$options = array_merge($db_options, ['persist' => $db_persist]);
-
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);

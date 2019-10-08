@@ -116,10 +116,6 @@ class MySQL implements DatabaseAdapter
 		mysqli_query($this->connection, "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
 
 		mysqli_set_charset($this->connection, 'utf8mb4');
-
-		// Dirty compatibility hack.
-		global $db_connection;
-		$db_connection = $this->connection;
 	}
 
 	/**
@@ -889,9 +885,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
 	{
-		global $smcFunc, $db_connection, $db_prefix;
-
-		$connection = $db_connection;
+		global $smcFunc, $db_prefix;
 		
 		$return_var = null;
 
@@ -933,7 +927,7 @@ class MySQL implements DatabaseAdapter
 		// Here's where the variables are injected to the query.
 		$insertRows = [];
 		foreach ($data as $dataRow)
-			$insertRows[] = $this->quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
+			$insertRows[] = $this->quote($insertData, array_combine($indexed_columns, $dataRow));
 
 		// Determine the method of insertion.
 		$queryTitle = $method == 'replace' ? 'REPLACE' : ($method == 'ignore' ? 'INSERT IGNORE' : 'INSERT');
@@ -950,8 +944,7 @@ class MySQL implements DatabaseAdapter
 					'security_override' => true,
 					'db_error_skip' => $table === $db_prefix . 'log_errors',
 					'safe_mode' => $safe_mode
-				],
-				$connection
+				]
 			);
 			if ($safe_mode)
 			{
@@ -974,8 +967,7 @@ class MySQL implements DatabaseAdapter
 						'security_override' => true,
 						'db_error_skip' => $table === $db_prefix . 'log_errors',
 						'safe_mode' => $safe_mode,
-					],
-					$connection
+					]
 				);
 				if ($safe_mode)
 				{
@@ -1004,9 +996,9 @@ class MySQL implements DatabaseAdapter
 						[]
 					);
 					
-					if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
+					if ($request !== false && $this->num_rows($request) == 1)
 					{
-						$row = $smcFunc['db']->fetch_assoc($request);
+						$row = $this->fetch_assoc($request);
 						$ai = $row[$keys[0]];
 					}
 				}
@@ -1022,12 +1014,12 @@ class MySQL implements DatabaseAdapter
 		if ($with_returning)
 		{
 			if ($returnmode == 1 && empty($return_var))
-				$return_var = $smcFunc['db']->inserted_id() + count($insertRows) - 1;
+				$return_var = $this->inserted_id() + count($insertRows) - 1;
 			elseif ($returnmode == 2 && empty($return_var))
 			{
 				$return_var = [];
 				$count = count($insertRows);
-				$start = $smcFunc['db']->inserted_id();
+				$start = $this->inserted_id();
 				for ($i = 0; $i < $count; $i++)
 					$return_var[] = $start + $i;
 			}

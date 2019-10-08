@@ -14,31 +14,6 @@ use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
 /**
- *  Maps the implementations in this file (sbb_db_function_name)
- *  to the $smcFunc['db_function_name'] variable.
- *
- * @param string $db_server The database server
- * @param string $db_name The name of the database
- * @param string $db_user The database username
- * @param string $db_passwd The database password
- * @param string $db_prefix The table prefix
- * @param array $db_options An array of database options
- * @return null|resource Returns null on failure if $db_options['non_fatal'] is true or a MySQL connection resource handle if the connection was successful.
- */
-function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options = [])
-{
-	global $smcFunc;
-
-	// Map some database specific functions, only do this once.
-	if (!isset($smcFunc['db_fetch_all']))
-	{
-		$smcFunc += [
-			'db_fetch_all'              => 'sbb_db_fetch_all',
-		];
-	}
-}
-
-/**
  * Extend the database functionality. It calls the respective file's init
  * to add the implementations in that file to $smcFunc array.
  *

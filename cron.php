@@ -32,7 +32,7 @@ define('MAX_CLAIM_THRESHOLD', 300);
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
-global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
+global $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
 define('TIME_START', microtime(true));

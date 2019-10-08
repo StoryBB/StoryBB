@@ -32,7 +32,10 @@ $databases = [
 	'mysql' => [
 		'name' => 'MySQL',
 		'version' => '5.5.3',
-		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
+		'version_check' => function($db)
+		{
+			return min($db->get_version(), mysqli_get_client_info());
+		},
 		'supported' => function_exists('mysqli_connect'),
 		'default_user' => 'mysql.default_user',
 		'default_password' => 'mysql.default_password',
@@ -279,7 +282,7 @@ function load_lang_file()
  */
 function load_database()
 {
-	global $db_prefix, $db_connection, $sourcedir, $smcFunc, $modSettings;
+	global $db_prefix, $sourcedir, $smcFunc, $modSettings;
 	global $db_server, $db_passwd, $db_type, $db_name, $db_user, $db_persist;
 
 	if (empty($sourcedir))
@@ -293,7 +296,7 @@ function load_database()
 	$modSettings['disableQueryCheck'] = true;
 
 	// Connect the database.
-	if (!$db_connection)
+	if (empty($smcFunc['db']))
 	{
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
@@ -311,17 +314,12 @@ function load_database()
 
 		$db_options['port'] = (int) $port;
 
-		if (!$db_connection)
-		{
-			require_once(__DIR__ . '/vendor/autoload.php');
+		require_once(__DIR__ . '/vendor/autoload.php');
 
-			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
-
-			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
-			$smcFunc['db']->set_prefix($db_prefix);
-			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-			$smcFunc['db']->connect($db_options);
-		}
+		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		$smcFunc['db']->set_prefix($db_prefix);
+		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+		$smcFunc['db']->connect($db_options);
 	}
 }
 
@@ -651,7 +649,7 @@ function CheckFilesWritable()
 function DatabaseSettings()
 {
 	global $txt, $databases, $incontext, $smcFunc, $sourcedir;
-	global $db_server, $db_name, $db_user, $db_passwd, $db_connection;
+	global $db_server, $db_name, $db_user, $db_passwd;
 
 	// Load our autoloader stuff.
 	require_once(__DIR__ . '/vendor/autoload.php');
@@ -776,7 +774,6 @@ function DatabaseSettings()
 
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
@@ -784,7 +781,7 @@ function DatabaseSettings()
 		$smcFunc['db']->connect(['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
-		if ($db_connection === null)
+		if (!$smcFunc['db']->connection_active())
 		{
 			$db_error = @$smcFunc['db']->error_message();
 
@@ -792,12 +789,11 @@ function DatabaseSettings()
 				'non_fatal' => true,
 				'dont_select_db' => !$needsDB,
 			];
-			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, $options);
 			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 			$smcFunc['db']->set_prefix($db_prefix);
 			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 			$smcFunc['db']->connect($options);
-			if ($db_connection != null)
+			if (!$smcFunc['db']->connection_active())
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
 				updateSettingsFile(['db_user' => $db_user]);
@@ -805,7 +801,7 @@ function DatabaseSettings()
 		}
 
 		// Still no connection?  Big fat error message :P.
-		if (!$db_connection)
+		if (!$smcFunc['db']->connection_active())
 		{
 			$incontext['error'] = $txt['error_db_connect'] . '<div style="margin: 2.5ex; font-family: monospace;"><strong>' . $db_error . '</strong></div>';
 			return false;
@@ -813,7 +809,7 @@ function DatabaseSettings()
 
 		// Do they meet the install requirements?
 		// @todo Old client, new server?
-		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', eval($databases[$db_type]['version_check']))) > 0)
+		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check'])) > 0)
 		{
 			$incontext['error'] = $txt['error_db_too_low'];
 			return false;
@@ -854,7 +850,7 @@ function DatabaseSettings()
  */
 function ForumSettings()
 {
-	global $txt, $incontext, $databases, $db_type, $db_connection;
+	global $txt, $incontext, $databases, $db_type;
 
 	require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -954,7 +950,7 @@ function ForumSettings()
  */
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
+	global $txt, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1042,7 +1038,7 @@ function DatabasePopulation()
 			}
 			else
 			{
-				$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message();
 			}
 		}
 		else
@@ -1082,12 +1078,12 @@ function DatabasePopulation()
 			continue;
 		}
 
-		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 		{
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
 				// MySQLi requires a connection object.
-				$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message();
 			}
 		}
 		else

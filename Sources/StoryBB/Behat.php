@@ -86,14 +86,13 @@ class Behat extends RawMinkContext implements Context
 		$txt['lang_locale'] = 'en-US';
 		$txt['lang_rtl'] = false;
 
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
-
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 		$smcFunc['db']->connect($options);
 
-		if (empty($db_connection)) {
+		if (!$smcFunc['db']->connection_active())
+		{
 			die('Database could not be connected - error given: ' . $smcFunc['db']->error_message());
 		}
 		db_extend('packages');
@@ -105,7 +104,6 @@ class Behat extends RawMinkContext implements Context
 				'security_override' => true,
 				'db_error_skip' => true,
 			],
-			$db_connection
 		);
 		$smcFunc['db']->query('', "
 			CREATE DATABASE `$db_name`",
@@ -113,7 +111,6 @@ class Behat extends RawMinkContext implements Context
 				'security_override' => true,
 				'db_error_skip' => true,
 			],
-			$db_connection
 		);
 		$smcFunc['db']->select_db($db_name);
 
@@ -221,7 +218,7 @@ class Behat extends RawMinkContext implements Context
 				}
 			}
 
-			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 			{
 				// Use the appropriate function based on the DB type
 				if ($db_type == 'mysql' || $db_type == 'mysqli')
@@ -229,7 +226,7 @@ class Behat extends RawMinkContext implements Context
 
 				// Error 1050: Table already exists!
 				// @todo Needs to be made better!
-				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $db_errorno($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db']->error_code() == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 				{
 					$exists[] = $match[1];
 					$incontext['sql_results']['table_dups']++;
@@ -238,7 +235,7 @@ class Behat extends RawMinkContext implements Context
 				elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 				{
 					// MySQLi requires a connection object.
-					$incontext['failures'][$count] = $smcFunc['db']->error_message($db_connection) . "\n" . $current_statement;
+					$incontext['failures'][$count] = $smcFunc['db']->error_message() . "\n" . $current_statement;
 				}
 			}
 			else
