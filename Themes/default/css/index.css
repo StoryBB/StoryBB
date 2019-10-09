@@ -721,7 +721,7 @@ input, button, select, textarea {
 	vertical-align: middle;
 	border-radius: 3px;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) inset;
-	padding: 3px;
+	padding: 0.3rem 0.4rem 0.33rem;
 }
 
 /* This is specific issue on Ubuntu - Chrome */
@@ -730,20 +730,16 @@ input, button, select, textarea {
 }
 
 input, button, select {
-	font-size: 0.9em;
+	font-size: 0.9rem;
 }
 
 /* Height fixation */
 input, select {
-	height: 25px;
-}
-
-select {
-	padding: 2px;
+	height: 2rem;
 }
 
 select option {
-	padding: 0 4px;
+	padding: 2px 4px;
 }
 
 select[size], input[type=checkbox], input[type=radio] {
