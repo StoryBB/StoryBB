@@ -572,7 +572,7 @@ function ModBlockGroupRequests()
 			'status_open' => 0,
 		]
 	);
-	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['group_requests'][] = [
 			'id' => $row['id_request'],
@@ -828,7 +828,7 @@ function ReportedMembers()
 	);
 	$context['reports'] = [];
 	$report_ids = [];
-	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$report_ids[] = $row['id_report'];
 		$context['reports'][$row['id_report']] = [

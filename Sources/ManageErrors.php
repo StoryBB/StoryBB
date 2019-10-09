@@ -153,7 +153,7 @@ function ViewErrorLog()
 	$context['errors'] = [];
 	$members = [];
 
-	for ($i = 0; $row = $smcFunc['db']->fetch_assoc($request); $i++)
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db']->escape_wildcard_string($row['message']));
 		if ($search_message == $filter['value']['sql'])

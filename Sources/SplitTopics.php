@@ -365,7 +365,7 @@ function SplitSelectTopics()
 		]
 	);
 	$context['messages'] = [];
-	for ($counter = 0; $row = $smcFunc['db']->fetch_assoc($request); $counter++)
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		censorText($row['subject']);
 		censorText($row['body']);
@@ -405,7 +405,7 @@ function SplitSelectTopics()
 			]
 		);
 		$context['messages'] = [];
-		for ($counter = 0; $row = $smcFunc['db']->fetch_assoc($request); $counter++)
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			censorText($row['subject']);
 			censorText($row['body']);

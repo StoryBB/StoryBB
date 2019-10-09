@@ -1389,5 +1389,4 @@ class MySQL implements DatabaseAdapter
 			]
 		);
 	}
-
 }

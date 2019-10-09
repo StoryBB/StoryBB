@@ -257,7 +257,8 @@ function UnapprovedPosts()
 		]
 	);
 	$context['unapproved_items'] = [];
-	for ($i = 1; $row = $smcFunc['db']->fetch_assoc($request); $i++)
+	$i = 1;
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
 		if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == [0] || in_array($row['id_board'], $delete_own_boards)))
@@ -300,6 +301,7 @@ function UnapprovedPosts()
 			],
 			'can_delete' => $can_delete,
 		];
+		$i++;
 	}
 	$smcFunc['db']->free_result($request);
 
