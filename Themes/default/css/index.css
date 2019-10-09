@@ -712,7 +712,7 @@ img.sort, .sort {
 /* 6# Inputs: textareas, checkboxes, the lot
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-input, button, select, textarea, textarea.editor {
+input, button, select, textarea {
 	color: #222;
 	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	background: #fff;
@@ -755,11 +755,11 @@ input:hover, textarea:hover, button:hover, select:hover {
 	border: 1px solid #999;
 }
 
-textarea:hover, textarea.editor:hover {
+textarea:hover {
 	background: #fbfbfb;
 }
 
-input:focus, textarea:focus, button:focus, select:focus, textarea.editor:focus {
+input:focus, textarea:focus, button:focus, select:focus {
 	outline: none !important;
 	border: 1px solid #999;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) inset;
@@ -796,11 +796,6 @@ fieldset legend {
 	color: #555;
 	box-shadow: none;
 	border: none;
-}
-
-/* The following is necessary. */
-textarea, textarea.editor {
-	font-size: 1em;
 }
 
 /* Checkboxes or radio buttons shouldn't have a border around them.
