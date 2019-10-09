@@ -374,7 +374,7 @@ h3.largetext {
 }
 
 /* The logo and slogan. */
-#header {
+header {
 	margin: 0 5%;
 	padding: 10px;
 }
