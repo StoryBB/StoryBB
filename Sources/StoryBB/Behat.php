@@ -103,14 +103,14 @@ class Behat extends RawMinkContext implements Context
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
-			],
+			]
 		);
 		$smcFunc['db']->query('', "
 			CREATE DATABASE `$db_name`",
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
-			],
+			]
 		);
 		$smcFunc['db']->select_db($db_name);
 
