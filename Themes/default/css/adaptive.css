@@ -18,7 +18,7 @@
 	#header {
 		margin: 0 2.5%; }
 
-	#footer, #top_section {
+	footer, #top_section {
 		padding-left: calc(2.5% + 10px);
 		padding-right: calc(2.5% + 10px);
 	}

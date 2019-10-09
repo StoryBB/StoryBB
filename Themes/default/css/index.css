@@ -444,7 +444,7 @@ img#sbblogo {
 }
 
 /* The footer with copyright links etc. */
-#footer {
+footer {
 	margin-top: auto;
 	padding: 10px calc(5% + 10px);
 	background: #3e5a78;
@@ -454,24 +454,24 @@ img#sbblogo {
 	text-align: right;
 }
 
-#footer a {
+footer a {
 	color: inherit;
 }
 
-#footer ul {
+footer ul {
 	padding: 0 5px;
 }
 
-#footer li {
+footer li {
 	display: inline-block;
 }
 
-#footer li + li:not(.copyright)::before {
+footer li + li:not(.copyright)::before {
 	content: " • ";
 	margin: 0 2px;
 }
 
-#footer .copyright {
+footer .copyright {
 	float: left;
 }
 
