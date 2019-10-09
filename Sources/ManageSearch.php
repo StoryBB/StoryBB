@@ -98,7 +98,7 @@ function EditSearchSettings($return_config = false)
 		call_user_func_array([$searchAPI, 'searchSettings'], [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['search_settings_title'], $config_vars];
 
 	$context['page_title'] = $txt['search_settings_title'];
 

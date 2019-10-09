@@ -247,7 +247,7 @@ function ModifyRegistrationSettings($return_config = false)
 	settings_integration_hook('integrate_modify_registration_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['registration_center'] . ' - ' . $txt['settings'], $config_vars];
 
 	// Setup the template
 	$context['page_title'] = $txt['registration_center'];

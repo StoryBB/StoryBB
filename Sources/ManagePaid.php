@@ -168,7 +168,7 @@ function ModifySubscriptionSettings($return_config = false)
 
 	// Just searching?
 	if ($return_config)
-		return $config_vars;
+		return [$txt['paid_subscriptions'], $config_vars];
 
 	// Get the settings template fired up.
 	require_once($sourcedir . '/ManageServer.php');

@@ -1039,7 +1039,7 @@ function ModifyNewsSettings($return_config = false)
 	settings_integration_hook('integrate_modify_news_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['admin_edit_news'] . ' - ' . $txt['settings'], $config_vars];
 
 	$context['page_title'] = $txt['admin_edit_news'] . ' - ' . $txt['settings'];
 

@@ -89,7 +89,7 @@ function EditSmileySettings($return_config = false)
 	settings_integration_hook('integrate_modify_smiley_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['smileys_manage'] . ' - ' . $txt['settings'], $config_vars];
 
 	// Setup the basics of the settings template.
 	require_once($sourcedir . '/ManageServer.php');

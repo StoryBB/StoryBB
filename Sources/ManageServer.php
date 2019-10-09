@@ -167,7 +167,7 @@ function ModifyGeneralSettings($return_config = false)
 	settings_integration_hook('integrate_general_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['admin_server_settings'] . ' - ' . $txt['general_settings'], $config_vars];
 
 	// Setup the template stuff.
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=general;save';
@@ -396,7 +396,7 @@ function ModifyCookieSettings($return_config = false)
 	settings_integration_hook('integrate_cookie_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['cookies_sessions_settings'], $config_vars];
 
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cookie;save';
 	$context['settings_title'] = $txt['cookies_sessions_settings'];
@@ -493,7 +493,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
 	settings_integration_hook('integrate_general_security_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['security_settings'], $config_vars];
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -569,7 +569,7 @@ function ModifyCacheSettings($return_config = false)
 		}
 	}
 	if ($return_config)
-		return $config_vars;
+		return [$txt['caching_settings'], $config_vars];
 
 	// Saving again?
 	if (isset($_GET['save']))
