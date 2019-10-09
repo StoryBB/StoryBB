@@ -784,6 +784,19 @@ fieldset legend {
 	border: none;
 }
 
+/* Give disabled text input elements a different background color. */
+input[disabled], select[disabled] {
+	background: #eee;
+}
+input[disabled]:hover, select[disabled]:hover {
+	border-color: #bbb;
+}
+
+select[disabled] {
+	color: #999;
+	opacity: 0.6;
+}
+
 /* Checkboxes or radio buttons shouldn't have a border around them.
  Some browsers will also render a box-shadow.
  @todo: Any browsers actually render a border? */
@@ -792,17 +805,6 @@ input[type=checkbox], input[type=radio] {
 	background: none;
 	vertical-align: middle;
 	box-shadow: none;
-}
-
-/* Give disabled text input elements a different background color. */
-input[disabled][type=text], input[disabled][type=email], input[disabled][type=search] {
-	background: #eee;
-}
-
-select[disabled] {
-	background: #eee;
-	color: #999;
-	opacity: 0.6;
 }
 
 .valid_input {
