@@ -50,7 +50,7 @@ function ListContact()
 					SELECT COUNT(cf.id_message)
 					FROM {db_prefix}contact_form AS cf'
 				);
-				list($count) = $smcFunc['db_fetch_row']($request);
+				list($count) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				return $count;
@@ -73,7 +73,7 @@ function ListContact()
 						'limit' => $items_per_page,
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$rows[$row['id_message']] = $row;
 				}
@@ -178,7 +178,7 @@ function ViewContact()
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
-	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact'] = $smcFunc['db']->fetch_assoc($request);
 	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
 	$smcFunc['db']->free_result($request);
 
@@ -197,7 +197,7 @@ function ViewContact()
 			'msg' => $msg,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['time_sent_format'] = timeformat($row['time_sent']);
 		$context['contact']['previous'][] = $row;
@@ -241,7 +241,7 @@ function ReplyContact()
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
-	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Nothing entered?
@@ -252,7 +252,7 @@ function ReplyContact()
 	}
 
 	// Insert it into the database.
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}contact_form_response',
 		['id_message' => 'int', 'id_member' => 'int', 'response' => 'string', 'time_sent' => 'int'],
 		[$msg, $context['user']['id'], $message, time()],

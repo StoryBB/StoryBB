@@ -31,8 +31,6 @@ function ManageSearch()
 
 	loadLanguage('Search');
 
-	db_extend('search');
-
 	$subActions = [
 		'settings' => 'EditSearchSettings',
 		'method' => 'EditSearchMethod',
@@ -148,7 +146,7 @@ function EditSearchMethod()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
 	$context['sub_template'] = 'search_select_method';
-	$context['supports_fulltext'] = $smcFunc['db_search_support']('fulltext');
+	$context['supports_fulltext'] = $smcFunc['db']->search_support('fulltext');
 
 	// Load any apis.
 	$context['search_apis'] = loadSearchAPIs();
@@ -205,11 +203,10 @@ function EditSearchMethod()
 		checkSession('get');
 		validateToken('admin-msm', 'get');
 
-		db_extend();
 		$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
-			$smcFunc['db_search_query']('drop_words_table', '
+			$smcFunc['db']->query('drop_words_table', '
 				DROP TABLE {db_prefix}log_search_words',
 				[
 				]
@@ -270,7 +267,7 @@ function EditSearchMethod()
 		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$context['table_info']['data_length'] = $row['Data_length'];
 			$context['table_info']['index_length'] = $row['Index_length'];
 			$context['table_info']['fulltext_length'] = $row['Index_length'];
@@ -299,7 +296,7 @@ function EditSearchMethod()
 		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
 			$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
 			$smcFunc['db']->free_result($request);
@@ -408,18 +405,17 @@ function CreateMessageIndex()
 
 		if ($context['start'] === 0)
 		{
-			db_extend();
 			$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
-				$smcFunc['db_search_query']('drop_words_table', '
+				$smcFunc['db']->query('drop_words_table', '
 					DROP TABLE {db_prefix}log_search_words',
 					[
 					]
 				);
 			}
 
-			$smcFunc['db_create_word_search']($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
+			$smcFunc['db']->create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
 
 			// Temporarily switch back to not using a search index.
 			if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom')
@@ -443,7 +439,7 @@ function CreateMessageIndex()
 				'starting_id' => $context['start'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$num_messages[empty($row['todo']) ? 'done' : 'todo'] = $row['num_messages'];
 
 		if (empty($num_messages['todo']))
@@ -472,7 +468,7 @@ function CreateMessageIndex()
 				);
 				$forced_break = false;
 				$number_processed = 0;
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					// In theory it's possible for one of these to take friggin ages so add more timeout protection.
 					if ($stop < time())
@@ -494,7 +490,7 @@ function CreateMessageIndex()
 				$context['start'] += $forced_break ? $number_processed : $messages_per_batch;
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_words',
 						['id_word' => 'int', 'id_msg' => 'int'],
 						$inserts,
@@ -541,7 +537,7 @@ function CreateMessageIndex()
 						'minimum_messages' => $max_messages,
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$stop_words[] = $row['id_word'];
 				$smcFunc['db']->free_result($request);
 
@@ -622,9 +618,6 @@ function detectFulltextIndex()
 {
 	global $smcFunc, $context, $db_prefix;
 
-	// We need this for db_get_version
-	db_extend();
-
 	$request = $smcFunc['db']->query('', '
 		SHOW INDEX
 		FROM {db_prefix}messages',
@@ -634,7 +627,7 @@ function detectFulltextIndex()
 	$context['fulltext_index'] = [];
 	if ($request !== false || $smcFunc['db']->num_rows($request) != 0)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
 			$context['fulltext_index'][] = $row['Key_name'];
 		$smcFunc['db']->free_result($request);
@@ -664,8 +657,8 @@ function detectFulltextIndex()
 
 	if ($request !== false)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db_get_version'](), '5.6.4', '>=')))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db']->get_version(), '5.6.4', '>=')))
 			$context['cannot_create_fulltext'] = true;
 		$smcFunc['db']->free_result($request);
 	}

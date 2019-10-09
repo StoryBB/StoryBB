@@ -110,7 +110,7 @@ function Display()
 			}
 
 			// Now you can be sure $topic is the id_topic to view.
-			list ($topic) = $smcFunc['db_fetch_row']($request);
+			list ($topic) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			$context['current_topic'] = $topic;
@@ -172,7 +172,7 @@ function Display()
 
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('not_a_topic', false, 404);
-	$context['topicinfo'] = $smcFunc['db_fetch_assoc']($request);
+	$context['topicinfo'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Is this a moved or merged topic that we are redirecting to?
@@ -182,7 +182,7 @@ function Display()
 		if (!$user_info['is_guest'] && $context['topicinfo']['new_from'] != $context['topicinfo']['id_first_msg'])
 		{
 			// Mark this as read first
-			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
+			$smcFunc['db']->insert($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
@@ -225,7 +225,7 @@ function Display()
 				'current_member' => $user_info['id'],
 			]
 		);
-		list ($myUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
+		list ($myUnapprovedPosts) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($context['topicinfo']['approved'] ? 1 : 0);
@@ -263,7 +263,7 @@ function Display()
 						'current_topic' => $topic,
 					]
 				);
-				list ($new_from) = $smcFunc['db_fetch_row']($request);
+				list ($new_from) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// Fall through to the next if statement.
@@ -293,7 +293,7 @@ function Display()
 						'timestamp' => $timestamp,
 					]
 				);
-				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
+				list ($context['start_from']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// Handle view_newest_first options, and get the correct start value.
@@ -326,7 +326,7 @@ function Display()
 						'no_member' => 0,
 					]
 				);
-				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
+				list ($context['start_from']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 
@@ -377,7 +377,7 @@ function Display()
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['id_member']))
 				continue;
@@ -541,7 +541,7 @@ function Display()
 				'id_poll' => $context['topicinfo']['id_poll'],
 			]
 		);
-		$pollinfo = $smcFunc['db_fetch_assoc']($request);
+		$pollinfo = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db']->query('', '
@@ -554,7 +554,7 @@ function Display()
 				'not_guest' => 0,
 			]
 		);
-		list ($pollinfo['total']) = $smcFunc['db_fetch_row']($request);
+		list ($pollinfo['total']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Total voters needs to include guest voters
@@ -575,7 +575,7 @@ function Display()
 		$pollOptions = [];
 		$realtotal = 0;
 		$pollinfo['has_voted'] = false;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			censorText($row['label']);
 			$pollOptions[$row['id_choice']] = $row;
@@ -781,7 +781,7 @@ function Display()
 
 	$messages = [];
 	$all_posters = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['id_member']))
 			$all_posters[$row['id_msg']] = $row['id_member'];
@@ -820,7 +820,7 @@ function Display()
 			$mark_at_msg = $modSettings['maxMsgID'];
 		if ($mark_at_msg >= $context['topicinfo']['new_from'])
 		{
-			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
+			$smcFunc['db']->insert($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
 				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
@@ -846,7 +846,7 @@ function Display()
 			]
 		);
 		$do_once = true;
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Find if this topic is marked for notification...
 			if (!empty($row['id_topic']))
@@ -893,7 +893,7 @@ function Display()
 					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
 				]
 			);
-			list ($numNewTopics) = $smcFunc['db_fetch_row']($request);
+			list ($numNewTopics) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// If there're no real new topics in this board, mark the board as seen.
@@ -909,7 +909,7 @@ function Display()
 		// Mark board as seen if we came using last post link from BoardIndex. (or other places...)
 		if (isset($_REQUEST['boardseen']))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}log_boards',
 				['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 				[$modSettings['maxMsgID'], $user_info['id'], $board],
@@ -959,7 +959,7 @@ function Display()
 				]
 			);
 			$temp = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 					continue;
@@ -1153,7 +1153,7 @@ function Display()
 			]
 		);
 
-		list ($lastPostTime) = $smcFunc['db_fetch_row']($request);
+		list ($lastPostTime) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
@@ -1401,10 +1401,10 @@ function prepareDisplayContext($reset = false)
 
 	// Start from the beginning...
 	if ($reset)
-		return @$smcFunc['db_data_seek']($messages_request, 0);
+		return @$smcFunc['db']->seek($messages_request, 0);
 
 	// Attempt to get the next message.
-	$message = $smcFunc['db_fetch_assoc']($messages_request);
+	$message = $smcFunc['db']->fetch_assoc($messages_request);
 	if (!$message)
 	{
 		$smcFunc['db']->free_result($messages_request);
@@ -1680,7 +1680,7 @@ function QuickInTopicModeration()
 				'message' => min($messages),
 			]
 		);
-		list($subname) = $smcFunc['db_fetch_row']($request);
+		list($subname) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		$_SESSION['split_selection'][$topic] = $messages;
 		redirectexit('action=splittopics;sa=selectTopics;topic=' . $topic . '.0;subname_enc=' . urlencode($subname) . ';' . $context['session_var'] . '=' . $context['session_id']);
@@ -1701,7 +1701,7 @@ function QuickInTopicModeration()
 				'current_topic' => $topic,
 			]
 		);
-		list ($starter) = $smcFunc['db_fetch_row']($request);
+		list ($starter) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$allowed_all = $starter == $user_info['id'];
@@ -1729,7 +1729,7 @@ function QuickInTopicModeration()
 		]
 	);
 	$messages = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!$allowed_all && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
 			continue;
@@ -1748,7 +1748,7 @@ function QuickInTopicModeration()
 			'current_topic' => $topic,
 		]
 	);
-	list ($first_message, $last_message) = $smcFunc['db_fetch_row']($request);
+	list ($first_message, $last_message) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Delete all the messages we know they can delete. ($messages)

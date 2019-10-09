@@ -85,7 +85,7 @@ function ReportToModerator()
 		);
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_board', false);
-		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db_fetch_row']($result);
+		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 
@@ -110,7 +110,7 @@ function ReportToModerator()
 
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_user', false);
-		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db_fetch_row']($result);
+		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db']->fetch_row($result);
 
 		$context['current_user'] = $_REQUEST['u'];
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
@@ -243,7 +243,7 @@ function reportPost($msg, $reason)
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$message = $smcFunc['db_fetch_assoc']($request);
+	$message = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -259,7 +259,7 @@ function reportPost($msg, $reason)
 		]
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
-		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
+		list ($id_report, $ignore) = $smcFunc['db']->fetch_row($request);
 
 	$smcFunc['db']->free_result($request);
 
@@ -284,7 +284,7 @@ function reportPost($msg, $reason)
 		if (empty($message['real_name']))
 			$message['real_name'] = $message['poster_name'];
 
-		$id_report = $smcFunc['db_insert']('',
+		$id_report = $smcFunc['db']->insert('',
 			'{db_prefix}log_reported',
 			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -303,7 +303,7 @@ function reportPost($msg, $reason)
 	// Now just add our report...
 	if ($id_report)
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_reported_comments',
 			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -359,7 +359,7 @@ function reportUser($id_member, $reason)
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_user', false);
-	$user = $smcFunc['db_fetch_assoc']($request);
+	$user = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$user_name = un_htmlspecialchars($user['real_name']) . ($user['real_name'] != $user['member_name'] ? ' (' . $user['member_name'] . ')' : '');
@@ -379,7 +379,7 @@ function reportUser($id_member, $reason)
 		]
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
-		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
+		list ($id_report, $ignore) = $smcFunc['db']->fetch_row($request);
 
 	$smcFunc['db']->free_result($request);
 
@@ -401,7 +401,7 @@ function reportUser($id_member, $reason)
 	// Otherwise, we shall make one!
 	else
 	{
-		$id_report = $smcFunc['db_insert']('',
+		$id_report = $smcFunc['db']->insert('',
 			'{db_prefix}log_reported',
 			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -420,7 +420,7 @@ function reportUser($id_member, $reason)
 	// Now just add our report...
 	if ($id_report)
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_reported_comments',
 			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',

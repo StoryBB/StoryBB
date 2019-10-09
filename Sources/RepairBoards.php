@@ -257,7 +257,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
 				$memberUpdatedID = (int) getMsgMemberID($row['myid_last_msg']);
 
-				$newTopicID = $smcFunc['db_insert']('',
+				$newTopicID = $smcFunc['db']->insert('',
 					'{db_prefix}topics',
 					[
 						'id_board' => 'int',
@@ -364,7 +364,7 @@ function loadForumTests()
 				}
 
 				if(empty($row['id_topic'])) {
-					$newMessageID = $smcFunc['db_insert']('',
+					$newMessageID = $smcFunc['db']->insert('',
 						'{db_prefix}messages',
 						[
 							'id_board' => 'int',
@@ -396,7 +396,7 @@ function loadForumTests()
 						1
 					);
 
-					$row['id_topic'] = $smcFunc['db_insert']('',
+					$row['id_topic'] = $smcFunc['db']->insert('',
 						'{db_prefix}topics',
 						[
 							'id_board' => 'int',
@@ -434,7 +434,7 @@ function loadForumTests()
 					updateStats('subject', $row['id_topic'], $txt['salvaged_poll_topic_name']);
 				}
 
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}polls',
 					[
 						'id_poll' => 'int',
@@ -496,7 +496,7 @@ function loadForumTests()
 
 				$row['poster_name'] = !empty($row['poster_name']) ? $row['poster_name'] : $txt['guest'];
 
-				$newMessageID = $smcFunc['db_insert']('',
+				$newMessageID = $smcFunc['db']->insert('',
 					'{db_prefix}messages',
 					[
 						'id_board' => 'int',
@@ -528,7 +528,7 @@ function loadForumTests()
 					1
 				);
 
-				$newTopicID = $smcFunc['db_insert']('',
+				$newTopicID = $smcFunc['db']->insert('',
 					'{db_prefix}topics',
 					[
 						'id_board' => 'int',
@@ -753,7 +753,7 @@ function loadForumTests()
 				$row['my_num_topics'] = (int) $row['my_num_topics'];
 				$row['my_num_posts'] = (int) $row['my_num_posts'];
 
-				$newBoardID = $smcFunc['db_insert']('',
+				$newBoardID = $smcFunc['db']->insert('',
 					'{db_prefix}boards',
 					['id_cat' => 'int', 'name' => 'string', 'description' => 'string', 'num_topics' => 'int', 'num_posts' => 'int', 'member_groups' => 'string'],
 					[$salvageCatID, $txt['salvaged_board_name'], $txt['salvaged_board_description'], $row['my_num_topics'], $row['my_num_posts'], '1'],
@@ -1218,13 +1218,13 @@ function loadForumTests()
 				global $smcFunc;
 
 				$inserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($result))
+				while ($row = $smcFunc['db']->fetch_assoc($result))
 				{
 					foreach (text2words($row['subject']) as $word)
 						$inserts[] = [$word, $row['id_topic']];
 					if (count($inserts) > 500)
 					{
-						$smcFunc['db_insert']('ignore',
+						$smcFunc['db']->insert('ignore',
 							'{db_prefix}log_search_subjects',
 							['word' => 'string', 'id_topic' => 'int'],
 							$inserts,
@@ -1236,7 +1236,7 @@ function loadForumTests()
 				}
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_subjects',
 						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
@@ -1519,7 +1519,7 @@ function findForumErrors($do_fix = false)
 				[
 				]
 			);
-			list ($step_max) = $smcFunc['db_fetch_row']($request);
+			list ($step_max) = $smcFunc['db']->fetch_row($request);
 
 			$total_queries++;
 			$smcFunc['db']->free_result($request);
@@ -1548,7 +1548,7 @@ function findForumErrors($do_fix = false)
 
 			// Does it need a fix?
 			if (!empty($test['check_type']) && $test['check_type'] == 'count')
-				list ($needs_fix) = $smcFunc['db_fetch_row']($request);
+				list ($needs_fix) = $smcFunc['db']->fetch_row($request);
 			else
 				$needs_fix = $smcFunc['db']->num_rows($request);
 
@@ -1568,7 +1568,7 @@ function findForumErrors($do_fix = false)
 					// One per row!
 					elseif (isset($test['messages']))
 					{
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 						{
 							$variables = $test['messages'];
 							foreach ($variables as $k => $v)
@@ -1587,7 +1587,7 @@ function findForumErrors($do_fix = false)
 					{
 						// Find out if there are actually errors.
 						$found_errors = false;
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$found_errors |= $test['message_function']($row);
 					}
 
@@ -1603,7 +1603,7 @@ function findForumErrors($do_fix = false)
 					if (isset($test['fix_collect']))
 					{
 						$ids = [];
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$ids[] = $row[$test['fix_collect']['index']];
 						if (!empty($ids))
 						{
@@ -1623,7 +1623,7 @@ function findForumErrors($do_fix = false)
 					// Do we have some processing to do?
 					elseif (isset($test['fix_processing']))
 					{
-						while ($row = $smcFunc['db_fetch_assoc']($request))
+						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$test['fix_processing']($row);
 					}
 
@@ -1719,12 +1719,12 @@ function createSalvageArea()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($salvageCatID) = $smcFunc['db_fetch_row']($result);
+		list ($salvageCatID) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($salvageCatID))
 	{
-		$salvageCatID = $smcFunc['db_insert']('',
+		$salvageCatID = $smcFunc['db']->insert('',
 			'{db_prefix}categories',
 			['name' => 'string-255', 'cat_order' => 'int'],
 			[$txt['salvaged_category_name'], -1],
@@ -1752,12 +1752,12 @@ function createSalvageArea()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($salvageBoardID) = $smcFunc['db_fetch_row']($result);
+		list ($salvageBoardID) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($salvageBoardID))
 	{
-		$salvageBoardID = $smcFunc['db_insert']('',
+		$salvageBoardID = $smcFunc['db']->insert('',
 			'{db_prefix}boards',
 			['name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'],
 			[$txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''],

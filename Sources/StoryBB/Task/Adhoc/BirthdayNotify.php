@@ -48,7 +48,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 
 		// Group them by languages.
 		$birthdays = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if (!isset($birthdays[$row['lngfile']]))
 				$birthdays[$row['lngfile']] = [];
@@ -117,7 +117,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 
 			// Insert the alerts if any
 			if (!empty($alert_rows))
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}user_alerts',
 					[
 						'alert_time' => 'int', 'id_member' => 'int', 'content_type' => 'string',

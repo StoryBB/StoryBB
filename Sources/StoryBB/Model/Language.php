@@ -88,7 +88,7 @@ class Language
 				'file_id' => $file_id,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if ($row['is_multi'])
 			{
@@ -251,7 +251,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}language_delta',
 			['id_theme' => 'int', 'id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
 			[$theme_id, $lang_id, $lang_file, $lang_var, $lang_key, $entry, 0],
@@ -275,7 +275,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}language_delta',
 			['id_theme' => 'int', 'id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
 			[$theme_id, $lang_id, $lang_file, $lang_var, $lang_key, json_encode($entry), 1],

@@ -47,7 +47,7 @@ class Policy
 				'language' => $versions_in_order,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row['title'];
 		}
@@ -85,7 +85,7 @@ class Policy
 			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_footer, pt.show_reg, pt.show_help
 			FROM {db_prefix}policy_types AS pt
 			ORDER BY pt.id_policy_type');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['no_language'] = [];
 			$policies[$row['id_policy_type']] = $row;
@@ -98,7 +98,7 @@ class Policy
 			FROM {db_prefix}policy AS p
 				INNER JOIN {db_prefix}policy_revision AS pr ON (p.last_revision = pr.id_revision)
 			ORDER BY p.id_policy');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($policies[$row['policy_type']]))
 			{
@@ -144,7 +144,7 @@ class Policy
 				'revision_id' => $revision_id,
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		if (empty($row))
@@ -205,7 +205,7 @@ class Policy
 			if ($smcFunc['db']->affected_rows() == 0)
 			{
 				// Hmm, we didn't change a row? Guess we're adding a new language we didn't already have.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}policy',
 					['policy_type' => 'int', 'language' => 'string', 'title' => 'string', 'description' => '', 'last_revision' => 'int'],
 					[$policy_type, $language, !empty($details['title']) ? $details['title'] : '', !empty($details['description']) ? $details['description'] : '', 0],
@@ -227,7 +227,7 @@ class Policy
 						'language' => $language,
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($request);
+				$row = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 				if (empty($row))
 				{
@@ -248,7 +248,7 @@ class Policy
 				}
 
 				// Now insert the new revision.
-				$revision_id = $smcFunc['db_insert']('insert',
+				$revision_id = $smcFunc['db']->insert('insert',
 					'{db_prefix}policy_revision',
 					[
 						'id_policy' => 'int', 'last_change' => 'int', 'short_revision_note' => 'string', 'revision_text' => 'string',
@@ -307,7 +307,7 @@ class Policy
 				'language' => $versions_in_order,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
@@ -356,7 +356,7 @@ class Policy
 					'revisions' => $revisions,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$final_policies[$row['policy_type']]['revision_note'] = $row['short_revision_note'];
 			}
@@ -401,7 +401,7 @@ class Policy
 				'agreed' => $agreed,
 			]
 		);
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
@@ -428,7 +428,7 @@ class Policy
 		}
 		if (!empty($rows))
 		{
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}policy_acceptance',
 				['id_policy' => 'int', 'id_member' => 'int', 'id_revision' => 'int', 'acceptance_time' => 'int'],
 				$rows,
@@ -480,7 +480,7 @@ class Policy
 				FROM {db_prefix}policy_types AS pt
 					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
 				WHERE pt.show_footer = 1');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$footer_links[$row['policy_type']][$row['language']] = [
 					'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],

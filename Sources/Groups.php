@@ -230,7 +230,7 @@ function MembergroupMembers()
 	// Doesn't exist?
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
-	$context['group'] = $smcFunc['db_fetch_assoc']($request);
+	$context['group'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Fix the membergroup icons.
@@ -256,7 +256,7 @@ function MembergroupMembers()
 		]
 	);
 	$context['group']['moderators'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['group']['moderators'][] = [
 			'id' => $row['id_member'],
@@ -390,7 +390,7 @@ function MembergroupMembers()
 			'group' => $_REQUEST['group'],
 		]
 	);
-	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$context['total_members'] = comma_format($context['total_members']);
 
@@ -432,7 +432,7 @@ function MembergroupMembers()
 		);
 	}
 	$context['members'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['member_ip'] = inet_dtop($row['member_ip']);
 		$last_online = empty($row['last_login']) ? $txt['never'] : timeformat($row['last_login']);
@@ -544,7 +544,7 @@ function GroupRequests()
 				]
 			);
 			$request_list = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (!isset($log_changes[$row['id_request']]))
 					$log_changes[$row['id_request']] = [
@@ -734,7 +734,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 		array_merge($where_parameters, [
 		])
 	);
-	list ($totalRequests) = $smcFunc['db_fetch_row']($request);
+	list ($totalRequests) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $totalRequests;
@@ -778,7 +778,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 		])
 	);
 	$group_requests = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($row['reason']))
 			$reason = '<em>(' . $txt['mc_groupr_no_reason'] . ')</em>';

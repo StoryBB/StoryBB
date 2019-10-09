@@ -41,7 +41,7 @@ function MoveTopic()
 			'current_topic' => $topic,
 		]
 	);
-	list ($id_member_started, $context['subject'], $context['is_approved']) = $smcFunc['db_fetch_row']($request);
+	list ($id_member_started, $context['subject'], $context['is_approved']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Can they see it - if not approved?
@@ -153,7 +153,7 @@ function MoveTopic2()
 			'current_topic' => $topic,
 		]
 	);
-	list ($id_member_started, $id_first_msg, $context['is_approved']) = $smcFunc['db_fetch_row']($request);
+	list ($id_member_started, $id_first_msg, $context['is_approved']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Can they see it?
@@ -193,7 +193,7 @@ function MoveTopic2()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	list ($pcounter, $board_name, $subject) = $smcFunc['db_fetch_row']($request);
+	list ($pcounter, $board_name, $subject) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Remember this for later.
@@ -304,7 +304,7 @@ function MoveTopic2()
 			'current_board' => $board,
 		]
 	);
-	list ($pcounter_from) = $smcFunc['db_fetch_row']($request);
+	list ($pcounter_from) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if ($pcounter_from != $pcounter)
@@ -320,7 +320,7 @@ function MoveTopic2()
 			]
 		);
 		$posters = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($posters[$row['id_member']]))
 				$posters[$row['id_member']] = 0;
@@ -406,7 +406,7 @@ function moveTopics($topics, $toBoard)
 	// Num of rows = 0 -> no topics found. Num of rows > 1 -> topics are on multiple boards.
 	if ($smcFunc['db']->num_rows($request) == 0)
 		return;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($fromBoards[$row['id_board']]['num_posts']))
 		{
@@ -446,14 +446,14 @@ function moveTopics($topics, $toBoard)
 		]
 	);
 	$log_topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$log_topics[] = [$row['id_topic'], $row['id_member'], $row['id_msg'], (is_null($row['unwatched']) ? 0 : $row['unwatched'])];
 
 		// Prevent queries from getting too big. Taking some steam off.
 		if (count($log_topics) > 500)
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}log_topics',
 				['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 				$log_topics,
@@ -469,7 +469,7 @@ function moveTopics($topics, $toBoard)
 	if (!empty($log_topics))
 	{
 		// Insert that information into the database!
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$log_topics,
@@ -552,7 +552,7 @@ function moveTopics($topics, $toBoard)
 			]
 		);
 		$approval_msgs = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$approval_msgs[] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 
@@ -578,7 +578,7 @@ function moveTopics($topics, $toBoard)
 			]
 		);
 		$topicMaxMin = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$topicMaxMin[$row['id_topic']] = [
 				'min' => $row['id_first_msg'],
@@ -597,7 +597,7 @@ function moveTopics($topics, $toBoard)
 				'topics' => $topics,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If not, update.
 			if ($row['first_msg'] != $topicMaxMin[$row['id_topic']]['min'] || $row['last_msg'] != $topicMaxMin[$row['id_topic']]['max'])
@@ -646,12 +646,12 @@ function moveTopics($topics, $toBoard)
 			'id_board' => $toBoard,
 		]
 	);
-	list ($isSeen) = $smcFunc['db_fetch_row']($request);
+	list ($isSeen) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if (!empty($isSeen) && !$user_info['is_guest'])
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
 			[$toBoard, $user_info['id'], $modSettings['maxMsgID']],
@@ -704,7 +704,7 @@ function moveTopicConcurrence()
 				'topic_id' => $topic,
 			]
 		);
-		list($topic_subject, $board_name) = $smcFunc['db_fetch_row']($request);
+		list($topic_subject, $board_name) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		$board_link = '<a href="' . $scripturl . '?board=' . $board . '.0">' . $board_name . '</a>';
 		$topic_link = '<a href="' . $scripturl . '?topic=' . $topic . '.0">' . $topic_subject . '</a>';

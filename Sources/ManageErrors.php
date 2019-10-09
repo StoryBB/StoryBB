@@ -84,7 +84,7 @@ function ViewErrorLog()
 		$filter = [
 			'variable' => $_GET['filter'],
 			'value' => [
-				'sql' => in_array($_GET['filter'], ['message', 'url', 'file']) ? base64_decode(strtr($_GET['value'], [' ' => '+'])) : $smcFunc['db_escape_wildcard_string']($_GET['value']),
+				'sql' => in_array($_GET['filter'], ['message', 'url', 'file']) ? base64_decode(strtr($_GET['value'], [' ' => '+'])) : $smcFunc['db']->escape_wildcard_string($_GET['value']),
 			],
 			'href' => ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'],
 			'entity' => $filters[$_GET['filter']]['txt']
@@ -103,7 +103,7 @@ function ViewErrorLog()
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
 		]
 	);
-	list ($num_errors) = $smcFunc['db_fetch_row']($result);
+	list ($num_errors) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// If this filter is empty...
@@ -133,7 +133,7 @@ function ViewErrorLog()
 			[]
 		);
 
-		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
+		list($context['num_errors']) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 	}
 
@@ -153,11 +153,11 @@ function ViewErrorLog()
 	$context['errors'] = [];
 	$members = [];
 
-	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
-		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db_escape_wildcard_string']($row['message']));
+		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db']->escape_wildcard_string($row['message']));
 		if ($search_message == $filter['value']['sql'])
-			$search_message = $smcFunc['db_escape_wildcard_string']($row['message']);
+			$search_message = $smcFunc['db']->escape_wildcard_string($row['message']);
 		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), ["\r" => '', '<br>' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;']), ["\n" => '<br>']);
 
 		$context['errors'][$row['id_error']] = [
@@ -170,7 +170,7 @@ function ViewErrorLog()
 			'timestamp' => $row['log_time'],
 			'url' => [
 				'html' => StringLibrary::escape(strpos($row['url'], 'cron.php') === false ? (substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url'] : $row['url']),
-				'href' => base64_encode($smcFunc['db_escape_wildcard_string']($row['url']))
+				'href' => base64_encode($smcFunc['db']->escape_wildcard_string($row['url']))
 			],
 			'message' => [
 				'html' => $show_message,
@@ -216,7 +216,7 @@ function ViewErrorLog()
 				'members' => count($members),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[$row['id_member']] = $row;
 		$smcFunc['db']->free_result($request);
 
@@ -285,7 +285,7 @@ function ViewErrorLog()
 			'critical_type' => 'critical',
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Total errors so far?
 		$sum += $row['num_errors'];
@@ -294,7 +294,7 @@ function ViewErrorLog()
 			'label' => (isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
 			'description' => isset($txt['errortype_' . $row['error_type'] . '_desc']) ? $txt['errortype_' . $row['error_type'] . '_desc'] : '',
 			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
-			'is_selected' => isset($filter) && $filter['value']['sql'] == $smcFunc['db_escape_wildcard_string']($row['error_type']),
+			'is_selected' => isset($filter) && $filter['value']['sql'] == $smcFunc['db']->escape_wildcard_string($row['error_type']),
 		];
 	}
 	$smcFunc['db']->free_result($request);

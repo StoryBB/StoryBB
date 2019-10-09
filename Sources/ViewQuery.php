@@ -23,7 +23,7 @@ use StoryBB\StringLibrary;
  */
 function ViewQuery()
 {
-	global $scripturl, $settings, $context, $db_connection, $boarddir, $smcFunc, $txt, $db_show_debug;
+	global $scripturl, $settings, $context, $boarddir, $smcFunc, $txt, $db_show_debug;
 
 	// We should have debug mode enabled, as well as something to display!
 	if (!isset($db_show_debug) || $db_show_debug !== true || !isset($_SESSION['debug']))
@@ -141,7 +141,7 @@ function ViewQuery()
 			{
 				echo '
 		<table>
-			<tr><td>', $smcFunc['db_error']($db_connection), '</td></tr>
+			<tr><td>', $smcFunc['db']->error_message(), '</td></tr>
 		</table>';
 				continue;
 			}
@@ -149,7 +149,7 @@ function ViewQuery()
 			echo '
 		<table>';
 
-			$row = $smcFunc['db_fetch_assoc']($result);
+			$row = $smcFunc['db']->fetch_assoc($result);
 
 			echo '
 			<tr>
@@ -157,8 +157,8 @@ function ViewQuery()
 				<th>', array_keys($row)) . '</th>
 			</tr>';
 
-			$smcFunc['db_data_seek']($result, 0);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			$smcFunc['db']->seek($result, 0);
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				echo '
 			<tr>

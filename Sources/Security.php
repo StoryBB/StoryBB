@@ -223,7 +223,7 @@ function is_not_banned($forceCheck = false)
 				$ban_query_vars
 			);
 			// Store every type of ban that applies to you in your session.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				foreach ($restrictions as $restriction)
 					if (!empty($row[$restriction]))
@@ -274,7 +274,7 @@ function is_not_banned($forceCheck = false)
 				'limit' => count($bans),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$_SESSION['ban']['cannot_access']['ids'][] = $row['id_ban'];
 			$_SESSION['ban']['cannot_access']['reason'] = $row['reason'];
@@ -495,7 +495,7 @@ function log_ban($ban_ids = [], $email = null)
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
 		return;
 
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}log_banned',
 		['id_member' => 'int', 'ip' => 'inet', 'email' => 'string', 'log_time' => 'int'],
 		[$user_info['id'], $user_info['ip'], ($email === null ? ($user_info['is_guest'] ? '' : $user_info['email']) : $email), time()],
@@ -549,7 +549,7 @@ function isBannedEmail($email, $restriction, $error)
 			'now' => time(),
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['cannot_access']))
 		{
@@ -943,7 +943,7 @@ function allowedTo($permission, $boards = null)
 		return false;
 
 	$result = true;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$result &= !empty($row['add_deny']);
 	$smcFunc['db']->free_result($request);
 
@@ -1076,7 +1076,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 	);
 	$boards = [];
 	$deny_boards = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($simple)
 		{
@@ -1159,7 +1159,7 @@ function spamProtection($error_type, $only_return_result = false)
 	);
 
 	// Add a new entry, deleting the old if necessary.
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}log_floodcontrol',
 		['ip' => 'inet', 'log_time' => 'int', 'log_type' => 'string'],
 		[$user_info['ip'], time(), $error_type],

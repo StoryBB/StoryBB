@@ -331,7 +331,7 @@ function SelectMailingMembers()
 		ORDER BY mg.group_name',
 		[]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
@@ -355,7 +355,7 @@ function SelectMailingMembers()
 				'normal_group_list' => $normalGroups,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
+		while ($row = $smcFunc['db']->fetch_assoc($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
 		$smcFunc['db']->free_result($query);
 
@@ -373,7 +373,7 @@ function SelectMailingMembers()
 				'blank_string' => '',
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
+		while ($row = $smcFunc['db']->fetch_assoc($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
 		$smcFunc['db']->free_result($query);
 	}
@@ -386,7 +386,7 @@ function SelectMailingMembers()
 		[
 		]
 	);
-	list ($context['groups'][3]['member_count']) = $smcFunc['db_fetch_row']($request);
+	list ($context['groups'][3]['member_count']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['can_send_pm'] = allowedTo('pm_send');
@@ -570,7 +570,7 @@ function ComposeMailing()
 			'current_time' => time(),
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['recipients']['exclude_members'][] = $row['id_member'];
 	$smcFunc['db']->free_result($request);
 
@@ -591,7 +591,7 @@ function ComposeMailing()
 	$condition_array = [];
 	$condition_array_params = [];
 	$count = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$condition_array[] = '{string:email_' . $count . '}';
 		$condition_array_params['email_' . $count++] = $row['email_address'];
@@ -606,7 +606,7 @@ function ComposeMailing()
 			WHERE email_address IN(' . implode(', ', $condition_array) . ')',
 			$condition_array_params
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['recipients']['exclude_members'][] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -623,7 +623,7 @@ function ComposeMailing()
 				'is_activated' => 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (in_array(3, $context['recipients']))
 				$context['recipients']['exclude_members'][] = $row['identifier'];
@@ -641,7 +641,7 @@ function ComposeMailing()
 		[
 		]
 	);
-	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Clean up the arrays.
@@ -697,7 +697,7 @@ function SendMailing($clean_only = false)
 			[
 			]
 		);
-		list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
+		list ($context['total_members']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else
@@ -940,7 +940,7 @@ function SendMailing($clean_only = false)
 			])
 		);
 		$rows = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$rows[$row['id_member']] = $row;
 		}

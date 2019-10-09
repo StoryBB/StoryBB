@@ -68,7 +68,7 @@ class Post
 					'id_topic' => $topicOptions['id'],
 				]
 			);
-			list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
+			list ($topicOptions['is_approved']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -101,7 +101,7 @@ class Post
 					$posterOptions['email'] = '';
 				}
 				else
-					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db_fetch_row']($request);
+					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 			else
@@ -139,7 +139,7 @@ class Post
 		call_integration_hook('integrate_create_post', [&$msgOptions, &$topicOptions, &$posterOptions, &$message_columns, &$message_parameters]);
 
 		// Insert the post.
-		$msgOptions['id'] = $smcFunc['db_insert']('',
+		$msgOptions['id'] = $smcFunc['db']->insert('',
 			'{db_prefix}messages',
 			$message_columns,
 			$message_parameters,
@@ -184,7 +184,7 @@ class Post
 
 			call_integration_hook('integrate_before_create_topic', [&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters]);
 
-			$topicOptions['id'] = $smcFunc['db_insert']('',
+			$topicOptions['id'] = $smcFunc['db']->insert('',
 				'{db_prefix}topics',
 				$topic_columns,
 				$topic_parameters,
@@ -301,7 +301,7 @@ class Post
 			);
 
 			// Add to the approval queue too.
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}approval_queue',
 				[
 					'id_msg' => 'int',
@@ -343,7 +343,7 @@ class Post
 
 			if (empty($flag))
 			{
-				$smcFunc['db_insert']('ignore',
+				$smcFunc['db']->insert('ignore',
 					'{db_prefix}log_topics',
 					['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
 					[$topicOptions['id'], $posterOptions['id'], $msgOptions['id']],
@@ -450,7 +450,7 @@ class Post
 						'id_msg' => $msgOptions['id'],
 					]
 				);
-				list ($msgOptions['old_body']) = $smcFunc['db_fetch_row']($request);
+				list ($msgOptions['old_body']) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 		}
@@ -570,7 +570,7 @@ class Post
 
 			if (empty($flag))
 			{
-				$smcFunc['db_insert']('ignore',
+				$smcFunc['db']->insert('ignore',
 					'{db_prefix}log_topics',
 					['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
 					[$topicOptions['id'], $user_info['id'], $modSettings['maxMsgID']],

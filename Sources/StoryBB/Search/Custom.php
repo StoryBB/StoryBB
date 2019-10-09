@@ -240,7 +240,7 @@ class Custom extends AbstractSearchable implements Searchable
 			}
 		}
 
-		$ignoreRequest = $smcFunc['db_search_query']('insert_into_log_messages_fulltext', ($smcFunc['db_support_ignore'] ? ('
+		$ignoreRequest = $smcFunc['db']->query('insert_into_log_messages_fulltext', ($smcFunc['db']->support_ignore() ? ('
 			INSERT IGNORE INTO {db_prefix}' . $search_data['insert_into'] . '
 				(' . implode(', ', array_keys($query_select)) . ')') : '') . '
 			SELECT ' . implode(', ', $query_select) . '
@@ -278,7 +278,7 @@ class Custom extends AbstractSearchable implements Searchable
 			$inserts[] = [$word, $msgOptions['id']];
 
 		if (!empty($inserts))
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db']->insert('ignore',
 				'{db_prefix}log_search_words',
 				['id_word' => 'int', 'id_msg' => 'int'],
 				$inserts,
@@ -334,7 +334,7 @@ class Custom extends AbstractSearchable implements Searchable
 				$inserts = [];
 				foreach ($inserted_words as $word)
 					$inserts[] = [$word, $msgOptions['id']];
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}log_search_words',
 					['id_word' => 'string', 'id_msg' => 'int'],
 					$inserts,

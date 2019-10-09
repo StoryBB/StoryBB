@@ -32,7 +32,10 @@ $databases = [
 	'mysql' => [
 		'name' => 'MySQL',
 		'version' => '5.5.3',
-		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
+		'version_check' => function($db)
+		{
+			return min($db->get_version(), mysqli_get_client_info());
+		},
 		'supported' => function_exists('mysqli_connect'),
 		'default_user' => 'mysql.default_user',
 		'default_password' => 'mysql.default_password',
@@ -279,7 +282,7 @@ function load_lang_file()
  */
 function load_database()
 {
-	global $db_prefix, $db_connection, $sourcedir, $smcFunc, $modSettings;
+	global $db_prefix, $sourcedir, $smcFunc, $modSettings;
 	global $db_server, $db_passwd, $db_type, $db_name, $db_user, $db_persist;
 
 	if (empty($sourcedir))
@@ -293,7 +296,7 @@ function load_database()
 	$modSettings['disableQueryCheck'] = true;
 
 	// Connect the database.
-	if (!$db_connection)
+	if (empty($smcFunc['db']))
 	{
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
@@ -311,17 +314,12 @@ function load_database()
 
 		$db_options['port'] = (int) $port;
 
-		if (!$db_connection)
-		{
-			require_once(__DIR__ . '/vendor/autoload.php');
+		require_once(__DIR__ . '/vendor/autoload.php');
 
-			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
-
-			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
-			$smcFunc['db']->set_prefix($db_prefix);
-			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-			$smcFunc['db']->connect($db_options);
-		}
+		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		$smcFunc['db']->set_prefix($db_prefix);
+		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+		$smcFunc['db']->connect($db_options);
 	}
 }
 
@@ -651,7 +649,7 @@ function CheckFilesWritable()
 function DatabaseSettings()
 {
 	global $txt, $databases, $incontext, $smcFunc, $sourcedir;
-	global $db_server, $db_name, $db_user, $db_passwd, $db_connection;
+	global $db_server, $db_name, $db_user, $db_passwd;
 
 	// Load our autoloader stuff.
 	require_once(__DIR__ . '/vendor/autoload.php');
@@ -776,7 +774,6 @@ function DatabaseSettings()
 
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
@@ -784,20 +781,19 @@ function DatabaseSettings()
 		$smcFunc['db']->connect(['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
-		if ($db_connection === null)
+		if (!$smcFunc['db']->connection_active())
 		{
-			$db_error = @$smcFunc['db_error']();
+			$db_error = @$smcFunc['db']->error_message();
 
 			$options = [
 				'non_fatal' => true,
 				'dont_select_db' => !$needsDB,
 			];
-			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, $options);
 			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 			$smcFunc['db']->set_prefix($db_prefix);
 			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 			$smcFunc['db']->connect($options);
-			if ($db_connection != null)
+			if (!$smcFunc['db']->connection_active())
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
 				updateSettingsFile(['db_user' => $db_user]);
@@ -805,7 +801,7 @@ function DatabaseSettings()
 		}
 
 		// Still no connection?  Big fat error message :P.
-		if (!$db_connection)
+		if (!$smcFunc['db']->connection_active())
 		{
 			$incontext['error'] = $txt['error_db_connect'] . '<div style="margin: 2.5ex; font-family: monospace;"><strong>' . $db_error . '</strong></div>';
 			return false;
@@ -813,7 +809,7 @@ function DatabaseSettings()
 
 		// Do they meet the install requirements?
 		// @todo Old client, new server?
-		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', eval($databases[$db_type]['version_check']))) > 0)
+		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check'])) > 0)
 		{
 			$incontext['error'] = $txt['error_db_too_low'];
 			return false;
@@ -854,7 +850,7 @@ function DatabaseSettings()
  */
 function ForumSettings()
 {
-	global $txt, $incontext, $databases, $db_type, $db_connection;
+	global $txt, $incontext, $databases, $db_type;
 
 	require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -954,7 +950,7 @@ function ForumSettings()
  */
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
+	global $txt, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -980,7 +976,7 @@ function DatabasePopulation()
 	$modSettings = [];
 	if ($result !== false)
 	{
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$modSettings[$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($result);
 
@@ -1002,8 +998,8 @@ function DatabasePopulation()
 	$replaces = [
 		'{$db_prefix}' => $db_prefix,
 		'{$language}' => $language,
-		'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($attachdir)]),
-		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
+		'{$attachdir}' => json_encode([1 => $smcFunc['db']->escape_string($attachdir)]),
+		'{$boarddir}' => $smcFunc['db']->escape_string(dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 		'{$sbb_version}' => $GLOBALS['current_sbb_version'],
@@ -1016,7 +1012,7 @@ function DatabasePopulation()
 	foreach ($txt as $key => $value)
 	{
 		if (substr($key, 0, 8) == 'default_')
-			$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
+			$replaces['{$' . $key . '}'] = $smcFunc['db']->escape_string($value);
 	}
 	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 
@@ -1042,7 +1038,7 @@ function DatabasePopulation()
 			}
 			else
 			{
-				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message();
 			}
 		}
 		else
@@ -1082,12 +1078,12 @@ function DatabasePopulation()
 			continue;
 		}
 
-		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 		{
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
 				// MySQLi requires a connection object.
-				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
+				$incontext['failures'][$count] = $smcFunc['db']->error_message();
 			}
 		}
 		else
@@ -1167,7 +1163,7 @@ function DatabasePopulation()
 
 	if (!empty($newSettings))
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}settings',
 			['variable' => 'string-255', 'value' => 'string-65534'],
 			$newSettings,
@@ -1182,7 +1178,7 @@ function DatabasePopulation()
 	// Find database user privileges.
 	$privs = [];
 	$get_privs = $smcFunc['db']->query('', 'SHOW PRIVILEGES', []);
-	while ($row = $smcFunc['db_fetch_assoc']($get_privs))
+	while ($row = $smcFunc['db']->fetch_assoc($get_privs))
 	{
 		if ($row['Privilege'] == 'Alter')
 			$privs[] = $row['Privilege'];
@@ -1301,7 +1297,7 @@ function AdminAccount()
 		);
 		if ($smcFunc['db']->num_rows($result) != 0)
 		{
-			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db_fetch_row']($result);
+			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			$incontext['account_existed'] = $txt['error_user_settings_taken'];
@@ -1340,7 +1336,7 @@ function AdminAccount()
 
 			$_POST['password1'] = hash_password(stripslashes($_POST['username']), stripslashes($_POST['password1']));
 
-			$incontext['member_id'] = $smcFunc['db_insert']('',
+			$incontext['member_id'] = $smcFunc['db']->insert('',
 				$db_prefix . 'members',
 				[
 					'member_name' => 'string-25', 'real_name' => 'string-25', 'passwd' => 'string', 'email_address' => 'string',
@@ -1366,7 +1362,7 @@ function AdminAccount()
 				1
 			);
 
-			$incontext['character_id'] = $smcFunc['db_insert']('',
+			$incontext['character_id'] = $smcFunc['db']->insert('',
 				$db_prefix . 'characters',
 				[
 					'id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
@@ -1445,7 +1441,7 @@ function DeleteInstall()
 		);
 
 	// As track stats is by default enabled let's add some activity.
-	$smcFunc['db_insert']('ignore',
+	$smcFunc['db']->insert('ignore',
 		'{db_prefix}log_activity',
 		['date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'],
 		[strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
@@ -1463,7 +1459,7 @@ function DeleteInstall()
 	// Only proceed if we can load the data.
 	if ($request)
 	{
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1482,7 +1478,7 @@ function DeleteInstall()
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
+		list ($db_sessions) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($db_sessions))
@@ -1491,7 +1487,7 @@ function DeleteInstall()
 	{
 		$_SERVER['HTTP_USER_AGENT'] = substr($_SERVER['HTTP_USER_AGENT'], 0, 211);
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}sessions',
 			[
 				'session_id' => 'string', 'last_update' => 'int', 'data' => 'string',

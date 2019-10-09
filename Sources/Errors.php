@@ -116,7 +116,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
-		$smcFunc['db_error_insert']($error_info);
+		$smcFunc['db']->error_insert($error_info);
 		$last_error = $error_info;
 	}
 
@@ -384,7 +384,7 @@ function display_maintenance_message()
 function display_db_error()
 {
 	global $mbname, $modSettings, $maintenance;
-	global $db_connection, $webmaster_email, $smcFunc, $sourcedir;
+	global $webmaster_email, $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');
 	set_fatal_error_headers();
@@ -486,7 +486,7 @@ function log_error_online($error, $sprintf = [])
 	);
 	if ($smcFunc['db']->num_rows($request) != 0)
 	{
-		list ($url) = $smcFunc['db_fetch_row']($request);
+		list ($url) = $smcFunc['db']->fetch_row($request);
 		$url = sbb_json_decode($url, true);
 
 		$error = trim($error);

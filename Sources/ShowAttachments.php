@@ -78,7 +78,7 @@ function showAttachment($force_attach = false)
 		// Do we have a hook wanting to use our attachment system? We use $attachRequest to prevent accidental usage of $request.
 		$attachRequest = null;
 		call_integration_hook('integrate_download_request', [&$attachRequest]);
-		if (!is_null($attachRequest) && $smcFunc['db_is_resource']($attachRequest))
+		if (!is_null($attachRequest) && $smcFunc['db']->is_query_result($attachRequest))
 			$request = $attachRequest;
 
 		else
@@ -102,7 +102,7 @@ function showAttachment($force_attach = false)
 			die('404 File Not Found');
 		}
 
-		$file = $smcFunc['db_fetch_assoc']($request);
+		$file = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// If theres a message ID stored, we NEED a topic ID.
@@ -159,7 +159,7 @@ function showAttachment($force_attach = false)
 				]
 			);
 
-			$thumbFile = $smcFunc['db_fetch_assoc']($request);
+			$thumbFile = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
 			// Got something! replace the $file var with the thumbnail info.

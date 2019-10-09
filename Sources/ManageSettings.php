@@ -478,7 +478,7 @@ function ModifySignatureSettings($return_config = false)
 			[
 			]
 		);
-		list ($context['max_member']) = $smcFunc['db_fetch_row']($request);
+		list ($context['max_member']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		while (!$done)
@@ -496,7 +496,7 @@ function ModifySignatureSettings($return_config = false)
 					'step' => $_GET['step'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				// Apply all the rules we can realistically do.
 				$sig = strtr($row['signature'], ['<br>' => "\n"]);
@@ -1102,7 +1102,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 				'items_per_page' => $items_per_page,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$list[] = $row;
 		$smcFunc['db']->free_result($request);
 	}
@@ -1125,7 +1125,7 @@ function list_getProfileFieldSize()
 		]
 	);
 
-	list ($numProfileFields) = $smcFunc['db_fetch_row']($request);
+	list ($numProfileFields) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $numProfileFields;
@@ -1173,7 +1173,7 @@ function EditCustomProfiles()
 			]
 		);
 		$context['field'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['field_type'] == 'textarea')
 				@list ($rows, $cols) = @explode(',', $row['default_value']);
@@ -1363,7 +1363,7 @@ function EditCustomProfiles()
 			$request = $smcFunc['db']->query('', '
 				SELECT id_field, col_name
 				FROM {db_prefix}custom_fields');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$current_fields[$row['id_field']] = $row['col_name'];
 			$smcFunc['db']->free_result($request);
 
@@ -1495,7 +1495,7 @@ function EditCustomProfiles()
 			// Gotta figure it out the order.
 			$new_order = $order_count > 1 ? ($order_count + 1) : 1;
 
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}custom_fields',
 				[
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
@@ -1573,7 +1573,7 @@ function EditCustomProfiles()
 		);
 
 		$fields = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$fields[] = [
 				'col_name' => strtr($row['col_name'], ['|' => '', ';' => '']),
@@ -1612,7 +1612,7 @@ function custFieldsMaxOrder()
 			[]
 		);
 
-	list ($order_count) = $smcFunc['db_fetch_row']($result);
+	list ($order_count) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	return (int) $order_count;

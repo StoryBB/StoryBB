@@ -76,7 +76,7 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 				]
 			);
 			$members = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$members[$row['id_member']] = $row['warning'];
 			$smcFunc['db']->free_result($request);
 
@@ -96,7 +96,7 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 					]
 				);
 				$member_changes = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					// More than 24 hours ago?
 					if ($row['last_warning'] <= time() - 86400)

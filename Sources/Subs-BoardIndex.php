@@ -76,7 +76,7 @@ function getBoardIndex($boardIndexOptions)
 	$boards = [];
 
 	// Run through the categories and boards (or only boards)....
-	while ($row_board = $smcFunc['db_fetch_assoc']($result_boards))
+	while ($row_board = $smcFunc['db']->fetch_assoc($result_boards))
 	{
 		// Perhaps we are ignoring this board?
 		$ignoreThisBoard = in_array($row_board['id_board'], $user_info['ignoreboards']);

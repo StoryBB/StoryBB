@@ -43,7 +43,7 @@ class Group
 			]
 		);
 		$is_character_group = false;
-		if ($row = $smcFunc['db_fetch_assoc']($request))
+		if ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$is_character_group = !empty($row['is_character']);
 		}

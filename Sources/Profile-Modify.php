@@ -257,7 +257,7 @@ function loadProfileFields($force_reload = false)
 						'variable' => 'name',
 					]
 				);
-				list ($name) = $smcFunc['db_fetch_row']($request);
+				list ($name) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				$context['member']['theme'] = [
@@ -971,7 +971,7 @@ function makeThemeChanges($memID, $id_theme)
 		]
 	);
 	$custom_fields = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$custom_fields[] = $row['col_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -1018,7 +1018,7 @@ function makeThemeChanges($memID, $id_theme)
 	{
 		if (!empty($themeSetArray))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$themeSetArray,
@@ -1155,7 +1155,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	);
 	$changes = [];
 	$log_changes = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		/* This means don't save if:
 			- The user is NOT an admin.
@@ -1254,7 +1254,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	// Make those changes!
 	if (!empty($changes) && empty($context['password_auth_failed']) && empty($errors))
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}themes',
 			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'],
 			$changes,
@@ -1422,7 +1422,7 @@ function editBuddies($memID)
 
 	$context['custom_pf'] = [];
 	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		if (!isset($disabled_fields[$row['col_name']]))
 			$context['custom_pf'][$row['col_name']] = [
 				'label' => $row['field_name'],
@@ -1446,7 +1446,7 @@ function editBuddies($memID)
 				'buddy_list_count' => substr_count($user_profile[$memID]['buddy_list'], ',') + 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$buddies[] = $row['id_member'];
 		$smcFunc['db']->free_result($result);
 	}
@@ -1605,7 +1605,7 @@ function editIgnoreList($memID)
 				'ignore_list_count' => substr_count($user_profile[$memID]['pm_ignore_list'], ',') + 1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$ignored[] = $row['id_member'];
 		$smcFunc['db']->free_result($result);
 	}
@@ -1909,7 +1909,7 @@ function alert_configuration($memID)
 			]
 		);
 
-		list ($can_mod) = $smcFunc['db_fetch_row']($request);
+		list ($can_mod) = $smcFunc['db']->fetch_row($request);
 
 		if (!isset($perms_cache['manage_membergroups']))
 		{
@@ -2472,7 +2472,7 @@ function list_getTopicNotificationCount($memID)
 			'is_approved' => 1,
 		]
 	);
-	list ($totalNotifications) = $smcFunc['db_fetch_row']($request);
+	list ($totalNotifications) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $totalNotifications;
@@ -2525,7 +2525,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		]
 	);
 	$notification_topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		censorText($row['subject']);
 
@@ -2583,7 +2583,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 		]
 	);
 	$notification_boards = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$notification_boards[] = [
 			'id' => $row['id_board'],
 			'name' => $row['name'],
@@ -2629,7 +2629,7 @@ function loadThemeOptions($memID)
 			]
 		);
 		$temp = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['id_member'] == -1)
 			{
@@ -2680,7 +2680,7 @@ function ignoreboards($memID)
 	);
 	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['categories'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
@@ -2796,7 +2796,7 @@ function profileLoadGroups()
 			'is_protected' => 1,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We should skip the administrator group if they don't have the admin_forum permission!
 		if ($row['id_group'] == 1 && !allowedTo('admin_forum'))
@@ -2946,7 +2946,7 @@ function profileSaveGroups(&$value)
 			]
 		);
 		$protected_groups = [1];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$protected_groups[] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 
@@ -2959,7 +2959,7 @@ function profileSaveGroups(&$value)
 		SELECT id_group
 		FROM {db_prefix}membergroups
 		WHERE is_character = 1');
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$char_groups[] = $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -3023,7 +3023,7 @@ function profileSaveGroups(&$value)
 					'selected_member' => $context['id_member'],
 				]
 			);
-			list ($another) = $smcFunc['db_fetch_row']($request);
+			list ($another) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (empty($another))
@@ -3258,7 +3258,7 @@ function profileSaveAvatarData(&$value)
 				// Remove previous attachments this member might have had.
 				removeAttachments(['id_character' => $context['character']['id_character']]);
 
-				$cur_profile['id_attach'] = $smcFunc['db_insert']('',
+				$cur_profile['id_attach'] = $smcFunc['db']->insert('',
 					'{db_prefix}attachments',
 					[
 						'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
@@ -3639,7 +3639,7 @@ function groupMembership($memID)
 		'member' => [],
 		'available' => []
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Can they edit their primary group?
 		if (($row['id_group'] == $context['primary_group'] && $row['group_type'] > 1) || ($row['hidden'] != 2 && $context['primary_group'] == 0 && in_array($row['id_group'], $groups)))
@@ -3737,7 +3737,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 				'limit' => 1,
 			]
 		);
-		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		list ($is_protected) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if ($is_protected == 1)
@@ -3754,7 +3754,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			'current_group' => $old_profile['id_group'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Is this the new group?
 		if ($row['id_group'] == $group_id)
@@ -3809,7 +3809,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 				'admin_forum' => 'admin_forum',
 			]
 		);
-		list ($disallow) = $smcFunc['db_fetch_row']($request);
+		list ($disallow) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if ($disallow)
@@ -3836,7 +3836,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		$smcFunc['db']->free_result($request);
 
 		// Log the request.
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_group_requests',
 			[
 				'id_member' => 'int', 'id_group' => 'int', 'time_applied' => 'int', 'reason' => 'string-65534',

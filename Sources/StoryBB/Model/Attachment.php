@@ -68,7 +68,7 @@ class Attachment
 			if ($smcFunc['db']->num_rows($request) === 0)
 				return false;
 
-			list ($file_hash) = $smcFunc['db_fetch_row']($request);
+			list ($file_hash) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 

@@ -35,7 +35,7 @@ function getAdminFile(string $filename, string $path = '')
 		]
 	);
 	$data = null;
-	if ($row = $smcFunc['db_fetch_assoc']($request))
+	if ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$data = $row['data'];
 		switch ($row['filetype'])
@@ -57,7 +57,7 @@ function getAdminFile(string $filename, string $path = '')
  */
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
+	global $txt, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
 
 	loadLanguage('Admin');
 
@@ -72,12 +72,11 @@ function getServerVersions($checkFor)
 	// Now lets check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
-		db_extend();
-		if (!isset($db_connection) || $db_connection === false)
+		if (!$smcFunc['db']->is_connected())
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 		{
-			$versions['db_server'] = ['title' => $txt['support_versions_db'], 'version' => $smcFunc['db_get_engine']() . ' ' . $smcFunc['db_get_version']()];
+			$versions['db_server'] = ['title' => $txt['support_versions_db'], 'version' => $smcFunc['db']->get_server() . ' ' . $smcFunc['db']->get_version()];
 		}
 	}
 
@@ -451,7 +450,7 @@ function updateAdminPreferences()
 	);
 
 	// Update the themes table.
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}themes',
 		['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 		[$user_info['id'], 1, 'admin_preferences', $options['admin_preferences']],
@@ -496,7 +495,7 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 		]
 	);
 	$emails_sent = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($prefs[$row['id_member']]['announcements']))
 			continue;

@@ -206,7 +206,7 @@ function MessageIndex()
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['id_member']))
 				continue;
@@ -328,7 +328,7 @@ function MessageIndex()
 			$message_pre_index_parameters
 		);
 		$topic_ids = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
 	}
 
@@ -386,13 +386,13 @@ function MessageIndex()
 			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . ($context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
 				' . (!empty($message_index_wheres) ? 'AND ' . implode("\n\t\t\t\tAND ", $message_index_wheres) : '') . '
-			ORDER BY ' . ($pre_query ? $smcFunc['db_custom_order']('t.id_topic', $topic_ids) : 'is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
+			ORDER BY ' . ($pre_query ? $smcFunc['db']->custom_order('t.id_topic', $topic_ids) : 'is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
 			LIMIT ' . ($pre_query ? '' : '{int:start}, ') . '{int:maxindex}',
 			$message_index_parameters
 		);
 
 		// Begin 'printing' the message index for current board.
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 				continue;
@@ -605,7 +605,7 @@ function MessageIndex()
 	// Mark current and parent boards as seen.
 	if (!$user_info['is_guest'])
 	{
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			[$modSettings['maxMsgID'], $user_info['id'], $board],
@@ -647,7 +647,7 @@ function MessageIndex()
 			]
 		);
 		$context['is_marked_notify'] = false; // this is for the *board* only
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!empty($row['id_board']))
 			{
@@ -874,7 +874,7 @@ function QuickModeration()
 				'limit' => count($_REQUEST['actions']),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!empty($board))
 			{
@@ -972,7 +972,7 @@ function QuickModeration()
 		);
 		$stickyCacheBoards = [];
 		$stickyCacheStatus = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$stickyCacheBoards[$row['id_topic']] = $row['id_board'];
 			$stickyCacheStatus[$row['id_topic']] = empty($row['is_sticky']);
@@ -1000,7 +1000,7 @@ function QuickModeration()
 		$moveTos = [];
 		$moveCache2 = [];
 		$countPosts = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$to = $moveCache[1][$row['id_topic']];
 
@@ -1041,7 +1041,7 @@ function QuickModeration()
 				]
 			);
 
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$cp = empty($row['count_posts']);
 
@@ -1073,7 +1073,7 @@ function QuickModeration()
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					if (!isset($members[$row['id_member']]))
 						$members[$row['id_member']] = 0;
@@ -1113,7 +1113,7 @@ function QuickModeration()
 
 		$removeCache = [];
 		$removeCacheBoards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$removeCache[] = $row['id_topic'];
 			$removeCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1154,7 +1154,7 @@ function QuickModeration()
 		);
 		$approveCache = [];
 		$approveCacheMembers = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$approveCache[] = $row['id_topic'];
 			$approveCacheMembers[$row['id_topic']] = $row['id_member_started'];
@@ -1197,7 +1197,7 @@ function QuickModeration()
 			);
 			$lockCache = [];
 			$lockCacheBoards = [];
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$lockCache[] = $row['id_topic'];
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1218,7 +1218,7 @@ function QuickModeration()
 				]
 			);
 			$lockCacheBoards = [];
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
@@ -1255,7 +1255,7 @@ function QuickModeration()
 			]
 		);
 		$logged_topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$logged_topics[$row['id_topic']] = $row['unwatched'];
 		$smcFunc['db']->free_result($request);
 
@@ -1263,7 +1263,7 @@ function QuickModeration()
 		foreach ($markCache as $topic)
 			$markArray[] = [$modSettings['maxMsgID'], $user_info['id'], $topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			$markArray,

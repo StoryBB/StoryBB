@@ -72,7 +72,7 @@ function updateReport($action, $value, $report_id)
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$extra[$row['id_report']] = [
 				'report' => $row['id_report'],
 				'board' => $row['id_board'],
@@ -93,7 +93,7 @@ function updateReport($action, $value, $report_id)
 			]
 		);
 
-		while($row = $smcFunc['db_fetch_assoc']($request))
+		while($row = $smcFunc['db']->fetch_assoc($request))
 			$extra[$row['id_report']] = [
 				'report' => $row['id_report'],
 				'member' => $row['id_member'],
@@ -163,7 +163,7 @@ function countReports($closed = 0)
 			'view_closed' => (int) $closed,
 		]
 	);
-	list ($total_reports) = $smcFunc['db_fetch_row']($request);
+	list ($total_reports) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $total_reports;
@@ -226,7 +226,7 @@ function getReports($closed = 0)
 	$report_ids = [];
 	$report_boards_ids = [];
 	$i = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$report_ids[] = $row['id_report'];
 		$reports[$row['id_report']] = [
@@ -291,7 +291,7 @@ function getReports($closed = 0)
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$board_names[$row['id_board']] = $row['name'];
 
 		$smcFunc['db']->free_result($request);
@@ -314,7 +314,7 @@ function getReports($closed = 0)
 				'report_list' => $report_ids,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$reports[$row['id_report']]['comments'][] = [
 				'id' => $row['id_comment'],
@@ -376,7 +376,7 @@ function recountOpenReports($type)
 			'not_a_reported_post' => 0,
 		]
 	);
-	list ($open_reports) = $smcFunc['db_fetch_row']($request);
+	list ($open_reports) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$arr = ($type == 'members' ? 'member_reports' : 'reports');
@@ -443,7 +443,7 @@ function getReportDetails($report_id)
 		return false;
 
 	// Woohoo we found a report and they can see it!
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	return $row;
@@ -479,7 +479,7 @@ function getReportComments($report_id)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$comment = [
 			'id' => $row['id_comment'],
@@ -514,7 +514,7 @@ function getReportComments($report_id)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$report['mod_comments'][] = [
 			'id' => $row['id_comment'],
@@ -559,7 +559,7 @@ function getCommentModDetails($comment_id)
 		]
 	);
 
-	$comment = $smcFunc['db_fetch_assoc']($request);
+	$comment = $smcFunc['db']->fetch_assoc($request);
 
 	$smcFunc['db']->free_result($request);
 
@@ -586,7 +586,7 @@ function saveModComment($report_id, $data)
 
 	$data = array_merge([$user_info['id'], $user_info['name'], 'reportc', ''], $data);
 
-	$last_comment = $smcFunc['db_insert']('',
+	$last_comment = $smcFunc['db']->insert('',
 		'{db_prefix}log_comments',
 		[
 			'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',

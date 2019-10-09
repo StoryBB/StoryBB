@@ -48,7 +48,7 @@ function exportData($memID)
 				'last_valid' => time() - (86400 * 7),
 			]
 		);
-		if ($row = $smcFunc['db_fetch_assoc']($request))
+		if ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			require_once($sourcedir . '/ShowAttachments.php');
 			showAttachment($row['id_attach']);
@@ -85,7 +85,7 @@ function exportData($memID)
 			'memID' => $memID,
 		]
 	);
-	if ($row = $smcFunc['db_fetch_assoc']($request))
+	if ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['id_export']) && empty($row['approved']))
 			$in_process = true;
@@ -133,7 +133,7 @@ function exportData($memID)
 					]
 				);
 				$rows = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$rows[] = $row;
 				}
@@ -155,7 +155,7 @@ function exportData($memID)
 						'memID' => $memID,
 					]
 				);
-				list($count) = $smcFunc['db_fetch_row']($request);
+				list($count) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				return $count;
@@ -338,7 +338,7 @@ function issueWarning($memID)
 				'warning' => 'warning',
 			]
 		);
-		list ($current_applied) = $smcFunc['db_fetch_row']($request);
+		list ($current_applied) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['min_allowed'] = max(0, $cur_profile['warning'] - $current_applied - $context['warning_limit']);
@@ -392,7 +392,7 @@ function issueWarning($memID)
 				sendpm(['to' => [$memID], 'bcc' => []], $_POST['warn_sub'], $_POST['warn_body'], false, $from);
 
 				// Log the notice!
-				$id_notice = $smcFunc['db_insert']('',
+				$id_notice = $smcFunc['db']->insert('',
 					'{db_prefix}log_member_notices',
 					[
 						'subject' => 'string-255', 'body' => 'string-65534',
@@ -417,7 +417,7 @@ function issueWarning($memID)
 		{
 			// Log what we've done!
 			if (!$context['user']['is_owner'])
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}log_comments',
 					[
 						'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int', 'recipient_name' => 'string-255',
@@ -611,7 +611,7 @@ function issueWarning($memID)
 		if ($smcFunc['db']->num_rows($request) != 0)
 		{
 			$context['warning_for_message'] = (int) $_REQUEST['msg'];
-			list ($context['warned_message_subject']) = $smcFunc['db_fetch_row']($request);
+			list ($context['warned_message_subject']) = $smcFunc['db']->fetch_row($request);
 		}
 		$smcFunc['db']->free_result($request);
 
@@ -637,7 +637,7 @@ function issueWarning($memID)
 			'current_member' => $user_info['id'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// If we're not warning for a message skip any that are.
 		if (!$context['warning_for_message'] && strpos($row['body'], '{MESSAGE}') !== false)
@@ -691,7 +691,7 @@ function list_getUserWarningCount($memID)
 			'selected_member' => $memID,
 		]
 	);
-	list ($total_warnings) = $smcFunc['db_fetch_row']($request);
+	list ($total_warnings) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $total_warnings;
@@ -727,7 +727,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 		]
 	);
 	$previous_warnings = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$previous_warnings[] = [
 			'issuer' => [
@@ -812,7 +812,7 @@ function deleteAccount2($memID)
 				'selected_member' => $memID,
 			]
 		);
-		list ($another) = $smcFunc['db_fetch_row']($request);
+		list ($another) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if (empty($another))
@@ -842,7 +842,7 @@ function deleteAccount2($memID)
 
 			$polls_to_update = [];
 
-			while ($row = $smcFunc['db_fetch_assoc']($get_voted_polls))
+			while ($row = $smcFunc['db']->fetch_assoc($get_voted_polls))
 			{
 				$polls_to_update[] = $row['id_poll'];
 			}
@@ -911,7 +911,7 @@ function deleteAccount2($memID)
 					]
 				);
 				$topicIDs = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$topicIDs[] = $row['id_topic'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -932,7 +932,7 @@ function deleteAccount2($memID)
 					]
 				);
 				$topicIDs = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$topicIDs[] = $row['id_topic'];
 				}
@@ -958,7 +958,7 @@ function deleteAccount2($memID)
 					]
 				);
 				// This could take a while... but ya know it's gonna be worth it in the end.
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$msgIDs[] = $row['id_msg'];
 				}
@@ -983,7 +983,7 @@ function deleteAccount2($memID)
 					]
 				);
 				// This could take a while... but ya know it's gonna be worth it in the end.
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$msgIDs[] = $row['id_msg'];
 				}
@@ -1103,7 +1103,7 @@ function subscriptions($memID)
 	);
 	$context['current'] = [];
 	$admin_forum = allowedTo('admin_forum');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// The subscription must exist!
 		if (!isset($context['subscriptions'][$row['id_subscribe']]))
@@ -1270,7 +1270,7 @@ function subscriptions($memID)
 		else
 		{
 			$pending_details = json_encode([$new_data]);
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}log_subscribed',
 				[
 					'id_subscribe' => 'int', 'id_member' => 'int', 'status' => 'int', 'payments_pending' => 'int', 'pending_details' => 'string-65534',

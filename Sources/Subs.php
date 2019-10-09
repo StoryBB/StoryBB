@@ -72,7 +72,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'is_activated' => 1,
 					]
 				);
-				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 
 				// Get the latest activated member's display name.
@@ -85,7 +85,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'id_member' => (int) $changes['latestMember'],
 					]
 				);
-				list ($changes['latestRealName']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['latestRealName']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 
 				// Update the amount of members awaiting approval (either new registration or deletion)
@@ -97,7 +97,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'activation_status' => [3, 4],
 					]
 				);
-				list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
+				list ($changes['unapprovedMembers']) = $smcFunc['db']->fetch_row($result);
 				$smcFunc['db']->free_result($result);
 			}
 			updateSettings($changes);
@@ -119,7 +119,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'blank_redirect' => '',
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($result);
+				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
 
 				updateSettings([
@@ -150,7 +150,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					$inserts[] = [$word, $parameter1];
 
 				if (!empty($inserts))
-					$smcFunc['db_insert']('ignore',
+					$smcFunc['db']->insert('ignore',
 						'{db_prefix}log_search_subjects',
 						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
@@ -174,7 +174,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($result);
+				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
 
 				updateSettings(['totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']]);
@@ -268,7 +268,7 @@ function updateMemberData($members, $data)
 					WHERE ' . $condition,
 					$parameters
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$member_names[] = $row['member_name'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -504,7 +504,7 @@ function updateSettings($changeArray, $update = false)
 	if (empty($replaceArray))
 		return;
 
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}settings',
 		['variable' => 'string-255', 'value' => 'string-65534'],
 		$replaceArray,
@@ -2114,7 +2114,7 @@ function setupMenuContext()
 			[]
 		);
 
-		list($errors) = $smcFunc['db_fetch_row']($query);
+		list($errors) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 
 		if ($errors)
@@ -2127,7 +2127,7 @@ function setupMenuContext()
 			SELECT COUNT(id_message)
 			FROM {db_prefix}contact_form
 			WHERE status = 0');
-		list($contactform) = $smcFunc['db_fetch_row']($query);
+		list($contactform) = $smcFunc['db']->fetch_row($query);
 		$smcFunc['db']->free_result($query);
 
 		if ($contactform)
@@ -2295,7 +2295,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 				'variable' => $hook,
 			]
 		);
-		list ($current_functions) = $smcFunc['db_fetch_row']($request);
+		list ($current_functions) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($current_functions))
@@ -2359,7 +2359,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 			'variable' => $hook,
 		]
 	);
-	list ($current_functions) = $smcFunc['db_fetch_row']($request);
+	list ($current_functions) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if (!empty($current_functions))
@@ -2516,7 +2516,7 @@ function prepareLikesContext($topic)
 				'topic' => $topic,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$temp[] = (int) $row['content_id'];
 
 		cache_put_data($cache_key, $temp, $ttl);
@@ -2880,7 +2880,7 @@ function build_query_board($userid)
 				]
 			);
 
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 
 		if (empty($row['additional_groups']))
 			$groups = [$row['id_group']];
@@ -2909,7 +2909,7 @@ function build_query_board($userid)
 				'current_member' => $userid,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -2922,7 +2922,7 @@ function build_query_board($userid)
 				'groups' => $groups,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_mod[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -2970,7 +2970,7 @@ function get_main_menu_groups()
 			WHERE chars.char_sheet != 0
 			GROUP BY mg.id_group, mg.group_name, mg.badge_order
 			ORDER BY mg.badge_order, mg.group_name');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groups[$row['id_group']] = $row['group_name'];
 		}
@@ -3029,7 +3029,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 			$request = $smcFunc['db']->query('', '
 				SELECT id_board, in_character
 				FROM {db_prefix}boards');
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$boards_ic[$row['id_board']] = $row['in_character'];
 			}

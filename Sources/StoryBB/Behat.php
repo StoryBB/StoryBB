@@ -86,15 +86,14 @@ class Behat extends RawMinkContext implements Context
 		$txt['lang_locale'] = 'en-US';
 		$txt['lang_rtl'] = false;
 
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
-
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 		$smcFunc['db']->connect($options);
 
-		if (empty($db_connection)) {
-			die('Database could not be connected - error given: ' . $smcFunc['db_error']());
+		if (!$smcFunc['db']->connection_active())
+		{
+			die('Database could not be connected - error given: ' . $smcFunc['db']->error_message());
 		}
 		db_extend('packages');
 
@@ -104,23 +103,21 @@ class Behat extends RawMinkContext implements Context
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
-			],
-			$db_connection
+			]
 		);
 		$smcFunc['db']->query('', "
 			CREATE DATABASE `$db_name`",
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
-			],
-			$db_connection
+			]
 		);
 		$smcFunc['db']->select_db($db_name);
 
 		$replaces = [
 			'{$db_prefix}' => 'behat_' . $db_prefix,
-			'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($boarddir . '/attachments')]),
-			'{$boarddir}' => $smcFunc['db_escape_string']($boarddir),
+			'{$attachdir}' => json_encode([1 => $smcFunc['db']->escape_string($boarddir . '/attachments')]),
+			'{$boarddir}' => $smcFunc['db']->escape_string($boarddir),
 			'{$boardurl}' => $boardurl,
 			'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 			'{$sbb_version}' => 'Behat',
@@ -132,7 +129,7 @@ class Behat extends RawMinkContext implements Context
 		foreach ($txt as $key => $value)
 		{
 			if (substr($key, 0, 8) == 'default_')
-				$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
+				$replaces['{$' . $key . '}'] = $smcFunc['db']->escape_string($value);
 		}
 		$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 
@@ -145,7 +142,7 @@ class Behat extends RawMinkContext implements Context
 			// Figure out storage engines - what do we have, etc.
 			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
 
-			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
+			while ($row = $smcFunc['db']->fetch_assoc($get_engines))
 			{
 				if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
 					$engines[] = $row['Engine'];
@@ -221,7 +218,7 @@ class Behat extends RawMinkContext implements Context
 				}
 			}
 
-			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 			{
 				// Use the appropriate function based on the DB type
 				if ($db_type == 'mysql' || $db_type == 'mysqli')
@@ -229,7 +226,7 @@ class Behat extends RawMinkContext implements Context
 
 				// Error 1050: Table already exists!
 				// @todo Needs to be made better!
-				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $db_errorno($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db']->error_code() == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 				{
 					$exists[] = $match[1];
 					$incontext['sql_results']['table_dups']++;
@@ -238,7 +235,7 @@ class Behat extends RawMinkContext implements Context
 				elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 				{
 					// MySQLi requires a connection object.
-					$incontext['failures'][$count] = $smcFunc['db_error']($db_connection) . "\n" . $current_statement;
+					$incontext['failures'][$count] = $smcFunc['db']->error_message() . "\n" . $current_statement;
 				}
 			}
 			else
@@ -330,7 +327,7 @@ class Behat extends RawMinkContext implements Context
 		$pristine_tables = preg_grep('/^behat_/i', $tables);
 		foreach ($pristine_tables as $table)
 		{
-			$smcFunc['db_backup_table']($table, str_replace('behat_', '', $table));
+			$smcFunc['db']->backup_table($table, str_replace('behat_', '', $table));
 			set_time_limit(60);
 		}
 

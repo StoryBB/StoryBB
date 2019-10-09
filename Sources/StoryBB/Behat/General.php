@@ -126,7 +126,7 @@ class General extends RawMinkContext implements Context
                         FROM {db_prefix}membergroups',
 						[]
 					);
-					while ($row = $smcFunc['db_fetch_assoc']($request))
+					while ($row = $smcFunc['db']->fetch_assoc($request))
 					{
 						$row['group_name'] = strtolower($row['group_name']);
 						if (isset($possible_groups[$row['group_name']]))
@@ -209,7 +209,7 @@ class General extends RawMinkContext implements Context
 			];
 		}
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
@@ -248,7 +248,7 @@ class General extends RawMinkContext implements Context
 				'usernames' => array_keys($userids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$userids[$row['member_name']] = $row['id_member'];
 		}
@@ -284,7 +284,7 @@ class General extends RawMinkContext implements Context
 				'charnames' => array_keys($charids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$charids[$row['character_name']] = $row['id_character'];
 		}
@@ -320,7 +320,7 @@ class General extends RawMinkContext implements Context
 				'groupnames' => array_keys($group_ids)
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$group_ids[$row['group_name']] = $row['id_group'];
 		}
@@ -372,7 +372,7 @@ class General extends RawMinkContext implements Context
                     LIMIT 1');
 				if ($smcFunc['db']->num_rows($request))
 				{
-					list($boardOptions['target_category']) = $smcFunc['db_fetch_row']($request);
+					list($boardOptions['target_category']) = $smcFunc['db']->fetch_row($request);
 				}
 				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_category']))
@@ -396,7 +396,7 @@ class General extends RawMinkContext implements Context
 				);
 				if ($smcFunc['db']->num_rows($request))
 				{
-					$row = $smcFunc['db_fetch_assoc']($request);
+					$row = $smcFunc['db']->fetch_assoc($request);
 					$boardOptions['target_category'] = $row['id_cat'];
 					$boardOptions['move_to'] = 'child';
 					$boardOptions['target_board'] = $row['id_board'];
@@ -518,7 +518,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			// Inserting the new group.
-			$id_group = $smcFunc['db_insert']('',
+			$id_group = $smcFunc['db']->insert('',
 				'{db_prefix}membergroups',
 				[
 					'description' => 'string', 'group_name' => 'string-80',
@@ -544,7 +544,7 @@ class General extends RawMinkContext implements Context
 					]
 				);
 				$inserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
 				}
@@ -552,7 +552,7 @@ class General extends RawMinkContext implements Context
 
 				if (!empty($inserts))
 				{
-					$smcFunc['db_insert']('insert',
+					$smcFunc['db']->insert('insert',
 						'{db_prefix}permissions',
 						['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 						$inserts,
@@ -571,7 +571,7 @@ class General extends RawMinkContext implements Context
 				]
 			);
 			$inserts = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
 			}
@@ -579,7 +579,7 @@ class General extends RawMinkContext implements Context
 
 			if (!empty($inserts))
 			{
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}board_permissions',
 					['id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'],
 					$inserts,

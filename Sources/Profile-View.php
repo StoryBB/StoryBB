@@ -176,7 +176,7 @@ function summary($memID)
 			WHERE (' . implode(' OR ', $ban_query) . ')',
 			$ban_query_vars
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Work out what restrictions we actually have.
 			$ban_restrictions = [];
@@ -284,7 +284,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	);
 
 	$senders = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$id_alert = array_shift($row);
 		$row['time'] = timeformat($row['alert_time']);
@@ -341,7 +341,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				'boards' => array_keys($boards),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[$row['id_board']] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
 	}
 	if (!empty($topics))
@@ -357,7 +357,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				'topics' => array_keys($topics),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topics[$row['id_topic']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>';
 	}
 	if (!empty($msgs))
@@ -373,7 +373,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				'msgs' => array_keys($msgs),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$msgs[$row['id_msg']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
 	}
 
@@ -388,7 +388,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				'chars' => array_keys($chars),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
 			$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
@@ -613,7 +613,7 @@ function showPosts($memID)
 				'id_msg' => (int) $_GET['delete'],
 			]
 		);
-		$info = $smcFunc['db_fetch_row']($request);
+		$info = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Trying to remove a message that doesn't exist.
@@ -664,7 +664,7 @@ function showPosts($memID)
 				'board' => $board,
 			]
 		);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -679,7 +679,7 @@ function showPosts($memID)
 			'board' => $board,
 		]
 	);
-	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
+	list ($min_msg_member, $max_msg_member) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$range_limit = '';
@@ -787,7 +787,7 @@ function showPosts($memID)
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
 	$board_ids = ['own' => [], 'any' => []];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor....
 		censorText($row['body']);
@@ -1059,7 +1059,7 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 		]
 	);
 	$attachments = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$attachments[] = [
 			'id' => $row['id_attach'],
 			'filename' => $row['filename'],
@@ -1110,7 +1110,7 @@ function list_getNumAttachments($boardsAllowed, $memID)
 			'board' => $board,
 		]
 	);
-	list ($attachCount) = $smcFunc['db_fetch_row']($request);
+	list ($attachCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $attachCount;
@@ -1273,7 +1273,7 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 	);
 
 	$topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$topics[] = $row['id_topic'];
 
 	$smcFunc['db']->free_result($request);
@@ -1294,7 +1294,7 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 				'topics' => $topics,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topicsInfo[] = $row;
 		$smcFunc['db']->free_result($request);
 	}
@@ -1325,7 +1325,7 @@ function list_getNumUnwatched($memID)
 			'current_member' => $memID,
 		]
 	);
-	list ($unwatchedCount) = $smcFunc['db_fetch_row']($request);
+	list ($unwatchedCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $unwatchedCount;
@@ -1380,7 +1380,7 @@ function statPanel($memID)
 			'no_poll' => 0,
 		]
 	);
-	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Number polls voted in.
@@ -1392,7 +1392,7 @@ function statPanel($memID)
 			'current_member' => $memID,
 		]
 	);
-	list ($context['num_votes']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_votes']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Format the numbers...
@@ -1418,7 +1418,7 @@ function statPanel($memID)
 		]
 	);
 	$context['popular_boards'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['popular_boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
@@ -1449,7 +1449,7 @@ function statPanel($memID)
 		]
 	);
 	$context['board_activity'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['board_activity'][$row['id_board']] = [
 			'id' => $row['id_board'],
@@ -1480,7 +1480,7 @@ function statPanel($memID)
 	);
 	$maxPosts = $realPosts = 0;
 	$context['posts_by_time'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		// Cast as an integer to remove the leading 0.
 		$row['hour'] = (int) $row['hour'];
@@ -1695,7 +1695,7 @@ function trackActivity($memID)
 				'current_member' => $memID,
 			]
 		);
-		list ($max_msg_member) = $smcFunc['db_fetch_row']($request);
+		list ($max_msg_member) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// There's no point worrying ourselves with messages made yonks ago, just get recent ones!
@@ -1724,7 +1724,7 @@ function trackActivity($memID)
 		]
 	);
 	$context['ips'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['poster_ip']) . ';u=' . $memID . '">' . inet_dtop($row['poster_ip']) . '</a>';
 		$ips[] = inet_dtop($row['poster_ip']);
@@ -1742,7 +1742,7 @@ function trackActivity($memID)
 		]
 	);
 	$context['error_ips'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['ip']) . ';u=' . $memID . '">' . inet_dtop($row['ip']) . '</a>';
 		$ips[] = inet_dtop($row['ip']);
@@ -1767,7 +1767,7 @@ function trackActivity($memID)
 			]
 		);
 		$message_members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$message_members[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -1783,7 +1783,7 @@ function trackActivity($memID)
 					'ip_list' => $ips,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 			$smcFunc['db']->free_result($request);
 		}
@@ -1798,7 +1798,7 @@ function trackActivity($memID)
 				'ip_list' => $ips,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		$smcFunc['db']->free_result($request);
 	}
@@ -1823,7 +1823,7 @@ function list_getUserErrorCount($where, $where_vars = [])
 		WHERE ' . $where,
 		$where_vars
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -1861,7 +1861,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 		])
 	);
 	$error_messages = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$error_messages[] = [
 			'ip' => inet_dtop($row['ip']),
 			'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
@@ -1893,7 +1893,7 @@ function list_getIPMessageCount($where, $where_vars = [])
 		WHERE {query_see_board} AND ' . $where,
 		$where_vars
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -1932,7 +1932,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 		])
 	);
 	$messages = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$messages[] = [
 			'ip' => inet_dtop($row['poster_ip']),
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
@@ -2003,7 +2003,7 @@ function TrackIP($memID = 0)
 		]
 	);
 	$context['ips'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['ips'][inet_dtop($row['member_ip'])][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
 	$smcFunc['db']->free_result($request);
 
@@ -2336,7 +2336,7 @@ function list_getLoginCount($where, $where_vars = [])
 			'id_member' => $where_vars['current_member'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $count;
@@ -2366,7 +2366,7 @@ function list_getLogins($start, $items_per_page, $sort, $where, $where_vars = []
 		]
 	);
 	$logins = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$logins[] = [
 			'time' => timeformat($row['time']),
 			'ip' => inet_dtop($row['ip']),
@@ -2396,7 +2396,7 @@ function trackEdits($memID)
 		]
 	);
 	$context['custom_field_titles'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['custom_field_titles']['customfield_' . $row['col_name']] = [
 			'title' => $row['field_name'],
 			'parse_bbc' => $row['bbc'],
@@ -2498,7 +2498,7 @@ function list_getProfileEditCount($memID)
 			'owner' => $memID,
 		]
 	);
-	list ($edit_count) = $smcFunc['db_fetch_row']($request);
+	list ($edit_count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $edit_count;
@@ -2536,7 +2536,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	);
 	$edits = [];
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$extra = sbb_json_decode($row['extra'], true);
 		if (!empty($extra['applicator']))
@@ -2594,7 +2594,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			]
 		);
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[$row['id_member']] = $row['real_name'];
 		$smcFunc['db']->free_result($request);
 
@@ -2704,7 +2704,7 @@ function list_getGroupRequestsCount($memID)
 			'memID' => $memID,
 		]
 	);
-	list ($report_count) = $smcFunc['db_fetch_row']($request);
+	list ($report_count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return (int) $report_count;
@@ -2743,7 +2743,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $memID)
 			'max' => $items_per_page,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$this_req = [
 			'group_name' => empty($row['online_color']) ? $row['group_name'] : '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>',
@@ -2821,7 +2821,7 @@ function showPermissions($memID)
 	);
 	$context['boards'] = [];
 	$context['no_access_boards'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (count(array_intersect($curGroups, explode(',', $row['member_groups']))) === 0 && !$row['is_mod'])
 			$context['no_access_boards'][] = [
@@ -2869,7 +2869,7 @@ function showPermissions($memID)
 			'group_list' => $curGroups,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		// We don't know about this permission, it doesn't exist :P.
 		if (!isset($txt['permissionname_' . $row['permission']]))
@@ -2926,7 +2926,7 @@ function showPermissions($memID)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We don't know about this permission, it doesn't exist :P.
 		if (!isset($txt['permissionname_' . $row['permission']]))

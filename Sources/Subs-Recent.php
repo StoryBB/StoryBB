@@ -49,7 +49,7 @@ function getLastPosts($latestPostOptions)
 		]
 	);
 	$posts = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor the subject and post for the preview ;).
 		censorText($row['subject']);

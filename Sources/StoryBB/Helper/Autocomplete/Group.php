@@ -80,7 +80,7 @@ class Group extends AbstractCompletable implements Completable
 				'search' => '%' . $this->escape_term($this->term) . '%',
 			]
 		);
-		list ($count) = $smcFunc['db_fetch_row']($request);
+		list ($count) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
@@ -125,7 +125,7 @@ class Group extends AbstractCompletable implements Completable
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['icons'] = explode('#', $row['icons']);
 			$row['icons'] = !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' .  $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '';
@@ -166,7 +166,7 @@ class Group extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$this->default[$row['id_group']] = $row;
 		}

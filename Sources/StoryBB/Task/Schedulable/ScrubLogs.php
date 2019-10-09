@@ -59,7 +59,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 				'now' => time(),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$banned_ips[] = $row;
 		}
@@ -154,7 +154,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 				'log_time' => $timestamp, 
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			foreach ($this->banned_ips as $ban)
 			{

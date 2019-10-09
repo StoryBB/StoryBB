@@ -1680,7 +1680,7 @@ class Parser
 				$smileysfrom = [];
 				$smileysto = [];
 				$smileysdescs = [];
-				while ($row = $smcFunc['db_fetch_assoc']($result))
+				while ($row = $smcFunc['db']->fetch_assoc($result))
 				{
 					$smileysfrom[] = $row['code'];
 					$smileysto[] = StringLibrary::escape($row['filename']);

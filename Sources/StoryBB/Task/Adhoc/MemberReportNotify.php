@@ -75,7 +75,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 				];
 			}
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
 					'member_name' => 'string', 'content_type' => 'string', 'content_id' => 'int',
@@ -106,7 +106,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 					'members' => $notifies['email'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (empty($row['lngfile']))
 					$row['lngfile'] = $language;

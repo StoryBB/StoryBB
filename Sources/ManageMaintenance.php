@@ -159,7 +159,7 @@ function MaintainMembers()
 			'name' => $txt['maintain_members_ungrouped']
 		],
 	];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['membergroups'][] = [
 			'id' => $row['id_group'],
@@ -191,7 +191,7 @@ function MaintainTopics()
 		]
 	);
 	$context['categories'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (!isset($context['categories'][$row['id_cat']]))
 			$context['categories'][$row['id_cat']] = [
@@ -371,7 +371,7 @@ function ConvertMsgBody()
 			FROM {db_prefix}messages',
 			[]
 		);
-		list($max_msgs) = $smcFunc['db_fetch_row']($request);
+		list($max_msgs) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Try for as much time as possible.
@@ -389,7 +389,7 @@ function ConvertMsgBody()
 					'increment' => $increment - 1,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$id_msg_exceeding[] = $row['id_msg'];
 			$smcFunc['db']->free_result($request);
 
@@ -433,7 +433,7 @@ function ConvertMsgBody()
 					'messages' => $query_msg,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$context['exceeding_messages'][] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
 			$smcFunc['db']->free_result($request);
 		}
@@ -463,7 +463,6 @@ function OptimizeTables()
 		validateToken('admin-optimize', 'post', false);
 
 	ignore_user_abort(true);
-	db_extend();
 
 	$context['page_title'] = $txt['database_optimize'];
 	$context['sub_template'] = 'admin_maintain_database_optimize';
@@ -515,7 +514,7 @@ function OptimizeTables()
 		}
 
 		// Optimize the table!  We use backticks here because it might be a custom table.
-		$data_freed = $smcFunc['db_optimize_table']($tables[$key]['table_name']);
+		$data_freed = $smcFunc['db']->optimize_table($tables[$key]['table_name']);
 
 		if ($data_freed > 0)
 			$_SESSION['optimized_tables'][] = [
@@ -576,7 +575,7 @@ function AdminBoardRecount()
 		[
 		]
 	);
-	list ($max_topics) = $smcFunc['db_fetch_row']($request);
+	list ($max_topics) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$increment = min(max(50, ceil($max_topics / 4)), 2000);
@@ -608,7 +607,7 @@ function AdminBoardRecount()
 					'max_id' => $_REQUEST['start'] + $increment,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}topics
 					SET num_replies = {int:num_replies}
@@ -636,7 +635,7 @@ function AdminBoardRecount()
 					'max_id' => $_REQUEST['start'] + $increment,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = {int:unapproved_posts}
@@ -694,7 +693,7 @@ function AdminBoardRecount()
 					'is_approved' => 1,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET num_posts = num_posts + {int:real_num_posts}
@@ -750,7 +749,7 @@ function AdminBoardRecount()
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET num_topics = num_topics + {int:real_num_topics}
@@ -806,7 +805,7 @@ function AdminBoardRecount()
 					'is_approved' => 0,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET unapproved_posts = unapproved_posts + {int:unapproved_posts}
@@ -862,7 +861,7 @@ function AdminBoardRecount()
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET unapproved_topics = unapproved_topics + {int:real_unapproved_topics}
@@ -905,7 +904,7 @@ function AdminBoardRecount()
 				'is_not_deleted' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			updateMemberData($row['id_member'], ['instant_messages' => $row['real_num']]);
 		$smcFunc['db']->free_result($request);
 
@@ -921,7 +920,7 @@ function AdminBoardRecount()
 				'is_not_read' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			updateMemberData($row['id_member'], ['unread_messages' => $row['real_num']]);
 		$smcFunc['db']->free_result($request);
 
@@ -954,7 +953,7 @@ function AdminBoardRecount()
 				]
 			);
 			$boards = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$boards[$row['id_board']][] = $row['id_msg'];
 			$smcFunc['db']->free_result($request);
 
@@ -997,7 +996,7 @@ function AdminBoardRecount()
 		]
 	);
 	$realBoardCounts = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$realBoardCounts[$row['id_board']] = $row['local_last_msg'];
 	$smcFunc['db']->free_result($request);
 
@@ -1008,7 +1007,7 @@ function AdminBoardRecount()
 		]
 	);
 	$resort_me = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['local_last_msg'] = isset($realBoardCounts[$row['id_board']]) ? $realBoardCounts[$row['id_board']] : 0;
 		$resort_me[$row['child_level']][] = $row;
@@ -1266,7 +1265,7 @@ function MaintainReattributePosts()
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
-		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
+		list ($memID, $characterID) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1316,7 +1315,7 @@ function MaintainPurgeInactiveMembers()
 			[
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Avoid this one?
 			if (!in_array($row['id_group'], $groups))
@@ -1343,7 +1342,7 @@ function MaintainPurgeInactiveMembers()
 			$where_vars
 		);
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!$row['is_mod'] || !in_array(3, $groups))
 				$members[] = $row['id_member'];
@@ -1393,7 +1392,7 @@ function MaintainRemoveOldDrafts()
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$drafts[] = (int) $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -1486,7 +1485,7 @@ function MaintainMassMoveTopics()
 			$conditions,
 			$params
 		);
-		list ($total_topics) = $smcFunc['db_fetch_row']($request);
+		list ($total_topics) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else
@@ -1520,7 +1519,7 @@ function MaintainMassMoveTopics()
 
 			// Get the ids.
 			$topics = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$topics[] = $row['id_topic'];
 
 			// Just return if we don't have any topics left to move.
@@ -1612,7 +1611,7 @@ function MaintainRecountPosts()
 		);
 
 		// save it so we don't do this again for this task
-		list ($_SESSION['total_members']) = $smcFunc['db_fetch_row']($request);
+		list ($_SESSION['total_members']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 	else
@@ -1638,7 +1637,7 @@ function MaintainRecountPosts()
 	$total_rows = $smcFunc['db']->num_rows($request);
 
 	// Update the post count for this group
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
@@ -1672,7 +1671,7 @@ function MaintainRecountPosts()
 	$total_rows = $smcFunc['db']->num_rows($request);
 
 	// Update the post count for this group
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
@@ -1739,7 +1738,7 @@ function MaintainRecountPosts()
 		);
 
 		// set the post count to zero for any delinquents we may have found
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}members
@@ -1791,7 +1790,7 @@ function MaintainRecountPosts()
 		);
 
 		// set the post count to zero for any delinquents we may have found
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}characters

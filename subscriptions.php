@@ -19,7 +19,7 @@ define('STORYBB', 'BACKGROUND');
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
-global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
+global $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
 // Just being safe...
@@ -119,7 +119,7 @@ $request = $smcFunc['db']->query('', '
 // Didn't find them?
 if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_could_not_find_member'], $member_id));
-$member_info = $smcFunc['db_fetch_assoc']($request);
+$member_info = $smcFunc['db']->fetch_assoc($request);
 $smcFunc['db']->free_result($request);
 
 // Get the subscription details.
@@ -136,7 +136,7 @@ $request = $smcFunc['db']->query('', '
 if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription'], $member_id, $subscription_id));
 
-$subscription_info = $smcFunc['db_fetch_assoc']($request);
+$subscription_info = $smcFunc['db']->fetch_assoc($request);
 $smcFunc['db']->free_result($request);
 
 // We wish to check the pending payments to make sure we are expecting this.
@@ -153,7 +153,7 @@ $request = $smcFunc['db']->query('', '
 );
 if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription_log'], $member_id, $subscription_id));
-$subscription_info += $smcFunc['db_fetch_assoc']($request);
+$subscription_info += $smcFunc['db']->fetch_assoc($request);
 $smcFunc['db']->free_result($request);
 
 // Is this a refund etc?

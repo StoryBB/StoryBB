@@ -215,7 +215,7 @@ function ThemeList()
 
 		if (!empty($setValues))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$setValues,
@@ -263,7 +263,7 @@ function SetThemeOptions()
 			]
 		);
 		$context['themes'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($context['themes'][$row['id_theme']]))
 				$context['themes'][$row['id_theme']] = [
@@ -284,7 +284,7 @@ function SetThemeOptions()
 				'guest_member' => -1,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_default_options'] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -296,7 +296,7 @@ function SetThemeOptions()
 			]
 		);
 		$customFields = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$customFields[] = $row['col_name'];
 		$smcFunc['db']->free_result($request);
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
@@ -312,7 +312,7 @@ function SetThemeOptions()
 				'custom_fields' => empty($customFields) ? [] : $customFields,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_members'] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -369,7 +369,7 @@ function SetThemeOptions()
 					]
 				);
 
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$setValues,
@@ -515,7 +515,7 @@ function SetThemeOptions()
 				]
 			);
 			$customFields = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$customFields[] = $row['col_name'];
 			$smcFunc['db']->free_result($request);
 		}
@@ -567,7 +567,7 @@ function SetThemeOptions()
 			]
 		);
 		$context['theme_options'] = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 
@@ -714,7 +714,7 @@ function SetThemeSettings()
 		// If we're actually inserting something..
 		if (!empty($inserts))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$inserts,
@@ -914,7 +914,7 @@ function PickTheme()
 			// A variants to save for the user?
 			if (!empty($_GET['vrt']))
 			{
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}themes',
 					['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 					[$_GET['th'], $user_info['id'], 'theme_variant', $_GET['vrt']],
@@ -931,7 +931,7 @@ function PickTheme()
 		// If changing members or guests - and there's a variant - assume changing default variant.
 		if (!empty($_GET['vrt']) && ($_REQUEST['u'] == '0' || $_REQUEST['u'] == '-1'))
 		{
-			$smcFunc['db_insert']('replace',
+			$smcFunc['db']->insert('replace',
 				'{db_prefix}themes',
 				['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				[$_GET['th'], 0, 'default_variant', $_GET['vrt']],
@@ -981,7 +981,7 @@ function PickTheme()
 
 			if (!empty($_GET['vrt']))
 			{
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}themes',
 					['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 					[$_GET['th'], (int) $_REQUEST['u'], 'theme_variant', $_GET['vrt']],
@@ -1029,7 +1029,7 @@ function PickTheme()
 				'current_member' => $context['current_member'],
 			]
 		);
-		list ($context['current_theme']) = $smcFunc['db_fetch_row']($request);
+		list ($context['current_theme']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1057,7 +1057,7 @@ function PickTheme()
 				'enable_themes' => explode(',', $modSettings['enableThemes']),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($context['available_themes'][$row['id_theme']]))
 				$context['available_themes'][$row['id_theme']] = [
@@ -1089,7 +1089,7 @@ function PickTheme()
 		[
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Figure out which theme it is they are REALLY using.
 		if (!empty($modSettings['knownThemes']) && !in_array($row['id_theme'], explode(',', $modSettings['knownThemes'])))
@@ -1119,7 +1119,7 @@ function PickTheme()
 				'id_member' => isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? [-1, $context['current_member']] : [-1],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$variant_preferences[$row['id_theme']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1446,7 +1446,7 @@ function SetJavaScript()
 	}
 
 	// Update the option.
-	$smcFunc['db_insert']('replace',
+	$smcFunc['db']->insert('replace',
 		'{db_prefix}themes',
 		['id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 		[$settings['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']],

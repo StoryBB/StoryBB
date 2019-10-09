@@ -662,7 +662,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 		);
 	}
 	$files = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$files[] = $row;
 	$smcFunc['db']->free_result($request);
 
@@ -705,7 +705,7 @@ function list_getNumFiles($browse_type)
 			]
 		);
 
-	list ($num_files) = $smcFunc['db_fetch_row']($request);
+	list ($num_files) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $num_files;
@@ -738,7 +738,7 @@ function MaintainFiles()
 			'guest_id_member' => 0,
 		]
 	);
-	list ($context['num_attachments']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_attachments']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$context['num_attachments'] = comma_format($context['num_attachments'], 0);
 
@@ -753,7 +753,7 @@ function MaintainFiles()
 			'export' => Attachment::ATTACHMENT_EXPORT,
 		]
 	);
-	list ($context['num_avatars']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_avatars']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$context['num_avatars'] = comma_format($context['num_avatars'], 0);
 
@@ -765,7 +765,7 @@ function MaintainFiles()
 			'export' => Attachment::ATTACHMENT_EXPORT,
 		]
 	);
-	list ($context['num_exports']) = $smcFunc['db_fetch_row']($request);
+	list ($context['num_exports']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$context['num_exports'] = comma_format($context['num_exports'], 0);
 
@@ -778,7 +778,7 @@ function MaintainFiles()
 			'type' => Attachment::ATTACHMENT_AVATAR,
 		]
 	);
-	list ($attachmentDirSize) = $smcFunc['db_fetch_row']($request);
+	list ($attachmentDirSize) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Divide it into kilobytes.
@@ -795,7 +795,7 @@ function MaintainFiles()
 			'type' => Attachment::ATTACHMENT_AVATAR,
 		]
 	);
-	list ($current_dir_files, $current_dir_size) = $smcFunc['db_fetch_row']($request);
+	list ($current_dir_files, $current_dir_size) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 	$current_dir_size /= 1024;
 
@@ -1063,7 +1063,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 		WHERE ' . $condition,
 		$query_parameter
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Figure out the "encrypted" filename and unlink it ;).
 		if ($row['attachment_type'] == 1)
@@ -1127,7 +1127,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			logAction(
 				'remove_attach',
 				[
@@ -1219,7 +1219,7 @@ function RepairAttachments()
 				'thumbnail' => 3,
 			]
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
+		list ($thumbnails) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
@@ -1238,7 +1238,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				// Only do anything once... just in case
 				if (!isset($to_remove[$row['id_attach']]))
@@ -1289,7 +1289,7 @@ function RepairAttachments()
 				'no_thumb' => 0,
 			]
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
+		list ($thumbnails) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
@@ -1308,7 +1308,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_update[] = $row['id_attach'];
 				$context['repair_errors']['parent_missing_thumbnail']++;
@@ -1346,7 +1346,7 @@ function RepairAttachments()
 			[
 			]
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
+		list ($thumbnails) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 250)
@@ -1362,7 +1362,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				// Get the filename.
 				if ($row['attachment_type'] == 1)
@@ -1494,7 +1494,7 @@ function RepairAttachments()
 			[
 			]
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
+		list ($thumbnails) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
@@ -1517,7 +1517,7 @@ function RepairAttachments()
 					'export' => Attachment::ATTACHMENT_EXPORT,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['avatar_no_member']++;
@@ -1567,7 +1567,7 @@ function RepairAttachments()
 			[
 			]
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
+		list ($thumbnails) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
@@ -1596,7 +1596,7 @@ function RepairAttachments()
 				]
 			);
 			
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = $smcFunc['db']->fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['attachment_no_msg']++;
@@ -1811,7 +1811,7 @@ function ApproveAttach()
 				'attachment_type' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$attachments[] = $row['id_attach'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1839,7 +1839,7 @@ function ApproveAttach()
 		]
 	);
 	$attachments = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We can only add it if we can approve in this board!
 		if ($allowed_boards = [0] || in_array($row['id_board'], $allowed_boards))
@@ -1895,7 +1895,7 @@ function ApproveAttachments($attachments)
 		]
 	);
 	$attachments = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Update the thumbnail too...
 		if (!empty($row['id_thumb']))
@@ -1932,7 +1932,7 @@ function ApproveAttachments($attachments)
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		logAction(
 			'approve_attach',
 			[
@@ -2069,7 +2069,7 @@ function ManageAttachmentPaths()
 						]
 					);
 
-					list ($num_attach) = $smcFunc['db_fetch_row']($request);
+					list ($num_attach) = $smcFunc['db']->fetch_row($request);
 					$smcFunc['db']->free_result($request);
 
 					// A check to see if it's a used base dir.
@@ -2501,7 +2501,7 @@ function list_getAttachDirs()
 
 	$expected_files = [];
 	$expected_size = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$expected_files[$row['id_folder']] = $row['num_attach'];
 		$expected_size[$row['id_folder']] = $row['size_attach'];
@@ -2694,7 +2694,7 @@ function TransferAttachments()
 				'attachment_type' => 1,
 			]
 		);
-		list ($total_progress) = $smcFunc['db_fetch_row']($request);
+		list ($total_progress) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		$total_progress -= $start;
 
@@ -2741,7 +2741,7 @@ function TransferAttachments()
 						'attachment_type' => 1,
 					]
 				);
-				list ($dir_files, $dir_size) = $smcFunc['db_fetch_row']($request);
+				list ($dir_files, $dir_size) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 			}
 
@@ -2772,7 +2772,7 @@ function TransferAttachments()
 
 			// Move them
 			$moved = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$source = Attachment::get_filename($row['filename'], $row['id_attach'], $row['id_folder'], $row['file_hash']);
 				$dest = $modSettings['attachmentUploadDir'][$new_dir] . '/' . basename($source);

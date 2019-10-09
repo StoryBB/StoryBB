@@ -41,7 +41,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 		$affected_users = [];
 		$members = [];
 		$alert_rows = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$members[] = $row['id_member'];
 			$row['lngfile'] = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
@@ -140,7 +140,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 
 			// Insert the alerts if any
 			if (!empty($alert_rows))
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}user_alerts',
 					[
 						'alert_time' => 'int', 'id_member' => 'int', 'content_type' => 'string',

@@ -65,14 +65,14 @@ function markBoardsRead($boards, $unread = false)
 			$markRead[] = [$modSettings['maxMsgID'], $user_info['id'], $board];
 
 		// Update log_mark_read and log_boards.
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_mark_read',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			$markRead,
 			['id_board', 'id_member']
 		);
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_boards',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 			$markRead,
@@ -92,7 +92,7 @@ function markBoardsRead($boards, $unread = false)
 			'current_member' => $user_info['id'],
 		]
 	);
-	list ($lowest_topic) = $smcFunc['db_fetch_row']($result);
+	list ($lowest_topic) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if (empty($lowest_topic))
@@ -114,7 +114,7 @@ function markBoardsRead($boards, $unread = false)
 		]
 	);
 	$topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 		$topics[] = $row['id_topic'];
 	$smcFunc['db']->free_result($result);
 
@@ -153,7 +153,7 @@ function MarkRead()
 			]
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 			$boards[] = $row['id_board'];
 		$smcFunc['db']->free_result($result);
 
@@ -185,7 +185,7 @@ function MarkRead()
 			]
 		);
 		$logged_topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$logged_topics[$row['id_topic']] = $row['unwatched'];
 		$smcFunc['db']->free_result($request);
 
@@ -193,7 +193,7 @@ function MarkRead()
 		foreach ($topics as $id_topic)
 			$markRead[] = [$modSettings['maxMsgID'], $user_info['id'], $id_topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
 
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			$markRead,
@@ -220,7 +220,7 @@ function MarkRead()
 				'current_member' => $user_info['id'],
 			]
 		);
-		$topicinfo = $smcFunc['db_fetch_assoc']($result);
+		$topicinfo = $smcFunc['db']->fetch_assoc($result);
 		$smcFunc['db']->free_result($result);
 
 		// Marking read from first page?  That's the whole topic.
@@ -242,14 +242,14 @@ function MarkRead()
 					'member' => $user_info['id'],
 				]
 			);
-			list ($earlyMsg) = $smcFunc['db_fetch_row']($result);
+			list ($earlyMsg) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			$earlyMsg--;
 		}
 
 		// Blam, unread!
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}log_topics',
 			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			[$earlyMsg, $user_info['id'], $topic, $topicinfo['unwatched']],
@@ -296,7 +296,7 @@ function MarkRead()
 					'board_list' => $boards,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				if (in_array($row['id_parent'], $boards))
 					$boards[] = $row['id_board'];
 			$smcFunc['db']->free_result($request);
@@ -327,7 +327,7 @@ function MarkRead()
 			])
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -357,10 +357,10 @@ function MarkRead()
 			if ($smcFunc['db']->num_rows($result) > 0)
 			{
 				$logBoardInserts = [];
-				while ($row = $smcFunc['db_fetch_assoc']($result))
+				while ($row = $smcFunc['db']->fetch_assoc($result))
 					$logBoardInserts[] = [$modSettings['maxMsgID'], $user_info['id'], $row['id_board']];
 
-				$smcFunc['db_insert']('replace',
+				$smcFunc['db']->insert('replace',
 					'{db_prefix}log_boards',
 					['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
 					$logBoardInserts,
@@ -405,7 +405,7 @@ function getMsgMemberID($messageID)
 		]
 	);
 	if ($smcFunc['db']->num_rows($result) > 0)
-		list ($memberID) = $smcFunc['db_fetch_row']($result);
+		list ($memberID) = $smcFunc['db']->fetch_row($result);
 	// The message doesn't even exist.
 	else
 		$memberID = 0;
@@ -572,7 +572,7 @@ function modifyBoard($board_id, &$boardOptions)
 					'board_parent' => (int) $board_parent,
 				]
 			);
-			list ($boardOptions['profile']) = $smcFunc['db_fetch_row']($request);
+			list ($boardOptions['profile']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 	}
@@ -711,7 +711,7 @@ function modifyBoard($board_id, &$boardOptions)
 						'limit' => count($moderators),
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 					$boardOptions['moderators'][] = $row['id_member'];
 				$smcFunc['db']->free_result($request);
 			}
@@ -724,7 +724,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderators'] as $moderator)
 				$inserts[] = [$board_id, $moderator];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}moderators',
 				['id_board' => 'int', 'id_member' => 'int'],
 				$inserts,
@@ -776,7 +776,7 @@ function modifyBoard($board_id, &$boardOptions)
 						'limit' => count($moderator_groups),
 					]
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					$boardOptions['moderator_groups'][] = $row['id_group'];
 				}
@@ -791,7 +791,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderator_groups'] as $moderator_group)
 				$inserts[] = [$board_id, $moderator_group];
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}moderator_groups',
 				['id_board' => 'int', 'id_group' => 'int'],
 				$inserts,
@@ -856,7 +856,7 @@ function createBoard($boardOptions)
 	call_integration_hook('integrate_create_board', [&$boardOptions, &$board_columns, &$board_parameters]);
 
 	// Insert a board, the settings are dealt with later.
-	$board_id = $smcFunc['db_insert']('',
+	$board_id = $smcFunc['db']->insert('',
 		'{db_prefix}boards',
 		$board_columns,
 		$board_parameters,
@@ -939,7 +939,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 		]
 	);
 	$topics = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$topics[] = $row['id_topic'];
 	$smcFunc['db']->free_result($request);
 
@@ -1066,7 +1066,7 @@ function fixChildren($parent, $newLevel, $newParent)
 		]
 	);
 	$children = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 		$children[] = $row['id_board'];
 	$smcFunc['db']->free_result($result);
 
@@ -1117,7 +1117,7 @@ function getTreeOrder()
 		ORDER BY b.board_order',
 		[]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!in_array($row['id_cat'], $tree_order['cats']))
 			$tree_order['cats'][] = $row['id_cat'];
@@ -1199,7 +1199,7 @@ function getBoardModerators(array $boards)
 		]
 	);
 	$moderators = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($moderators[$row['id_board']]))
 			$moderators[$row['id_board']] = [];
@@ -1239,7 +1239,7 @@ function getBoardModeratorGroups(array $boards)
 		]
 	);
 	$groups = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (empty($groups[$row['id_board']]))
 			$groups[$row['id_board']] = [];
@@ -1295,7 +1295,7 @@ function getBoardTree()
 	$cat_tree = [];
 	$boards = [];
 	$last_board_order = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($cat_tree[$row['id_cat']]))
 		{

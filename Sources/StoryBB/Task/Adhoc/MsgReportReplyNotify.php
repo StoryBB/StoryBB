@@ -38,7 +38,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				'last_comment' => $this->_details['comment_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 			$possible_members[] = $row[0];
 		$smcFunc['db']->free_result($request);
 
@@ -65,7 +65,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				'current_board' => $this->_details['board_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -83,7 +83,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$members[] = $row['id_member'];
 		$smcFunc['db']->free_result($request);
 
@@ -135,7 +135,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				];
 			}
 
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
 					'member_name' => 'string', 'content_type' => 'string', 'content_id' => 'int',
@@ -166,7 +166,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 					'members' => $notifies['email'],
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				if (empty($row['lngfile']))
 					$row['lngfile'] = $language;
@@ -184,7 +184,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 					'report' => $this->_details['report_id'],
 				]
 			);
-			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
+			list ($subject, $poster_name, $comment) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Third, iterate through each language, load the relevant templates and set up sending.

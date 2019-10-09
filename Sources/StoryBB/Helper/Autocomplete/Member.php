@@ -46,7 +46,7 @@ class Member extends AbstractCompletable implements Completable
 				'search' => $this->escape_term($this->term),
 			]
 		);
-		list ($count) = $smcFunc['db_fetch_row']($request);
+		list ($count) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
@@ -94,7 +94,7 @@ class Member extends AbstractCompletable implements Completable
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$result[] = [
 				'id' => $row['id_member'],
@@ -132,7 +132,7 @@ class Member extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$this->default[$row['id_member']] = $row;
 		}

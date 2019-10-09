@@ -127,7 +127,7 @@ function UnapprovedPosts()
 		);
 		$toAction = [];
 		$details = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// If it's not within what our view is ignore it...
 			if (($row['id_msg'] == $row['id_first_msg'] && $context['current_view'] != 'topics') || ($row['id_msg'] != $row['id_first_msg'] && $context['current_view'] != 'replies'))
@@ -193,7 +193,7 @@ function UnapprovedPosts()
 			'not_approved' => 0,
 		]
 	);
-	list ($context['total_unapproved_posts']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_unapproved_posts']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// What about topics?  Normally we'd use the table alias t for topics but lets use m so we don't have to redo our approve query.
@@ -208,7 +208,7 @@ function UnapprovedPosts()
 			'not_approved' => 0,
 		]
 	);
-	list ($context['total_unapproved_topics']) = $smcFunc['db_fetch_row']($request);
+	list ($context['total_unapproved_topics']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Limit to how many? (obey the user setting)
@@ -257,7 +257,8 @@ function UnapprovedPosts()
 		]
 	);
 	$context['unapproved_items'] = [];
-	for ($i = 1; $row = $smcFunc['db_fetch_assoc']($request); $i++)
+	$i = 1;
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
 		if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == [0] || in_array($row['id_board'], $delete_own_boards)))
@@ -300,6 +301,7 @@ function UnapprovedPosts()
 			],
 			'can_delete' => $can_delete,
 		];
+		$i++;
 	}
 	$smcFunc['db']->free_result($request);
 
@@ -368,7 +370,7 @@ function UnapprovedAttachments()
 			]
 		);
 		$attachments = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$attachments[] = $row['id_attach'];
 		$smcFunc['db']->free_result($request);
 
@@ -573,7 +575,7 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 	);
 
 	$unapproved_items = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$unapproved_items[] = [
 			'id' => $row['id_attach'],
@@ -637,7 +639,7 @@ function list_getNumUnapprovedAttachments($approve_query)
 			'attachment_type' => 0,
 		]
 	);
-	list ($total_unapproved_attachments) = $smcFunc['db_fetch_row']($request);
+	list ($total_unapproved_attachments) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $total_unapproved_attachments;
@@ -670,7 +672,7 @@ function ApproveMessage()
 			'id_msg' => $_REQUEST['msg'],
 		]
 	);
-	list ($starter, $first_msg, $poster, $subject, $approved) = $smcFunc['db_fetch_row']($request);
+	list ($starter, $first_msg, $poster, $subject, $approved) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// If it's the first in a topic then the whole topic gets approved!
@@ -741,7 +743,7 @@ function approveAllData()
 		]
 	);
 	$msgs = [];
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$msgs[] = $row[0];
 	$smcFunc['db']->free_result($request);
 
@@ -761,7 +763,7 @@ function approveAllData()
 		]
 	);
 	$attaches = [];
-	while ($row = $smcFunc['db_fetch_row']($request))
+	while ($row = $smcFunc['db']->fetch_row($request))
 		$attaches[] = $row[0];
 	$smcFunc['db']->free_result($request);
 

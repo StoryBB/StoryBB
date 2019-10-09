@@ -313,7 +313,7 @@ function list_getLanguages()
 		GROUP BY lngfile',
 		[]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Default?
 		if (empty($row['lngfile']) || !isset($languages[$row['lngfile']]))

@@ -204,7 +204,7 @@ class Likes
 				]
 			);
 			if ($smcFunc['db']->num_rows($request) == 1)
-				list ($this->_idTopic, $topicOwner) = $smcFunc['db_fetch_row']($request);
+				list ($this->_idTopic, $topicOwner) = $smcFunc['db']->fetch_row($request);
 
 			$smcFunc['db']->free_result($request);
 			if (empty($this->_idTopic))
@@ -307,7 +307,7 @@ class Likes
 		call_integration_hook('integrate_issue_like_before', [&$type, &$content, &$user, &$time]);
 
 		// Insert the like.
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}user_likes',
 			['content_id' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'],
 			[$content, $type, $user['id'], $time],
@@ -351,7 +351,7 @@ class Likes
 				'like_type' => $this->_type,
 			]
 		);
-		list ($this->_numLikes) = $smcFunc['db_fetch_row']($request);
+		list ($this->_numLikes) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// If you want to call this directly, fill out _data property too.
@@ -483,7 +483,7 @@ class Likes
 				'like_type' => $this->_type,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['likers'][$row['id_member']] = ['timestamp' => $row['like_time']];
 
 		// Now to get member data, including avatars and so on.

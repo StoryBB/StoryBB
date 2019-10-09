@@ -73,7 +73,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$watched = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groups = array_merge([$row['id_group']], (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 			if (!in_array(1, $groups) && count(array_intersect($groups, explode(',', $row['member_groups']))) == 0)
@@ -208,7 +208,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		}
 
 		// Insert it into the digest for daily/weekly notifications
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}log_digest',
 			[
 				'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
@@ -221,7 +221,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		if (!empty($alert_rows))
 		{
 			header('X-Debug: ' . json_encode($alert_rows));
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int', 'chars_dest' => 'int',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
@@ -373,7 +373,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($posterOptions['id'] == $row['id_member'])
 				continue;

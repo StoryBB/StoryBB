@@ -74,7 +74,7 @@ class Database
 			$engines = [];
 			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
 
-			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
+			while ($row = $smcFunc['db']->fetch_assoc($get_engines))
 			{
 				if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
 					$engines[] = $row['Engine'];

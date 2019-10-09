@@ -155,7 +155,7 @@ function AdminRegister()
 			]
 		);
 		$context['member_groups'] = [0 => $txt['admin_register_group_none']];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$context['member_groups'][$row['id_group']] = $row['group_name'];
 		$smcFunc['db']->free_result($request);
 	}

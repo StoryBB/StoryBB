@@ -200,11 +200,11 @@ function MLAll()
 
 			for ($i = 0, $n = $smcFunc['db']->num_rows($request); $i < $n; $i += $cache_step_size)
 			{
-				$smcFunc['db_data_seek']($request, $i);
-				list($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
+				$smcFunc['db']->seek($request, $i);
+				list($memberlist_cache['index'][$i]) = $smcFunc['db']->fetch_row($request);
 			}
-			$smcFunc['db_data_seek']($request, $memberlist_cache['num_members'] - 1);
-			list ($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db']->seek($request, $memberlist_cache['num_members'] - 1);
+			list ($memberlist_cache['index'][$i]) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Now we've got the cache...store it.
@@ -225,7 +225,7 @@ function MLAll()
 				'is_activated' => 1,
 			]
 		);
-		list ($context['num_members']) = $smcFunc['db_fetch_row']($request);
+		list ($context['num_members']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -250,7 +250,7 @@ function MLAll()
 				'first_letter' => $_REQUEST['start'],
 			]
 		);
-		list ($_REQUEST['start']) = $smcFunc['db_fetch_row']($request);
+		list ($_REQUEST['start']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -395,7 +395,7 @@ function MLSearch()
 		]
 	);
 	$context['custom_search_fields'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['custom_search_fields'][$row['col_name']] = [
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
@@ -514,7 +514,7 @@ function MLSearch()
 				AND mem.is_activated = {int:is_activated}',
 			$query_parameters
 		);
-		list ($numResults) = $smcFunc['db_fetch_row']($request);
+		list ($numResults) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
@@ -599,7 +599,7 @@ function printMemberListRows($request)
 		[
 		]
 	);
-	list ($most_posts) = $smcFunc['db_fetch_row']($result);
+	list ($most_posts) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	// Avoid division by zero...
@@ -607,7 +607,7 @@ function printMemberListRows($request)
 		$most_posts = 1;
 
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$members[] = $row['id_member'];
 
 	// Load all the members for display.
@@ -677,7 +677,7 @@ function getCustFieldsMList()
 		]
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Get all the data we're gonna need.
 		$cpf['columns'][$row['col_name']] = [

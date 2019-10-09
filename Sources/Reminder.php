@@ -101,7 +101,7 @@ function RemindPick()
 			fatal_lang_error('no_user_with_email', false);
 	}
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If the user isn't activated/approved, give them some feedback on what to do next.
@@ -231,7 +231,7 @@ function setPassword2()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('invalid_userid', false);
 
-	list ($realCode, $username, $email, $flood_value) = $smcFunc['db_fetch_row']($request);
+	list ($realCode, $username, $email, $flood_value) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Is the password actually valid?
@@ -302,7 +302,7 @@ function SecretAnswerInput()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If there is NO secret question - then throw an error.
@@ -348,7 +348,7 @@ function SecretAnswer2()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Check if the secret answer is correct.

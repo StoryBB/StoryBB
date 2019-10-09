@@ -268,7 +268,7 @@ function Login2()
 		return;
 	}
 
-	$user_settings = $smcFunc['db_fetch_assoc']($request);
+	$user_settings = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Bad password!  Thought you could fool the database?!
@@ -513,7 +513,7 @@ function DoLogin()
 
 	// Log this entry, only if we have it enabled.
 	if (!empty($modSettings['loginHistoryDays']))
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}member_logins',
 			[
 				'id_member' => 'int', 'time' => 'int', 'ip' => 'inet', 'ip2' => 'inet',

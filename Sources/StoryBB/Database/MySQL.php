@@ -12,6 +12,7 @@
 
 namespace StoryBB\Database;
 
+use mysqli_result;
 use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Database\Exception\ConnectionFailedException;
 use StoryBB\Database\Exception\CouldNotSelectDatabaseException;
@@ -115,10 +116,6 @@ class MySQL implements DatabaseAdapter
 		mysqli_query($this->connection, "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
 
 		mysqli_set_charset($this->connection, 'utf8mb4');
-
-		// Dirty compatibility hack.
-		global $db_connection;
-		$db_connection = $this->connection;
 	}
 
 	/**
@@ -249,8 +246,6 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function list_tables($filter = null, $db = null)
 	{
-		global $smcFunc;
-
 		$db = $db === null ? $this->db_name : $db;
 		$db = trim($db);
 		$filter = $filter === null ? '' : ' LIKE \'' . $filter . '\'';
@@ -265,7 +260,7 @@ class MySQL implements DatabaseAdapter
 			]
 		);
 		$tables = [];
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $this->fetch_row($request))
 			$tables[] = $row[0];
 		$this->free_result($request);
 
@@ -447,6 +442,49 @@ class MySQL implements DatabaseAdapter
 	}
 
 	/**
+	 * Function to save errors in database in a safe way
+	 *
+	 * @param array with keys in this order id_member, log_time, ip, url, message, session, error_type, file, line
+	 * @return void
+	 */
+	public function error_insert($error_array)
+	{
+		static $mysql_error_data_prep;
+
+		if (empty($mysql_error_data_prep))
+		{
+			$mysql_error_data_prep = mysqli_prepare($this->connection,
+				'INSERT INTO ' . $this->db_prefix . 'log_errors(id_member, log_time, ip, url, message, session, error_type, file, line)
+				VALUES(?, ?, unhex(?), ?, ?, ?, ?, ?, ?)'
+			);
+		}
+
+		if (filter_var($error_array[2], FILTER_VALIDATE_IP) !== false)
+		{
+			$error_array[2] = bin2hex(inet_pton($error_array[2]));
+		}
+		else
+		{
+			$error_array[2] = null;
+		}
+
+		mysqli_stmt_bind_param($mysql_error_data_prep, 'iissssssi', 
+			$error_array[0], $error_array[1], $error_array[2], $error_array[3], $error_array[4], $error_array[5], $error_array[6],
+			$error_array[7], $error_array[8]);
+		mysqli_stmt_execute ($mysql_error_data_prep);
+	}
+
+	public function error_message()
+	{
+		return mysqli_error($this->connection);
+	}
+
+	public function error_code()
+	{
+		return mysqli_errno($this->connection);
+	}
+
+	/**
 	 * Do a query.  Takes care of errors too.
 	 *
 	 * @param string $identifier An identifier.
@@ -457,7 +495,7 @@ class MySQL implements DatabaseAdapter
 	public function query($identifier, $db_string, $db_values = [])
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
-		global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
+		global $db_unbuffered, $db_callback, $modSettings;
 
 		// Comments that are allowed in a query are preg_removed.
 		static $allowed_comments_from = [
@@ -485,7 +523,7 @@ class MySQL implements DatabaseAdapter
 			catch (\Exception $e)
 			{
 				// We're not connected, guess we're going nowhere.
-				$this->error_backtrace('No longer connected to database.', $smcFunc['db_error'](), true, __FILE__, __LINE__);
+				$this->error_backtrace('No longer connected to database.', $this->error_message(), true, __FILE__, __LINE__);
 			}
 		}
 
@@ -830,5 +868,525 @@ class MySQL implements DatabaseAdapter
 				$this->error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
 			}
 		}, $db_string);
+	}
+
+	/**
+	 * Inserts data into a table
+	 *
+	 * @param string $method The insert method - can be 'replace', 'ignore' or 'insert'
+	 * @param string $table The table we're inserting the data into
+	 * @param array $columns An array of the columns we're inserting the data into. Should contain 'column' => 'datatype' pairs
+	 * @param array $data The data to insert
+	 * @param array $keys The keys for the table
+	 * @param int returnmode 0 = nothing(default), 1 = last row id, 2 = all rows id as array
+	 * @return mixed value of the first key, behavior based on returnmode. null if no data.
+	 */
+	public function insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
+	{
+		global $db_prefix;
+		
+		$return_var = null;
+
+		// With nothing to insert, simply return.
+		if (empty($data))
+			return;
+
+		// Replace the prefix holder with the actual prefix.
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+		
+		$with_returning = false;
+		
+		if (!empty($keys) && (count($keys) > 0) && $returnmode > 0)
+		{
+			$with_returning = true;
+			if ($returnmode == 2)
+				$return_var = [];
+		}
+
+		// Inserting data as a single row can be done as a single array.
+		if (!is_array($data[array_rand($data)]))
+			$data = [$data];
+
+		// Create the mold for a single row insert.
+		$insertData = '(';
+		foreach ($columns as $columnName => $type)
+		{
+			// Are we restricting the length?
+			if (strpos($type, 'string-') !== false)
+				$insertData .= sprintf('SUBSTRING({string:%1$s}, 1, ' . substr($type, 7) . '), ', $columnName);
+			else
+				$insertData .= sprintf('{%1$s:%2$s}, ', $type, $columnName);
+		}
+		$insertData = substr($insertData, 0, -2) . ')';
+
+		// Create an array consisting of only the columns.
+		$indexed_columns = array_keys($columns);
+
+		// Here's where the variables are injected to the query.
+		$insertRows = [];
+		foreach ($data as $dataRow)
+			$insertRows[] = $this->quote($insertData, array_combine($indexed_columns, $dataRow));
+
+		// Determine the method of insertion.
+		$queryTitle = $method == 'replace' ? 'REPLACE' : ($method == 'ignore' ? 'INSERT IGNORE' : 'INSERT');
+
+		if (!$with_returning || $method != 'ingore')
+		{
+			// Do the insert.
+			$result = $this->query('', '
+				' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
+				VALUES
+					' . implode(',
+					', $insertRows),
+				[
+					'security_override' => true,
+					'db_error_skip' => $table === $db_prefix . 'log_errors',
+					'safe_mode' => $safe_mode
+				]
+			);
+			if ($safe_mode)
+			{
+				return $result;
+			}
+		}
+		else //special way for ignore method with returning
+		{
+			$count = count($insertRows);
+			$ai = 0;
+			for($i = 0; $i < $count; $i++)
+			{
+				$old_id = $this->inserted_id();
+				
+				$result = $this->query('', '
+					' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
+					VALUES
+						' . $insertRows[$i],
+					[
+						'security_override' => true,
+						'db_error_skip' => $table === $db_prefix . 'log_errors',
+						'safe_mode' => $safe_mode,
+					]
+				);
+				if ($safe_mode)
+				{
+					return $result;
+				}
+				$new_id = $this->inserted_id();
+				
+				if ($last_id != $new_id) //the inserted value was new
+				{
+					$ai = $new_id;
+				}
+				else	// the inserted value already exists we need to find the pk
+				{
+					$where_string = '';
+					$count2 = count($indexed_columns);
+					for ($x = 0; $x < $count2; $x++)
+					{
+						$where_string += key($indexed_columns[$x]) . ' = '. $insertRows[$i][$x];
+						if (($x + 1) < $count2)
+							$where_string += ' AND ';
+					}
+
+					$request = $this->query('', '
+						SELECT `'. $keys[0] . '` FROM ' . $table .'
+						WHERE ' . $where_string . ' LIMIT 1',
+						[]
+					);
+					
+					if ($request !== false && $this->num_rows($request) == 1)
+					{
+						$row = $this->fetch_assoc($request);
+						$ai = $row[$keys[0]];
+					}
+				}
+				
+				if ($returnmode == 1)
+					$return_var = $ai;
+				elseif ($returnmode == 2)
+					$return_var[] = $ai;
+			}
+		}
+		
+
+		if ($with_returning)
+		{
+			if ($returnmode == 1 && empty($return_var))
+				$return_var = $this->inserted_id() + count($insertRows) - 1;
+			elseif ($returnmode == 2 && empty($return_var))
+			{
+				$return_var = [];
+				$count = count($insertRows);
+				$start = $this->inserted_id();
+				for ($i = 0; $i < $count; $i++)
+					$return_var[] = $start + $i;
+			}
+			return $return_var;
+		}
+	}
+
+	public function fetch_assoc(mysqli_result $result)
+	{
+		return mysqli_fetch_assoc($result);
+	}
+
+	public function fetch_row(mysqli_result $result)
+	{
+		return mysqli_fetch_row($result);
+	}
+
+	public function escape_string($string)
+	{
+		return addslashes($string);
+	}
+
+	public function unescape_string($string)
+	{
+		return stripslashes($string);
+	}
+
+	public function seek($result, $offset)
+	{
+		return mysqli_data_seek($result, $offset);
+	}
+
+	/**
+	 * Escape the LIKE wildcards so that they match the character and not the wildcard.
+	 *
+	 * @param string $string The string to escape
+	 * @param bool $translate_human_wildcards If true, turns human readable wildcards into SQL wildcards.
+	 * @return string The escaped string
+	 */
+	public function escape_wildcard_string($string, $translate_human_wildcards = false)
+	{
+		$replacements = [
+			'%' => '\%',
+			'_' => '\_',
+			'\\' => '\\\\',
+		];
+
+		if ($translate_human_wildcards)
+			$replacements += [
+				'*' => '%',
+			];
+
+		return strtr($string, $replacements);
+	}
+
+	/**
+	 * Validates whether the resource is a valid mysqli_result instance.
+	 *
+	 * @param mixed $result The string to test
+	 * @return bool True if it is, false otherwise
+	 */
+	public function is_query_result($result)
+	{
+		return $result instanceof mysqli_result;
+	}
+
+	/**
+	 * Function which constructs an optimize custom order string
+	 * as an improved alternative to find_in_set()
+	 *
+	 * @param string $field name
+	 * @param array $array_values Field values sequenced in array via order priority. Must cast to int.
+	 * @param boolean $desc default false
+	 * @return string case field when ... then ... end
+	 */
+	public function custom_order($field, $array_values, $desc = false)
+	{
+		$return = 'CASE '. $field . ' ';
+		$count = count($array_values);
+		$then = ($desc ? ' THEN -' : ' THEN ');
+
+		for ($i = 0; $i < $count; $i++)
+			$return .= 'WHEN ' . (int) $array_values[$i] . $then . $i . ' ';
+
+		$return .= 'END';
+		return $return;
+	}
+
+	/**
+	 *  Get the MySQL version number.
+	 *  @return string The version
+	 */
+	public function get_version()
+	{
+		static $ver;
+
+		if (!empty($ver))
+			return $ver;
+
+		$request = $this->query('', 'SELECT VERSION()');
+		list ($ver) = $this->fetch_row($request);
+		$this->free_result($request);
+
+		return $ver;
+	}
+
+	/**
+	 * Figures out if we are using MySQL, Percona or MariaDB
+	 *
+	 * @return string The database engine we are using
+	*/
+	public function get_server()
+	{
+		static $db_type;
+
+		if (!empty($db_type))
+			return $db_type;
+
+		$request = $this->query('', 'SELECT @@version_comment');
+		list ($comment) = $this->fetch_row($request);
+		$this->free_result($request);
+
+		// Skip these if we don't have a comment.
+		if (!empty($comment))
+		{
+			if (stripos($comment, 'percona') !== false)
+				return 'Percona';
+			if (stripos($comment, 'mariadb') !== false)
+				return 'MariaDB';
+		}
+		else
+			return '(unknown)';
+
+		return 'MySQL';
+	}
+
+	/**
+	 * This function optimizes a table.
+	 * @param string $table The table to be optimized
+	 * @return int How much space was gained
+	 */
+	public function optimize_table($table)
+	{
+		global $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// Get how much overhead there is.
+		$request = $this->query('', '
+			SHOW TABLE STATUS LIKE {string:table_name}',
+			[
+				'table_name' => str_replace('_', '\_', $table),
+			]
+		);
+		$row = $this->fetch_assoc($request);
+		$this->free_result($request);
+
+		$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
+		$request = $this->query('', '
+			OPTIMIZE TABLE `{raw:table}`',
+			[
+				'table' => $table,
+			]
+		);
+		if (!$request)
+		{
+			return -1;
+		}
+
+		// How much left?
+		$request = $this->query('', '
+			SHOW TABLE STATUS LIKE {string:table}',
+			[
+				'table' => str_replace('_', '\_', $table),
+			]
+		);
+		$row = $this->fetch_assoc($request);
+		$this->free_result($request);
+
+		$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
+
+		return $total_change;
+	}
+
+	/**
+	 * Backup $table to $backup_table.
+	 * @param string $table The name of the table to backup
+	 * @param string $backup_table The name of the backup table for this table
+	 * @return resource -the request handle to the table creation query
+	 */
+	public function backup_table($table, $backup_table)
+	{
+		global $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// First, get rid of the old table.
+		$this->query('', '
+			DROP TABLE IF EXISTS {raw:backup_table}',
+			[
+				'backup_table' => $backup_table,
+			]
+		);
+
+		// Can we do this the quick way?
+		$result = $this->query('', '
+			CREATE TABLE {raw:backup_table} LIKE {raw:table}',
+			[
+				'backup_table' => $backup_table,
+				'table' => $table
+			]
+		);
+		// If this failed, we go old school.
+		if ($result)
+		{
+			$request = $this->query('', '
+				INSERT INTO {raw:backup_table}
+				SELECT *
+				FROM {raw:table}',
+				[
+					'backup_table' => $backup_table,
+					'table' => $table
+				]);
+
+			// Old school or no school?
+			if ($request)
+				return $request;
+		}
+
+		// At this point, the quick method failed.
+		$result = $this->query('', '
+			SHOW CREATE TABLE {raw:table}',
+			[
+				'table' => $table,
+			]
+		);
+		list (, $create) = $this->fetch_row($result);
+		$this->free_result($result);
+
+		$create = preg_split('/[\n\r]/', $create);
+
+		$auto_inc = '';
+		// Default engine type.
+		$engine = 'MyISAM';
+		$charset = '';
+		$collate = '';
+
+		foreach ($create as $k => $l)
+		{
+			// Get the name of the auto_increment column.
+			if (strpos($l, 'auto_increment'))
+				$auto_inc = trim($l);
+
+			// For the engine type, see if we can work out what it is.
+			if (strpos($l, 'ENGINE') !== false || strpos($l, 'TYPE') !== false)
+			{
+				// Extract the engine type.
+				preg_match('~(ENGINE|TYPE)=(\w+)(\sDEFAULT)?(\sCHARSET=(\w+))?(\sCOLLATE=(\w+))?~', $l, $match);
+
+				if (!empty($match[1]))
+					$engine = $match[1];
+
+				if (!empty($match[2]))
+					$engine = $match[2];
+
+				if (!empty($match[5]))
+					$charset = $match[5];
+
+				if (!empty($match[7]))
+					$collate = $match[7];
+			}
+
+			// Skip everything but keys...
+			if (strpos($l, 'KEY') === false)
+				unset($create[$k]);
+		}
+
+		if (!empty($create))
+			$create = '(
+				' . implode('
+				', $create) . ')';
+		else
+			$create = '';
+
+		$request = $this->query('', '
+			CREATE TABLE {raw:backup_table} {raw:create}
+			ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
+			SELECT *
+			FROM {raw:table}',
+			[
+				'backup_table' => $backup_table,
+				'table' => $table,
+				'create' => $create,
+				'engine' => $engine,
+				'charset' => empty($charset) ? '' : $charset,
+				'collate' => empty($collate) ? '' : $collate,
+			]
+		);
+
+		if ($auto_inc != '')
+		{
+			if (preg_match('~\`(.+?)\`\s~', $auto_inc, $match) != 0 && substr($auto_inc, -1, 1) == ',')
+				$auto_inc = substr($auto_inc, 0, -1);
+
+			$this->query('', '
+				ALTER TABLE {raw:backup_table}
+				CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
+				[
+					'backup_table' => $backup_table,
+					'column_detail' => $match[1],
+					'auto_inc' => $auto_inc,
+				]
+			);
+		}
+
+		return $request;
+	}
+
+	/**
+	 * This function will tell you whether this database type supports this search type.
+	 *
+	 * @param string $search_type The search type.
+	 * @return boolean Whether or not the specified search type is supported by this db system
+	 * @deprecated This should be abstracted out to the individual search backends properly
+	 */
+	public function search_support($search_type)
+	{
+		$supported_types = ['fulltext'];
+
+		return in_array($search_type, $supported_types);
+	}
+
+	/**
+	 * Whether this DB engine supports INSERT IGNORE
+	 * @deprecated
+	 * @return bool True if it is supported
+	 */
+	public function support_ignore(): bool
+	{
+		return true;
+	}
+
+	/**
+	 * Highly specific function, to create the custom word index table.
+	 *
+	 * @param string $size The size of the desired index.
+	 * @deprecated
+	 */
+	public function create_word_search($size)
+	{
+		global $smcFunc;
+
+		if ($size == 'small')
+			$size = 'smallint(5)';
+		elseif ($size == 'medium')
+			$size = 'mediumint(8)';
+		else
+			$size = 'int(10)';
+
+		$this->query('', '
+			CREATE TABLE {db_prefix}log_search_words (
+				id_word {raw:size} unsigned NOT NULL default {string:string_zero},
+				id_msg int(10) unsigned NOT NULL default {string:string_zero},
+				PRIMARY KEY (id_word, id_msg)
+			) ENGINE=InnoDB',
+			[
+				'string_zero' => '0',
+				'size' => $size,
+			]
+		);
 	}
 }

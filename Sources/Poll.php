@@ -49,7 +49,7 @@ function Vote()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('poll_error', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If this is a guest can they vote?
@@ -110,7 +110,7 @@ function Vote()
 				'id_poll' => $row['id_poll'],
 			]
 		);
-		while ($choice = $smcFunc['db_fetch_row']($request))
+		while ($choice = $smcFunc['db']->fetch_row($request))
 			$pollOptions[] = $choice[0];
 		$smcFunc['db']->free_result($request);
 
@@ -169,7 +169,7 @@ function Vote()
 	}
 
 	// Add their vote to the tally.
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}log_polls',
 		['id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'],
 		$inserts,
@@ -243,7 +243,7 @@ function LockVoting()
 			'current_topic' => $topic,
 		]
 	);
-	list ($memberID, $pollID, $voting_locked) = $smcFunc['db_fetch_row']($request);
+	list ($memberID, $pollID, $voting_locked) = $smcFunc['db']->fetch_row($request);
 
 	// If the user _can_ modify the poll....
 	if (!allowedTo('poll_lock_any'))
@@ -326,7 +326,7 @@ function EditPoll()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	// Get the poll information.
-	$pollinfo = $smcFunc['db_fetch_assoc']($request);
+	$pollinfo = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// If we are adding a new poll - make sure that there isn't already a poll there.
@@ -379,7 +379,7 @@ function EditPoll()
 				]
 			);
 			$context['choices'] = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				// Get the highest id so we can add more without reusing.
 				if ($row['id_choice'] >= $last_id)
@@ -506,7 +506,7 @@ function EditPoll()
 			);
 			$context['choices'] = [];
 			$number = 1;
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				censorText($row['label']);
 
@@ -621,7 +621,7 @@ function EditPoll2()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	$bcinfo = $smcFunc['db_fetch_assoc']($request);
+	$bcinfo = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Check their adding/editing is valid.
@@ -739,7 +739,7 @@ function EditPoll2()
 	else
 	{
 		// Create the poll.
-		$bcinfo['id_poll'] = $smcFunc['db_insert']('',
+		$bcinfo['id_poll'] = $smcFunc['db']->insert('',
 			'{db_prefix}polls',
 			[
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
@@ -775,7 +775,7 @@ function EditPoll2()
 		]
 	);
 	$choices = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$choices[] = $row['id_choice'];
 	$smcFunc['db']->free_result($request);
 
@@ -813,7 +813,7 @@ function EditPoll2()
 				]
 			);
 		else
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}poll_choices',
 				[
 					'id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255', 'votes' => 'int',
@@ -938,7 +938,7 @@ function RemovePoll()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		list ($topicStarter, $pollStarter) = $smcFunc['db_fetch_row']($request);
+		list ($topicStarter, $pollStarter) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		isAllowedTo('poll_remove_' . ($topicStarter == $user_info['id'] || ($pollStarter != 0 && $user_info['id'] == $pollStarter) ? 'own' : 'any'));
@@ -954,7 +954,7 @@ function RemovePoll()
 			'current_topic' => $topic,
 		]
 	);
-	list ($pollID) = $smcFunc['db_fetch_row']($request);
+	list ($pollID) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Remove all user logs for this poll.

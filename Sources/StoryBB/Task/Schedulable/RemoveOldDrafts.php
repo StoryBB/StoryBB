@@ -60,7 +60,7 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_row']($request))
+		while ($row = $smcFunc['db']->fetch_row($request))
 		{
 			$drafts[] = (int) $row[0];
 		}

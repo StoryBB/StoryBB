@@ -85,7 +85,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 	$admins = [];
 	$user_log_details = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['is_admin'])
 			$admins[] = $row['id_member'];
@@ -140,7 +140,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$characters[$row['id_character']] = $row['character_name'];
 	}
@@ -432,7 +432,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'buddy_list' => implode(', buddy_list) != 0 OR FIND_IN_SET(', $users),
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}members
 			SET
@@ -588,7 +588,7 @@ function registerMember(&$regOptions, $return_errors = false)
 				'new_name' => $regOptions['extra_register_vars']['first_char'],
 			]
 		);
-		list ($matching_names) = $smcFunc['db_fetch_row']($result);
+		list ($matching_names) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
 
 		if ($matching_names)
@@ -700,7 +700,7 @@ function registerMember(&$regOptions, $return_errors = false)
 					'is_protected' => 1,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$unassignableGroups[] = $row['id_group'];
 			}
@@ -759,7 +759,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	}
 
 	// Register them into the database.
-	$memberID = $smcFunc['db_insert']('',
+	$memberID = $smcFunc['db']->insert('',
 		'{db_prefix}members',
 		$column_names,
 		$values,
@@ -774,7 +774,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	// So at this point we've created the account, and we're going to be creating
 	// a character. More accurately, two - one for the 'main' and one for the 'character'.
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}characters',
 		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
@@ -793,7 +793,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	if (!empty($regOptions['extra_register_vars']['first_char']))
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
@@ -834,7 +834,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$inserts = [];
 		foreach ($theme_vars as $var => $val)
 			$inserts[] = [$memberID, $var, $val];
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}themes',
 			['id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 			$inserts,
@@ -1083,7 +1083,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 	}
@@ -1107,7 +1107,7 @@ function groupsAllowedTo($permission, $board_id = null)
 			);
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board');
-			list ($profile_id) = $smcFunc['db_fetch_row']($request);
+			list ($profile_id) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -1123,7 +1123,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
 		$smcFunc['db']->free_result($request);
 
@@ -1146,7 +1146,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				]
 			);
 
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$moderator_groups[] = $row['id_group'];
 			}
@@ -1219,7 +1219,7 @@ function membersAllowedTo($permission, $board_id = null)
 		]
 	);
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$members[] = $row['id_member'];
 	$smcFunc['db']->free_result($request);
 
@@ -1261,7 +1261,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			]
 		);
-		list ($email, $membername) = $smcFunc['db_fetch_row']($request);
+		list ($email, $membername) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1277,7 +1277,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			]
 		);
-		list ($characterID) = $smcFunc['db_fetch_row']($request);
+		list ($characterID) = $smcFunc['db']->fetch_row($request);
 	}
 
 	// If they want the post count restored then we need to do some research.
@@ -1302,7 +1302,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'recycled_board' => $recycle_board,
 			]
 		);
-		list ($messageCount) = $smcFunc['db_fetch_row']($request);
+		list ($messageCount) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		updateMemberData($memID, ['posts' => 'posts + ' . $messageCount]);
@@ -1449,7 +1449,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	);
 
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['member_ip'] = inet_dtop($row['member_ip']);
 		$row['member_ip2'] = inet_dtop($row['member_ip2']);
@@ -1489,7 +1489,7 @@ function list_getNumMembers($where, $where_params = [])
 			array_merge($where_params, [
 			])
 		);
-		list ($num_members) = $smcFunc['db_fetch_row']($request);
+		list ($num_members) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1537,7 +1537,7 @@ function populateDuplicateMembers(&$members)
 	);
 	$duplicate_members = [];
 	$duplicate_ids = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		//$duplicate_ids[] = $row['id_member'];
 		$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -1575,7 +1575,7 @@ function populateDuplicateMembers(&$members)
 	);
 
 	$had_ips = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['poster_ip'] = inet_dtop($row['poster_ip']);
 
@@ -1635,7 +1635,7 @@ function generateValidationCode()
 		]
 	);
 
-	list ($dbRand) = $smcFunc['db_fetch_row']($request);
+	list ($dbRand) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);

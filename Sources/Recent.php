@@ -43,7 +43,7 @@ function getLastPost()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		return [];
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Censor the subject and post...
@@ -100,7 +100,7 @@ function RecentPosts()
 					'id_cat' => $_REQUEST['c'][0],
 				]
 			);
-			list ($name) = $smcFunc['db_fetch_row']($request);
+			list ($name) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (empty($name))
@@ -129,7 +129,7 @@ function RecentPosts()
 		);
 		$total_cat_posts = 0;
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
@@ -173,7 +173,7 @@ function RecentPosts()
 		);
 		$total_posts = 0;
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
@@ -207,7 +207,7 @@ function RecentPosts()
 				'current_board' => $board,
 			]
 		);
-		list ($total_posts, $redirect) = $smcFunc['db_fetch_row']($request);
+		list ($total_posts, $redirect) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// If this is a redirection board, don't bother counting topics here...
@@ -251,7 +251,7 @@ function RecentPosts()
 			array_merge($query_these_boards_params, ['empty' => ''])
 		);
 
-		list($db_num_posts) = $smcFunc['db_fetch_row']($get_num_posts);
+		list($db_num_posts) = $smcFunc['db']->fetch_row($get_num_posts);
 		$num_posts = min(100, $db_num_posts);
 
 		$smcFunc['db']->free_result($get_num_posts);
@@ -302,7 +302,7 @@ function RecentPosts()
 				$done = true;
 		}
 		$messages = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$messages[] = $row['id_msg'];
 		$smcFunc['db']->free_result($request);
 		if (!empty($cache_results))
@@ -345,7 +345,7 @@ function RecentPosts()
 	$counter = $_REQUEST['start'] + 1;
 	$context['posts'] = [];
 	$board_ids = ['own' => [], 'any' => []];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor everything.
 		censorText($row['body']);
@@ -525,7 +525,7 @@ function UnreadTopics()
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			if (in_array($row['id_parent'], $boards))
 				$boards[] = $row['id_board'];
 
@@ -560,7 +560,7 @@ function UnreadTopics()
 			]
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -588,7 +588,7 @@ function UnreadTopics()
 			]
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -613,7 +613,7 @@ function UnreadTopics()
 			]
 		);
 		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 
@@ -666,7 +666,7 @@ function UnreadTopics()
 				'id_cat' => (int) $_REQUEST['c'][0],
 			]
 		);
-		list ($name) = $smcFunc['db_fetch_row']($request);
+		list ($name) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		$context['linktree'][] = [
@@ -719,7 +719,7 @@ function UnreadTopics()
 					'current_member' => $user_info['id'],
 				]
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
+			list ($earliest_msg) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -733,7 +733,7 @@ function UnreadTopics()
 					'current_member' => $user_info['id'],
 				]
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
+			list ($earliest_msg) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -756,7 +756,7 @@ function UnreadTopics()
 						'current_member' => $user_info['id'],
 					]
 				);
-				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
+				list ($earliest_msg2) = $smcFunc['db']->fetch_row($request);
 				$smcFunc['db']->free_result($request);
 
 				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
@@ -821,7 +821,7 @@ function UnreadTopics()
 				'is_approved' => 1,
 			])
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -907,7 +907,7 @@ function UnreadTopics()
 				'is_approved' => 1,
 			])
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -1057,7 +1057,7 @@ function UnreadTopics()
 				array_merge($query_parameters, [
 				])
 			);
-			list ($num_topics) = $smcFunc['db_fetch_row']($request);
+			list ($num_topics) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -1078,7 +1078,7 @@ function UnreadTopics()
 					'is_approved' => 1,
 				])
 			);
-			list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
+			list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -1151,7 +1151,7 @@ function UnreadTopics()
 			);
 
 		$topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$topics[] = $row['id_topic'];
 		$smcFunc['db']->free_result($request);
 
@@ -1197,7 +1197,7 @@ function UnreadTopics()
 	$topic_ids = [];
 	$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0;
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 			continue;
@@ -1354,7 +1354,7 @@ function UnreadTopics()
 				'limit' => count($topic_ids),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;

@@ -47,7 +47,7 @@ function modifyCategory($category_id, $catOptions)
 			[
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['id_cat'] != $category_id)
 				$cats[] = $row['id_cat'];
@@ -154,7 +154,7 @@ function createCategory($catOptions)
 	call_integration_hook('integrate_create_category', [&$catOptions, &$cat_columns, &$cat_parameters]);
 
 	// Add the category to the database.
-	$category_id = $smcFunc['db_insert']('',
+	$category_id = $smcFunc['db']->insert('',
 		'{db_prefix}categories',
 		$cat_columns,
 		$cat_parameters,
@@ -204,7 +204,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 			]
 		);
 		$boards_inside = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$boards_inside[] = $row['id_board'];
 		$smcFunc['db']->free_result($request);
 

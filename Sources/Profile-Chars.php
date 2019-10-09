@@ -210,7 +210,7 @@ function character_profile($memID)
 			'variable' => 'name',
 		]
 	);
-	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
+	list ($context['character']['theme_name']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
@@ -271,7 +271,7 @@ function char_create()
 					'new_name' => $context['character']['character_name'],
 				]
 			);
-			list ($matching_names) = $smcFunc['db_fetch_row']($result);
+			list ($matching_names) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
@@ -281,7 +281,7 @@ function char_create()
 		if (empty($context['form_errors']))
 		{
 			// So no errors, we can save this new character, yay!
-			$smcFunc['db_insert']('insert',
+			$smcFunc['db']->insert('insert',
 				'{db_prefix}characters',
 				['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
@@ -301,7 +301,7 @@ function char_create()
 			if (!empty($context['character']['sheet']))
 			{
 				// Also gotta insert this.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_versions',
 					['sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
 						'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'],
@@ -436,7 +436,7 @@ function char_edit()
 					'char' => $context['character']['id_character'],
 				]
 			);
-			list ($matching_names) = $smcFunc['db_fetch_row']($result);
+			list ($matching_names) = $smcFunc['db']->fetch_row($result);
 			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
@@ -544,7 +544,7 @@ function char_edit()
 					];
 				}
 				if (!empty($rows)) {
-					$smcFunc['db_insert']('insert',
+					$smcFunc['db']->insert('insert',
 						'{db_prefix}log_actions',
 						['id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
 							'ip' => 'inet', 'action' => 'string', 'id_board' => 'int',
@@ -626,7 +626,7 @@ function char_delete()
 			'char' => $context['character']['id_character'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($result);
+	list ($count) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	if ($count > 0)
@@ -643,7 +643,7 @@ function char_delete()
 			'member' => $context['id_member'],
 		]
 	);
-	list ($current_character) = $smcFunc['db_fetch_row']($result);
+	list ($current_character) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 	if ($current_character == $context['character']['id_character'])
 	{
@@ -665,7 +665,7 @@ function char_delete()
 		]
 	);
 	$members = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$members[] = $row['id_member'];
 	}
@@ -730,7 +730,7 @@ function char_theme()
 			'vars' => ['name', 'images_url', 'theme_dir'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 	$smcFunc['db']->free_result($request);
 
@@ -854,7 +854,7 @@ function char_posts()
 				'board' => $board,
 			]
 		);
-	list ($msgCount) = $smcFunc['db_fetch_row']($request);
+	list ($msgCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db']->query('', '
@@ -869,7 +869,7 @@ function char_posts()
 			'board' => $board,
 		]
 	);
-	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
+	list ($min_msg_member, $max_msg_member) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$reverse = false;
@@ -974,7 +974,7 @@ function char_posts()
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
 	$board_ids = ['own' => [], 'any' => []];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor....
 		censorText($row['body']);
@@ -1113,7 +1113,7 @@ function profileLoadCharGroups()
 			'newbie_group' => 4,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['member_groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
@@ -1157,7 +1157,7 @@ function char_retire()
 		'id_character' => $context['character']['id_character'],
 		'character_name' => $context['character']['character_name'],
 	];
-	$smcFunc['db_insert']('insert',
+	$smcFunc['db']->insert('insert',
 		'{db_prefix}log_actions',
 		['id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
 			'ip' => 'inet', 'action' => 'string', 'id_board' => 'int',
@@ -1220,7 +1220,7 @@ function char_stats()
 			'recycle_board' => $modSettings['recycle_board'],
 		]
 	);
-	list ($context['num_topics']) = $smcFunc['db_fetch_row']($result);
+	list ($context['num_topics']) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 	$context['num_topics'] = comma_format($context['num_topics']);
 
@@ -1242,7 +1242,7 @@ function char_stats()
 		]
 	);
 	$context['popular_boards'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['popular_boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
@@ -1273,7 +1273,7 @@ function char_stats()
 		]
 	);
 	$context['board_activity'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$context['board_activity'][$row['id_board']] = [
 			'id' => $row['id_board'],
@@ -1304,7 +1304,7 @@ function char_stats()
 	);
 	$maxPosts = $realPosts = 0;
 	$context['posts_by_time'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		// Cast as an integer to remove the leading 0.
 		$row['hour'] = (int) $row['hour'];
@@ -1377,7 +1377,7 @@ function char_sheet()
 		);
 		if ($smcFunc['db']->num_rows($request) > 0)
 		{
-			$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
+			$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 		}
 
@@ -1394,7 +1394,7 @@ function char_sheet()
 			if (!empty($message))
 			{
 				// WE GAHT ONE!!!!!!!!!
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_comments',
 					['id_character' => 'int', 'id_author' => 'int', 'time_posted' => 'int', 'sheet_comment' => 'string'],
 					[$context['character']['id_character'], $context['user']['id'], time(), $message],
@@ -1414,7 +1414,7 @@ function char_sheet()
 				'version' => $context['character']['char_sheet'],
 			]
 		);
-		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
+		$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1501,7 +1501,7 @@ function char_sheet()
 						'character' => $context['character']['id_character'],
 					]
 				);
-			if ($row = $smcFunc['db_fetch_assoc']($request))
+			if ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$last_approved = (int) $row['last_approved'];
 			}
@@ -1520,7 +1520,7 @@ function char_sheet()
 					'approval' => $last_approved,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$row['sheet_comment_parsed'] = Parser::parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
 				$context['sheet_comments'][$row['id_comment']] = $row;
@@ -1578,7 +1578,7 @@ function char_sheet_history()
 			'char' => $context['character']['id_character'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!empty($row['id_approver']))
 		{
@@ -1607,7 +1607,7 @@ function char_sheet_history()
 			'char' => $context['character']['id_character'],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['type'] = 'comment';
 		$row['sheet_comment_parsed'] = Parser::parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
@@ -1664,7 +1664,7 @@ function char_sheet_edit()
 	);
 	if ($smcFunc['db']->num_rows($request) > 0)
 	{
-		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
+		$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1688,7 +1688,7 @@ function char_sheet_edit()
 			if (empty($context['character']['sheet_details']['sheet_text']) || $message != $context['character']['sheet_details']['sheet_text'])
 			{
 				// It's different, good. So insert it, making it await approval.
-				$smcFunc['db_insert']('insert',
+				$smcFunc['db']->insert('insert',
 					'{db_prefix}character_sheet_versions',
 					[
 						'sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
@@ -1750,7 +1750,7 @@ function char_sheet_edit()
 				'last_approved_time' => $context['character']['sheet_details']['created_time'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['real_name']))
 				$row['real_name'] = $txt['char_unknown'];
@@ -1778,7 +1778,7 @@ function load_char_sheet_templates()
 		SELECT id_template, template_name, template
 		FROM {db_prefix}character_sheet_templates
 		ORDER BY position ASC');
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['sheet_templates'][$row['id_template']] = [
 			'name' => $row['template_name'],
@@ -1818,7 +1818,7 @@ function char_sheet_approval()
 				'character' => $context['character']['id_character'],
 			]
 		);
-	if ($row = $smcFunc['db_fetch_assoc']($request))
+	if ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$last_approved = (int) $row['last_approved'];
 	}
@@ -1836,7 +1836,7 @@ function char_sheet_approval()
 				'character' => $context['character']['id_character'],
 			]
 		);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	if (empty($row))
 	{
 		// There isn't a version to mark as pending approval.
@@ -1876,7 +1876,7 @@ function char_sheet_approval()
 
 	if (!empty($alert_rows))
 	{
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}user_alerts',
 			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
@@ -1920,7 +1920,7 @@ function char_sheet_approve()
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 	}
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Correct character?
@@ -1942,7 +1942,7 @@ function char_sheet_approve()
 			'character' => $context['character']['id_character'],
 		]
 	);
-	list ($count) = $smcFunc['db_fetch_row']($request);
+	list ($count) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	if ($count > 0)
@@ -1974,7 +1974,7 @@ function char_sheet_approve()
 	);
 
 	// And send the character sheet owner an alert.
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}user_alerts',
 		['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 			'chars_src' => 'int', 'chars_dest' => 'int',
@@ -2044,7 +2044,7 @@ function char_sheet_compare()
 	{
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 	}
-	$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
+	$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Now we need to go get the currently approved one too.
@@ -2056,7 +2056,7 @@ function char_sheet_compare()
 			'current_version' => $context['character']['char_sheet'],
 		]
 	);
-	$context['character']['original_sheet'] = $smcFunc['db_fetch_assoc']($request);
+	$context['character']['original_sheet'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// And parse the bbc.
@@ -2135,7 +2135,7 @@ function char_merge_account($memID)
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_merge_not_found', false);
 
-		list ($dest) = $smcFunc['db_fetch_row']($request);
+		list ($dest) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
@@ -2283,7 +2283,7 @@ function merge_char_accounts($source, $dest)
 			'source' => $source,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$rows[] = [
 			'id_pm' => $row['id_pm'],
@@ -2298,7 +2298,7 @@ function merge_char_accounts($source, $dest)
 	$smcFunc['db']->free_result($request);
 	if (!empty($rows))
 	{
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}pm_recipients',
 			[
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'is_read' => 'int',
@@ -2360,7 +2360,7 @@ function char_move_account()
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_move_not_found', false);
 
-		list ($dest) = $smcFunc['db_fetch_row']($request);
+		list ($dest) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
@@ -2397,7 +2397,7 @@ function move_char_accounts($source_chr, $dest_acct)
 			'char' => $source_chr,
 		]
 	);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	if (empty($row))
 	{
 		return 'cannot_move_char_not_found';
@@ -2424,7 +2424,7 @@ function move_char_accounts($source_chr, $dest_acct)
 			'source_chr' => $source_chr,
 		]
 	);
-	list ($is_online) = $smcFunc['db_fetch_row']($request);
+	list ($is_online) = $smcFunc['db']->fetch_row($request);
 	if ($is_online)
 	{
 		return 'online';
@@ -2477,7 +2477,7 @@ function move_char_accounts($source_chr, $dest_acct)
 			'source_chr' => $source_chr,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$topics[] = (int) $row['id_topic'];
 	}
@@ -2506,7 +2506,7 @@ function move_char_accounts($source_chr, $dest_acct)
 			'source_chr' => $source_chr,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$topics[] = (int) $row['id_topic'];
 	}
@@ -2550,7 +2550,7 @@ function CharacterList()
 		$redirect = '';
 		if ($smcFunc['db']->num_rows($result))
 		{
-			$row = $smcFunc['db_fetch_assoc']($result);
+			$row = $smcFunc['db']->fetch_assoc($result);
 			$redirect = 'action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'];
 		}
 		$smcFunc['db']->free_result($result);
@@ -2637,7 +2637,7 @@ function CharacterList()
 		WHERE ' . implode(' AND ', $clauses),
 		$vars
 	);
-	list($context['char_count']) = $smcFunc['db_fetch_row']($request);
+	list($context['char_count']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['items_per_page'] = 12;
@@ -2666,7 +2666,7 @@ function CharacterList()
 			LIMIT {int:start}, {int:limit}',
 			$vars
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
@@ -2737,7 +2737,7 @@ function CharacterSheetList()
 			'sort' => $sort[$context['sort_by']][$context['sort_order']],
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$row['group_list'] = array_merge((array) $row['main_char_group'], explode(',', $row['char_groups']));
 		$row['groups'] = get_labels_and_badges($row['group_list']);
@@ -2776,7 +2776,7 @@ function ReattributePost()
 	if ($smcFunc['db']->num_rows($result) == 0)
 		fatal_lang_error('no_access', false);
 
-	$row = $smcFunc['db_fetch_assoc']($result);
+	$row = $smcFunc['db']->fetch_assoc($result);
 	$smcFunc['db']->free_result($result);
 
 	// 2b. Not the topic we thought it was?

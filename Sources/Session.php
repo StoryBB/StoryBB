@@ -132,7 +132,7 @@ function sessionRead($session_id)
 			'session_id' => $session_id,
 		]
 	);
-	list ($sess_data) = $smcFunc['db_fetch_row']($result);
+	list ($sess_data) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	return $sess_data != null ? $sess_data : '';
@@ -166,7 +166,7 @@ function sessionWrite($session_id, $data)
 
 	// If that didn't work, try inserting a new one.
 	if ($smcFunc['db']->affected_rows() == 0)
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}sessions',
 			['session_id' => 'string', 'data' => 'string', 'last_update' => 'int'],
 			[$session_id, $data, time()],

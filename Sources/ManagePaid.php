@@ -422,7 +422,7 @@ function ModifySubscription()
 			]
 		);
 		$members = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$id_member = array_shift($row);
 			$members[$id_member] = $row;
@@ -443,7 +443,7 @@ function ModifySubscription()
 			$id_group = 0;
 			$add_groups = '';
 			if ($smcFunc['db']->num_rows($request))
-				list ($id_group, $add_groups) = $smcFunc['db_fetch_row']($request);
+				list ($id_group, $add_groups) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			$changes = [];
@@ -571,7 +571,7 @@ function ModifySubscription()
 		// Is it new?!
 		if ($context['action_type'] == 'add')
 		{
-			$id_subscribe = $smcFunc['db_insert']('',
+			$id_subscribe = $smcFunc['db']->insert('',
 				'{db_prefix}subscriptions',
 				[
 					'name' => 'string-60', 'description' => 'string-255', 'active' => 'int', 'length' => 'string-4', 'cost' => 'string',
@@ -601,7 +601,7 @@ function ModifySubscription()
 					'is_active' => 1,
 				]
 			);
-			list ($disableGroups) = $smcFunc['db_fetch_row']($request);
+			list ($disableGroups) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			$smcFunc['db']->query('substring', '
@@ -667,7 +667,7 @@ function ModifySubscription()
 				'current_subscription' => $context['sub_id'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Sort the date.
 			preg_match('~(\d*)(\w)~', $row['length'], $match);
@@ -719,7 +719,7 @@ function ModifySubscription()
 				'is_active' => 1,
 			]
 		);
-		list ($context['disable_groups']) = $smcFunc['db_fetch_row']($request);
+		list ($context['disable_groups']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 		$context['disable_groups'] = (int) $context['disable_groups'];
 	}
@@ -736,7 +736,7 @@ function ModifySubscription()
 		]
 	);
 	$context['groups'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['groups'][$row['id_group']] = $row['group_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -776,7 +776,7 @@ function ViewSubscribedUsers()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 	// Do the subscription context.
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$context['subscription'] = [
 		'id' => $row['id_subscribe'],
 		'name' => $row['name'],
@@ -967,7 +967,7 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = [])
 			'no_pending_payments' => 0,
 		])
 	);
-	list ($memberCount) = $smcFunc['db_fetch_row']($request);
+	list ($memberCount) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $memberCount;
@@ -1009,7 +1009,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 		])
 	);
 	$subscribers = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$subscribers[] = [
 			'id' => $row['id_sublog'],
 			'id_member' => $row['id_member'],
@@ -1056,7 +1056,7 @@ function ModifyUserSubscription()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		list ($context['sub_id']) = $smcFunc['db_fetch_row']($request);
+		list ($context['sub_id']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -1097,7 +1097,7 @@ function ModifyUserSubscription()
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('error_member_not_found');
 
-			list ($id_member, $id_group) = $smcFunc['db_fetch_row']($request);
+			list ($id_member, $id_group) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Ensure the member doesn't already have a subscription!
@@ -1120,7 +1120,7 @@ function ModifyUserSubscription()
 				addSubscription($context['sub_id'], $id_member, 0, $starttime, $endtime);
 			else
 			{
-				$smcFunc['db_insert']('',
+				$smcFunc['db']->insert('',
 					'{db_prefix}log_subscribed',
 					[
 						'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
@@ -1148,7 +1148,7 @@ function ModifyUserSubscription()
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_access', false);
 
-			list ($id_member, $old_status) = $smcFunc['db_fetch_row']($request);
+			list ($id_member, $old_status) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Pick the right permission stuff depending on what the status is changing from/to.
@@ -1197,7 +1197,7 @@ function ModifyUserSubscription()
 					'subscription_list' => $toDelete,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 				removeSubscription($row['id_subscribe'], $row['id_member'], isset($_REQUEST['delete']));
 			$smcFunc['db']->free_result($request);
 		}
@@ -1240,7 +1240,7 @@ function ModifyUserSubscription()
 					'current_member' => (int) $_GET['uid'],
 				]
 			);
-			list ($context['sub']['username']) = $smcFunc['db_fetch_row']($request);
+			list ($context['sub']['username']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -1263,7 +1263,7 @@ function ModifyUserSubscription()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Any pending payments?
@@ -1390,7 +1390,7 @@ function reapplySubscriptions($users)
 			'user_list' => $users,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$groups[$row['id_member']] = [
 			'primary' => $row['id_group'],
@@ -1410,7 +1410,7 @@ function reapplySubscriptions($users)
 			'current_time' => time(),
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Specific primary group?
 		if ($row['id_group'] != 0)
@@ -1513,7 +1513,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 
 	if ($smcFunc['db']->num_rows($request) != 0)
 	{
-		list ($id_sublog, $endtime, $starttime) = $smcFunc['db_fetch_row']($request);
+		list ($id_sublog, $endtime, $starttime) = $smcFunc['db']->fetch_row($request);
 
 		// If this has already expired but is active, extension means the period from now.
 		if ($endtime < time())
@@ -1558,7 +1558,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	if ($smcFunc['db']->num_rows($request) == 0)
 		return;
 
-	list ($old_id_group, $additional_groups) = $smcFunc['db_fetch_row']($request);
+	list ($old_id_group, $additional_groups) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Prepare additional groups.
@@ -1615,7 +1615,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	 */
 	if ($smcFunc['db']->num_rows($request) != 0)
 	{
-		list ($id_sublog, $endtime, $starttime) = $smcFunc['db_fetch_row']($request);
+		list ($id_sublog, $endtime, $starttime) = $smcFunc['db']->fetch_row($request);
 
 		// If this has already expired but is active, extension means the period from now.
 		if ($endtime < time())
@@ -1658,7 +1658,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	else
 		$starttime = $forceStartTime;
 
-	$smcFunc['db_insert']('',
+	$smcFunc['db']->insert('',
 		'{db_prefix}log_subscribed',
 		[
 			'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
@@ -1707,7 +1707,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		);
 		return;
 	}
-	list ($id_group, $additional_groups) = $smcFunc['db_fetch_row']($request);
+	list ($id_group, $additional_groups) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Get all of the subscriptions for this user that are active - it will be necessary!
@@ -1727,7 +1727,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	$allowed = [];
 	$old_id_group = 0;
 	$new_id_group = -1;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (!isset($context['subscriptions'][$row['id_subscribe']]))
 			continue;
@@ -1843,7 +1843,7 @@ function loadSubscriptions()
 		]
 	);
 	$context['subscriptions'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Pick a cost.
 		$costs = sbb_json_decode($row['cost'], true);
@@ -1911,7 +1911,7 @@ function loadSubscriptions()
 		[
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$ind = $row['status'] == 0 ? 'finished' : 'total';
 
@@ -1928,7 +1928,7 @@ function loadSubscriptions()
 		[
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (isset($context['subscriptions'][$row['id_subscribe']]))
 			$context['subscriptions'][$row['id_subscribe']]['pending'] = $row['total_pending'];

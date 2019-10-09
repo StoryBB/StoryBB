@@ -147,7 +147,7 @@ class WhosOnline extends AbstractBlock implements Block
 				'reg_mem_group' => 0,
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (empty($row['real_name']))
 			{
@@ -305,7 +305,7 @@ class WhosOnline extends AbstractBlock implements Block
 			// The log_activity hasn't got an entry for today?
 			if ($smcFunc['db']->num_rows($request) === 0)
 			{
-				$smcFunc['db_insert']('ignore',
+				$smcFunc['db']->insert('ignore',
 					'{db_prefix}log_activity',
 					['date' => 'date', 'most_on' => 'int'],
 					[$date, $total_users_online],
@@ -315,7 +315,7 @@ class WhosOnline extends AbstractBlock implements Block
 			// There's an entry in log_activity on today...
 			else
 			{
-				list ($modSettings['mostOnlineToday']) = $smcFunc['db_fetch_row']($request);
+				list ($modSettings['mostOnlineToday']) = $smcFunc['db']->fetch_row($request);
 
 				if ($total_users_online > $modSettings['mostOnlineToday'])
 					trackStats(['most_on' => $total_users_online]);
@@ -355,7 +355,7 @@ class WhosOnline extends AbstractBlock implements Block
 			]
 		);
 		$groupCache = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 		}

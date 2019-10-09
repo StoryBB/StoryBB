@@ -84,7 +84,7 @@ class Alert
 			WHERE ' . implode(' AND ', $clauses),
 			$criteria
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$alerts[$row['id_member']][] = (int) $row['id_alert'];
 		}

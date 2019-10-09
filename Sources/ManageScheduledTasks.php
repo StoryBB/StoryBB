@@ -109,7 +109,7 @@ function ScheduledTasks()
 			]
 		);
 
-		$temp = $smcFunc['db_fetch_assoc']($get_info);
+		$temp = $smcFunc['db']->fetch_assoc($get_info);
 		$task_disabled = !empty($temp['disabled']) ? 0 : 1;
 		$smcFunc['db']->free_result($get_info);
 
@@ -142,7 +142,7 @@ function ScheduledTasks()
 		// Lets get it on!
 		require_once($sourcedir . '/ScheduledTasks.php');
 		ignore_user_abort(true);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$task = false;
 			if (!empty($row['class']) && class_exists($row['class']) && is_subclass_of($row['class'], 'StoryBB\\Task\\Schedulable'))
@@ -296,7 +296,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 		]
 	);
 	$known_tasks = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Find the next for regularity - don't offset as it's always server time!
 		$offset = sprintf($txt['scheduled_task_reg_starting'], date('H:i', $row['time_offset']));
@@ -407,7 +407,7 @@ function EditTask()
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$context['task'] = [
@@ -555,7 +555,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 		]
 	);
 	$log_entries = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$log_entries[] = [
@@ -584,7 +584,7 @@ function list_getNumTaskLogEntries()
 		[
 		]
 	);
-	list ($num_entries) = $smcFunc['db_fetch_row']($request);
+	list ($num_entries) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	return $num_entries;

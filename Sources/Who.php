@@ -108,7 +108,7 @@ function Who()
 		[
 		]
 	);
-	list ($totalMembers) = $smcFunc['db_fetch_row']($request);
+	list ($totalMembers) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Prepare some page index variables.
@@ -140,7 +140,7 @@ function Who()
 	$context['members'] = [];
 	$member_ids = [];
 	$url_data = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$actions = sbb_json_decode($row['url'], true);
 		if ($actions === false)
@@ -390,7 +390,7 @@ function determineActions($urls, $preferred_prefix = false)
 						'id_msg' => $msgid,
 					]
 				);
-				list ($id_topic, $subject) = $smcFunc['db_fetch_row']($result);
+				list ($id_topic, $subject) = $smcFunc['db']->fetch_row($result);
 				$data[$k] = sprintf($txt['whopost_' . $actions['action']], $id_topic, $subject);
 				$smcFunc['db']->free_result($result);
 
@@ -469,7 +469,7 @@ function determineActions($urls, $preferred_prefix = false)
 				'limit' => count($topic_ids),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			// Show the topic's subject for each of the actions.
 			foreach ($topic_ids[$row['id_topic']] as $k => $session_text)
@@ -492,7 +492,7 @@ function determineActions($urls, $preferred_prefix = false)
 				'limit' => count($board_ids),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			// Put the board name into the string for each member...
 			foreach ($board_ids[$row['id_board']] as $k => $session_text)
@@ -515,7 +515,7 @@ function determineActions($urls, $preferred_prefix = false)
 				'member_list' => array_keys($profile_ids),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			// If they aren't allowed to view this person's profile, skip it.
 			if (!$allow_view_any && ($user_info['id'] != $row['id_member']))

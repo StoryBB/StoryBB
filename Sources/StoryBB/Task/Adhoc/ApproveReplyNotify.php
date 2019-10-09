@@ -42,7 +42,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		);
 
 		$watched = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;
@@ -96,7 +96,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 
 		// Insert the alerts if any
 		if (!empty($alert_rows))
-			$smcFunc['db_insert']('',
+			$smcFunc['db']->insert('',
 				'{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],

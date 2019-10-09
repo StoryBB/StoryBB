@@ -152,11 +152,11 @@ class ExportData extends \StoryBB\Task\Adhoc
 		);
 		if ($smcFunc['db']->num_rows($request))
 		{
-			list ($char_id) = $smcFunc['db_fetch_row']($request);
+			list ($char_id) = $smcFunc['db']->fetch_row($request);
 		}
 		$smcFunc['db']->free_result($request);
 
-		$this->_details['id_attach'] = $smcFunc['db_insert']('',
+		$this->_details['id_attach'] = $smcFunc['db']->insert('',
 			'{db_prefix}attachments',
 			[
 				'id_folder' => 'int', 'id_msg' => 'int', 'id_character' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40',
@@ -173,7 +173,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		);
 
 		// Create the entry in the export table.
-		$this->_details['export_id'] = $smcFunc['db_insert']('',
+		$this->_details['export_id'] = $smcFunc['db']->insert('',
 			'{db_prefix}user_exports',
 			[
 				'id_attach' => 'int', 'id_member' => 'int', 'id_requester' => 'int', 'requested_on' => 'int',
@@ -221,7 +221,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		// @todo appropriate setlocale call here
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if ($row['is_main'])
 			{
@@ -249,7 +249,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 					'member' => $this->_details['id_member'],
 				]
 			);
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
 			$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -271,7 +271,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 					'admin_only' => 3,
 				]
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$exports[$main_char]['custom_fields'][$row['field_name']] = $row['value'];
 			}
@@ -381,7 +381,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'member' => $this->_details['id_member'],
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!isset($exports[$row['id_character']]))
 			{
@@ -444,7 +444,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Now begin the export.
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$content = 'Board: ' . $row['board_name'] . "\r\n";
 			$content .= 'Topic: ' . $row['subject'] . "\r\n";
@@ -530,7 +530,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			throw new Exception("Could not open export data for user " . $this->_details['id_member'] . ". Permissions for the attachments folder may need to be checked.");
 		}
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$path = 'posts/';
 			$path .= $this->_exportable_character_name($row['character_name'], (int) $row['id_character']) . '/';
@@ -631,7 +631,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'member' => $this->_details['id_member'],
 			]
 		);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Issue an alert to the owner to indicate they're good to go.
@@ -668,7 +668,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Add the alerts.
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}user_alerts',
 			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],

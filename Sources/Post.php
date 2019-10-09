@@ -79,7 +79,7 @@ function Post($post_errors = [])
 		if ($smcFunc['db']->num_rows($request) != 1)
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
-			list ($topic) = $smcFunc['db_fetch_row']($request);
+			list ($topic) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 	}
 
@@ -102,7 +102,7 @@ function Post($post_errors = [])
 				'current_topic' => $topic,
 			]
 		);
-		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db_fetch_row']($request);
+		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
@@ -262,7 +262,7 @@ function Post($post_errors = [])
 					'approved' => 1,
 				]
 			);
-			list ($context['new_replies']) = $smcFunc['db_fetch_row']($request);
+			list ($context['new_replies']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			if (!empty($context['new_replies']))
@@ -449,10 +449,10 @@ function Post($post_errors = [])
 			// @todo Change this error message?
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board', false);
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 
 			$attachment_stuff = [$row];
-			while ($row2 = $smcFunc['db_fetch_assoc']($request))
+			while ($row2 = $smcFunc['db']->fetch_assoc($request))
 				$attachment_stuff[] = $row2;
 			$smcFunc['db']->free_result($request);
 
@@ -491,7 +491,7 @@ function Post($post_errors = [])
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
 					if ($row['filesize'] <= 0)
 						continue;
@@ -521,7 +521,7 @@ function Post($post_errors = [])
 						'id_msg' => (int) $_REQUEST['msg'],
 					]
 				);
-				$row = $smcFunc['db_fetch_assoc']($request);
+				$row = $smcFunc['db']->fetch_assoc($request);
 				$smcFunc['db']->free_result($request);
 
 				if (empty($row['id_member']))
@@ -566,10 +566,10 @@ function Post($post_errors = [])
 		// The message they were trying to edit was most likely deleted.
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_message', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 
 		$attachment_stuff = [$row];
-		while ($row2 = $smcFunc['db_fetch_assoc']($request))
+		while ($row2 = $smcFunc['db']->fetch_assoc($request))
 			$attachment_stuff[] = $row2;
 		$smcFunc['db']->free_result($request);
 
@@ -684,7 +684,7 @@ function Post($post_errors = [])
 			);
 			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
-			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db_fetch_row']($request);
+			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
@@ -1271,7 +1271,7 @@ function Post2()
 				'current_topic' => $topic,
 			]
 		);
-		$topic_info = $smcFunc['db_fetch_assoc']($request);
+		$topic_info = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		// Though the topic should be there, it might have vanished.
@@ -1438,7 +1438,7 @@ function Post2()
 		);
 		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
+		$row = $smcFunc['db']->fetch_assoc($request);
 		$smcFunc['db']->free_result($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
@@ -1806,7 +1806,7 @@ function Post2()
 	if (isset($_REQUEST['poll']))
 	{
 		// Create the poll.
-		$id_poll = $smcFunc['db_insert']('',
+		$id_poll = $smcFunc['db']->insert('',
 			'{db_prefix}polls',
 			[
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
@@ -1829,7 +1829,7 @@ function Post2()
 			$i++;
 		}
 
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}poll_choices',
 			['id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255'],
 			$pollOptions,
@@ -1939,7 +1939,7 @@ function Post2()
 	// Turn notification on or off.  (note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && !$context['user']['is_guest'])
 	{
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}log_notify',
 			['id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'],
 			[$user_info['id'], $topic, 0],
@@ -2073,7 +2073,7 @@ function AnnouncementSelectMembergroup()
 			'newbie_id_group' => 4,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$context['groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
@@ -2092,7 +2092,7 @@ function AnnouncementSelectMembergroup()
 			'group_list' => $groups,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$context['groups'][$row['id_group']]['name'] = $row['group_name'];
 	$smcFunc['db']->free_result($request);
 
@@ -2106,7 +2106,7 @@ function AnnouncementSelectMembergroup()
 			'current_topic' => $topic,
 		]
 	);
-	list ($context['topic_subject']) = $smcFunc['db_fetch_row']($request);
+	list ($context['topic_subject']) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	censorText($context['announce_topic']['subject']);
@@ -2156,7 +2156,7 @@ function AnnouncementSend()
 			'current_topic' => $topic,
 		]
 	);
-	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db_fetch_row']($request);
+	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	censorText($context['topic_subject']);
@@ -2201,7 +2201,7 @@ function AnnouncementSend()
 	$announcements = [];
 	// Loop through all members that'll receive an announcement in this batch.
 	$rows = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$rows[$row['id_member']] = $row;
 	}
@@ -2296,7 +2296,7 @@ function getTopic()
 	);
 	$context['previous_posts'] = [];
 	$context['ignored_posts'] = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
@@ -2361,7 +2361,7 @@ function QuoteFast()
 		]
 	);
 	$context['close_window'] = $smcFunc['db']->num_rows($request) == 0;
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	$context['sub_template'] = 'xml_quotefast';
@@ -2478,7 +2478,7 @@ function JavaScriptModify()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	// Change either body or subject requires permissions to modify messages.

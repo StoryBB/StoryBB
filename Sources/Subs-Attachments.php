@@ -332,7 +332,7 @@ function processAttachments()
 					'attachment_type' => 0,
 				]
 			);
-			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
+			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		else
@@ -550,7 +550,7 @@ function attachmentChecks($attachID)
 					'type' => 1,
 				]
 			);
-			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db_fetch_row']($request);
+			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db']->fetch_row($request);
 			$smcFunc['db']->free_result($request);
 		}
 		$context['dir_size'] += $_SESSION['temp_attachments'][$attachID]['size'];
@@ -702,7 +702,7 @@ function createAttachment(&$attachmentOptions)
 	if (empty($attachmentOptions['id_folder']) || !in_array($attachmentOptions['id_folder'], $folders))
 		$attachmentOptions['id_folder'] = $modSettings['currentAttachmentUploadDir'];
 
-	$attachmentOptions['id'] = $smcFunc['db_insert']('',
+	$attachmentOptions['id'] = $smcFunc['db']->insert('',
 		'{db_prefix}attachments',
 		[
 			'id_folder' => 'int', 'id_msg' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
@@ -732,7 +732,7 @@ function createAttachment(&$attachmentOptions)
 
 	// If it's not approved then add to the approval queue.
 	if (!$attachmentOptions['approved'])
-		$smcFunc['db_insert']('',
+		$smcFunc['db']->insert('',
 			'{db_prefix}approval_queue',
 			[
 				'id_attach' => 'int', 'id_msg' => 'int',
@@ -794,7 +794,7 @@ function createAttachment(&$attachmentOptions)
 			}
 
 			// To the database we go!
-			$attachmentOptions['thumb'] = $smcFunc['db_insert']('',
+			$attachmentOptions['thumb'] = $smcFunc['db']->insert('',
 				'{db_prefix}attachments',
 				[
 					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
@@ -1004,7 +1004,7 @@ function getRawAttachInfo($attachIDs)
 	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$return[$row['id_attach']] = [
 			'name' => StringLibrary::escape($row['filename']),
 			'size' => $row['size'],
@@ -1047,7 +1047,7 @@ function getAttachMsgInfo($attachID)
 	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
-	$row = $smcFunc['db_fetch_assoc']($request);
+	$row = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
 
 	return $row;
@@ -1084,7 +1084,7 @@ function getAttachsByMsg($msgID = 0)
 			]
 		);
 		$temp = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 				continue;
@@ -1195,7 +1195,7 @@ function loadAttachmentContext($id_msg, $attachments)
 						$thumb_hash = Attachment::get_new_filename($thumb_filename);
 
 						// Add this beauty to the database.
-						$attachment['id_thumb'] = $smcFunc['db_insert']('',
+						$attachment['id_thumb'] = $smcFunc['db']->insert('',
 							'{db_prefix}attachments',
 							['id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'fileext' => 'string', 'mime_type' => 'string'],
 							[$id_folder_thumb, $id_msg, 3, $thumb_filename, $thumb_hash, (int) $thumb_size, (int) $attachment['thumb_width'], (int) $attachment['thumb_height'], $thumb_ext, $thumb_mime],

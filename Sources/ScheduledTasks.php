@@ -43,7 +43,7 @@ function AutoTask()
 		if ($smcFunc['db']->num_rows($request) != 0)
 		{
 			// The two important things really...
-			$row = $smcFunc['db_fetch_assoc']($request);
+			$row = $smcFunc['db']->fetch_assoc($request);
 
 			// When should this next be run?
 			$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
@@ -121,7 +121,7 @@ function AutoTask()
 		if ($smcFunc['db']->num_rows($request) === 0)
 			$nextEvent = time() + 86400;
 		else
-			list ($nextEvent) = $smcFunc['db_fetch_row']($request);
+			list ($nextEvent) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
 		updateSettings(['next_task_time' => $nextEvent]);
@@ -218,7 +218,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	);
 	$ids = [];
 	$emails = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// We want to delete these from the database ASAP, so just get the data and go.
 		$ids[] = $row['id_mail'];
@@ -299,7 +299,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	if (!empty($failed_emails))
 	{
 		// Update the failed attempts check.
-		$smcFunc['db_insert']('replace',
+		$smcFunc['db']->insert('replace',
 			'{db_prefix}settings',
 			['variable' => 'string', 'value' => 'string'],
 			['mail_failed_attempts', empty($modSettings['mail_failed_attempts']) ? 1 : ++$modSettings['mail_failed_attempts']],
@@ -319,7 +319,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			]);
 
 		// Add our email back to the queue, manually.
-		$smcFunc['db_insert']('insert',
+		$smcFunc['db']->insert('insert',
 			'{db_prefix}mail_queue',
 			['recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'time_sent' => 'string', 'private' => 'int'],
 			$failed_emails,
@@ -379,7 +379,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		]
 	);
 	$tasks = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);
 
@@ -498,7 +498,7 @@ function loadEssentialThemeData()
 			'theme_guests' => !empty($modSettings['theme_guests']) ? $modSettings['theme_guests'] : 1,
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$settings[$row['variable']] = $row['value'];
 

@@ -339,7 +339,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 			'modlog_query' => $modlog_query,
 		])
 	);
-	list ($entry_count) = $smcFunc['db_fetch_row']($result);
+	list ($entry_count) = $smcFunc['db']->fetch_row($result);
 	$smcFunc['db']->free_result($result);
 
 	return $entry_count;
@@ -398,7 +398,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	$members = [];
 	$messages = [];
 	$entries = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		$row['extra'] = sbb_json_decode($row['extra'], true);
 
@@ -498,7 +498,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				'limit' => count(array_keys($boards)),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			foreach ($boards[$row['id_board']] as $action)
 			{
@@ -527,7 +527,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				'limit' => count(array_keys($topics)),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			foreach ($topics[$row['id_topic']] as $action)
 			{
@@ -563,7 +563,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				'limit' => count(array_keys($messages)),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			foreach ($messages[$row['id_msg']] as $action)
 			{
@@ -597,7 +597,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				'limit' => count(array_keys($members)),
 			]
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			foreach ($members[$row['id_member']] as $action)
 			{

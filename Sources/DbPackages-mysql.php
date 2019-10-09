@@ -51,9 +51,6 @@ function db_packages_init()
 		$table_name = $table->get_table_name();
 		$reservedTables[] = strtolower($db_prefix . $table_name);
 	}
-
-	// We in turn may need the extra stuff.
-	db_extend('extra');
 }
 
 /**
@@ -343,7 +340,7 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
 	$smcFunc['db']->query('', '
 		ALTER TABLE ' . $table_name . '
 		CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db_escape_string']($column_info['default']) . '\'') . ' ' .
+			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db']->escape_string($column_info['default']) . '\'') . ' ' .
 			(empty($column_info['auto']) ? '' : 'auto_increment') . ' ',
 		[
 			'security_override' => true,
@@ -565,7 +562,7 @@ function sbb_db_table_structure(string $table_name): Table
 			'table_name' => substr($real_table_name, 0, 1) == '`' ? $real_table_name : '`' . $real_table_name . '`',
 		]
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (preg_match('~(.+?)\s*\((\d+)\)(?:(?:\s*)?(unsigned))?~i', $row['Type'], $matches) === 1)
 		{
@@ -682,7 +679,7 @@ function sbb_db_table_structure(string $table_name): Table
 	);
 	$indexlist = [];
 	$indexfunc = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (empty($row['Sub_part']))
 		{
@@ -1110,7 +1107,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 		]
 	);
 	$columns = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (!$detail)
 		{
@@ -1178,7 +1175,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 		]
 	);
 	$indexes = [];
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = $smcFunc['db']->fetch_assoc($result))
 	{
 		if (!$detail)
 			$indexes[] = $row['Key_name'];
@@ -1232,7 +1229,7 @@ function sbb_db_create_query_column($column)
 		$default = 'auto_increment';
 	}
 	elseif (isset($column['default']) && $column['default'] !== null)
-		$default = 'default \'' . $smcFunc['db_escape_string']($column['default']) . '\'';
+		$default = 'default \'' . $smcFunc['db']->escape_string($column['default']) . '\'';
 	else
 		$default = '';
 

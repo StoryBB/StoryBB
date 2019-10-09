@@ -174,7 +174,7 @@ class Theme
 		);
 		$cache = [];
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$cache[$row['id_theme']][$row['variable']] = $row['value'];
 		$smcFunc['db']->free_result($request);
 

@@ -132,7 +132,7 @@ function writeLog($force = false)
 				]
 			);
 
-		$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
+		$smcFunc['db']->insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
 			['session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'],
 			[$session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get],
@@ -356,7 +356,7 @@ function trackStats($stats = [])
 	);
 	if ($smcFunc['db']->affected_rows() == 0)
 	{
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db']->insert('ignore',
 			'{db_prefix}log_activity',
 			array_merge($insert_keys, ['date' => 'date']),
 			array_merge($cache_stats, [$date]),
@@ -505,7 +505,7 @@ function logActions($logs)
 		];
 	}
 
-	$id_action = $smcFunc['db_insert']('',
+	$id_action = $smcFunc['db']->insert('',
 		'{db_prefix}log_actions',
 		[
 			'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'inet', 'action' => 'string',
