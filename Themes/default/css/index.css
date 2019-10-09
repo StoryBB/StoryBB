@@ -861,6 +861,7 @@ input[type=checkbox], input[type=radio] {
 .button, .button_submit, input[type="submit"], input[type="button"], input[type="submit"] {
 	text-transform: uppercase;
 }
+
 #frmLogin input[type="submit"], #guest_form input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
 	margin-left: inherit;
@@ -2864,7 +2865,8 @@ div#pollmoderation {
 
 .keyinfo h5 a.floatright {
 	padding: 0 12px 0 0;
-	/* Deprecated? */ }
+	/* Deprecated? */
+}
 
 .keyinfo h5 .modified {
 	color: #333;
@@ -4316,7 +4318,7 @@ dl.stats dd span {
 }
 
 .blocktype_recentposts .block_content {
-	width:100%;
+	width: 100%;
 }
 
 .blocktype_recentposts th {
