@@ -732,7 +732,7 @@ select option {
 	padding: 2px 4px;
 }
 
-select[size], input[type=checkbox], input[type=radio] {
+select[size], input[type=checkbox], input[type=radio], input[type=file] {
 	height: auto;
 }
 
