@@ -682,11 +682,6 @@ dl.settings img {
 	vertical-align: middle;
 }
 
-/* Help icons */
-dl.settings dt a span {
-	vertical-align: top;
-}
-
 /* Posts and personal messages displayed throughout the forum. */
 .post {
 	overflow: auto;
@@ -1783,16 +1778,11 @@ body#help_popup {
 
 /* Generally, those [?] icons. This makes your cursor a help icon. */
 .help {
-	cursor: help;
-}
-
-.help .icon {
-	margin: 0;
-	cursor: help;
+	cursor: help !important;
 	opacity: 0.8;
 }
 
-.help .icon:hover {
+.help:hover {
 	opacity: 1;
 }
 
@@ -4581,10 +4571,6 @@ span.member.hidden {
 
 #admin_login .centertext .error {
 	padding: 0 0 12px 0;
-}
-
-#admin_login .centertext a.help img {
-	vertical-align: middle;
 }
 
 .custom_field a img {
