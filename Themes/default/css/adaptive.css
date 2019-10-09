@@ -13,10 +13,12 @@
 @media screen and (max-width: 1200px) {
 	
 	#content_wrapper {
-		width: 95%; }
+		width: 95%;
+	}
 
 	header {
-		margin: 0 2.5%; }
+		margin: 0 2.5%;
+	}
 
 	footer, #top_section {
 		padding-left: calc(2.5% + 10px);
@@ -36,12 +38,21 @@
 }
 
 @media screen and (max-width: 700px) {
-	
 }
-
 @media screen and (max-width: 600px) {
-	
-}
+	#content_wrapper {
+		width: 100%;
+		border-radius: 0;
+	}
+
+	header {
+		margin: 0;
+	}
+
+	footer, #top_section {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
 
 @media screen and (max-width: 500px) {
 	
