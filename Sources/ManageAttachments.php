@@ -183,7 +183,7 @@ function ManageAttachmentSettings($return_config = false)
 	settings_integration_hook('integrate_modify_attachment_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['attachment_manager_settings'], $config_vars];
 
 	// These are very likely to come in handy! (i.e. without them we're doomed!)
 	require_once($sourcedir . '/ManagePermissions.php');
@@ -298,7 +298,7 @@ function ManageAvatarSettings($return_config = false)
 	settings_integration_hook('integrate_modify_avatar_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['attachment_manager_avatar_settings'], $config_vars];
 
 	// We need this file for the settings template.
 	require_once($sourcedir . '/ManageServer.php');

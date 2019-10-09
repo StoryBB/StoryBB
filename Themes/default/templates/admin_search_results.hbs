@@ -19,7 +19,7 @@
 
 	{{#each context.search_results}}
 				<li>
-					<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
+					{{#if prefix}}{{{prefix}}} &raquo; {{/if}}<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
 		{{#if help}}
 					<p class="results_desc">{{{help}}}</p>
 		{{/if}}

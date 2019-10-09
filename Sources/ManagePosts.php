@@ -101,7 +101,7 @@ function ModifyBBCSettings($return_config = false)
 	settings_integration_hook('integrate_modify_bbc_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['manageposts_bbc_settings_title'], $config_vars];
 
 	// Setup the template.
 	require_once($sourcedir . '/ManageServer.php');
@@ -281,7 +281,7 @@ function ModifyPostSettings($return_config = false)
 	settings_integration_hook('integrate_modify_post_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['manageposts_settings'], $config_vars];
 
 	// We'll want this for our easy save.
 	require_once($sourcedir . '/ManageServer.php');
@@ -369,7 +369,7 @@ function ModifyTopicSettings($return_config = false)
 	settings_integration_hook('integrate_modify_topic_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['manageposts_topic_settings'], $config_vars];
 
 	// Get the settings template ready.
 	require_once($sourcedir . '/ManageServer.php');
@@ -422,7 +422,7 @@ function ModifyDraftSettings($return_config = false)
 	];
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['managedrafts_settings'], $config_vars];
 
 	// Get the settings template ready.
 	require_once($sourcedir . '/ManageServer.php');

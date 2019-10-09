@@ -164,7 +164,7 @@ function ModifyBasicSettings($return_config = false)
 	settings_integration_hook('integrate_modify_basic_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['mods_cat_features'], $config_vars];
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -233,7 +233,7 @@ function ModifyWarningSettings($return_config = false)
 	settings_integration_hook('integrate_warning_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['warnings'], $config_vars];
 
 	// Will need the utility functions from here.
 	require_once($sourcedir . '/ManageServer.php');
@@ -352,7 +352,7 @@ function ModifyAntispamSettings($return_config = false)
 	settings_integration_hook('integrate_spam_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['antispam_title'], $config_vars];
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -448,7 +448,7 @@ function ModifySignatureSettings($return_config = false)
 	settings_integration_hook('integrate_signature_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['signature_settings'], $config_vars];
 
 	// Setup the template.
 	$context['page_title'] = $txt['signature_settings'];
@@ -1665,7 +1665,7 @@ function ModifyLogSettings($return_config = false)
 	settings_integration_hook('integrate_prune_settings', [&$config_vars, &$prune_toggle, false]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['log_settings'], $config_vars];
 
 	if (!empty($prune_toggle))
 	{

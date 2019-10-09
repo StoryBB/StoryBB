@@ -670,11 +670,20 @@ function AdminSearchInternal()
 	foreach ($settings_search as $setting_area)
 	{
 		// Get a list of their variables.
-		$config_vars = $setting_area[0](true);
+		list($page_title, $config_vars) = $setting_area[0](true);
 
 		foreach ($config_vars as $var)
+		{
 			if (!empty($var[1]) && !in_array($var[0], ['permissions', 'switch', 'desc']))
-				$search_data['settings'][] = [$var[(isset($var[2]) && in_array($var[2], ['file', 'db'])) ? 0 : 1], $setting_area[1], 'alttxt' => (isset($var[2]) && in_array($var[2], ['file', 'db'])) || isset($var[3]) ? (in_array($var[2], ['file', 'db']) ? $var[1] : $var[3]) : ''];
+			{
+				$search_data['settings'][] = [
+					$var[(isset($var[2]) && in_array($var[2], ['file', 'db'])) ? 0 : 1],
+					$setting_area[1],
+					'alttxt' => (isset($var[2]) && in_array($var[2], ['file', 'db'])) || isset($var[3]) ? (in_array($var[2], ['file', 'db']) ? $var[1] : $var[3]) : '',
+					'pagetitle' => $page_title,
+				];
+			}
+		}
 	}
 
 	$context['page_title'] = $txt['admin_search_results'];
@@ -707,6 +716,7 @@ function AdminSearchInternal()
 				$context['search_results'][] = [
 					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_var'] . '=' . $context['session_id'] . ((substr($item[1], 0, 4) == 'area' && $section == 'settings' ? '#' . $item[0][0] : '')),
 					'name' => $name,
+					'prefix' => !empty($item['pagetitle']) ? $item['pagetitle'] : '',
 					'type' => $section,
 					'type_string' => isset($txt['admin_search_section_' . $section]) ? $txt['admin_search_section_' . $section] : $section,
 					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),

@@ -738,7 +738,7 @@ function EditBoardSettings($return_config = false)
 	settings_integration_hook('integrate_modify_board_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['boards_and_cats'] . ' - ' . $txt['settings'], $config_vars];
 
 	// Needed for the settings template.
 	require_once($sourcedir . '/ManageServer.php');

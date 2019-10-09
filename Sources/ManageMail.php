@@ -317,7 +317,7 @@ function ModifyMailSettings($return_config = false)
 	settings_integration_hook('integrate_modify_mail_settings', [&$config_vars]);
 
 	if ($return_config)
-		return $config_vars;
+		return [$txt['mailqueue_settings'], $config_vars];
 
 	// Saving?
 	if (isset($_GET['save']))
