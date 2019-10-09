@@ -34,6 +34,7 @@
 </head>
 <body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
 	<div id="wrapper">
+		<a href="" id="top"></a>
 		<div id="top_section">
 
 {{#if context.user.is_logged}}
@@ -128,7 +129,14 @@
 	
 		<header>
 			<h1 class="forumtitle">
-				<a id="top" href="{{scripturl}}">{{#if context.header_logo_url_html_safe}}<img src="{{context.header_logo_url_html_safe}}" alt="{{context.forum_name_html_safe}}">{{else}}{{context.forum_name_html_safe}}{{/if}}</a>
+				<a href="{{scripturl}}">
+
+{{#if context.header_logo_url_html_safe}}
+					<img src="{{context.header_logo_url_html_safe}}" alt="{{context.forum_name_html_safe}}">
+{{else}}
+					{{context.forum_name_html_safe}}
+{{/if}}
+				</a>
 			</h1>
 
 {{#if settings.site_slogan}}
@@ -197,10 +205,12 @@
 			</ul>
 
 			<div class="jump_buttons" style="display: none;">
-				<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
-				<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
+				<a href="#top" title="{{txt.go_up}}" class="go_up"></a>
+				<a href="#bottom" title="{{txt.go_down}}" class="go_down"></a>
 			</div>
 		</footer>
+
+		<a href="" id="bottom"></a>
 
 	</div><!-- #wrapper -->
 
