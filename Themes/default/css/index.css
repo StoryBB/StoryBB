@@ -4753,4 +4753,5 @@ div#manage_boards dl dd textarea[name=desc] {
 
 .sceditor-container textarea, .sceditor-container textarea:focus {
 	box-shadow: none;
+	padding: 6px;
 }
