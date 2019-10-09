@@ -109,7 +109,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 		global $smcFunc;
 
 		// Try to determine the minimum number of letters for a fulltext search.
-		$request = $smcFunc['db_search_query']('max_fulltext_length', '
+		$request = $smcFunc['db']->query('max_fulltext_length', '
 			SHOW VARIABLES
 			LIKE {string:fulltext_minimum_word_length}',
 			[
@@ -267,7 +267,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 
 		}
 
-		$ignoreRequest = $smcFunc['db_search_query']('insert_into_log_messages_fulltext', ($smcFunc['db_support_ignore'] ? ( '
+		$ignoreRequest = $smcFunc['db']->query('insert_into_log_messages_fulltext', ($smcFunc['db']->support_ignore() ? ( '
 			INSERT IGNORE INTO {db_prefix}' . $search_data['insert_into'] . '
 				(' . implode(', ', array_keys($query_select)) . ')') : '') . '
 			SELECT ' . implode(', ', $query_select) . '

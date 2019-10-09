@@ -31,8 +31,6 @@ function ManageSearch()
 
 	loadLanguage('Search');
 
-	db_extend('search');
-
 	$subActions = [
 		'settings' => 'EditSearchSettings',
 		'method' => 'EditSearchMethod',
@@ -148,7 +146,7 @@ function EditSearchMethod()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
 	$context['sub_template'] = 'search_select_method';
-	$context['supports_fulltext'] = $smcFunc['db_search_support']('fulltext');
+	$context['supports_fulltext'] = $smcFunc['db']->search_support('fulltext');
 
 	// Load any apis.
 	$context['search_apis'] = loadSearchAPIs();
@@ -208,7 +206,7 @@ function EditSearchMethod()
 		$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
-			$smcFunc['db_search_query']('drop_words_table', '
+			$smcFunc['db']->query('drop_words_table', '
 				DROP TABLE {db_prefix}log_search_words',
 				[
 				]
@@ -410,14 +408,14 @@ function CreateMessageIndex()
 			$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
-				$smcFunc['db_search_query']('drop_words_table', '
+				$smcFunc['db']->query('drop_words_table', '
 					DROP TABLE {db_prefix}log_search_words',
 					[
 					]
 				);
 			}
 
-			$smcFunc['db_create_word_search']($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
+			$smcFunc['db']->create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
 
 			// Temporarily switch back to not using a search index.
 			if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom')

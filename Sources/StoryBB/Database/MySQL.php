@@ -1335,4 +1335,59 @@ class MySQL implements DatabaseAdapter
 
 		return $request;
 	}
+
+	/**
+	 * This function will tell you whether this database type supports this search type.
+	 *
+	 * @param string $search_type The search type.
+	 * @return boolean Whether or not the specified search type is supported by this db system
+	 * @deprecated This should be abstracted out to the individual search backends properly
+	 */
+	public function search_support($search_type)
+	{
+		$supported_types = ['fulltext'];
+
+		return in_array($search_type, $supported_types);
+	}
+
+	/**
+	 * Whether this DB engine supports INSERT IGNORE
+	 * @deprecated
+	 * @return bool True if it is supported
+	 */
+	public function support_ignore(): bool
+	{
+		return true;
+	}
+
+	/**
+	 * Highly specific function, to create the custom word index table.
+	 *
+	 * @param string $size The size of the desired index.
+	 * @deprecated
+	 */
+	public function create_word_search($size)
+	{
+		global $smcFunc;
+
+		if ($size == 'small')
+			$size = 'smallint(5)';
+		elseif ($size == 'medium')
+			$size = 'mediumint(8)';
+		else
+			$size = 'int(10)';
+
+		$this->query('', '
+			CREATE TABLE {db_prefix}log_search_words (
+				id_word {raw:size} unsigned NOT NULL default {string:string_zero},
+				id_msg int(10) unsigned NOT NULL default {string:string_zero},
+				PRIMARY KEY (id_word, id_msg)
+			) ENGINE=InnoDB',
+			[
+				'string_zero' => '0',
+				'size' => $size,
+			]
+		);
+	}
+
 }
