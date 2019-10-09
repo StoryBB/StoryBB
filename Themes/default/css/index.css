@@ -3577,6 +3577,11 @@ dl.addrules dt.floatleft {
 	float: left;
 }
 
+/* Signature preview */
+dd#preview_signature_display {
+	overflow: hidden;
+}
+
 /* Issue a warning */
 #warn_body {
 	width: 80%;
