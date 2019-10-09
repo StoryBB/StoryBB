@@ -475,10 +475,6 @@ footer .copyright {
 	float: left;
 }
 
-#footerfix {
-	flex: 1 0 auto;
-}
-
 /* The posting icons */
 #postbuttons_upper ul li a span {
 	line-height: 19px;
