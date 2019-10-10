@@ -151,14 +151,6 @@ function reloadSettings()
 		]);
 	}
 
-	// Integration is cool.
-	if (defined('STORYBB_INTEGRATION_SETTINGS'))
-	{
-		$integration_settings = sbb_json_decode(STORYBB_INTEGRATION_SETTINGS, true);
-		foreach ($integration_settings as $hook => $function)
-			add_integration_function($hook, $function, '', false);
-	}
-
 	// Any files to pre include?
 	if (!empty($modSettings['integrate_pre_include']))
 	{

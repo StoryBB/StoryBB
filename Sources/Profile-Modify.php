@@ -16,6 +16,7 @@ use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 
@@ -337,7 +338,7 @@ function loadProfileFields($force_reload = false)
 						updateMemberData($context['id_member'], ['member_name' => $value]);
 
 						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting StoryBB generate the password)
-						call_integration_hook('integrate_reset_pass', [$cur_profile['member_name'], $value, $_POST['passwrd1']]);
+						(new Observable\Account\PasswordReset($cur_profile['member_name'], $value, $_POST['passwrd1']))->execute();
 					}
 				}
 				return false;

@@ -290,7 +290,7 @@ function sbb_main()
 	];
 
 	// Allow modifying $actionArray easily.
-	(new Mutatable\ActionList($actionArray))->execute();
+	(new Mutatable\Routing\ActionList($actionArray))->execute();
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($actionArray[$_REQUEST['action']]))

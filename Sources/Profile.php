@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 
 /**
@@ -768,7 +769,9 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 		{
 			// If we've changed the password, notify any integration that may be listening in.
 			if (isset($profile_vars['passwd']))
-				call_integration_hook('integrate_reset_pass', [$cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']]);
+			{
+				(new Observable\Account\PasswordReset($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']))->execute();
+			}
 
 			if (isset($profile_vars['avatar'])) {
 				if (!isset($context['character']['id_character'])) {
