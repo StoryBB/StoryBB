@@ -9,6 +9,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Hook\Observable;
+
 /**
  * This is the controlling delegator
  * @uses Profile language files and Reminder template
@@ -259,7 +261,7 @@ function setPassword2()
 	// User validated.  Update the database!
 	updateMemberData($_POST['u'], ['validation_code' => '', 'passwd' => hash_password($username, $_POST['passwrd1'])]);
 
-	call_integration_hook('integrate_reset_pass', [$username, $username, $_POST['passwrd1']]);
+	(new Observable\Account\PasswordReset($username, $username, $_POST['passwrd1']))->execute();
 
 	$context += [
 		'page_title' => $txt['reminder_password_set'],
@@ -377,7 +379,7 @@ function SecretAnswer2()
 	// Alright, so long as 'yer sure.
 	updateMemberData($row['id_member'], ['passwd' => hash_password($row['member_name'], $_POST['passwrd1'])]);
 
-	call_integration_hook('integrate_reset_pass', [$row['member_name'], $row['member_name'], $_POST['passwrd1']]);
+	(new Observable\Account\PasswordReset($row['member_name'], $row['member_name'], $_POST['passwrd1']))->execute();
 
 	// Tell them it went fine.
 	$context += [

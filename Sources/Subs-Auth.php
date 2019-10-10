@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 
 /**
@@ -497,7 +498,7 @@ function resetPassword($memID, $username = null)
 	else
 		updateMemberData($memID, ['passwd' => $newPassword_sha1]);
 
-	call_integration_hook('integrate_reset_pass', [$old_user, $user, $newPassword]);
+	(new Observable\Account\PasswordReset($old_user, $user, $newPassword))->execute();
 
 	$replacements = [
 		'USERNAME' => $user,
