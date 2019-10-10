@@ -468,6 +468,8 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		);
 	}
 
+	(new Observable\Group\AccountsRemoved($members, $groups))->execute();
+
 	// Do the log.
 	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
 	{
@@ -620,6 +622,8 @@ function removeCharactersFromGroups($characters, $groups)
 				'char_groups' => implode(',', array_diff(explode(',', $char_groups), $groups)),
 			]
 		);
+
+	(new Observable\Group\CharactersRemoved($characters, $groups))->execute();
 
 	// Do the log.
 	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
@@ -795,7 +799,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 		trigger_error('addMembersToGroup(): Unknown type \'' . $type . '\'', E_USER_WARNING);
 	}
 
-	call_integration_hook('integrate_add_members_to_group', [$members, $group, &$group_names]);
+	(new Observable\Group\AccountsAdded($members, $group))->execute();
 
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');
@@ -903,6 +907,8 @@ function addCharactersToGroup($characters, $group)
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
 	$smcFunc['db']->free_result($request);
+
+	(new Observable\Group\CharactersAdded($characters, $group))->execute();
 
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');
