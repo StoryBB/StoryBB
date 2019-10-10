@@ -1,0 +1,44 @@
+<div class="{{css_class}} hidden-post">
+
+{{#if (not (eq id ../context.first_message))}}
+	<a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
+{{/if}}
+
+	<div class="post_wrapper">
+		<div class="poster"></div>
+		<div class="postarea">
+			<div class="keyinfo">
+				{{!-- Some people don't want subject ... The div is still required or quick edit breaks... --}}
+				<div id="subject_{{id}}" class="subject_title{{#unless ../modSettings.subject_toggle}} subject_hidden{{/unless}}">
+					<a href="{{href}}" rel="nofollow">{{{subject}}}</a>
+				</div>
+				<h5>
+					<a href="{{href}}" rel="nofollow" title="{{#if counter}}{{textTemplate reply_number counter ' - '}}{{/if}}{{{subject}}}" class="smalltext">{{{time}}}</a>
+
+					<span class="page_number floatright">
+						{{#if counter}} #{{counter}}{{/if}}
+					</span>
+
+				</h5>
+				<div id="msg_{{id}}_quick_mod"{{#if is_hidden}} style="display:none"{{/if}}></div>
+
+
+				<div id="msg_{{id}}_hidden_prompt">
+	{{#if (eq_coerce deleted 1)}}
+					{{{../txt.deleted_by_author}}}
+	{{/if}}
+	{{#if (eq_coerce deleted 2)}}
+					{{{../txt.deleted_by_moderator}}}
+	{{/if}}
+				</div>
+
+			</div>
+			<div class="post">
+
+				<div class="inner" data-msgid="{{id}}" id="msg_{{id}}">{{{body}}}</div>
+			</div>
+
+		</div>
+	</div><!-- .post_wrapper -->
+</div>
+<hr class="post_separator">

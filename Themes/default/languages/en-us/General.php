@@ -761,7 +761,9 @@ $txt['send_email'] = 'Send Email';
 $txt['send_email_disclosed'] = 'Note this will be visible to the recipient.';
 
 $txt['ignoring_user'] = 'You are ignoring this user.';
-$txt['show_ignore_user_post'] = 'Show me the post.';
+$txt['deleted_by_author'] = 'This post was deleted by its author.';
+$txt['deleted_by_moderator'] = 'This post was deleted by a moderator.';
+$txt['show_user_post'] = 'Show me the post.';
 
 $txt['robot'] = 'Robot';
 $txt['robots'] = 'Robots';

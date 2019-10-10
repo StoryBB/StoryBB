@@ -135,7 +135,13 @@ function sbb_main()
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
+	{
 		fatal_lang_error('not_a_topic', false);
+	}
+	if (!empty($topic) && !empty($board_info['cur_topic_deleted']) && !allowedTo('delete_any'))
+	{
+		fatal_lang_error('not_a_topic', false);
+	}
 
 	$no_stat_actions = ['autocomplete', 'dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery'];
 	call_integration_hook('integrate_pre_log_stats', [&$no_stat_actions]);

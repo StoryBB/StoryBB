@@ -151,7 +151,7 @@ function Display()
 	$request = $smcFunc['db']->query('', '
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
-			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.id_redirect_topic,
+			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.deleted, t.unapproved_posts, t.id_redirect_topic,
 			COALESCE(mem.real_name, ms.poster_name) AS topic_started_name, ms.poster_time AS topic_started_time,
 			IFNULL(chars.character_name, IFNULL(mem.real_name, ms.poster_name)) AS topic_started_name,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'COALESCE(lt.id_msg, lmr.id_msg, -1) + 1') . ' AS new_from
@@ -993,7 +993,7 @@ function Display()
 		$messages_request = $smcFunc['db']->query('', '
 			SELECT
 				id_msg, subject, poster_time, poster_ip, id_member, modified_time, modified_name, modified_reason, body,
-				smileys_enabled, poster_name, poster_email, approved, likes,
+				smileys_enabled, poster_name, poster_email, approved, deleted, likes,
 				id_msg_modified < {int:new_from} AS is_read, id_character
 				' . (!empty($msg_selects) ? (', ' . implode(', ', $msg_selects)) : '') . '
 			FROM {db_prefix}messages
@@ -1048,8 +1048,8 @@ function Display()
 		'can_report_moderator' => 'report_any',
 		'can_moderate_forum' => 'moderate_forum',
 		'can_issue_warning' => 'issue_warning',
-		'can_restore_topic' => 'move_any',
-		'can_restore_msg' => 'move_any',
+		'can_restore_topic' => 'remove_any',
+		'can_restore_msg' => 'delete_any',
 		'can_see_likes' => 'likes_view',
 		'can_like' => 'likes_like',
 	];
@@ -1130,9 +1130,8 @@ function Display()
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
 
-	// Can restore topic?  That's if the topic is in the recycle board and has a previous restore state.
-	$context['can_restore_topic'] &= !empty($board_info['recycle']) && !empty($context['topicinfo']['id_previous_board']);
-	$context['can_restore_msg'] &= !empty($board_info['recycle']) && !empty($context['topicinfo']['id_previous_topic']);
+	// Can restore topic?#
+	$context['can_restore_topic'] &= !empty($context['topicinfo']['deleted']);
 
 	// Check if the draft functions are enabled and that they have permission to use them (for quick reply.)
 	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft') && $context['can_reply'];
@@ -1301,11 +1300,14 @@ function Display()
 		$context['viewing'] = $settings['display_who_viewing'] == 1 ? count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'] : empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
 	}
 	$context['messages'] = [];
-	$context['ignoredMsgs'] = [];
+	$context['hiddenMsgs'] = [];
 	$context['removableMessageIDs'] = [];
 	while($message = $context['get_message']()) {
 		$context['messages'][] = $message;
-		if (!empty($message['is_ignored'])) $context['ignoredMsgs'][] = $message['id'];
+		if (!empty($message['is_ignored']) || !empty($message['deleted']))
+		{
+			$context['hiddenMsgs'][] = $message['id'];
+		}
 		if ($message['can_remove']) $context['removableMessageIDs'][] = $message['id'];
 	}
 }
@@ -1487,16 +1489,20 @@ function prepareDisplayContext($reset = false)
 		'body' => $message['body'],
 		'new' => empty($message['is_read']),
 		'approved' => $message['approved'],
+		'deleted' => $message['deleted'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $context['can_approve'] && $message['approved'],
+		'can_restore_msg' => $message['deleted'] && $context['can_restore_msg'],
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('moderate_forum'),
-		'css_class' => $message['approved'] ? 'windowbg' : 'approvebg',
+		'css_class' => $message['approved'] && !$message['deleted'] ? 'windowbg' : ($message['deleted'] ? 'deletedbg' : 'approvebg'),
 		'separator' => $message_separator,
 	];
+	$output['is_hidden'] = $output['is_ignored'] || $output['deleted'];
+	$output['hidden_non_moderator'] = $output['deleted'] && !$output['can_restore_msg'];
 
 	// Getting the poster is a little tricky. Start with whatever we have
 	// for the account as a whole and see if we can make a character out of it.

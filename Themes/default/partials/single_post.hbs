@@ -1,4 +1,4 @@
-<div class="{{css_class}}">
+<div class="{{css_class}}{{#if is_hidden}} hidden-post{{/if}}">
 
 {{#if (not (eq id ../context.first_message))}}
 	<a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
@@ -26,7 +26,7 @@
 
 				{{{member.link}}}
 			</h4>
-			<ul class="user_info">
+			<ul class="user_info"{{#if is_hidden}} style="display:none"{{/if}}>
 
 {{! avatar }}
 {{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
@@ -137,12 +137,20 @@
 						{{#if (and ../modSettings.show_modify modified.name)}}{{{modified.last_edit_text}}}{{/if}}
 					</span>
 				</h5>
-				<div id="msg_{{id}}_quick_mod"{{#if is_ignored}} style="display:none"{{/if}}></div>
+				<div id="msg_{{id}}_quick_mod"{{#if is_hidden}} style="display:none"{{/if}}></div>
 
-{{#if is_ignored}}
-				<div id="msg_{{id}}_ignored_prompt">
+{{#if is_hidden}}
+				<div id="msg_{{id}}_hidden_prompt">
+	{{#if is_ignored}}
 					{{{../txt.ignoring_user}}}
-					<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{{../txt.show_ignore_user_post}}}</a>
+	{{/if}}
+	{{#if (eq_coerce deleted 1)}}
+					{{{../txt.deleted_by_author}}}
+	{{/if}}
+	{{#if (eq_coerce deleted 2)}}
+					{{{../txt.deleted_by_moderator}}}
+	{{/if}}
+					<a href="#" id="msg_{{id}}_hidden_link" style="display: none;">{{{../txt.show_user_post}}}</a>
 				</div>
 {{/if}}
 
@@ -160,7 +168,7 @@
 
 {{#unless ../modSettings.dont_show_attach_under_post}}
 	{{#if attachment}}
-			<div id="msg_{{id}}_footer" class="attachments"{{#if is_ignored}} style="display:none"{{/if}}>
+			<div id="msg_{{id}}_footer" class="attachments"{{#if is_hidden}} style="display:none"{{/if}}>
 
 		{{#each attachment}}
 				<div class="attached" data-index="{{@index}}" data-breakrow="{{{breakRow @index '5' 'br'}}}">
@@ -191,7 +199,7 @@
 {{/unless}}
 
 {{!-- aything below the attachments? --}}
-{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split can_restore_msg ../context.can_quote)}}
 			<div class="under_message">
 {{/if}}
 
@@ -232,7 +240,7 @@
 {{/if}}
 
 {{!-- quick buttons --}}
-{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split can_restore_msg ../context.can_quote)}}
 				<ul class="quickbuttons dropmenu buttonrow">
 
 	{{#if ../context.can_quote}}
@@ -250,7 +258,7 @@
 					</li>
 	{{/if}}
 
-	{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
+	{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split can_restore_msg)}}
 					<li class="post_options">
 						<a href="#">{{../txt.post_options}}</a>
 						<ul>
@@ -299,7 +307,7 @@
 					<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}" class="main_icons warn_button">{{../txt.issue_warning}}</a></li>
 	{{/unless}}
 
-	{{#if ../context.can_restore_msg}}
+	{{#if can_restore_msg}}
 					<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}" class="main_icons restore_button">{{../txt.restore_message}}</a></li>
 	{{/if}}
 

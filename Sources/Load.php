@@ -746,7 +746,7 @@ function loadBoard()
 				COALESCE(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.in_character,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
-				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
+				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.deleted, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -795,6 +795,7 @@ function loadBoard()
 				'in_character' => !empty($row['in_character']),
 				'posts_count' => empty($row['count_posts']),
 				'cur_topic_approved' => empty($topic) || $row['approved'],
+				'cur_topic_deleted' => empty($topic) || $row['deleted'],
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
 			];
 

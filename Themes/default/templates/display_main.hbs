@@ -116,7 +116,11 @@
 	{{#if this.separator}}
 		{{>post_separator .}}
 	{{/if}}
+	{{#if this.hidden_non_moderator}}
+		{{>single_post_hidden .}}
+	{{else}}
 		{{>single_post .}}
+	{{/if}}
 {{/each}}
 
 	</form>
@@ -264,5 +268,5 @@
 				sGoButtonLabel: {{{json txt.go}}}
 			});
 		}
-	{{#if context.ignoredMsgs}}ignore_toggles({{{json context.ignoredMsgs}}}, {{{json txt.show_ignore_user_post}}});{{/if}}
+	{{#if context.hiddenMsgs}}ignore_toggles({{{json context.hiddenMsgs}}}, {{{json txt.show_user_post}}});{{/if}}
 </script>
