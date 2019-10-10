@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Hook\Observable;
+use StoryBB\Hook\Mutatable;
 use StoryBB\StringLibrary;
 
 /**
@@ -682,7 +683,7 @@ function rebuildModCache()
 
 	$mod_query = empty($boards_mod) ? '0=1' : 'b.id_board IN (' . implode(',', $boards_mod) . ')';
 
-	$_SESSION['mc'] = [
+	$user_info['mod_cache'] = [
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
 		'id' => $user_info['id'] && $user_info['name'] ? $user_info['id'] : 0,
@@ -693,9 +694,8 @@ function rebuildModCache()
 		'mb' => $boards_mod,
 		'mq' => $mod_query,
 	];
-	call_integration_hook('integrate_mod_cache');
-
-	$user_info['mod_cache'] = $_SESSION['mc'];
+	(new Mutatable\ModerationCache($user_info['mod_cache']))->execute();
+	$_SESSION['mc'] = $user_info['mod_cache'];
 
 	// Might as well clean up some tokens while we are at it.
 	cleanTokens();
