@@ -11,7 +11,7 @@
  * @deprecated This will eventually be replaced by the revised controller/routing setup.
  */
 
-namespace StoryBB\Hook\Mutatable;
+namespace StoryBB\Hook\Mutatable\Routing;
 
 /**
  * This hook runs when the list of actions is prepared.
