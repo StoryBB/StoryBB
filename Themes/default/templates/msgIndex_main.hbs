@@ -94,7 +94,7 @@
 		{{#if (eq settings.display_who_viewing 1)}}
 				{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 		{{else}}
-				{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
+				{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}} 0 {{txt.members}}{{/if}}
 		{{/if}}
 				{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 			</div>
@@ -199,20 +199,20 @@
 				</div>
 	{{/if}}
 			</div><!-- #topic_container -->
-
+		</div><!-- #messageindex -->
 	{{#if (and context.can_quick_mod context.topics)}}
 		{{session_form}}
-		</form>
+	</form>
 	{{/if}}
 
-		<div class="mobile_buttons floatright">
-			<a class="button mobile_act">{{txt.mobile_action}}</a>
-		</div>
-		<div class="pagesection">
-			{{>button_strip button_strip=context.normal_buttons direction='right'}}
-			{{context.menu_separator}}
-			<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-		</div>
+	<div class="mobile_buttons floatright">
+		<a class="button mobile_act">{{txt.mobile_action}}</a>
+	</div>
+	<div class="pagesection">
+		{{>button_strip button_strip=context.normal_buttons direction='right'}}
+		{{context.menu_separator}}
+		<div class="pagelinks floatleft">{{{context.page_index}}}</div>
+	</div>
 {{/unless}}
 
 {{#if (and context.can_quick_mod context.topics context.can_move)}}

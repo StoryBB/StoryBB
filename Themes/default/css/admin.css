@@ -21,10 +21,6 @@
 	margin-top: 0;
 	margin-bottom: 0;
 }
-a.help span {
-	margin: -4px 0 0 0;
-	padding: 0 4px 0 0;
-}
 .table_caption, tr.table_caption td {
 	color: #000;
 	font-size: 10px;
