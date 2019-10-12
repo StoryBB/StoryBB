@@ -600,15 +600,12 @@ function UnreadTopics()
 	else
 	{
 		$see_board = isset($_REQUEST['action']) && $_REQUEST['action'] == 'unreadreplies' ? 'query_see_board' : 'query_wanna_see_board';
-		// Don't bother to show deleted posts!
+		// Verify requested boards against boards they can see.
 		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
-			WHERE ' . $user_info[$see_board] . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-				AND b.id_board != {int:recycle_board}' : ''),
-			[
-				'recycle_board' => (int) $modSettings['recycle_board'],
-			]
+			WHERE ' . $user_info[$see_board],
+			[]
 		);
 		$boards = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
@@ -774,8 +771,7 @@ function UnreadTopics()
 	{
 		$smcFunc['db']->query('', '
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
-			[
-			]
+			[]
 		);
 
 		// Let's copy things out of the log_topics table, to reduce searching.
@@ -790,11 +786,13 @@ function UnreadTopics()
 				AND t.' . $query_this_board . (empty($earliest_msg) ? '' : '
 				AND t.id_last_msg > {int:earliest_msg}') . '
 				AND t.approved = {int:is_approved}
+				AND t.deleted = {int:not_deleted}
 				AND lt.unwatched != 1',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'is_approved' => 1,
+				'not_deleted' => 0,
 				'db_error_skip' => true,
 			])
 		) !== false;
@@ -812,11 +810,13 @@ function UnreadTopics()
 			WHERE t.' . $query_this_board . (!empty($earliest_msg) ? '
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
-				AND t.approved = {int:is_approved}',
+				AND t.approved = {int:is_approved}
+				AND t.deleted = {int:not_deleted}',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'is_approved' => 1,
+				'not_deleted' => 0,
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
@@ -897,12 +897,14 @@ function UnreadTopics()
 				AND t.id_last_msg > {int:earliest_msg}' : (!$context['showing_all_topics'] && empty($_SESSION['first_login']) ? '
 				AND t.id_last_msg > {int:id_msg_last_visit}' : '')) . '
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
-				AND t.approved = {int:is_approved}',
+				AND t.approved = {int:is_approved}
+				AND t.deleted = {int:not_deleted}',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'id_msg_last_visit' => $_SESSION['id_msg_last_visit'],
 				'is_approved' => 1,
+				'not_deleted' => 0,
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
@@ -982,14 +984,12 @@ function UnreadTopics()
 		{
 			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
-				[
-				]
+				[]
 			);
 
 			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}log_topics_posted_in',
-				[
-				]
+				[]
 			);
 
 			$sortKey_joins = [
@@ -1017,11 +1017,13 @@ function UnreadTopics()
 				WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
 					AND t.id_board = {int:current_board}' : '') . '
 					AND t.approved = {int:is_approved}
+					AND t.deleted = {int:not_deleted}
 				GROUP BY m.id_topic',
 				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
 					'is_approved' => 1,
+					'not_deleted' => 0,
 					'string_zero' => '0',
 					'db_error_skip' => true,
 				]
@@ -1070,10 +1072,12 @@ function UnreadTopics()
 					AND m.id_member = {int:current_member}
 					AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
 					AND t.approved = {int:is_approved}
+					AND t.deleted = {int:not_deleted}
 					AND lt.unwatched != 1',
 				array_merge($query_parameters, [
 					'current_member' => $user_info['id'],
 					'is_approved' => 1,
+					'not_deleted' => 0,
 				])
 			);
 			list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
@@ -1134,13 +1138,16 @@ function UnreadTopics()
 				WHERE t.' . $query_this_board . '
 					AND t.id_last_msg >= {int:min_message}
 					AND (COALESCE(lt.id_msg, lmr.id_msg, 0)) < t.id_last_msg
-					AND t.approved = {int:is_approved} AND lt.unwatched != 1
+					AND t.approved = {int:is_approved}
+					AND t.deleted = {int:not_deleted}
+					AND lt.unwatched != 1
 				ORDER BY {raw:order}
 				LIMIT {int:offset}, {int:limit}',
 				array_merge($query_parameters, [
 					'current_member' => $user_info['id'],
 					'min_message' => (int) $min_message,
 					'is_approved' => 1,
+					'not_deleted' => 0,
 					'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
 					'offset' => $_REQUEST['start'],
 					'limit' => $context['topics_per_page'],
@@ -1193,7 +1200,6 @@ function UnreadTopics()
 
 	$context['topics'] = [];
 	$topic_ids = [];
-	$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0;
 
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
