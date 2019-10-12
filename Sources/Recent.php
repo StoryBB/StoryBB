@@ -16,7 +16,7 @@ use StoryBB\StringLibrary;
 /**
  * Get the latest post made on the system
  *
- * - respects approved, recycled, and board permissions
+ * - respects approved, deleted, and board permissions
  * - @todo is this even used anywhere?
  *
  * @return array An array of information about the last post that you can see
@@ -31,14 +31,14 @@ function getLastPost()
 			ml.smileys_enabled
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = b.id_last_msg)
-		WHERE {query_wanna_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND b.id_board != {int:recycle_board}' : '') . '
+		WHERE {query_wanna_see_board}
 			AND ml.approved = {int:is_approved}
+			AND ml.deleted = {int:not_deleted}
 		ORDER BY b.id_msg_updated DESC
 		LIMIT 1',
 		[
-			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
+			'not_deleted' => 0,
 		]
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
@@ -112,19 +112,15 @@ function RecentPosts()
 			];
 		}
 
-		$recycling = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
-
 		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:category_list})
-				AND b.redirect = {string:empty}' . ($recycling ? '
-				AND b.id_board != {int:recycle_board}' : '') . '
+				AND b.redirect = {string:empty}
 				AND {query_wanna_see_board}',
 			[
 				'category_list' => $_REQUEST['c'],
 				'empty' => '',
-				'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 			]
 		);
 		$total_cat_posts = 0;
@@ -232,11 +228,9 @@ function RecentPosts()
 	}
 	else
 	{
-		$query_this_board = '{query_wanna_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-					AND b.id_board != {int:recycle_board}' : ''). '
+		$query_this_board = '{query_wanna_see_board}
 					AND m.id_msg >= {int:max_id_msg}';
 		$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 100 - $_REQUEST['start'] * 6);
-		$query_parameters['recycle_board'] = $modSettings['recycle_board'];
 
 		// "Borrow" some data from above...
 		$query_these_boards = str_replace('AND m.id_msg >= {int:max_id_msg}', '', $query_this_board);
@@ -279,15 +273,19 @@ function RecentPosts()
 			$request = $smcFunc['db']->query('', '
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
+					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 				WHERE ' . $query_this_board . '
 					AND m.approved = {int:is_approved}
+					AND m.deleted = {int:not_deleted}
+					AND t.deleted = {int:not_deleted}
 				ORDER BY m.id_msg DESC
 				LIMIT {int:offset}, {int:limit}',
 				array_merge($query_parameters, [
 					'is_approved' => 1,
 					'offset' => $_REQUEST['start'],
 					'limit' => 10,
+					'not_deleted' => 0,
 				])
 			);
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
