@@ -1566,7 +1566,7 @@ function MaintainMassMoveTopics()
  * - recounts all posts for members found in the message table
  * - updates the members post count record in the members table
  * - honors the boards post count flag
- * - does not count posts in the recycle bin
+ * - does not count deleted posts
  * - zeros post counts for all members with no posts in the message table
  * - runs as a delayed loop to avoid server overload
  * - uses the not_done template in Admin.template
@@ -1624,13 +1624,13 @@ function MaintainRecountPosts()
 			INNER JOIN {db_prefix}boards AS b ON m.id_board = b.id_board
 		WHERE m.id_member != {int:zero}
 			AND b.count_posts = {int:zero}
-			' . (!empty($modSettings['recycle_enable']) ? ' AND b.id_board != {int:recycle}' : '') . '
+			AND m.deleted = {int:not_deleted}
 		GROUP BY m.id_member
 		LIMIT {int:start}, {int:number}',
 		[
 			'start' => $_REQUEST['start'],
 			'number' => $increment,
-			'recycle' => $modSettings['recycle_board'],
+			'not_deleted' => 0,
 			'zero' => 0,
 		]
 	);
@@ -1657,14 +1657,14 @@ function MaintainRecountPosts()
 		FROM ({db_prefix}messages AS m, {db_prefix}boards AS b)
 		WHERE m.id_character != {int:zero}
 			AND b.count_posts = {int:zero}
-			AND m.id_board = b.id_board ' . (!empty($modSettings['recycle_enable']) ? '
-			AND b.id_board != {int:recycle}' : '') . '
+			AND m.id_board = b.id_board
+			AND m.deleted = {int:not_deleted}
 		GROUP BY m.id_character
 		LIMIT {int:start}, {int:number}',
 		[
 			'start' => $_REQUEST['start'],
 			'number' => $increment,
-			'recycle' => $modSettings['recycle_board'],
+			'not_deleted' => 0,
 			'zero' => 0,
 		]
 	);
@@ -1712,13 +1712,11 @@ function MaintainRecountPosts()
 			INNER JOIN {db_prefix}boards AS b ON m.id_board = b.id_board
 		WHERE m.id_member != {int:zero}
 			AND b.count_posts = {int:zero}
-			' . (!empty($modSettings['recycle_enable']) ? ' AND b.id_board != {int:recycle}' : '') . '
 		GROUP BY m.id_member',
 		[
 			'zero' => 0,
 			'string_zero' => '0',
 			'db_error_skip' => true,
-			'recycle' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 		]
 	) !== false;
 
@@ -1763,14 +1761,12 @@ function MaintainRecountPosts()
 		FROM ({db_prefix}messages AS m,{db_prefix}boards AS b)
 		WHERE m.id_character != {int:zero}
 			AND b.count_posts = {int:zero}
-			AND m.id_board = b.id_board ' . (!empty($modSettings['recycle_enable']) ? '
-			AND b.id_board != {int:recycle}' : '') . '
+			AND m.id_board = b.id_board
 		GROUP BY m.id_character',
 		[
 			'zero' => 0,
 			'string_zero' => '0',
 			'db_error_skip' => true,
-			'recycle' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 		]
 	) !== false;
 
