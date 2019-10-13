@@ -25,7 +25,7 @@ use StoryBB\StringLibrary;
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $smcFunc, $txt;
+	global $modSettings, $boarddir, $smcFunc;
 	global $cache_enable, $sourcedir, $context;
 
 	// We need some caching support, maybe.
@@ -791,7 +791,6 @@ function loadBoard()
 				'override_theme' => !empty($row['override_theme']),
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
-				'recycle' => !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $board,
 				'in_character' => !empty($row['in_character']),
 				'posts_count' => empty($row['count_posts']),
 				'cur_topic_approved' => empty($topic) || $row['approved'],
@@ -1412,7 +1411,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
-	global $context, $modSettings, $settings, $smcFunc;
+	global $context, $modSettings, $settings;
 	static $dataLoaded = [];
 	static $loadedLanguages = [];
 
@@ -2540,7 +2539,7 @@ function addInlineJavaScript($javascript, $defer = false)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $user_info, $language, $settings, $context, $modSettings;
+	global $user_info, $language, $settings, $context;
 	global $db_show_debug, $sourcedir, $cachedir;
 	global $txt, $helptxt, $txtBirthdayEmails, $editortxt;
 	static $already_loaded = [];
@@ -2596,7 +2595,14 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// If it still doesn't exist, abort!
 		if (!file_exists($path))
 		{
-			fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+			if ($fatal)
+			{
+				fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		@include($path);
@@ -2753,7 +2759,7 @@ function getBoardParents($id_parent)
  */
 function getLanguages($use_cache = true)
 {
-	global $context, $smcFunc, $settings, $modSettings, $language;
+	global $context, $settings, $modSettings, $language;
 
 	// Either we don't use the cache, or its expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) === null)
@@ -2864,7 +2870,7 @@ function getLanguages($use_cache = true)
  */
 function censorText(&$text, $force = false)
 {
-	global $modSettings, $options, $txt;
+	global $modSettings, $options;
 	static $censor_vulgar = null, $censor_proper;
 
 	if ((!empty($options['show_no_censored']) && !empty($modSettings['allow_no_censored']) && !$force) || empty($modSettings['censor_vulgar']) || trim($text) === '')
@@ -2901,91 +2907,6 @@ function censorText(&$text, $force = false)
 		$text = preg_replace($censor_vulgar, $censor_proper, $text);
 
 	return $text;
-}
-
-/**
- * Load the language file using require
- * 	- loads the language file specified by filename.
- * 	- outputs a parse error if the file did not exist or contained errors.
- * 	- attempts to detect the error and line, and show detailed information.
- *
- * @param string $filename The name of the file to include
- * @param bool $once If true only includes the file once (like include_once)
- */
-function template_include($filename, $once = false)
-{
-	global $context, $settings, $txt, $scripturl, $modSettings;
-	global $boardurl, $boarddir, $sourcedir;
-	global $maintenance, $mtitle, $mmessage;
-	static $templates = [];
-
-	// We want to be able to figure out any errors...
-	@ini_set('track_errors', '1');
-
-	// Don't include the file more than once, if $once is true.
-	if ($once && in_array($filename, $templates))
-		return;
-	// Add this file to the include list, whether $once is true or not.
-	else
-		$templates[] = $filename;
-
-	$file_found = file_exists($filename);
-
-	if ($once && $file_found)
-		require_once($filename);
-	elseif ($file_found)
-		require($filename);
-
-	if ($file_found !== true)
-	{
-		ob_end_clean();
-		ob_start();
-
-		if (isset($_GET['debug']))
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
-
-		// Don't cache error pages!!
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Cache-Control: no-cache');
-
-		if (!isset($txt['template_parse_error']))
-		{
-			$txt['template_parse_error'] = 'Template Parse Error!';
-			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system.  This problem should only be temporary, so please come back later and try again.  If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_errmsg'] = 'Unfortunately more information is not available at this time as to exactly what is wrong.';
-		}
-
-		// First, let's get the doctype and language information out of the way.
-		echo '<!DOCTYPE html>
-<html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="UTF-8">';
-
-		if (!empty($maintenance) && !allowedTo('admin_forum'))
-			echo '
-		<title>', $mtitle, '</title>
-	</head>
-	<body>
-		<h3>', $mtitle, '</h3>
-		', $mmessage, '
-	</body>
-</html>';
-		else
-		{
-			echo '
-		}
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', $txt['template_parse_error_message'], '
-	</body>
-</html>';
-		}
-
-		die;
-	}
 }
 
 /**
@@ -3133,7 +3054,7 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret, $settings;
+	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings;
 
 	// Come on!
 	if (empty($data))
@@ -3247,8 +3168,6 @@ function get_char_membergroup_data()
  */
 function get_labels_and_badges($group_list)
 {
-	global $settings, $context;
-
 	$group_title = null;
 	$group_color = '';
 	$groups = get_char_membergroup_data();
