@@ -138,12 +138,14 @@ function PlushSearch1()
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => (empty($context['search_params']['brd']) && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
+			'selected' => (empty($context['search_params']['brd']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
 		];
 
 		// If a board wasn't checked that probably should have been ensure the board selection is selected, yo!
-		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
+		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'])
+		{
 			$context['boards_check_all'] = false;
+		}
 	}
 	$smcFunc['db']->free_result($request);
 
@@ -473,14 +475,12 @@ function PlushSearch2()
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {raw:boards_allowed_to_see}
-				AND redirect = {string:empty_string}' . (empty($_REQUEST['brd']) ? (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-				AND b.id_board != {int:recycle_board_id}' : '') : '
+				AND redirect = {string:empty_string}' . (empty($_REQUEST['brd']) ? '' : '
 				AND b.id_board IN ({array_int:selected_search_boards})'),
 			[
 				'boards_allowed_to_see' => $user_info[$see_board],
 				'empty_string' => '',
 				'selected_search_boards' => empty($_REQUEST['brd']) ? [] : $_REQUEST['brd'],
-				'recycle_board_id' => $modSettings['recycle_board'],
 			]
 		);
 		$search_params['brd'] = [];
@@ -512,8 +512,6 @@ function PlushSearch2()
 
 		if (count($search_params['brd']) == $num_boards)
 			$boardQuery = '';
-		elseif (count($search_params['brd']) == $num_boards - 1 && !empty($modSettings['recycle_board']) && !in_array($modSettings['recycle_board'], $search_params['brd']))
-			$boardQuery = '!= ' . $modSettings['recycle_board'];
 		else
 			$boardQuery = 'IN (' . implode(', ', $search_params['brd']) . ')';
 	}
@@ -867,6 +865,7 @@ function PlushSearch2()
 					];
 
 					$subject_query['where'][] = 't.approved = {int:is_approved}';
+					$subject_query['where'][] = 't.deleted = {int:not_deleted}';
 
 					$numTables = 0;
 					$prev_join = 0;
@@ -954,6 +953,7 @@ function PlushSearch2()
 							'recent_message' => $recentMsg,
 							'huge_topic_posts' => $humungousTopicPosts,
 							'is_approved' => 1,
+							'not_deleted' => 0,
 						])
 					);
 
@@ -1005,13 +1005,19 @@ function PlushSearch2()
 						'{db_prefix}messages AS m ON (m.id_topic = t.id_topic)'
 					],
 					'left_join' => [],
-					'where' => [],
+					'where' => [
+						't.approved = {int:is_approved}',
+						'm.approved = {int:is_approved}',
+						't.deleted = {int:not_deleted}',
+						'm.deleted = {int:not_deleted}',
+					],
 					'group_by' => [],
 					'parameters' => [
 						'min_msg' => $minMsg,
 						'recent_message' => $recentMsg,
 						'huge_topic_posts' => $humungousTopicPosts,
 						'is_approved' => 1,
+						'not_deleted' => 0,
 					],
 				];
 
@@ -1566,7 +1572,6 @@ function PlushSearch2()
 		$context['can_move'] = in_array(0, $boards_can['move_any']);
 		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
 		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
-		$context['can_restore'] = false;
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
@@ -1668,9 +1673,6 @@ function PlushSearch2()
 		$context['search_results'][] = $row;
 	}
 
-	$context['can_restore_perm'] = allowedTo('move_any') && !empty($modSettings['recycle_enable']);
-	$context['can_restore'] = false; // We won't know until we handle the context later whether we can actually restore...
-
 	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
 		'board_name' => addslashes(un_htmlspecialchars($txt['select_destination'])),
@@ -1692,10 +1694,6 @@ function prepareSearchContext($reset = false)
 	global $txt, $modSettings, $scripturl, $user_info;
 	global $memberContext, $context, $settings, $options, $messages_request;
 	global $boards_can, $participants, $smcFunc;
-	static $recycle_board = null;
-
-	if ($recycle_board === null)
-		$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0;
 
 	// Remember which message this is.  (ie. reply #83)
 	static $counter = null;
@@ -1874,7 +1872,7 @@ function prepareSearchContext($reset = false)
 		'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
 		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
 		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
-		'restore' => !empty($context['can_restore_perm']) && ($modSettings['recycle_board'] == $output['board']['id']),
+		'restore' => false,
 	];
 
 	$context['can_lock'] |= $output['quick_mod']['lock'];
@@ -1882,7 +1880,7 @@ function prepareSearchContext($reset = false)
 	$context['can_move'] |= $output['quick_mod']['move'];
 	$context['can_remove'] |= $output['quick_mod']['remove'];
 	$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
-	$context['can_restore'] |= $output['quick_mod']['restore'];
+	$context['can_restore'] = false; // @todo reinstate this later?
 	$context['can_markread'] = $context['user']['is_logged'];
 
 	$context['qmod_actions'] = [];
