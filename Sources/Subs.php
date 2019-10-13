@@ -112,12 +112,8 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_posts + unapproved_posts) AS total_messages, MAX(id_last_msg) AS max_msg_id
 				FROM {db_prefix}boards
-				WHERE redirect = {string:blank_redirect}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-					AND id_board != {int:recycle_board}' : ''),
-					[
-						'recycle_board' => isset($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-						'blank_redirect' => '',
-					]
+				WHERE redirect = {empty}',
+					[]
 				);
 				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
@@ -165,14 +161,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			else
 			{
 				// Get the number of topics - a SUM is better for InnoDB tables.
-				// We also ignore the recycle bin here because there will probably be a bunch of one-post topics there.
 				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_topics + unapproved_topics) AS total_topics
-				FROM {db_prefix}boards' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-				WHERE id_board != {int:recycle_board}' : ''),
-					[
-						'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-					]
+				FROM {db_prefix}boards',
+					[]
 				);
 				$row = $smcFunc['db']->fetch_assoc($result);
 				$smcFunc['db']->free_result($result);
