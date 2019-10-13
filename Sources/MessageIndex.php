@@ -356,7 +356,7 @@ function MessageIndex()
 
 		$result = $smcFunc['db']->query('substring', '
 			SELECT
-				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board,
+				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll,
 				' . ($user_info['is_guest'] ? '0' : 'COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1') . ' AS new_from,
 				' . ( $enableParticipation ? ' COALESCE(( SELECT 1 FROM {db_prefix}messages AS parti WHERE t.id_topic = parti.id_topic and parti.id_member = {int:current_member} LIMIT 1) , 0) as is_posted_in,
 				'	: '') . '
@@ -562,7 +562,7 @@ function MessageIndex()
 		// Ignore approving own topics as it's unlikely to come up...
 		$context['can_approve'] = allowedTo('approve_posts') && !empty($board_info['unapproved_topics']);
 		// Can we restore topics?
-		$context['can_restore'] = allowedTo('move_any') && !empty($board_info['recycle']);
+		$context['can_restore'] = allowedTo('delete_any');
 
 		if ($user_info['is_admin'] || $modSettings['topic_move_any'])
 			$context['can_move_any'] = true;
@@ -1099,7 +1099,7 @@ function QuickModeration()
 	{
 		// They can only delete their own topics. (we wouldn't be here if they couldn't do that..)
 		$result = $smcFunc['db']->query('', '
-			SELECT id_topic, id_board
+			SELECT id_topic, id_board, deleted
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:removed_topic_ids})' . (!empty($board) && !allowedTo('remove_any') ? '
 				AND id_member_started = {int:current_member}' : '') . '
@@ -1116,7 +1116,7 @@ function QuickModeration()
 		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
 			$removeCache[] = $row['id_topic'];
-			$removeCacheBoards[$row['id_topic']] = $row['id_board'];
+			$removeCacheBoards[$row['id_topic']] = ['board' => $row['id_board'], 'deleted' => $row['deleted']];
 		}
 		$smcFunc['db']->free_result($result);
 
@@ -1126,8 +1126,8 @@ function QuickModeration()
 			// Gotta send the notifications *first*!
 			foreach ($removeCache as $topic)
 			{
-				// Only log the topic ID if it's not in the recycle board.
-				logAction('remove', [(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $removeCacheBoards[$topic] ? 'topic' : 'old_topic_id') => $topic, 'board' => $removeCacheBoards[$topic]]);
+				// Only log the topic ID if it's not currently deleted.
+				logAction('remove', ['topic' => $topic, 'board' => $removeCacheBoards[$topic]['board']]);
 				sendNotifications($topic, 'remove');
 			}
 
