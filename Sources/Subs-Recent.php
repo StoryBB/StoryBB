@@ -34,18 +34,18 @@ function getLastPosts($latestPostOptions)
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-		WHERE m.id_msg >= {int:likely_max_msg}' .
-			(!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND b.id_board != {int:recycle_board}' : '') . '
+		WHERE m.id_msg >= {int:likely_max_msg}
 			AND {query_wanna_see_board}
 			AND t.approved = {int:is_approved}
 			AND m.approved = {int:is_approved}
+			AND t.not_deleted = {int:not_deleted}
+			AND m.not_deleted = {int:not_deleted}
 		ORDER BY m.id_msg DESC
 		LIMIT ' . $latestPostOptions['number_posts'],
 		[
 			'likely_max_msg' => max(0, $modSettings['maxMsgID'] - 50 * $latestPostOptions['number_posts']),
-			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
+			'not_deleted' => 0,
 		]
 	);
 	$posts = [];
