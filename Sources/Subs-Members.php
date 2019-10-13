@@ -1283,14 +1283,13 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 	// If they want the post count restored then we need to do some research.
 	if ($post_count)
 	{
-		$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0;
 		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = {int:count_posts})
 			WHERE m.id_member = {int:guest_id}
-				AND m.approved = {int:is_approved}' . (!empty($recycle_board) ? '
-				AND m.id_board != {int:recycled_board}' : '') . (empty($email) ? '' : '
+				AND m.approved = {int:is_approved}
+				AND m.deleted = {int:not_deleted}' . (empty($email) ? '' : '
 				AND m.poster_email = {string:email_address}') . (empty($membername) ? '' : '
 				AND m.poster_name = {string:member_name}'),
 			[
@@ -1299,7 +1298,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'email_address' => $email,
 				'member_name' => $membername,
 				'is_approved' => 1,
-				'recycled_board' => $recycle_board,
+				'not_deleted' => 0,
 			]
 		);
 		list ($messageCount) = $smcFunc['db']->fetch_row($request);
