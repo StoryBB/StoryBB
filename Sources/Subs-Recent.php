@@ -38,8 +38,8 @@ function getLastPosts($latestPostOptions)
 			AND {query_wanna_see_board}
 			AND t.approved = {int:is_approved}
 			AND m.approved = {int:is_approved}
-			AND t.not_deleted = {int:not_deleted}
-			AND m.not_deleted = {int:not_deleted}
+			AND t.deleted = {int:not_deleted}
+			AND m.deleted = {int:not_deleted}
 		ORDER BY m.id_msg DESC
 		LIMIT ' . $latestPostOptions['number_posts'],
 		[
