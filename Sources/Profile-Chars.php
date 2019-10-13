@@ -1213,11 +1213,11 @@ function char_stats()
 		SELECT COUNT(*)
 		FROM {db_prefix}topics AS t
 		INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
-		WHERE m.id_character = {int:id_character}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND t.id_board != {int:recycle_board}' : ''),
+		WHERE m.id_character = {int:id_character}
+			AND t.deleted = {int:not_deleted}',
 		[
 			'id_character' => $context['character']['id_character'],
-			'recycle_board' => $modSettings['recycle_board'],
+			'not_deleted' => 0,
 		]
 	);
 	list ($context['num_topics']) = $smcFunc['db']->fetch_row($result);
@@ -1233,12 +1233,14 @@ function char_stats()
 		WHERE m.id_character = {int:id_character}
 			AND b.count_posts = {int:count_enabled}
 			AND {query_see_board}
+			AND m.deleted = {int:not_deleted}
 		GROUP BY b.id_board
 		ORDER BY message_count DESC
 		LIMIT 10',
 		[
 			'id_character' => $context['character']['id_character'],
 			'count_enabled' => 0,
+			'not_deleted' => 0,
 		]
 	);
 	$context['popular_boards'] = [];
@@ -1265,11 +1267,13 @@ function char_stats()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 		WHERE m.id_character = {int:id_character}
 			AND {query_see_board}
+			AND m.deleted = {int:not_deleted}
 		GROUP BY b.id_board, b.num_posts
 		ORDER BY percentage DESC
 		LIMIT 10',
 		[
 			'id_character' => $context['character']['id_character'],
+			'not_deleted' => 0,
 		]
 	);
 	$context['board_activity'] = [];

@@ -1372,11 +1372,11 @@ function statPanel($memID)
 	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*), COUNT( CASE WHEN id_poll != {int:no_poll} THEN 1 ELSE NULL END )
 		FROM {db_prefix}topics
-		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND id_board != {int:recycle_board}' : ''),
+		WHERE id_member_started = {int:current_member}
+			AND deleted = {int:not_deleted}',
 		[
 			'current_member' => $memID,
-			'recycle_board' => $modSettings['recycle_board'],
+			'not_deleted' => 0,
 			'no_poll' => 0,
 		]
 	);
