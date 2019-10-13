@@ -762,8 +762,8 @@ function deleteAccount($memID)
 	// Permissions for removing stuff...
 	$context['can_delete_posts'] = !$context['user']['is_owner'] && allowedTo('moderate_forum');
 
-	// Show an extra option if recycling is enabled...
-	$context['show_perma_delete'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
+	// Show an extra option if soft deleting is a thing...
+	$context['show_perma_delete'] = allowedTo(['admin_forum', 'moderate_forum']);
 
 	// Can they do this, or will they need approval?
 	$context['needs_approval'] = $context['user']['is_owner'] && !allowedTo('moderate_forum');
@@ -878,10 +878,10 @@ function deleteAccount2($memID)
 		// Include RemoveTopics - essential for this type of work!
 		require_once($sourcedir . '/RemoveTopic.php');
 
-		$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
-		$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
+		$extra_topic = empty($_POST['perma_delete']) ? ' AND t.deleted = {int:not_deleted}' : '';
+		$extra_msg = empty($_POST['perma_delete']) ? ' AND m.deleted = {int:not_deleted}' : '';
 
-		if (allowedTo('moderate_forum'))
+		if (allowedTo(['moderate_forum', 'admin_forum']))
 		{
 			// Identify the OOC account in here.
 			$ooc_account = 0;
@@ -903,11 +903,11 @@ function deleteAccount2($memID)
 					FROM {db_prefix}topics AS t
 						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 					WHERE t.id_member_started = {int:selected_member}
-						AND m.id_character = {int:ooc_character}' . $extra,
+						AND m.id_character = {int:ooc_character}' . $extra_topic,
 					[
 						'selected_member' => $memID,
 						'ooc_character' => $ooc_account,
-						'recycle_board' => $recycle_board,
+						'not_deleted' => 0,
 					]
 				);
 				$topicIDs = [];
@@ -924,11 +924,11 @@ function deleteAccount2($memID)
 					FROM {db_prefix}topics AS t
 						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 					WHERE t.id_member_started = {int:selected_member}
-						AND m.id_character != {int:ooc_character}' . $extra,
+						AND m.id_character != {int:ooc_character}' . $extra_topic,
 					[
 						'selected_member' => $memID,
 						'ooc_character' => $ooc_account,
-						'recycle_board' => $recycle_board,
+						'not_deleted' => 0,
 					]
 				);
 				$topicIDs = [];
@@ -949,12 +949,12 @@ function deleteAccount2($memID)
 							AND t.id_first_msg != m.id_msg)
 					WHERE m.id_member = {int:selected_member}
 						AND m.id_character = {int:ooc_character}' . (!empty($topicIDs) ? '
-						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra_msg,
 					[
 						'selected_member' => $memID,
 						'ooc_character' => $ooc_account,
 						'topics' => $topicIDs,
-						'recycle_board' => $recycle_board,
+						'not_deleted' => 0,
 					]
 				);
 				// This could take a while... but ya know it's gonna be worth it in the end.
@@ -974,12 +974,12 @@ function deleteAccount2($memID)
 							AND t.id_first_msg != m.id_msg)
 					WHERE m.id_member = {int:selected_member}
 						AND m.id_character != {int:ooc_character}' . (!empty($topicIDs) ? '
-						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra_msg,
 					[
 						'selected_member' => $memID,
 						'ooc_character' => $ooc_account,
 						'topics' => $topicIDs,
-						'recycle_board' => $recycle_board,
+						'not_deleted' => 0,
 					]
 				);
 				// This could take a while... but ya know it's gonna be worth it in the end.
@@ -992,9 +992,9 @@ function deleteAccount2($memID)
 
 			if (!empty($topicIDs))
 			{
-				// Actually remove the topics. Ignore recycling if we want to perma-delete things...
-				// @todo This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
-				removeTopics($topicIDs, true, !empty($extra));
+				// Actually remove the topics. Ignore soft delete if we want to perma-delete things...
+				// @todo This needs to check permissions, but we'll let it slide for now because of moderate_forum/admin_forum already being had.
+				removeTopics($topicIDs, true, !empty($extra_msg));
 			}
 
 			if (!empty($msgIDs))
