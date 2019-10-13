@@ -172,8 +172,7 @@ function ShowXmlFeed()
 	}
 	else
 	{
-		$query_this_board = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND b.id_board != ' . $modSettings['recycle_board'] : '');
+		$query_this_board = '{query_see_board}';
 		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 100 - $_GET['limit'] * 5);
 	}
 
@@ -682,6 +681,8 @@ function getXmlNews($xml_format)
 				AND {raw:optimize_msg}') . (empty($board) ? '' : '
 				AND t.id_board = {int:current_board}') . '
 				AND t.approved = {int:is_approved}
+				AND t.deleted = {int:not_deleted}
+				AND m.deleted = {int:not_deleted}
 			ORDER BY t.id_first_msg DESC
 			LIMIT {int:limit}',
 			[
@@ -932,12 +933,15 @@ function getXmlRecent($xml_format)
 				AND {raw:optimize_msg}') . (empty($board) ? '' : '
 				AND m.id_board = {int:current_board}') . '
 				AND m.approved = {int:is_approved}
+				AND t.deleted = {int:not_deleted}
+				AND m.deleted = {int:not_deleted}
 			ORDER BY m.id_msg DESC
 			LIMIT {int:limit}',
 			[
 				'limit' => $_GET['limit'],
 				'current_board' => $board,
 				'is_approved' => 1,
+				'not_deleted' => 0,
 				'optimize_msg' => $optimize_msg,
 			]
 		);
