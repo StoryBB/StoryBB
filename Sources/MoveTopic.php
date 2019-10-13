@@ -129,7 +129,7 @@ function MoveTopic()
  */
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $sourcedir, $modSettings, $context;
+	global $txt, $board, $topic, $scripturl, $sourcedir, $context;
 	global $board, $language, $user_info, $smcFunc;
 
 	if (empty($topic))
@@ -383,9 +383,6 @@ function moveTopics($topics, $toBoard)
 	if (empty($toBoard))
 		return;
 
-	// Are we moving to the recycle board?
-	$isRecycleDest = !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $toBoard;
-
 	// Callback for search APIs to do their thing
 	require_once($sourcedir . '/Search.php');
 	$searchAPI = findSearchAPI();
@@ -509,10 +506,9 @@ function moveTopics($topics, $toBoard)
 		UPDATE {db_prefix}boards
 		SET
 			num_topics = num_topics + {int:total_topics},
-			num_posts = num_posts + {int:total_posts},' . ($isRecycleDest ? '
-			unapproved_posts = {int:no_unapproved}, unapproved_topics = {int:no_unapproved}' : '
+			num_posts = num_posts + {int:total_posts},
 			unapproved_posts = unapproved_posts + {int:total_unapproved_posts},
-			unapproved_topics = unapproved_topics + {int:total_unapproved_topics}') . '
+			unapproved_topics = unapproved_topics + {int:total_unapproved_topics}
 		WHERE id_board = {int:id_board}',
 		[
 			'id_board' => $toBoard,
@@ -527,8 +523,7 @@ function moveTopics($topics, $toBoard)
 	// Move the topic.  Done.  :P
 	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
-		SET id_board = {int:id_board}' . ($isRecycleDest ? ',
-			unapproved_posts = {int:no_unapproved}, approved = {int:is_approved}' : '') . '
+		SET id_board = {int:id_board}
 		WHERE id_topic IN ({array_int:topics})',
 		[
 			'id_board' => $toBoard,
@@ -538,86 +533,9 @@ function moveTopics($topics, $toBoard)
 		]
 	);
 
-	// If this was going to the recycle bin, check what messages are being recycled, and remove them from the queue.
-	if ($isRecycleDest && ($totalUnapprovedTopics || $totalUnapprovedPosts))
-	{
-		$request = $smcFunc['db']->query('', '
-			SELECT id_msg
-			FROM {db_prefix}messages
-			WHERE id_topic IN ({array_int:topics})
-				and approved = {int:not_approved}',
-			[
-				'topics' => $topics,
-				'not_approved' => 0,
-			]
-		);
-		$approval_msgs = [];
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-			$approval_msgs[] = $row['id_msg'];
-		$smcFunc['db']->free_result($request);
-
-		// Empty the approval queue for these, as we're going to approve them next.
-		if (!empty($approval_msgs))
-			$smcFunc['db']->query('', '
-				DELETE FROM {db_prefix}approval_queue
-				WHERE id_msg IN ({array_int:message_list})
-					AND id_attach = {int:id_attach}',
-				[
-					'message_list' => $approval_msgs,
-					'id_attach' => 0,
-				]
-			);
-
-		// Get all the current max and mins.
-		$request = $smcFunc['db']->query('', '
-			SELECT id_topic, id_first_msg, id_last_msg
-			FROM {db_prefix}topics
-			WHERE id_topic IN ({array_int:topics})',
-			[
-				'topics' => $topics,
-			]
-		);
-		$topicMaxMin = [];
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-		{
-			$topicMaxMin[$row['id_topic']] = [
-				'min' => $row['id_first_msg'],
-				'max' => $row['id_last_msg'],
-			];
-		}
-		$smcFunc['db']->free_result($request);
-
-		// Check the MAX and MIN are correct.
-		$request = $smcFunc['db']->query('', '
-			SELECT id_topic, MIN(id_msg) AS first_msg, MAX(id_msg) AS last_msg
-			FROM {db_prefix}messages
-			WHERE id_topic IN ({array_int:topics})
-			GROUP BY id_topic',
-			[
-				'topics' => $topics,
-			]
-		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-		{
-			// If not, update.
-			if ($row['first_msg'] != $topicMaxMin[$row['id_topic']]['min'] || $row['last_msg'] != $topicMaxMin[$row['id_topic']]['max'])
-				$smcFunc['db']->query('', '
-					UPDATE {db_prefix}topics
-					SET id_first_msg = {int:first_msg}, id_last_msg = {int:last_msg}
-					WHERE id_topic = {int:selected_topic}',
-					[
-						'first_msg' => $row['first_msg'],
-						'last_msg' => $row['last_msg'],
-						'selected_topic' => $row['id_topic'],
-					]
-				);
-		}
-		$smcFunc['db']->free_result($request);
-	}
-
 	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
-		SET id_board = {int:id_board}' . ($isRecycleDest ? ',approved = {int:is_approved}' : '') . '
+		SET id_board = {int:id_board}
 		WHERE id_topic IN ({array_int:topics})',
 		[
 			'id_board' => $toBoard,
