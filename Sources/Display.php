@@ -29,7 +29,7 @@ function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
 	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
-	global $attachments, $messages_request, $language, $smcFunc, $user_profile;
+	global $messages_request, $language, $smcFunc;
 	global $memberContext;
 
 	// What are you gonna display if these are empty?!
@@ -49,7 +49,7 @@ function Display()
 
 	// Let's do some work on what to search index.
 	if (count($_GET) > 2)
-		foreach ($_GET as $k => $v)
+		foreach (array_keys($_GET) as $k)
 		{
 			if (!in_array($k, ['topic', 'board', 'start', session_name()]))
 				$context['robot_no_index'] = true;
@@ -155,7 +155,6 @@ function Display()
 			COALESCE(mem.real_name, ms.poster_name) AS topic_started_name, ms.poster_time AS topic_started_time,
 			IFNULL(chars.character_name, IFNULL(mem.real_name, ms.poster_name)) AS topic_started_name,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'COALESCE(lt.id_msg, lmr.id_msg, -1) + 1') . ' AS new_from
-			' . (!empty($board_info['recycle']) ? ', id_previous_board, id_previous_topic' : '') . '
 			' . (!empty($topic_selects) ? (', ' . implode(', ', $topic_selects)) : '') . '
 			' . (!$user_info['is_guest'] ? ', COALESCE(lt.unwatched, 0) as unwatched' : '') . '
 		FROM {db_prefix}topics AS t
