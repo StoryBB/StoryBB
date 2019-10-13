@@ -236,7 +236,7 @@
 				</script>
 				<hr>
 
-{{#if (and (not context.board.is_recycle) (not context.board.topics))}}
+{{#if (not context.board.topics)}}
 					<dl class="settings">
 						<dt>
 							<strong{{#if context.board.topics}} style="color: gray;"{{/if}}>{{{txt.mboards_redirect}}}:</strong><br>
@@ -336,10 +336,6 @@
 				</div>
 {{/if}}
 
-{{#if context.board.is_recycle}}
-				<div class="noticebox">{{{txt.mboards_recycle_disabled_delete}}}</div>
-{{/if}}
-
 				<input type="hidden" name="rid" value="{{{context.redirect_location}}}">
 				{{session_form}}
 				{{token_form context.token_check}}
@@ -356,9 +352,9 @@
 				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);">
 {{/if}}
 
-{{#if (and (not context.board.is_new) (not context.board.is_recycle))}}
+{{#unless context.board.is_new}}
 				<input type="submit" name="delete" value="{{{txt.mboards_delete_board}}}" data-confirm="{{{txt.boardConfirm}}}" class="you_sure">
-{{/if}}
+{{/unless}}
 			</div>
 		</form>
 	</div>
@@ -374,9 +370,6 @@
 		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
 		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
 		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";
-
-{{#if (and (not context.board.topics) (not context.board.is_recycle))}}
-			document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";
 
 	{{#if context.board.redirect}}
 			document.getElementById("reset_redirect_div").style.display = redirectEnabled ? "" : "none";

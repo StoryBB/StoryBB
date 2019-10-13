@@ -353,7 +353,6 @@ function EditBoard()
 		$context['board']['name'] = html_to_bbc($context['board']['name']);
 		$context['board']['description'] = html_to_bbc($context['board']['description']);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
-		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
 
 	// As we may have come from the permissions screen keep track of where we should go on save.
@@ -701,37 +700,12 @@ function EditBoard2()
  */
 function EditBoardSettings($return_config = false)
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
-
-	// Load the boards list - for the recycle bin!
-	$request = $smcFunc['db']->query('order_by_board_order', '
-		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
-		FROM {db_prefix}boards AS b
-			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
-		WHERE redirect = {string:empty_string}',
-		[
-			'empty_string' => '',
-		]
-	);
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
-	$smcFunc['db']->free_result($request);
-
-	if (!empty($recycle_boards))
-	{
-		require_once($sourcedir . '/Subs-Boards.php');
-		sortBoards($recycle_boards);
-		$recycle_boards = [''] + $recycle_boards;
-	}
-	else
-		$recycle_boards = [''];
+	global $context, $txt, $sourcedir, $scripturl;
 
 	// Here and the board settings...
 	$config_vars = [
 			// Other board settings.
 			['check', 'countChildPosts'],
-			['check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'],
-			['select', 'recycle_board', $recycle_boards],
 			['check', 'allow_ignore_boards'],
 	];
 
@@ -746,13 +720,6 @@ function EditBoardSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=manageboards;save;sa=settings';
 
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
-
-	// Add some javascript stuff for the recycle box.
-	addInlineJavaScript('
-	document.getElementById("recycle_board").disabled = !document.getElementById("recycle_enable").checked;', true);
-
-	// Warn the admin against selecting the recycle topic without selecting a board.
-	$context['force_form_onsubmit'] = 'if(document.getElementById(\'recycle_enable\').checked && document.getElementById(\'recycle_board\').value == 0) { return confirm(\'' . $txt['recycle_board_unselected_notice'] . '\');} return true;';
 
 	// Doing a save?
 	if (isset($_GET['save']))

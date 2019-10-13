@@ -86,14 +86,9 @@ $txt['mboards_order_in_category'] = 'In category';
 $txt['mboards_current_position'] = 'Current Position';
 $txt['no_valid_parent'] = 'Board %1$s does not have a valid parent. Use the \'find and repair errors\' function to fix this.';
 
-$txt['mboards_recycle_disabled_delete'] = 'Note: You must select an alternative recycle bin board or disable recycling before you can delete this board.';
-
 $txt['mboards_settings_desc'] = 'Edit general board and category settings.';
 $txt['mboards_settings_submit'] = 'Save';
-$txt['recycle_enable'] = 'Enable recycling of deleted topics';
-$txt['recycle_board'] = 'Board for recycled topics';
 $txt['redirect_board_desc'] = 'A board that redirects users if they visit it';
-$txt['recycle_board_unselected_notice'] = 'You have enabled the recycling of topics without specifying a board to place them in. This feature will not be enabled until you specify a board to place recycled topics into.';
 $txt['countChildPosts'] = 'Count sub-board\'s posts in parent\'s totals';
 $txt['allow_ignore_boards'] = 'Allow boards to be ignored';
 $txt['boardsaccess_option_desc'] = 'For each permission you can choose \'Allow\' (A), \'Disallow\' (X), or <span class="alert">\'Deny\' (D)</span>.<br><br>If you deny access, any member - (including moderators) - in that group will be denied access.<br>For this reason, you should set deny carefully, only when <strong>necessary</strong>. Disallow, on the other hand, denies unless otherwise granted.';
