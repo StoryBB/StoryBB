@@ -70,6 +70,7 @@ $txt['cannot_post_unapproved_replies_own'] = 'You do not have permission to post
 $txt['cannot_post_unapproved_replies_any'] = 'You do not have permission to post unapproved replies to other users\' topics.';
 $txt['cannot_remove_any'] = 'Sorry, but you don\'t have the privilege to remove just any topic. Check to make sure this topic wasn\'t just moved to another board.';
 $txt['cannot_remove_own'] = 'You cannot delete your own topics in this board. Check to make sure this topic wasn\'t just moved to another board.';
+$txt['cannot_restore_post'] = 'You cannot undelete posts.';
 $txt['cannot_edit_news'] = 'You are not allowed to edit news items on this forum.';
 $txt['cannot_pm_read'] = 'Sorry, you can\'t read your personal messages.';
 $txt['cannot_pm_send'] = 'You are not allowed to send personal messages.';
@@ -180,9 +181,6 @@ $txt['impossible_insert_new_bangroup'] = 'An error occurred while inserting the 
 
 $txt['ban_name_exists'] = 'The name of this ban already exists. Please choose a different name.';
 $txt['ban_trigger_already_exists'] = 'This ban trigger (%1$s) already exists in %2$s.';
-
-$txt['recycle_no_valid_board'] = 'No valid board selected for recycled topics';
-$txt['post_already_deleted'] = 'The topic or message has already been moved to the recycle board. Are you sure you want to delete it completely?<br>If so follow <a href="%1$s">this link</a>';
 
 $txt['login_threshold_fail'] = 'Sorry, you are out of login chances. Please come back and try again later.';
 $txt['login_threshold_brute_fail'] = 'Sorry, but you\'ve reached your login attempts threshold for account %1$s. Please wait 30 seconds and try again later.';

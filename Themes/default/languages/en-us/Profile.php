@@ -216,7 +216,7 @@ $txt['deleteAccount_topics_ic'] = 'Remove entire in-character topics (and all re
 $txt['deleteAccount_votes'] = 'Remove poll votes made by this member';
 $txt['deleteAccount_confirm'] = 'Are you completely sure you want to delete this account?';
 $txt['deleteAccount_approval'] = 'Please note that the forum moderators will have to approve this account\'s deletion before it will be removed.';
-$txt['deleteAccount_permanent'] = 'Permanently delete topics/posts instead of recycling them?';
+$txt['deleteAccount_permanent'] = 'Permanently delete topics/posts instead of soft-deleting them?';
 
 $txt['profile_of_username'] = 'Profile of %1$s';
 $txt['profileInfo'] = 'Profile Info';
