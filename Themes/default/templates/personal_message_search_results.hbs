@@ -28,8 +28,8 @@
 			<div class="cat_bar">
 				<h3 class="catbg">{{../txt.from}}: {{{member.link}}}, {{../txt.to}}: 
 
-				{{!-- Show the recipients.
-				@todo This doesn't deal with the sent item searching quite right for bcc. --}}
+				{{! Show the recipients.
+				@todo This doesn't deal with the sent item searching quite right for bcc. }}
 				{{#if recipients.to}}
 					{{implode recipients.to}}
 				{{else}}
@@ -42,7 +42,7 @@
 				<p class="pm_reply righttext">
 
 		{{#if ../context.can_send_pm}}
-			{{!--You can only reply if they are not a guest...--}}
+			{{! You can only reply if they are not a guest...}}
 			{{#unless member.is_guest}}
 					<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
 						{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
@@ -53,7 +53,7 @@
 					</a>
 					{{{../context.menu_separator}}}
 			{{/unless}}
-		{{!-- This is for "forwarding" - even if the member is gone.--}}
+		{{! This is for "forwarding" - even if the member is gone.}}
 		{{else}}
 					<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
 						{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
@@ -62,8 +62,8 @@
 				</p>
 			</div>
 	{{else}}
-	{{!-- simple list --}}
-	{{!-- @todo No context at all of the search? --}}
+	{{! simple list }}
+	{{! @todo No context at all of the search? }}
 			<tr class="windowbg">
 				<td>{{{time}}}</td>
 				<td>{{{link}}}</td>

@@ -4,7 +4,7 @@
 </div>
 {{/if}}
 
-{{!-- New topic info --}}
+{{! New topic info }}
 <div id="display_head" class="information">
 	<h2 class="display_title">
 		<span id="top_subject">{{context.subject}}</span>
@@ -19,11 +19,11 @@
 
 </div>
 
-{{!-- Show the anchor for the top and for the first message. If the first message is new, say so. --}}
+{{! Show the anchor for the top and for the first message. If the first message is new, say so. }}
 <a id="msg{{context.first_message}}"></a>
 {{#if context.first_new_message}}<a id="new"></a>{{/if}}
 
-{{!-- poll logic --}}
+{{! poll logic }}
 {{#if context.is_poll}}
 <div id="poll">
 	<div class="cat_bar">
@@ -92,9 +92,9 @@
 <div id="pollmoderation">
 	{{>button_strip button_strip=context.poll_buttons}}
 </div>
-{{/if}}{{!-- end poll logic --}}
+{{/if}}{{! end poll logic }}
 
-{{!-- pagination --}}
+{{! pagination }}
 <div class="pagesection top">
 	{{>button_strip button_strip=context.normal_buttons direction='right'}}{{context.menu_separator}}
 	<div class="pagelinks floatleft">
@@ -102,13 +102,13 @@
 	</div>
 </div>
 
-{{!-- mobile moderation buttons --}}
+{{! mobile moderation buttons }}
 <div class="mobile_buttons floatright">
 	<a class="button mobile_act">{{txt.mobile_action}}</a>
 	{{#if (or context.can_moderate_forum context.user.is_mod)}}<a class="button mobile_mod">{{txt.mobile_moderation}}</a>{{/if}}
 </div>
 
-{{!-- topic information - subject, etc. --}}
+{{! topic information - subject, etc. }}
 <div id="forumposts">
 	<form action="{{scripturl}}?action=quickmod2;topic={{context.current_topic}}.{{context.start}}" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" onsubmit="return onQuickModify.bInEditMode ? oQuickModify.modifySave('{{context.session_id}}', '{{context.session_var}}') : false">
 
@@ -122,13 +122,13 @@
 	</form>
 </div>
 
-{{!-- mobile moderation buttons --}}
+{{! mobile moderation buttons }}
 <div class="mobile_buttons floatright">
 	<a class="button mobile_act">{{txt.mobile_action}}</a>
 	{{#if (or context.can_moderate_forum context.user.is_mod)}}<a class="button mobile_mod">{{txt.mobile_moderation}}</a>{{/if}}
 </div>
 
-{{!-- pagination --}}
+{{! pagination }}
 <div class="pagesection">
 	{{>button_strip button_strip=context.normal_buttons direction='right'}}{{context.menu_separator}}
 	<div class="pagelinks floatleft">
@@ -138,7 +138,7 @@
 
 {{> linktree}}	
 	
-{{!-- moderation buttons --}}
+{{! moderation buttons }}
 <div id="moderationbuttons">
 	{{>button_strip button_strip=context.mod_buttons direction='bottom'}}
 </div>
@@ -149,7 +149,7 @@
 {{>quick_reply}}
 {{/if}}
 
-{{!-- small screen responsive user action pop --}}
+{{! small screen responsive user action pop }}
 <div id="mobile_action" class="popup_container">
 	<div class="popup_window description">
 		<div class="popup_heading">{{txt.mobile_action}}
@@ -158,7 +158,7 @@
 	</div>
 </div>
 
-{{!-- moderation buttons --}}
+{{! moderation buttons }}
 {{#if (or context.can_moderate_forum context.user.is_mod)}}
 <div id="mobile_moderation" class="popup_container">
 	<div class="popup_window description">
@@ -173,7 +173,7 @@
 </div>
 {{/if}}
 
-{{!-- Javascript nonsense --}}
+{{! Javascript nonsense }}
 <script>
 {{#if context.can_remove_post}}
 	var oInTopicModeration = new InTopicModeration({
