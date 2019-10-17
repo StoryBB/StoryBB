@@ -1123,7 +1123,10 @@ a.button_submit {
 }
 
 .generic_menu_container .generic_menu_sidebar {
-	width: 190px;
+	min-width: 120px;
+	max-width: 240px;
+	flex-basis: max-content;
+	flex-shrink: 0;
 	margin-right: 10px;
 }
 
