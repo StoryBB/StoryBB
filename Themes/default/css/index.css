@@ -1127,6 +1127,10 @@ a.button_submit {
 	margin-right: 10px;
 }
 
+.generic_menu_sidebar li {
+	padding-left: 15px;
+}
+
 .generic_menu_sidebar h3.catbg {
 	font-size: 0.8em;
 	font-weight: normal;
@@ -1141,16 +1145,8 @@ a.button_submit {
 	margin-bottom: 1em;
 }
 
-.generic_menu_sidebar a::before {
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	margin-right: 3px;
-	content: ' ';
-}
-
-.generic_menu_sidebar a.chosen::before {
-	background: url(../images/selected.png) 0 0 no-repeat;
+.generic_menu_sidebar .chosen {
+	background: url(../images/selected.png) no-repeat center left;
 }
 
 /* User information. */
