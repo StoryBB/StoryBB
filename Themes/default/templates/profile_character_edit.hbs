@@ -23,7 +23,7 @@
 					</dt>
 					<dd>
 						<select name="id_group">
-							{{! // Fill the select box with all primary member groups that can be assigned to a member. }}
+							{{! Fill the select box with all primary member groups that can be assigned to a member. }}
 							{{#each context.member_groups}}
 								{{#if can_be_primary}}
 									<option value="{{id}}"{{#if is_primary}} selected{{/if}}>{{{name}}}</option>
@@ -37,7 +37,7 @@
 					<dd>
 						<span id="additional_groupsList">
 							<input type="hidden" name="additional_groups[]" value="0">
-							{{! // For each membergroup show a checkbox so members can be assigned to more than one group. }}
+							{{! For each membergroup show a checkbox so members can be assigned to more than one group. }}
 							{{#each context.member_groups}}
 								{{#if can_be_additional}}
 									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}}>{{{name}}}</label><br>

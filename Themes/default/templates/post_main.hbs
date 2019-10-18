@@ -1,4 +1,4 @@
-{{!-- I'm sorry. --}}
+{{! I'm sorry. }}
 <script>
 {{#if (browser 'is_firefox')}}
 	window.addEventListener("pageshow", reActivate, false);
@@ -346,7 +346,7 @@
 							</div>
 						</dd>
 					</dd>
-					{{!-- {{>upload_template}} --}}
+					{{! {{>upload_template}} }}
 					<dd class="smalltext">
 						{{#if modSettings.attachmentCheckExtensions}}{{txt.allowed_types}}: {{context.allowed_extensions}}<br>{{/if}}
 						{{#if context.attachment_restrictions}}{{{txt.attach_restrictions}}} {{#each context.attachment_restrictions}}{{.}},{{/each}}<br>{{/if}}
@@ -354,7 +354,7 @@
 						{{#unless context.can_post_attachment_unapproved}}<span class="alert">{{txt.attachment_requires_approval}}</span><br>{{/unless}}
 					</dd>
 				</dl>
-{{/if}}{{!-- end of attachment section --}}
+{{/if}}{{! end of attachment section }}
 
 			</div><!-- #postAdditionalOptions -->
 

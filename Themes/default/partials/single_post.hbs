@@ -43,7 +43,7 @@
 					{{/each}}
 					</ul>
 				</div>
-				{{! div inside an ul? }}
+				{{! @todo: div inside an ul? }}
 {{/if}}
 
 {{#if (not member.is_guest)}}
@@ -113,7 +113,7 @@
 				</li>
 {{/if}}
 
-{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
+{{!  Are there any custom fields to show at the bottom of the poster info? }}
 {{#each custom_fields.bottom_poster}}
 				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
 {{/each}}
@@ -121,7 +121,7 @@
 		</div>
 		<div class="postarea">
 			<div class="keyinfo">
-				{{!-- Some people don't want subject ... The div is still required or quick edit breaks... --}}
+				{{! Some people don't want subject ... The div is still required or quick edit breaks... }}
 				<div id="subject_{{id}}" class="subject_title{{#unless ../modSettings.subject_toggle}} subject_hidden{{/unless}}">
 					<a href="{{href}}" rel="nofollow">{{{subject}}}</a>
 				</div>
@@ -131,8 +131,8 @@
 					<span class="page_number floatright">
 						{{#if counter}} #{{counter}}{{/if}}
 					</span>
-					{{!-- Show "<< Last Edit: Time by Person >>" if this post was edited. But we need the div even if it wasn't modified! 
-					 Because we insert into it through AJAX and we don't want to stop themers moving it around if they so wish so they can put it where they want it. --}}
+					{{! Show "<< Last Edit: Time by Person >>" if this post was edited. But we need the div even if it wasn't modified! 
+					 Because we insert into it through AJAX and we don't want to stop themers moving it around if they so wish so they can put it where they want it. }}
 					<span class="smalltext modified floatright {{#if (and ../modSettings.show_modify modified.name)}} mvisible{{/if}}" id="modified_{{id}}">
 						{{#if (and ../modSettings.show_modify modified.name)}}{{{modified.last_edit_text}}}{{/if}}
 					</span>
@@ -190,7 +190,7 @@
 	{{/if}}
 {{/unless}}
 
-{{!-- aything below the attachments? --}}
+{{! aything below the attachments? }}
 {{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 			<div class="under_message">
 {{/if}}
@@ -201,7 +201,7 @@
 				</ul>
 {{/if}}
 
-{{!-- Show the IP to this user for this post - because you can moderate? --}}
+{{! Show the IP to this user for this post - because you can moderate? }}
 {{#if (and can_see_ip member.ip)}}
 				<ul class="floatright smalltext">
 					<li class="poster_ip">
@@ -231,7 +231,7 @@
 				</ul>
 {{/if}}
 
-{{!-- quick buttons --}}
+{{! quick buttons }}
 {{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 				<ul class="quickbuttons dropmenu buttonrow">
 

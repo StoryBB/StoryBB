@@ -20,7 +20,7 @@
 					,
 					emoticons:
 					{
-						{{!-- key is a location, value is a row of smileys --}}
+						{{! key is a location, value is a row of smileys }}
 						{{#each context.smileys}}
 						{{#if (eq @key 'postform')}}
 						dropdown:
@@ -30,12 +30,12 @@
 						{
 						{{/if}}
 						{{#if (getNumItems this)}}
-						{{!-- iterate over the row --}}
+						{{! iterate over the row }}
 						{{#each this.[0].smileys}}
 							{{{json code}}}:"{{../../settings.smileys_url}}/{{filename}}"{{#unless isLast}},{{/unless}}
 						{{/each}}
 						{{#unless (getNumItems this.[0].smileys)}}
-							"0":'', {{!-- allows empty rows --}}
+							"0":'', {{! allows empty rows }}
 						{{/unless}}
 						{{/if}}
 						}{{#unless isLast}},{{/unless}}
