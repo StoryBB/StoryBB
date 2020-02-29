@@ -147,8 +147,6 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = [
-		['forum_name', $txt['admin_title'], 'db', 'text', 30],
-		'',
 		['maintenance', $txt['admin_maintain'], 'file', 'check'],
 		['mtitle', $txt['maintenance_subject'], 'file', 'text', 36],
 		['mmessage', $txt['maintenance_message'], 'file', 'text', 36],

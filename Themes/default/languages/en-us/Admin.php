@@ -31,7 +31,6 @@ $txt['admin_reserved_set'] = 'Set reserved names';
 $txt['admin_reserved_line'] = 'One reserved word per line.';
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
-$txt['admin_title'] = 'Forum Title';
 $txt['cookie_name'] = 'Cookie name';
 $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
