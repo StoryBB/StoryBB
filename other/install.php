@@ -809,7 +809,7 @@ function DatabaseSettings()
 
 		// Do they meet the install requirements?
 		// @todo Old client, new server?
-		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check'])) > 0)
+		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check']($smcFunc['db']))) > 0)
 		{
 			$incontext['error'] = $txt['error_db_too_low'];
 			return false;
@@ -916,7 +916,7 @@ function ForumSettings()
 			'sourcedir' => addslashes(dirname(__FILE__)) . '/Sources',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
 			'mbname' => strtr($_POST['mbname'], ['\"' => '"']),
-			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
+			'language' => $_SESSION['installer_temp_lang'],
 			'image_proxy_secret' => substr(sha1(mt_rand()), 0, 20),
 			'image_proxy_enabled' => !empty($_POST['force_ssl']),
 		];

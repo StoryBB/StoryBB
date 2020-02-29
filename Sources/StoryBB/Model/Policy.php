@@ -494,6 +494,8 @@ class Policy
 
 		$versions = [$user_info['language'], $language, 'en-us'];
 
+		$lang_footer_links = [];
+
 		foreach ($footer_links as $policy_type => $languages)
 		{
 			foreach ($versions as $version)
