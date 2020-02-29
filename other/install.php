@@ -4,7 +4,7 @@
  * StoryBB Installer
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -1792,7 +1792,7 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2019, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2020, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
