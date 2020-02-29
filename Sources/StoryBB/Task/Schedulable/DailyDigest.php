@@ -52,7 +52,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $txt, $mbname, $scripturl, $sourcedir, $smcFunc, $modSettings;
+		global $txt, $scripturl, $sourcedir, $smcFunc, $modSettings, $context;
 
 		// We'll want this...
 		require_once($sourcedir . '/Subs-Post.php');
@@ -190,7 +190,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			loadLanguage('EmailTemplates', $lang);
 			$langtxt[$lang] = [
 				'subject' => $txt[$this->subject_line],
-				'intro' => sprintf($txt[$this->intro_line], $mbname),
+				'intro' => sprintf($txt[$this->intro_line], $context['forum_name']),
 				'new_topics' => $txt['digest_new_topics'],
 				'topic_lines' => $txt['digest_new_topics_line'],
 				'new_replies' => $txt['digest_new_replies'],
@@ -204,7 +204,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				'move' => $txt['digest_mod_act_move'],
 				'merge' => $txt['digest_mod_act_merge'],
 				'split' => $txt['digest_mod_act_split'],
-				'bye' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
+				'bye' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
 			];
 		}
 
@@ -224,7 +224,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 
 			// Do the start stuff!
 			$email = [
-				'subject' => $mbname . ' - ' . $langtxt[$lang]['subject'],
+				'subject' => $context['forum_name'] . ' - ' . $langtxt[$lang]['subject'],
 				'body' => $member['name'] . ',' . "\n\n" . $langtxt[$lang]['intro'] . "\n" . $scripturl . '?action=profile;area=notification;u=' . $member['id'] . "\n",
 				'email' => $member['email'],
 			];
@@ -294,7 +294,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				$email['body'] .= "\n";
 
 			// Then just say our goodbyes!
-			$email['body'] .= "\n\n" . str_replace('{forum_name}', $mbname, $txt['regards_team']);
+			$email['body'] .= "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']);
 
 			// Send it - low priority!
 			StoryBB\Helper\Mail::send($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);

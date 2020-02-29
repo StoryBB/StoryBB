@@ -34,11 +34,6 @@ $mmessage = 'Okay faithful users...we\'re attempting to restore an older backup 
 
 /********* Forum Info *********/
 /**
- * The name of your forum.
- * @var string
- */
-$mbname = 'My Community (Behat)';
-/**
  * The default language file set for the forum.
  * @var string
  */

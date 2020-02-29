@@ -147,7 +147,7 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = [
-		['mbname', $txt['admin_title'], 'file', 'text', 30],
+		['forum_name', $txt['admin_title'], 'db', 'text', 30],
 		'',
 		['maintenance', $txt['admin_maintain'], 'file', 'check'],
 		['mtitle', $txt['maintenance_subject'], 'file', 'text', 36],
@@ -979,7 +979,7 @@ function saveSettings(&$config_vars)
 	// All the strings to write.
 	$config_strs = [
 		'mtitle', 'mmessage',
-		'language', 'mbname', 'boardurl',
+		'language', 'boardurl',
 		'cookiename',
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix',

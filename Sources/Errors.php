@@ -383,7 +383,7 @@ function display_maintenance_message()
  */
 function display_db_error()
 {
-	global $mbname, $modSettings, $maintenance;
+	global $modSettings, $maintenance;
 	global $webmaster_email, $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');

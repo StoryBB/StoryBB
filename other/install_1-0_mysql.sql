@@ -508,6 +508,7 @@ VALUES
 INSERT INTO {$db_prefix}settings
   (variable, value)
 VALUES ('sbbVersion', '{$sbb_version}'),
+  ('forum_name', '{$default_forum_name}'),
   ('news', '{$default_news}'),
   ('todayMod', '1'),
   ('pollMode', '1'),

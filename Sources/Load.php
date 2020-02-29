@@ -1749,7 +1749,7 @@ function isBrowser($browser)
 function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_info, $user_settings, $board_info, $boarddir, $maintenance;
-	global $txt, $boardurl, $scripturl, $mbname, $modSettings;
+	global $txt, $boardurl, $scripturl, $modSettings;
 	global $context, $settings, $options, $sourcedir, $smcFunc, $language, $board, $image_proxy_enabled;
 
 	// The theme was specified by parameter.
@@ -2036,7 +2036,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['menu_separator'] = ' ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
-	$context['forum_name'] = $mbname;
+	$context['forum_name'] = $modSettings['forum_name'];
 	$context['forum_name_html_safe'] = StringLibrary::escape($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : StringLibrary::escape($settings['header_logo_url']);
 	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;

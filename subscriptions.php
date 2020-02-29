@@ -16,7 +16,7 @@ use StoryBB\StringLibrary;
 // Start things rolling by getting StoryBB alive...
 define('STORYBB', 'BACKGROUND');
 
-global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
+global $time_start, $maintenance, $msubject, $mmessage, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;
