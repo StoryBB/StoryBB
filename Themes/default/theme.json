@@ -29,15 +29,6 @@
         },
         "",
         {
-            "id": "show_newsfader",
-            "label": "news_fader"
-        },
-        {
-            "id": "newsfader_time",
-            "label": "admin_fader_delay",
-            "type": "number"
-        },
-        {
             "id": "sub_boards_columns",
             "label": "sub_boards_columns",
             "options": {

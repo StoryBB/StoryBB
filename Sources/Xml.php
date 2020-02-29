@@ -75,7 +75,6 @@ function RetrievePreview()
 	global $context;
 
 	$items = [
-		'newspreview',
 		'newsletterpreview',
 		'sig_preview',
 		'warning_preview',
@@ -87,38 +86,6 @@ function RetrievePreview()
 		return false;
 
 	$_POST['item']();
-}
-
-/**
- * Handles previewing news items
- */
-function newspreview()
-{
-	global $context, $sourcedir, $smcFunc;
-
-	require_once($sourcedir . '/Subs-Post.php');
-
-	$errors = [];
-	$news = !isset($_POST['news']) ? '' : StringLibrary::escape($_POST['news'], ENT_QUOTES);
-	if (empty($news))
-		$errors[] = ['value' => 'no_news'];
-	else
-		preparsecode($news);
-
-	$context['xml_data'] = [
-		'news' => [
-			'identifier' => 'parsedNews',
-			'children' => [
-				[
-					'value' => Parser::parse_bbc($news),
-				],
-			],
-		],
-		'errors' => [
-			'identifier' => 'error',
-			'children' => $errors
-		],
-	];
 }
 
 /**

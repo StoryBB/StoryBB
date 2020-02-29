@@ -89,7 +89,6 @@ $txt['disable_recent_posts'] = 'Disable recent posts';
 $txt['enable_single_post'] = 'Enable single post';
 $txt['enable_multiple_posts'] = 'Enable multiple posts';
 $txt['latest_members'] = 'Show latest member on board index';
-$txt['news_fader'] = 'Show news fader on board index';
 $txt['member_list_bar'] = 'Show members list bar on board index';
 $txt['header_logo_url'] = 'Logo image URL';
 $txt['header_logo_url_desc'] = '(leave blank to show forum name or default logo.)';

@@ -35,7 +35,6 @@ $txt['modlog_ac_split'] = 'Split &quot;{topic}&quot; to create &quot;{new_topic}
 $txt['modlog_ac_move'] = 'Moved &quot;{topic}&quot; from &quot;{board_from}&quot; to &quot;{board_to}&quot;';
 $txt['modlog_ac_profile'] = 'Edit the profile of &quot;{member}&quot;';
 $txt['modlog_ac_pruned'] = 'Pruned some posts older than {days} days';
-$txt['modlog_ac_news'] = 'Edited the news';
 $txt['modlog_ac_clearlog_moderate'] = 'Cleared the moderation log';
 $txt['modlog_ac_clearlog_admin'] = 'Cleared the administration log';
 $txt['modlog_enter_comment'] = 'Enter Moderation Comment';

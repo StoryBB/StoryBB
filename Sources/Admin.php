@@ -76,7 +76,6 @@ function AdminMain()
 					'icon' => 'news',
 					'permission' => ['edit_news', 'send_mail', 'admin_forum'],
 					'subsections' => [
-						'editnews' => [$txt['admin_edit_news'], 'edit_news'],
 						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
 						'settings' => [$txt['settings'], 'admin_forum'],
 					],

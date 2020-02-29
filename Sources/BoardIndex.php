@@ -51,10 +51,4 @@ function BoardIndex()
 
 	// Allow mods to add additional buttons here
 	call_integration_hook('integrate_mark_read_button');
-
-	if (!empty($settings['show_newsfader']))
-	{
-		loadJavaScriptFile('slippry.min.js', [], 'sbb_jquery_slippry');
-		loadCSSFile('slider.min.css', [], 'sbb_jquery_slider');
-	}
 }
