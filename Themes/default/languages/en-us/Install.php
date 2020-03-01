@@ -4,7 +4,7 @@
  * This file contains language strings for the installer.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -45,7 +45,6 @@ $txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy us
 $txt['default_board_name'] = 'General Discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_category_name'] = 'General Category';
-$txt['default_news'] = 'StoryBB - Just Installed!';
 $txt['default_reserved_names'] = 'Admin\nWebmaster\nGuest\nroot';
 $txt['default_theme_name'] = 'StoryBB Default Theme - Curve2';
 

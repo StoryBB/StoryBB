@@ -4,7 +4,7 @@
  * This class handles policies in the system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -493,6 +493,8 @@ class Policy
 		}
 
 		$versions = [$user_info['language'], $language, 'en-us'];
+
+		$lang_footer_links = [];
 
 		foreach ($footer_links as $policy_type => $languages)
 		{

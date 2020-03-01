@@ -1,5 +1,4 @@
 var sbb_formSubmitted = false;
-var lastKeepAliveCheck = new Date().getTime();
 var sbb_editorArray = new Array();
 
 // Some very basic browser detection - from Mozilla's sniffer page.
@@ -568,24 +567,6 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 			oForm[i].checked = oInvertCheckbox.checked;
 	}
 }
-
-// Keep the session alive - always!
-var lastKeepAliveCheck = new Date().getTime();
-function sbb_sessionKeepAlive()
-{
-	var curTime = new Date().getTime();
-
-	// Prevent a Firefox bug from hammering the server.
-	if (sbb_scripturl && curTime - lastKeepAliveCheck > 900000)
-	{
-		var tempImage = new Image();
-		tempImage.src = sbb_prepareScriptUrl(sbb_scripturl) + 'action=keepalive;time=' + curTime;
-		lastKeepAliveCheck = curTime;
-	}
-
-	window.setTimeout('sbb_sessionKeepAlive();', 1200000);
-}
-window.setTimeout('sbb_sessionKeepAlive();', 1200000);
 
 // Set a theme option through javascript.
 function sbb_setThemeOption(theme_var, theme_value, theme_id, theme_cur_session_id, theme_cur_session_var, theme_additional_vars)

@@ -1,6 +1,9 @@
 # StoryBB
 
-This is the archive of the first version of StoryBB! It was forked from SMF. It is has been abandoned by way of a complete rewrite and exists now solely for referential purposes; it may go away one day.
+[![Build Status](https://travis-ci.org/StoryBB/StoryBB.svg?branch=master)](https://travis-ci.org/StoryBB/StoryBB) [![Open Source Helpers](https://www.codetriage.com/storybb/storybb/badges/users.svg)](https://www.codetriage.com/storybb/storybb) [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) 
+![GitHub last commit](https://img.shields.io/github/last-commit/storybb/storybb/master.svg)
+
+StoryBB is a piece of software designed to let you run a forum with a roleplayer-focused set of features.
 
 The software is licensed under [BSD 3-clause license](https://opensource.org/licenses/BSD-3-Clause).
 

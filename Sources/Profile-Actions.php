@@ -4,7 +4,7 @@
  * This file handles actions made on a user's profile.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -292,7 +292,7 @@ function activateAccount($memID)
  */
 function issueWarning($memID)
 {
-	global $txt, $scripturl, $modSettings, $user_info, $mbname;
+	global $txt, $scripturl, $modSettings, $user_info;
 	global $context, $cur_profile, $smcFunc, $sourcedir;
 
 	// Get all the actual settings.
@@ -664,8 +664,8 @@ function issueWarning($memID)
 			'{MEMBER}' => un_htmlspecialchars($context['member']['name']),
 			'{MESSAGE}' => '[url=' . $scripturl . '?msg=' . $context['warning_for_message'] . ']' . un_htmlspecialchars($context['warned_message_subject']) . '[/url]',
 			'{SCRIPTURL}' => $scripturl,
-			'{FORUMNAME}' => $mbname,
-			'{REGARDS}' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
+			'{FORUMNAME}' => $context['forum_name'],
+			'{REGARDS}' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
 		]);
 	}
 

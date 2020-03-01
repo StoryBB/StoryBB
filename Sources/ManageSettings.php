@@ -5,7 +5,7 @@
  * settings and options.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -99,6 +99,8 @@ function ModifyBasicSettings($return_config = false)
 
 	$config_vars = [
 			// Basic stuff, titles, permissions...
+			['text', 'forum_name', 'size' => 50],
+			'',
 			['check', 'allow_guestAccess'],
 			['check', 'enable_likes'],
 			['check', 'enable_mentions'],

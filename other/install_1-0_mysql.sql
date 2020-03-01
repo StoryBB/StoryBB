@@ -508,7 +508,7 @@ VALUES
 INSERT INTO {$db_prefix}settings
   (variable, value)
 VALUES ('sbbVersion', '{$sbb_version}'),
-  ('news', '{$default_news}'),
+  ('forum_name', '{$default_forum_name}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
   ('attachmentSizeLimit', '128'),
@@ -704,8 +704,6 @@ VALUES (1, 'name', '{$default_theme_name}'),
   (1, 'images_url', '{$boardurl}/Themes/default/images'),
   (1, 'theme_dir', '{$boarddir}/Themes/default'),
   (1, 'show_latest_member', '1'),
-  (1, 'show_newsfader', '0'),
-  (1, 'newsfader_time', '3000'),
   (1, 'enable_news', '1'),
   (1, 'drafts_show_saved_enabled', '1'),
   (1, 'sub_boards_columns', '2');

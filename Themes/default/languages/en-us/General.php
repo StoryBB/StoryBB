@@ -4,7 +4,7 @@
  * This file contains language strings for the general site.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -109,7 +109,6 @@ $txt['warn_moderate'] = 'Moderated';
 $txt['warn_mute'] = 'Muted';
 
 $txt['message_index'] = 'Message Index';
-$txt['news'] = 'News';
 $txt['home'] = 'Home';
 $txt['page'] = 'Page';
 $txt['prev'] = 'previous page';

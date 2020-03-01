@@ -4,7 +4,7 @@
  * StoryBB Installer
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -809,7 +809,7 @@ function DatabaseSettings()
 
 		// Do they meet the install requirements?
 		// @todo Old client, new server?
-		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check'])) > 0)
+		if (version_compare($databases[$db_type]['version'], preg_replace('~^\D*|\-.+?$~', '', $databases[$db_type]['version_check']($smcFunc['db']))) > 0)
 		{
 			$incontext['error'] = $txt['error_db_too_low'];
 			return false;
@@ -910,13 +910,13 @@ function ForumSettings()
 			$_POST['boardurl'] = strtr($_POST['boardurl'], ['http://' => 'https://']);		
 
 		// Save these variables.
+		$_SESSION['installer_name'] = $_POST['forum_name'];
 		$vars = [
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
 			'sourcedir' => addslashes(dirname(__FILE__)) . '/Sources',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
-			'mbname' => strtr($_POST['mbname'], ['\"' => '"']),
-			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
+			'language' => $_SESSION['installer_temp_lang'],
 			'image_proxy_secret' => substr(sha1(mt_rand()), 0, 20),
 			'image_proxy_enabled' => !empty($_POST['force_ssl']),
 		];
@@ -1007,6 +1007,7 @@ function DatabasePopulation()
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$registration_method}' => isset($_POST['reg_mode']) ? $_POST['reg_mode'] : 0,
 		'{$default_time_format}' => array_keys(\StoryBB\Helper\Datetime::list_dateformats())[0],
+		'{$default_forum_name}' => $smcFunc['db']->escape_string(!empty($_SESSION['installer_name']) ? $_SESSION['installer_name'] : $txt['install_settings_name_default']),
 	];
 
 	foreach ($txt as $key => $value)
@@ -1791,7 +1792,7 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2019, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2020, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
@@ -2055,10 +2056,10 @@ function template_forum_settings()
 		<table style="width: 100%; margin: 1em 0;">
 			<tr>
 				<td class="textbox" style="width: 20%; vertical-align: top;">
-					<label for="mbname_input">', $txt['install_settings_name'], ':</label>
+					<label for="forum_name_input">', $txt['install_settings_name'], ':</label>
 				</td>
 				<td>
-					<input type="text" name="mbname" id="mbname_input" value="', $txt['install_settings_name_default'], '" size="65" />
+					<input type="text" name="forum_name" id="forum_name_input" value="', $txt['install_settings_name_default'], '" size="65" />
 					<div class="smalltext block">', $txt['install_settings_name_info'], '</div>
 				</td>
 			</tr>

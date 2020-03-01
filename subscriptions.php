@@ -5,7 +5,7 @@
  * when a payment has been received - it sorts out the user status.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -16,7 +16,7 @@ use StoryBB\StringLibrary;
 // Start things rolling by getting StoryBB alive...
 define('STORYBB', 'BACKGROUND');
 
-global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
+global $time_start, $maintenance, $msubject, $mmessage, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;

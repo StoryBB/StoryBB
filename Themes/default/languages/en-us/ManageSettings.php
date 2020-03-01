@@ -4,7 +4,7 @@
  * This file contains language strings for the generic settings pages.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -16,6 +16,7 @@ $txt['pollMode'] = 'Poll mode';
 $txt['disable_polls'] = 'Disable polls';
 $txt['enable_polls'] = 'Enable polls';
 $txt['polls_as_topics'] = 'Show existing polls as topics';
+$txt['forum_name'] = 'Forum name';
 $txt['allow_guestAccess'] = 'Allow guests to browse the forum';
 $txt['userLanguage'] = 'Enable user-selectable language support';
 $txt['allow_hideOnline'] = 'Allow non-administrators to hide their online status';

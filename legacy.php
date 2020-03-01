@@ -11,7 +11,7 @@
  * with the URL index.php?action=action-in-url.  Relatively simple, no?
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -103,13 +103,6 @@ function sbb_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic, $context;
 	global $board_info, $maintenance, $sourcedir;
-
-	// Special case: session keep-alive, output a transparent pixel.
-	if (isset($_GET['action']) && $_GET['action'] == 'keepalive')
-	{
-		header('Content-Type: image/gif');
-		die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
-	}
 
 	// We should set our security headers now.
 	frameOptionsHeader();

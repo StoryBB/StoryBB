@@ -4,7 +4,7 @@
  * This file contains language strings for the admin area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -31,7 +31,6 @@ $txt['admin_reserved_set'] = 'Set reserved names';
 $txt['admin_reserved_line'] = 'One reserved word per line.';
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
-$txt['admin_title'] = 'Forum Title';
 $txt['cookie_name'] = 'Cookie name';
 $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
@@ -63,7 +62,6 @@ $txt['admin_match_case'] = 'Match case. If unchecked, search will be case insens
 $txt['admin_check_user'] = 'Check username.';
 $txt['admin_check_display'] = 'Check display name.';
 $txt['admin_newsletter_send'] = 'You can email anyone from this page. The email addresses of the selected membergroups should appear below, but you may remove or add any email addresses you wish. Be sure that each address is separated in this fashion: \'address1; address2\'.';
-$txt['admin_fader_delay'] = 'Fading delay between items for the news fader';
 $txt['additional_options_collapsable'] = 'Enable collapsible additional post options';
 $txt['zero_for_no_limit'] = '(0 for no limit)';
 $txt['zero_to_disable'] = '(Set to 0 to disable.)';
@@ -484,15 +482,11 @@ $txt['news_title'] = 'News and Newsletters';
 $txt['news_settings_desc'] = 'Here you can change the settings and permissions related to news and newsletters.';
 $txt['news_settings_submit'] = 'Save';
 $txt['news_mailing_desc'] = 'From this menu you can send messages to all members who\'ve registered and entered their email addresses. You may edit the distribution list, or send messages to all. Useful for important update/news information.';
-$txt['news_error_no_news'] = 'Nothing written';
 $txt['xmlnews_enable'] = 'Enable XML/RSS news';
 $txt['xmlnews_maxlen'] = 'Maximum message length';
 $txt['xmlnews_maxlen_note'] = '(0 to disable, bad idea.)';
 $txt['xmlnews_attachments'] = 'Enclose attachments in XML/RSS feeds';
 $txt['xmlnews_attachments_note'] = 'Note: Some feed formats will only enclose one attachment per post.';
-$txt['editnews_clickadd'] = 'Add another item';
-$txt['editnews_remove_selected'] = 'Remove selected';
-$txt['editnews_remove_confirm'] = 'Are you sure you want to delete the selected news items?';
 $txt['censor_clickadd'] = 'Add another word';
 
 $txt['layout_controls'] = 'Forum';

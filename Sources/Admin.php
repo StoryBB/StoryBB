@@ -4,7 +4,7 @@
  * This file, unpredictable as this might be, handles basic administration.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -76,7 +76,6 @@ function AdminMain()
 					'icon' => 'news',
 					'permission' => ['edit_news', 'send_mail', 'admin_forum'],
 					'subsections' => [
-						'editnews' => [$txt['admin_edit_news'], 'edit_news'],
 						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
 						'settings' => [$txt['settings'], 'admin_forum'],
 					],

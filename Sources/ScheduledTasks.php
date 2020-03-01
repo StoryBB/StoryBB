@@ -4,7 +4,7 @@
  * This file is automatically called and handles all manner of scheduled things.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -485,7 +485,7 @@ function next_time($regularity, $unit, $offset)
  */
 function loadEssentialThemeData()
 {
-	global $settings, $modSettings, $smcFunc, $mbname, $context, $sourcedir, $txt;
+	global $settings, $modSettings, $smcFunc, $context, $sourcedir, $txt;
 
 	// Get all the default theme variables.
 	$result = $smcFunc['db']->query('', '
@@ -523,7 +523,7 @@ function loadEssentialThemeData()
 	}
 
 	// Assume we want this.
-	$context['forum_name'] = $mbname;
+	$context['forum_name'] = $modSettings['forum_name'];
 
 	// Check loadLanguage actually exists!
 	if (!function_exists('loadLanguage'))

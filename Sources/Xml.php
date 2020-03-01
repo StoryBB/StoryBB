@@ -4,7 +4,7 @@
  * Maintains all XML-based interaction (mainly XMLhttp)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -75,7 +75,6 @@ function RetrievePreview()
 	global $context;
 
 	$items = [
-		'newspreview',
 		'newsletterpreview',
 		'sig_preview',
 		'warning_preview',
@@ -87,38 +86,6 @@ function RetrievePreview()
 		return false;
 
 	$_POST['item']();
-}
-
-/**
- * Handles previewing news items
- */
-function newspreview()
-{
-	global $context, $sourcedir, $smcFunc;
-
-	require_once($sourcedir . '/Subs-Post.php');
-
-	$errors = [];
-	$news = !isset($_POST['news']) ? '' : StringLibrary::escape($_POST['news'], ENT_QUOTES);
-	if (empty($news))
-		$errors[] = ['value' => 'no_news'];
-	else
-		preparsecode($news);
-
-	$context['xml_data'] = [
-		'news' => [
-			'identifier' => 'parsedNews',
-			'children' => [
-				[
-					'value' => Parser::parse_bbc($news),
-				],
-			],
-		],
-		'errors' => [
-			'identifier' => 'error',
-			'children' => $errors
-		],
-	];
 }
 
 /**
@@ -235,7 +202,7 @@ function sig_preview()
  */
 function warning_preview()
 {
-	global $context, $sourcedir, $smcFunc, $txt, $user_info, $scripturl, $mbname;
+	global $context, $sourcedir, $smcFunc, $txt, $user_info, $scripturl;
 
 	require_once($sourcedir . '/Subs-Post.php');
 	loadLanguage('Errors');
@@ -274,7 +241,7 @@ function warning_preview()
 			];
 			$replace = [
 				$user_info['name'],
-				$mbname,
+				$context['forum_name'],
 				$scripturl,
 				str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
 			];

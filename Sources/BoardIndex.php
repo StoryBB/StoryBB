@@ -5,7 +5,7 @@
  * board index.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -51,10 +51,4 @@ function BoardIndex()
 
 	// Allow mods to add additional buttons here
 	call_integration_hook('integrate_mark_read_button');
-
-	if (!empty($settings['show_newsfader']))
-	{
-		loadJavaScriptFile('slippry.min.js', [], 'sbb_jquery_slippry');
-		loadCSSFile('slider.min.css', [], 'sbb_jquery_slider');
-	}
 }

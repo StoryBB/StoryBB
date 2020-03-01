@@ -11,7 +11,7 @@
  * running a little bit faster.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -29,7 +29,7 @@ define('MAX_CRON_TIME', 10);
 define('MAX_CLAIM_THRESHOLD', 300);
 
 // We're going to want a few globals... these are all set later.
-global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
+global $time_start, $maintenance, $msubject, $mmessage, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;

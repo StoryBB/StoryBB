@@ -6,7 +6,7 @@
  * error log administration.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -383,7 +383,7 @@ function display_maintenance_message()
  */
 function display_db_error()
 {
-	global $mbname, $modSettings, $maintenance;
+	global $modSettings, $maintenance;
 	global $webmaster_email, $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');

@@ -50,7 +50,7 @@
  *  	array('text', 'invalidlabel', 3, 'label' => 'Actual Label')
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -147,8 +147,6 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = [
-		['mbname', $txt['admin_title'], 'file', 'text', 30],
-		'',
 		['maintenance', $txt['admin_maintain'], 'file', 'check'],
 		['mtitle', $txt['maintenance_subject'], 'file', 'text', 36],
 		['mmessage', $txt['maintenance_message'], 'file', 'text', 36],
@@ -979,7 +977,7 @@ function saveSettings(&$config_vars)
 	// All the strings to write.
 	$config_strs = [
 		'mtitle', 'mmessage',
-		'language', 'mbname', 'boardurl',
+		'language', 'boardurl',
 		'cookiename',
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix',
