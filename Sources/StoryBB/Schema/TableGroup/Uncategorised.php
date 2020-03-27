@@ -15,6 +15,7 @@ namespace StoryBB\Schema\TableGroup;
 use StoryBB\Schema\Table;
 use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
+use StoryBB\Schema\Constraint;
 
 class Uncategorised
 {
@@ -130,6 +131,7 @@ class Uncategorised
 				[
 					Index::primary(['id_instance']),
 				],
+				[],
 				[
 					'on_create' => function($safe_mode = false)
 					{
@@ -470,8 +472,7 @@ class Uncategorised
 					'note_type' => Column::varchar(10)->default('post'),
 					'daily' => Column::tinyint(),
 					'exclude' => Column::mediumint(),
-				],
-				[]
+				]
 			),
 			Table::make('log_errors',
 				[
@@ -502,6 +503,7 @@ class Uncategorised
 				[
 					Index::primary(['ip', 'log_type'])
 				],
+				[],
 				[
 					'prefer_engine' => ['MEMORY', 'InnoDB'],
 				]
@@ -571,6 +573,7 @@ class Uncategorised
 					Index::key(['log_time']),
 					Index::key(['id_member']),
 				],
+				[],
 				[
 					'prefer_engine' => ['MEMORY', 'InnoDB'],
 				]
@@ -1194,6 +1197,11 @@ class Uncategorised
 					Index::key(['id_member_started', 'id_board']),
 					Index::key(['id_board', 'is_sticky', 'id_last_msg']),
 					Index::key(['id_board', 'id_first_msg']),
+				],
+				[
+					Constraint::from('topics.id_board')->to('boards.id_board'),
+					Constraint::from('topics.id_first_msg')->to('messages.id_msg'),
+					Constraint::from('topics.id_last_msg')->to('messages.id_msg'),
 				]
 			),
 			Table::make('user_alerts',
