@@ -279,7 +279,7 @@ class MySQL implements DatabaseAdapter
 		global $txt, $context, $modSettings, $db_show_debug;
 
 		// Get the file and line numbers.
-		list ($file, $line) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
+		list ($file, $line, $function) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 		// This is the error message...
 		$query_error = mysqli_error($this->connection);
@@ -395,11 +395,19 @@ class MySQL implements DatabaseAdapter
 
 		foreach (debug_backtrace() as $step)
 		{
-			// Did it come from inside this class? If so, don't care.
-			if (isset($step['class']) && $step['class'] == __CLASS__)
+			// Did it come from inside this class? If so, we might not care.
+			if (!empty($step['class']) && $step['class'] == __CLASS__)
 			{
-				continue;
+				if ($step['function'] == 'error_backtrace')
+				{
+					continue; // We definitely don't want this function call in our backtrace.
+				}
+				if ($step['function'] == 'insert')
+				{
+					continue; // If we're inserting, we want to go one more step up the trace.
+				}
 			}
+
 			// Is it from something that looks normal? If so, add the place in question 
 			if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), ['sbb_db_', 'preg_re', 'db_erro', 'call_us']) && strpos($step['function'], '__') !== 0)
 			{
@@ -416,7 +424,7 @@ class MySQL implements DatabaseAdapter
 
 		// A special case - we want the file and line numbers for debugging.
 		if ($error_type == 'return')
-			return [$file, $line];
+			return [$file, $line, (!empty($step['class']) ? $step['class'] . '::' : '') . $step['function']];
 
 		// Is always a critical error.
 		if (function_exists('log_error'))
@@ -559,7 +567,7 @@ class MySQL implements DatabaseAdapter
 		if (isset($db_show_debug) && $db_show_debug === true)
 		{
 			// Get the file and line number this function was called.
-			list ($file, $line) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
+			list ($file, $line, $function) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 			// Initialize $db_cache if not already initialized.
 			if (!isset($db_cache))
@@ -577,6 +585,7 @@ class MySQL implements DatabaseAdapter
 			// Don't overload it.
 			$st = microtime(true);
 			$db_cache[$db_count]['q'] = $db_count < 50 ? $db_string : '...';
+			$db_cache[$db_count]['c'] = $function;
 			$db_cache[$db_count]['f'] = $file;
 			$db_cache[$db_count]['l'] = $line;
 			$db_cache[$db_count]['s'] = $st - $time_start;
