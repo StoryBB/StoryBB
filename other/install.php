@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\Schema\Schema;
 use StoryBB\Database\AdapterFactory;
 
@@ -321,6 +323,13 @@ function load_database()
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 		$smcFunc['db']->connect($db_options);
 	}
+
+	App::start(__DIR__);
+	$container = Container::instance();
+	$container->inject('database', $smcFunc['db']);
+	$container->inject('filesystem', function() use ($container) {
+		return $container->instantiate('StoryBB\\Helper\\Filesystem');
+	});
 }
 
 /**
@@ -1106,6 +1115,16 @@ function DatabasePopulation()
 	}
 
 	$smcFunc['db']->transaction('commit');
+
+	// And fix the files that need to be added to the repository.
+	$container = Container::instance();
+	$installer = $container->instantiate('StoryBB\\Helper\\Installer');
+
+	// 1. Favicon.
+	$installer->upload_favicon();
+
+	// 2. Smileys.
+	$installer->upload_smileys();
 
 	// Sort out the context for the SQL.
 	foreach ($incontext['sql_results'] as $key => $number)
