@@ -17,10 +17,24 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Hook\Mutatable;
+use StoryBB\StringLibrary;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RequestContext;
 
 // Get everything started up...
 define('STORYBB', 1);
+
+$php_version = phpversion();
+if (version_compare($php_version, '7.1.3', '<'))
+{
+	die("PHP 7.1.3 or newer is required, your server has " . $php_version . ". Please ask your host to upgrade PHP.");
+}
+
+require_once(__DIR__ . '/vendor/autoload.php');
+App::start(__DIR__);
 
 error_reporting(E_ALL);
 $time_start = microtime(true);
@@ -28,20 +42,10 @@ $time_start = microtime(true);
 // This makes it so headers can be sent!
 ob_start();
 
-// Do some cleaning, just in case.
-foreach (['cachedir'] as $variable)
-	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable], $GLOBALS[$variable]);
-
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');
 
-// Make absolutely sure the cache directory is defined.
-if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-	$cachedir = $boarddir . '/cache';
-
 // Without those we can't go anywhere
-require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Auth.php');
@@ -86,6 +90,15 @@ set_error_handler('sbb_error_handler');
 
 // Start the session. (assuming it hasn't already been.)
 loadSession();
+
+$result = App::dispatch_request((new RequestContext('/'))->fromRequest(Request::createFromGlobals()));
+
+if ($result && $result instanceof Response)
+{
+	ob_end_clean();
+	$result->send();
+	exit;
+}
 
 // What function shall we execute? (done like this for memory's sake.)
 call_user_func(sbb_main());
@@ -202,6 +215,8 @@ function sbb_main()
 		}
 		redirectexit();
 	}
+
+	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = [
