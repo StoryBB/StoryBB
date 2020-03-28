@@ -360,6 +360,23 @@ class Uncategorised
 					Index::unique(['col_name']),
 				]
 			),
+			Table::make('files',
+				[
+					'id' => Column::int()->auto_increment(),
+					'handler' => Column::varchar(32),
+					'content_id' => Column::int(),
+					'filename' => Column::varchar(255),
+					'filehash' => Column::varchar(64),
+					'mimetype' => Column::varchar(100),
+					'size' => Column::bigint(),
+					'id_owner' => Column::int(),
+					'timemodified' => Column::int(),
+				],
+				[
+					Index::primary(['id']),
+					Index::key(['handler', 'content_id']),
+				]
+			),
 			Table::make('group_moderators',
 				[
 					'id_group' => Column::smallint(),
