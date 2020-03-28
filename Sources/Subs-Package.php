@@ -13,7 +13,7 @@
  * @version 1.0 Alpha 1
  */
 
-use StoryBB\Helper\Environment;
+use StoryBB\App;
 use GuzzleHttp\Client;
 
 /**
@@ -266,7 +266,7 @@ function package_get_contents($filename)
 
 	if (!isset($package_cache))
 	{
-		$mem_check = Environment::setMemoryLimit('128M');
+		$mem_check = App::setMemoryLimit('256M');
 
 		// Windows doesn't seem to care about the memory_limit.
 		if (!empty($modSettings['package_disable_cache']) || $mem_check || stripos(PHP_OS, 'win') !== false)
@@ -300,7 +300,7 @@ function package_put_contents($filename, $data, $testing = false)
 	if (!isset($package_cache))
 	{
 		// Try to increase the memory limit - we don't want to run out of ram!
-		$mem_check = Environment::setMemoryLimit('128M');
+		$mem_check = App::setMemoryLimit('128M');
 
 		if (!empty($modSettings['package_disable_cache']) || $mem_check || stripos(PHP_OS, 'win') !== false)
 			$package_cache = [];

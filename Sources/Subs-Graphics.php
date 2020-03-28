@@ -15,7 +15,7 @@
  * @version 1.0 Alpha 1
  */
 
-use StoryBB\Helper\Environment;
+use StoryBB\App;
 use GuzzleHttp\Client;
 
 /**
@@ -266,7 +266,7 @@ function imageMemoryCheck($sizes)
 	// doing the old 'set it and hope' way?
 	if (empty($modSettings['attachment_thumb_memory']))
 	{
-		Environment::setMemoryLimit('128M');
+		App::setMemoryLimit('256M');
 		return true;
 	}
 
@@ -276,7 +276,7 @@ function imageMemoryCheck($sizes)
 	$needed_memory = ($sizes[0] * $sizes[1] * 5);
 
 	// if we need more, lets try to get it
-	return Environment::setMemoryLimit($needed_memory, true);
+	return App::setMemoryLimit($needed_memory, true);
 }
 
 /**

@@ -11,7 +11,6 @@
  */
 
 use StoryBB\App;
-use StoryBB\Helper\Environment;
 use StoryBB\StringLibrary;
 
 /**
@@ -589,7 +588,7 @@ function AdminSearchInternal()
 	global $context, $txt, $helptxt, $scripturl, $sourcedir;
 
 	// Try to get some more memory.
-	Environment::setMemoryLimit('128M');
+	App::setMemoryLimit('128M');
 
 	// Load a lot of language files.
 	$language_files = [
