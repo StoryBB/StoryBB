@@ -91,6 +91,10 @@ class Smiley implements Servable
 			$timemodified = new Datetime('@' . $file['timemodified']);
 			$timemodified->add(new DateInterval('P1Y'));
 			$response->setExpires($timemodified);
+			$response->setPublic();
+
+			$response->setLastModified(new Datetime('@' . $file['timemodified']));
+			$response->setEtag(sha1($file['filehash'] . $file['timemodified']));
 		}
 
 		return $response;

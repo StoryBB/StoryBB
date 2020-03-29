@@ -52,6 +52,24 @@ class Filesystem
 		return $record;
 	}
 
+	public function delete_file(string $handler, int $content_id): void
+	{
+		$file = $this->get_file_details($handler, $content_id);
+
+		$physical_path = $this->get_physical_file_location($file);
+		@unlink($physical_path);
+
+		$this->db()->query('', '
+			DELETE FROM {db_prefix}files
+			WHERE handler = {string:handler}
+			AND content_id = {int:content_id}',
+			[
+				'handler' => $handler,
+				'content_id' => $content_id,
+			]
+		);
+	}
+
 	public function get_physical_file_location(array $file): string
 	{
 		$filedir = App::get_root_path() . '/cache/files';

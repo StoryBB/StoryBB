@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Helper\Parser;
 
 /**
@@ -151,6 +152,9 @@ function HelpSmileys()
 {
 	global $smcFunc, $scripturl, $context, $txt, $modSettings;
 
+	$container = Container::instance();
+	$smiley_helper = $container->get('smileys');
+
 	// Build the link tree.
 	$context['linktree'][] = [
 		'url' => $scripturl . '?action=help',
@@ -162,30 +166,14 @@ function HelpSmileys()
 	];
 
 	$context['smileys'] = [];
-	$request = $smcFunc['db']->query('', '
-		SELECT code, filename, description
-		FROM {db_prefix}smileys
-		ORDER BY smiley_row, smiley_order, hidden');
-	while ($row = $smcFunc['db']->fetch_assoc($request))
+	foreach ($smiley_helper->get_smileys() as $smiley)
 	{
-		if (!isset($context['smileys'][$row['filename']]))
-		{
-			$context['smileys'][$row['filename']] = [
-				'text' => $row['description'],
-				'code' => [$row['code']],
-				'image' => $modSettings['smileys_url'] . '/' . $row['filename'],
-			];
-		}
-		else
-		{
-			if (empty($context['smileys'][$row['filename']]['text']))
-			{
-				$context['smileys'][$row['filename']]['text'] = $row['description'];
-			}
-			$context['smileys'][$row['filename']]['code'][] = $row['code'];
-		}
+		$context['smileys'][] = [
+			'text' => $smiley['description'],
+			'code' => explode("\n", $smiley['code']),
+			'image' => $smiley['url'],
+		];
 	}
-	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['manual_smileys'];
 	$context['sub_template'] = 'help_smileys';

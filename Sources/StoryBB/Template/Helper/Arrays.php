@@ -91,6 +91,11 @@ class Arrays
 	 */
 	public static function count($array)
 	{
+		if(!(is_array($array) || $array instanceof \Countable))
+		{
+			var_dump($array);
+			debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
 		return count($array);
 	}
 

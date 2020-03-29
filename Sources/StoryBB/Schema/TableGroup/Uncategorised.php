@@ -1140,7 +1140,7 @@ class Uncategorised
 			Table::make('smileys',
 				[
 					'id_smiley' => Column::smallint()->auto_increment(),
-					'code' => Column::varchar(30),
+					'code' => Column::text(),
 					'filename' => Column::varchar(48),
 					'description' => Column::varchar(80),
 					'smiley_row' => Column::tinyint(),

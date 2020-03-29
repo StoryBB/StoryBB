@@ -12,6 +12,7 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Container;
 use StoryBB\Helper\TLD;
 use StoryBB\StringLibrary;
 
@@ -1663,30 +1664,38 @@ class Parser
 		if (trim($message) == '')
 			return;
 
-
 		// If smileyPregSearch hasn't been set, do it now.
 		if (empty($smileyPregSearch))
 		{
 			// Load the smileys in reverse order by length so they don't get parsed wrong.
 			if (($temp = cache_get_data('parsing_smileys', 480)) == null)
 			{
-				$result = $smcFunc['db']->query('', '
-					SELECT code, filename, description
-					FROM {db_prefix}smileys
-					ORDER BY LENGTH(code) DESC',
-					[
-					]
-				);
-				$smileysfrom = [];
-				$smileysto = [];
-				$smileysdescs = [];
-				while ($row = $smcFunc['db']->fetch_assoc($result))
+				$container = Container::instance();
+				$smiley_helper = $container->get('smileys');
+
+				// Get all the smileys.
+				$smileys = $smiley_helper->get_smileys();
+				$linearsmileys = [];
+				// Split out the multiple code variants into a single master list.
+				foreach ($smileys as $smiley)
 				{
-					$smileysfrom[] = $row['code'];
-					$smileysto[] = StringLibrary::escape($row['filename']);
-					$smileysdescs[] = $row['description'];
+					$codes = explode("\n", $smiley['code']);
+					foreach ($codes as $code)
+					{
+						$linearsmileys[] = [trim($code), $smiley['url'], $smiley['description']];
+					}
 				}
-				$smcFunc['db']->free_result($result);
+				// Sort the smileys by longest code first.
+				uasort($linearsmileys, function($a, $b) {
+					return StringLibrary::strlen($b[0]) <=> StringLibrary::strlen($a[0]);
+				});
+				// Pack into three arrays for the rest of the logic to use.
+				foreach ($linearsmileys as $smiley)
+				{
+					$smileysfrom[] = $smiley[0];
+					$smileysto[] = $smiley[1];
+					$smileysdescs[] = $smiley[2];
+				}
 
 				cache_put_data('parsing_smileys', [$smileysfrom, $smileysto, $smileysdescs], 480);
 			}
@@ -1699,12 +1708,11 @@ class Parser
 			// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 			$smileyPregReplacements = [];
 			$searchParts = [];
-			$smileys_path = StringLibrary::escape($modSettings['smileys_url'] . '/');
 
 			for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 			{
 				$specialChars = StringLibrary::escape($smileysfrom[$i], ENT_QUOTES);
-				$smileyCode = '<img src="' . $smileys_path . $smileysto[$i] . '" alt="' . strtr($specialChars, [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']). '" title="' . strtr(StringLibrary::escape($smileysdescs[$i]), [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']) . '" class="smiley">';
+				$smileyCode = '<img src="' . $smileysto[$i] . '" alt="' . strtr($specialChars, [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']). '" title="' . strtr(StringLibrary::escape($smileysdescs[$i]), [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']) . '" class="smiley">';
 
 				$smileyPregReplacements[$smileysfrom[$i]] = $smileyCode;
 

@@ -187,24 +187,6 @@ function calculateNewValues()
 	}
 }
 
-function switchType()
-{
-	document.getElementById("ul_settings").style.display = document.getElementById("method-existing").checked ? "none" : "";
-	document.getElementById("ex_settings").style.display = document.getElementById("method-upload").checked ? "none" : "";
-}
-
-function selectMethod(element)
-{
-	document.getElementById("method-existing").checked = element != "upload";
-	document.getElementById("method-upload").checked = element == "upload";
-}
-
-function updatePreview()
-{
-	var currentImage = document.getElementById("preview");
-	currentImage.src = sbb_smileys_url + "/" + document.forms.smileyForm.smiley_filename.value;
-}
-
 function swap_database_changes()
 {
 	db_vis = !db_vis;

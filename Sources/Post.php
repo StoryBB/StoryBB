@@ -328,7 +328,7 @@ function Post($post_errors = [])
 		$form_message = StringLibrary::escape($_REQUEST['message'], ENT_QUOTES);
 
 		// Make sure the subject isn't too long - taking into account special characters.
-		if (StringLibrary::strpos($form_subject) > 100)
+		if (StringLibrary::strlen($form_subject) > 100)
 			$form_subject = StringLibrary::substr($form_subject, 0, 100);
 
 		if (isset($_REQUEST['poll']))
@@ -1545,7 +1545,7 @@ function Post2()
 
 		if ($_POST['guestname'] == '' || $_POST['guestname'] == '_')
 			$post_errors[] = 'no_name';
-		if (StringLibrary::strpos($_POST['guestname']) > 25)
+		if (StringLibrary::strlen($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -1580,7 +1580,7 @@ function Post2()
 		$post_errors[] = 'no_subject';
 	if (!isset($_POST['message']) || StringLibrary::htmltrim(StringLibrary::escape($_POST['message']), ENT_QUOTES) === '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = ['long_message', [$modSettings['max_messageLength']]];
 	else
 	{
@@ -1680,11 +1680,11 @@ function Post2()
 	$_POST['modify_reason'] = empty($_POST['modify_reason']) ? '' : strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 	// At this point, we want to make sure the subject isn't too long.
-	if (StringLibrary::strpos($_POST['subject']) > 100)
+	if (StringLibrary::strlen($_POST['subject']) > 100)
 		$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 
 	// Same with the "why did you edit this" text.
-	if (StringLibrary::strpos($_POST['modify_reason']) > 100)
+	if (StringLibrary::strlen($_POST['modify_reason']) > 100)
 		$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 
 	// Make the poll...
@@ -2512,7 +2512,7 @@ function JavaScriptModify()
 		$_POST['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if (StringLibrary::strpos($_POST['subject']) > 100)
+		if (StringLibrary::strlen($_POST['subject']) > 100)
 			$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
@@ -2528,7 +2528,7 @@ function JavaScriptModify()
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		{
 			$post_errors[] = 'long_message';
 			unset($_POST['message']);
@@ -2572,7 +2572,7 @@ function JavaScriptModify()
 		$_POST['modify_reason'] = strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if (StringLibrary::strpos($_POST['modify_reason']) > 100)
+		if (StringLibrary::strlen($_POST['modify_reason']) > 100)
 			$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 	}
 
