@@ -27,7 +27,7 @@ function RepairBoards()
 	isAllowedTo('admin_forum');
 
 	// Get as much memory as possible as this can be big.
- 	App::setMemoryLimit('256M');
+	App::setMemoryLimit('256M');
 
 	// Print out the top of the webpage.
 	$context['page_title'] = $txt['admin_repair'];

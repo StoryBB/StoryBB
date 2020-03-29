@@ -29,7 +29,7 @@ class App
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
 	protected static $storybb_root = '';
-	protected static $storybb_sources= '';
+	protected static $storybb_sources = '';
 
 	public static function start($path)
 	{

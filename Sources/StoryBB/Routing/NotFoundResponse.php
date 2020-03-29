@@ -19,31 +19,31 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class NotFoundResponse extends Response
 {
-    public function __construct(?string $content = '', int $status = 404, array $headers = [])
-    {
-        parent::__construct('', $status, $headers);
+	public function __construct(?string $content = '', int $status = 404, array $headers = [])
+	{
+		parent::__construct('', $status, $headers);
 
-        if (empty($content))
-        {
-            $content = $this->placeholder_content();
-        }
-        $this->setContent($content);
-        $this->setStatusCode($status);
-        $this->setProtocolVersion('1.0');
-    }
+		if (empty($content))
+		{
+			$content = $this->placeholder_content();
+		}
+		$this->setContent($content);
+		$this->setStatusCode($status);
+		$this->setProtocolVersion('1.0');
+	}
 
-    protected function placeholder_content() : string
-    {
-        return '<!DOCTYPE html>
+	protected function placeholder_content() : string
+	{
+		return '<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
+	<head>
+		<meta charset="UTF-8" />
 
-        <title>Not Found</title>
-    </head>
-    <body>
-        Not Found.
-    </body>
+		<title>Not Found</title>
+	</head>
+	<body>
+		Not Found.
+	</body>
 </html>';
-    }
+	}
 }
