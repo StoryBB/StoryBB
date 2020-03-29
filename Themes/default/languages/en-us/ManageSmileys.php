@@ -26,7 +26,6 @@ $txt['smileys_make_hidden'] = 'Make Hidden';
 $txt['smileys_show_on_post'] = 'Show on post form';
 $txt['smileys_show_on_popup'] = 'Show on popup';
 
-$txt['smiley_settings_explain'] = 'These settings allow you to set paths and configuration data.';
 $txt['smiley_editsmileys_explain'] = 'Change your smileys here by clicking on the smiley you want to modify.Don\'t forget to save after you are done editing.';
 $txt['smiley_setorder_explain'] = 'Change the order of the smileys here.';
 $txt['smiley_addsmiley_explain'] = 'Here you can add a new smiley - either from an existing file or by uploading new ones.';

@@ -53,9 +53,6 @@ function ManageSmileys()
 			'setorder' => [
 				'description' => $txt['smiley_setorder_explain'],
 			],
-			'settings' => [
-				'description' => $txt['smiley_settings_explain'],
-			],
 		],
 	];
 
