@@ -472,7 +472,6 @@ function CheckFilesWritable()
 		'attachments',
 		'custom_avatar',
 		'cache',
-		'Smileys',
 		'Themes',
 		'Settings.php',
 		'Settings_bak.php',
