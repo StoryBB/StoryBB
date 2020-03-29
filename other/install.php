@@ -18,7 +18,7 @@ use StoryBB\Database\AdapterFactory;
 $GLOBALS['current_sbb_version'] = '1.0 Alpha 1';
 $GLOBALS['db_script_version'] = '1-0';
 
-$GLOBALS['required_php_version'] = '7.0.0';
+$GLOBALS['required_php_version'] = '7.1.3';
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">
