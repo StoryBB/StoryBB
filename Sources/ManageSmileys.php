@@ -53,9 +53,6 @@ function ManageSmileys()
 			'setorder' => [
 				'description' => $txt['smiley_setorder_explain'],
 			],
-			'settings' => [
-				'description' => $txt['smiley_settings_explain'],
-			],
 		],
 	];
 
@@ -571,6 +568,9 @@ function EditSmileyOrder()
 
 		cache_put_data('parsing_smileys', null, 480);
 		cache_put_data('posting_smileys', null, 480);
+
+		session_flash('success', 'smiley_change_saved');
+		redirectexit('action=admin;area=smileys;sa=setorder');
 	}
 
 	$context['smileys'] = [
