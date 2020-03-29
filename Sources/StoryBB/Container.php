@@ -34,7 +34,7 @@ class Container
 
 	final protected function __clone()
 	{
-
+		return;
 	}
 
 	final public function inject($key, $value)
