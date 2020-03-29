@@ -14,7 +14,7 @@ Contributions to documentation are licensed under [CC-by-SA 3](https://creativec
 
 ## Requirements
 * MySQL 5.5.3 or higher
-* PHP 7.0 or higher
+* PHP 7.1.3 or higher
 
 #### Required PHP extensions
 * cURL
