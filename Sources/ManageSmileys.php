@@ -66,61 +66,6 @@ function ManageSmileys()
 }
 
 /**
- * Handles modifying smileys settings.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function EditSmileySettings($return_config = false)
-{
-	global $modSettings, $context, $txt, $boarddir, $sourcedir, $scripturl;
-
-	// The directories...
-	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
-	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
-
-	// All the settings for the page...
-	$config_vars = [
-			['text', 'smileys_url', 40],
-			['warning', !is_dir($context['smileys_dir']) ? 'setting_smileys_dir_wrong' : ''],
-			['text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found'], 40],
-	];
-
-	settings_integration_hook('integrate_modify_smiley_settings', [&$config_vars]);
-
-	if ($return_config)
-		return [$txt['smileys_manage'] . ' - ' . $txt['settings'], $config_vars];
-
-	// Setup the basics of the settings template.
-	require_once($sourcedir . '/ManageServer.php');
-
-	// Finish up the form...
-	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';
-
-	// Saving the settings?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		settings_integration_hook('integrate_save_smiley_settings');
-
-		saveDBSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
-
-		redirectexit('action=admin;area=smileys;sa=settings');
-	}
-
-	// We need this for the in-line permissions
-	createToken('admin-mp');
-
-	prepareDBSettingContext($config_vars);
-	$context['settings_title'] = $txt['settings'];
-}
-
-/**
  * Add a smiley, that's right.
  */
 function AddSmiley()

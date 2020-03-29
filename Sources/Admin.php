@@ -164,7 +164,6 @@ function AdminMain()
 						'addsmiley' => [$txt['smileys_add']],
 						'editsmileys' => [$txt['smileys_edit']],
 						'setorder' => [$txt['smileys_set_order']],
-						'settings' => [$txt['settings']],
 					],
 				],
 				'manageattachments' => [
@@ -618,7 +617,6 @@ function AdminSearchInternal()
 		['ModifyTopicSettings', 'area=postsettings;sa=topics'],
 		['ModifyDraftSettings', 'area=postsettings;sa=drafts'],
 		['EditSearchSettings', 'area=managesearch;sa=settings'],
-		['EditSmileySettings', 'area=smileys;sa=settings'],
 		['ModifyGeneralSettings', 'area=serversettings;sa=general'],
 		['ModifyCookieSettings', 'area=serversettings;sa=cookie'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
