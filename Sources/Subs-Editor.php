@@ -12,6 +12,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Container;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -1347,7 +1348,6 @@ function create_control_richedit($editorOptions)
 	if (empty($context['controls']['richedit']))
 	{
 		// Some general stuff.
-		$settings['smileys_url'] = $modSettings['smileys_url'];
 		if (!empty($context['drafts_autosave']))
 			$context['drafts_autosave_frequency'] = empty($modSettings['drafts_autosave_frequency']) ? 60000 : $modSettings['drafts_autosave_frequency'] * 1000;
 
@@ -1362,7 +1362,6 @@ function create_control_richedit($editorOptions)
 		addInlineJavaScript('$.sceditor.locale[' . javaScriptEscape($txt['lang_locale']) . '] = ' . json_encode($editortxt) . ';');
 
 		addInlineJavaScript('
-		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
 		var bbc_quote = \'' . addcslashes($txt['quote'], "'") . '\';
 		var bbc_search_on = \'' . addcslashes($txt['search_on'], "'") . '\';');
@@ -1614,42 +1613,89 @@ function create_control_richedit($editorOptions)
 			$context['html_headers'] .= '
 		<style>' . $bbcodes_styles . '
 		</style>';
+
+		$bbc_rows = [];
+		foreach ($context['bbc_toolbar'] as $key => $row)
+		{
+			$bbc_rows[] = implode('|', $row);
+		}
+		$context['bbc_toolbar_string'] = implode('||', $bbc_rows);
 	}
 
 	// Initialize smiley array... if not loaded before.
 	if (empty($context['smileys']) && empty($editorOptions['disable_smiley_box']))
 	{
+		// These need to be exported in a slightly odd format.
+		// They need to be flattened into linear lists even if containing multiple rows, with "-0": "" entries as dividers.
 		$context['smileys'] = [
 			'postform' => [],
 			'popup' => [],
+			'descriptions' => [],
 		];
 
 		if (($temp = cache_get_data('posting_smileys', 480)) == null)
 		{
-			$request = $smcFunc['db']->query('', '
-				SELECT code, filename, description, smiley_row, hidden
-				FROM {db_prefix}smileys
-				WHERE hidden IN (0, 2)
-				ORDER BY smiley_row, smiley_order',
-				[
-				]
-			);
-			while ($row = $smcFunc['db']->fetch_assoc($request))
-			{
-				$row['filename'] = StringLibrary::escape($row['filename']);
-				$row['description'] = StringLibrary::escape($row['description']);
+			$container = Container::instance();
+			$smiley_helper = $container->get('smileys');
 
-				$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
+			$smileys = $smiley_helper->get_smileys();
+			$smileys = array_filter($smileys, function($smiley) use ($smiley_helper) {
+				return $smiley['hidden'] != $smiley_helper::POSITION_HIDDEN;
+			});
+			// Now sort them into rows.
+			$tempsmileys = [];
+			foreach ($smileys as $id => $smiley)
+			{
+				$tempsmileys[$smiley['smiley_row']][$id] = $smiley;
 			}
-			$smcFunc['db']->free_result($request);
 
-			foreach ($context['smileys'] as $section => $smileyRows)
+			foreach ($tempsmileys as $rowid => $row)
 			{
-				foreach ($smileyRows as $rowIndex => $smileys)
-					$context['smileys'][$section][$rowIndex]['smileys'][count($smileys['smileys']) - 1]['isLast'] = true;
+				uasort($row, function ($a, $b) {
+					return $a['smiley_order'] <=> $b['smiley_order'];
+				});
 
-				if (!empty($smileyRows))
-					$context['smileys'][$section][count($smileyRows) - 1]['isLast'] = true;
+				// Now we have a row of smileys, let's get into this.
+				foreach ($row as $smiley)
+				{
+					$smiley['filename'] = StringLibrary::escape($smiley['filename']);
+					$smiley['description'] = StringLibrary::escape($smiley['description']);
+
+					$codes = explode("\n", $smiley['code']);
+					foreach ($codes as $code)
+					{
+						$context['smileys']['descriptions'][$code] = $smiley['description'];
+					}
+
+					// We might need to add a new row separator.
+					$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$code] = $smiley['url'];
+				}
+
+				if (!empty($context['smileys']['postform']))
+				{
+					$context['smileys']['postform'][' separator' . $rowid] = '';
+				}
+				if (!empty($context['smileys']['popup']))
+				{
+					$context['smileys']['popup'][' separator' . $rowid] = '';
+				}
+			}
+
+			foreach (['postform', 'popup'] as $array)
+			{
+				$keys = array_keys($context['smileys'][$array]);
+				$keys = array_reverse($keys);
+				foreach ($keys as $key)
+				{
+					if (empty($context['smileys'][$array][$key]))
+					{
+						unset($context['smileys'][$array][$key]);
+					}
+					else
+					{
+						break;
+					}
+				}
 			}
 
 			cache_put_data('posting_smileys', $context['smileys'], 480);

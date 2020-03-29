@@ -292,7 +292,10 @@ function displayDebug()
 			echo '
 	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" rel="noopener" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', StringLibrary::escape(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
-			if (!empty($qq['f']) && !empty($qq['l']))
+
+			if (!empty($qq['c']) && !empty($qq['f']) && !empty($qq['l']))
+				echo sprintf($txt['debug_query_in_function_in_line'], $qq['c'], $qq['f'], $qq['l']);
+			elseif (!empty($qq['f']) && !empty($qq['l']))
 				echo sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
 
 			if (isset($qq['s'], $qq['t']) && isset($txt['debug_query_which_took_at']))

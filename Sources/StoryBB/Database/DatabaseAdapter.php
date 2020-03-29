@@ -17,5 +17,11 @@ namespace StoryBB\Database;
  */
 interface DatabaseAdapter
 {
+	const INSERT_INSERT = 'insert';
+	const INSERT_IGNORE = 'ignore';
+	const INSERT_REPLACE = 'replace';
 
+	const RETURN_NOTHING = 0;
+	const RETURN_LAST_ID = 1;
+	const RETURN_ALL = 2;
 }

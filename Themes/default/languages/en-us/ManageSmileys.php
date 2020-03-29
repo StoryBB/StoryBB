@@ -10,14 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
-$txt['setting_smileys_url'] = 'Base URL to the smiley folder';
-$txt['setting_smileys_dir'] = 'Absolute path to the smileys folder';
-$txt['setting_smileys_dir_wrong'] = 'The path to all smileys is wrong. This will prevent smileys from working.';
-
-$txt['smileys_add_method'] = 'Image Source';
-$txt['smileys_add_existing'] = 'Use existing file';
-$txt['smileys_add_upload'] = 'Upload new smiley';
 $txt['smileys_add_upload_choose'] = 'File to upload';
+$txt['smiley_change_saved'] = 'Your changes were saved.';
 
 $txt['smileys_code'] = 'Code';
 $txt['smileys_filename'] = 'Filename';

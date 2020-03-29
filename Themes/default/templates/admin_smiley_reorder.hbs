@@ -28,10 +28,10 @@
 		{{#each .}}
 			{{#unless ../../../context.move_smiley}}
 				<a href="{{../../../scripturl}}?action=admin;area=smileys;sa=setorder;move={{id}}">
-					<img src="{{{../../../modSettings.smileys_url}}}/{{filename}}" style="padding: 2px; border: 0px solid black;" alt="{{{description}}}">
+					<img src="{{{url}}}" style="padding: 2px; border: 0px solid black;" alt="{{{description}}}">
 				</a>
 			{{else}}
-				<img src="{{{../../../modSettings.smileys_url}}}/{{filename}}" style="padding: 2px;{{#if selected}} border: 2px solid red{{/if}};" alt="{{{description}}}">
+				<img src="{{{url}}}" style="padding: 2px;{{#if selected}} border: 2px solid red{{/if}};" alt="{{{description}}}">
 				<a href="{{scripturl}}?action=admin;area=smileys;sa=setorder;location={{../../id}};source={{../../../context.move_smiley}};after={{id}};reorder=1;{{session_url}}" title="{{{txt.smileys_move_here}}}" class="main_icons select_below"></a>
 			{{/unless}}
 		{{/each}}

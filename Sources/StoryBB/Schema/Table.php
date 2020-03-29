@@ -32,6 +32,8 @@ class Table
 	/** @var array $indexes An array of Index objects that are the indexes for this table. */
 	protected $indexes = [];
 
+	/** @var array $constraints An array of Constraint objects that are the constraints on this table. */
+
 	/** @var array $opts An array of options for this table's creation/setup. */
 	protected $opts = [];
 
@@ -44,14 +46,16 @@ class Table
 	 * @param string $table_name The name of the table being investigated or manipulated.
 	 * @param array $columns The columns this table object should have.
 	 * @param array $indexes The indexes this table object should have.
+	 * @param array $constraints The constraints this table object should have.
 	 * @param array $opts An array of options about this object, e.g. table engine preferences.
 	 * @return Table The table instance.
 	 */
-	private function __construct(string $table_name, array $columns, array $indexes = [], array $opts = [])
+	private function __construct(string $table_name, array $columns, array $indexes = [], array $constraints, array $opts = [])
 	{
 		$this->table_name = $table_name;
 		$this->columns = $columns;
 		$this->indexes = $indexes;
+		$this->constraints = $constraints;
 		$this->opts = $opts;
 
 		$this->check_index_columns();

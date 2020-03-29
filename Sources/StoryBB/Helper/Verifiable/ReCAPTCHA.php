@@ -26,7 +26,7 @@ class ReCAPTCHA extends AbstractVerifiable implements Verifiable
 		global $modSettings;
 
 		parent::__construct($id);
-		$this->secret_key = $modSettings['recaptcha_secret_key'];
+		$this->secret_key = $modSettings['recaptcha_secret_key'] ?? '';
 	}
 
 	public function is_available(): bool

@@ -36,7 +36,7 @@ class ClassManager
 	 */
 	protected static function get_cache(): array
 	{
-		global $cachedir;
+		$cachedir = App::get_root_path() . '/cache';
 		if (!file_exists($cachedir . '/class_cache.php'))
 		{
 			$class_cache = self::rebuild_cache();
@@ -58,7 +58,8 @@ class ClassManager
 	 */
 	public static function rebuild_cache(): array
 	{
-		global $cachedir, $sourcedir;
+		$cachedir = App::get_root_path() . '/cache';
+		$sourcedir = App::get_sources_path();
 
 		$class_cache = [];
 
@@ -111,10 +112,9 @@ class ClassManager
 		foreach ($filteriterator as $file)
 		{
 			// Match the filename part of the PHP file. We're going to need that part.
-			preg_match('/\\\\([^\\\\]+)\.php$/', $file[0], $match);
-			if (!isset($match[1]))
-			{
-				continue;
+			$match = basename($file[0]);
+			if (strtolower(substr($match, -4)) === '.php') {
+				$match = substr($match, 0, -4);
 			}
 
 			$filecontent = file_get_contents($file[0]);
@@ -125,13 +125,13 @@ class ClassManager
 			}
 
 			// Does this file contain a class or interface?
-			if (strpos($filecontent, "\nclass " . $match[1]) !== false || strpos($filecontent, "\ninterface " . $match[1]) !== false)
+			if (strpos($filecontent, "\nclass " . $match) !== false || strpos($filecontent, "\ninterface " . $match) !== false)
 			{
 				try
 				{
 					include_once($file[0]);
 				}
-				catch (\Exception $e)
+				catch (\Throwable $e)
 				{
 					// We don't really care if this happens.
 					continue;

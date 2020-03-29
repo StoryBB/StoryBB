@@ -1949,7 +1949,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$settings['actual_images_url'] = strtr($settings['actual_images_url'], [$oldurl => $boardurl]);
 
 			// And just a few mod settings :).
-			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], [$oldurl => $boardurl]);
 			$modSettings['custom_avatar_url'] = strtr($modSettings['custom_avatar_url'], [$oldurl => $boardurl]);
 
 			// Clean up after loadBoard().
@@ -2202,7 +2201,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'sbb_theme_url' => '"' . $settings['theme_url'] . '"',
 		'sbb_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
 		'sbb_images_url' => '"' . $settings['images_url'] . '"',
-		'sbb_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'sbb_scripturl' => '"' . $scripturl . '"',
 		'sbb_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
 		'sbb_session_id' => '"' . $context['session_id'] . '"',

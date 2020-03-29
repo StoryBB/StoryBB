@@ -10,8 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Model\Policy;
-use StoryBB\Helper\Environment;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 
@@ -39,7 +39,7 @@ function deleteMembers($users, $check_not_admin = false)
 	@set_time_limit(600);
 
 	// Try to get some more memory.
-	Environment::setMemoryLimit('128M');
+	App::setMemoryLimit('128M');
 
 	// If it's not an array, make it so!
 	if (!is_array($users))

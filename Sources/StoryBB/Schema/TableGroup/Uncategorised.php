@@ -15,6 +15,7 @@ namespace StoryBB\Schema\TableGroup;
 use StoryBB\Schema\Table;
 use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
+use StoryBB\Schema\Constraint;
 
 class Uncategorised
 {
@@ -130,6 +131,7 @@ class Uncategorised
 				[
 					Index::primary(['id_instance']),
 				],
+				[],
 				[
 					'on_create' => function($safe_mode = false)
 					{
@@ -358,6 +360,23 @@ class Uncategorised
 					Index::unique(['col_name']),
 				]
 			),
+			Table::make('files',
+				[
+					'id' => Column::int()->auto_increment(),
+					'handler' => Column::varchar(32),
+					'content_id' => Column::int(),
+					'filename' => Column::varchar(255),
+					'filehash' => Column::varchar(64),
+					'mimetype' => Column::varchar(100),
+					'size' => Column::bigint(),
+					'id_owner' => Column::int(),
+					'timemodified' => Column::int(),
+				],
+				[
+					Index::primary(['id']),
+					Index::key(['handler', 'content_id']),
+				]
+			),
 			Table::make('group_moderators',
 				[
 					'id_group' => Column::smallint(),
@@ -470,8 +489,7 @@ class Uncategorised
 					'note_type' => Column::varchar(10)->default('post'),
 					'daily' => Column::tinyint(),
 					'exclude' => Column::mediumint(),
-				],
-				[]
+				]
 			),
 			Table::make('log_errors',
 				[
@@ -502,6 +520,7 @@ class Uncategorised
 				[
 					Index::primary(['ip', 'log_type'])
 				],
+				[],
 				[
 					'prefer_engine' => ['MEMORY', 'InnoDB'],
 				]
@@ -571,6 +590,7 @@ class Uncategorised
 					Index::key(['log_time']),
 					Index::key(['id_member']),
 				],
+				[],
 				[
 					'prefer_engine' => ['MEMORY', 'InnoDB'],
 				]
@@ -1120,7 +1140,7 @@ class Uncategorised
 			Table::make('smileys',
 				[
 					'id_smiley' => Column::smallint()->auto_increment(),
-					'code' => Column::varchar(30),
+					'code' => Column::text(),
 					'filename' => Column::varchar(48),
 					'description' => Column::varchar(80),
 					'smiley_row' => Column::tinyint(),
@@ -1194,6 +1214,11 @@ class Uncategorised
 					Index::key(['id_member_started', 'id_board']),
 					Index::key(['id_board', 'is_sticky', 'id_last_msg']),
 					Index::key(['id_board', 'id_first_msg']),
+				],
+				[
+					Constraint::from('topics.id_board')->to('boards.id_board'),
+					Constraint::from('topics.id_first_msg')->to('messages.id_msg'),
+					Constraint::from('topics.id_last_msg')->to('messages.id_msg'),
 				]
 			),
 			Table::make('user_alerts',

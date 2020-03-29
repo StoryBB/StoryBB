@@ -2,56 +2,6 @@
 	<div id="admincenter">
 		<form action="{{scripturl}}?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
 			<div class="cat_bar">
-				<h3 class="catbg">{{{txt.smileys_add_method}}}</h3>
-			</div>
-			<div class="windowbg">
-				<ul>
-					<li>
-						<label for="method-existing">
-							<input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked> {{{txt.smileys_add_existing}}}
-						</label>
-					</li>
-					<li>
-						<label for="method-upload">
-							<input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload"> {{{txt.smileys_add_upload}}}
-						</label>
-					</li>
-				</ul>
-				<br>
-				<fieldset id="ex_settings">
-					<dl class="settings">
-						<dt>
-							<strong><label for="smiley_filename">{{{txt.smileys_filename}}}</label>: </strong>
-						</dt>
-						<dd>
-
-{{#unless context.filenames}}
-							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');">
-{{else}}
-							<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
-
-	{{#each context.filenames}}
-								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{id}}}</option>
-	{{/each}}
-							</select>
-{{/unless}}
-
-							&nbsp; <img src="{{{modSettings.smileys_url}}}/{{context.current_smiley.filename}}" id="preview" alt="">
-						</dd>
-					</dl>
-				</fieldset>
-				<fieldset id="ul_settings" style="display: none;">
-					<dl class="settings">
-						<dt>
-							<strong>{{{txt.smileys_add_upload_choose}}}:</strong>
-						</dt>
-						<dd>
-							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod('upload');">
-						</dd>
-					</dl>
-				</fieldset>
-			</div>
-			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.smiley_new}}}</h3>
 			</div>
 			<div class="windowbg">
@@ -60,7 +10,7 @@
 						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_code" id="smiley_code" value="">
+						<input type="text" name="smiley_code" id="smiley_code" value="" required>
 					</dd>
 					<dt>
 						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>
@@ -83,6 +33,12 @@
 								{{{txt.smileys_location_popup}}}
 							</option>
 						</select>
+					</dd>
+					<dt>
+						<strong>{{{txt.smileys_add_upload_choose}}}:</strong>
+					</dt>
+					<dd>
+						<input type="file" name="uploadSmiley" id="uploadSmiley">
 					</dd>
 				</dl>
 				<input type="submit" name="smiley_save" value="{{{txt.smileys_save}}}">
