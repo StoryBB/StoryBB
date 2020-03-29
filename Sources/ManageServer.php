@@ -211,7 +211,6 @@ $(function()
  * If force_ssl has changed, ensure all URLs are aligned with the new setting.
  * This includes:
  *     - $boardurl
- *     - $modSettings['smileys_url']
  *     - $modSettings['avatar_url']
  *     - $modSettings['custom_avatar_url'] - if found
  *     - theme_url - all entries in the themes table
@@ -241,16 +240,6 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 	updateSettingsFile(['boardurl' => '\'' . addslashes($newval) . '\'']);
 
 	$new_settings = [];
-
-	// Check $smileys_url, but only if it points to a subfolder of $boardurl
-	if (BoardurlMatch($modSettings['smileys_url']))
-	{
-		if ($new_force_ssl == 2)
-			$newval = strtr($modSettings['smileys_url'], ['http://' => 'https://']);
-		else
-			$newval = strtr($modSettings['smileys_url'], ['https://' => 'http://']);
-		$new_settings['smileys_url'] = $newval;
-	}
 
 	// Check $custom_avatar_url, but only if it points to a subfolder of $boardurl
 	// This one had been optional in the past, make sure it is set first
