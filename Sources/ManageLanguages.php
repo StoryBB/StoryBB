@@ -362,7 +362,7 @@ function ModifyLanguage()
 	// Get all the theme data.
 	$themes = [
 		1 => [
-			'name' => $txt['dvc_default'],
+			'name' => $txt['default_templates'],
 			'theme_dir' => $settings['default_theme_dir'],
 		],
 	];
