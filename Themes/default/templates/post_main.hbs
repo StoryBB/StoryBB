@@ -223,15 +223,6 @@
 						</li>
 {{/if}}
 
-{{#if (and context.can_announce context.is_first_post)}}
-						<li>
-							<label for="check_announce">
-								<input type="checkbox" name="announce_topic" id="check_announce" value="1"{{#if context.announce}} checked{{/if}}>
-								{{txt.announce_topic}}
-							</label>
-						</li>
-{{/if}}
-
 {{#if context.show_approval}}
 						<li>
 							<label for="approve">

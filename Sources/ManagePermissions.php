@@ -1453,7 +1453,6 @@ function loadAllPermissions()
 			'remove' => [true, 'topic', 'modify'],
 			'modify_replies' => [false, 'topic'],
 			'delete_replies' => [false, 'topic'],
-			'announce_topic' => [false, 'topic'],
 			'delete' => [true, 'post'],
 			'modify' => [true, 'post'],
 			'report_any' => [false, 'post'],
@@ -2122,7 +2121,6 @@ function loadIllegalGuestPermissions()
 	$context['non_guest_permissions'] = [
 		'access_mod_center',
 		'admin_forum',
-		'announce_topic',
 		'approve_posts',
 		'delete',
 		'delete_replies',

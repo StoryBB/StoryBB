@@ -211,8 +211,6 @@ $txt['permissionname_modify_replies'] = 'Modify replies to own topics';
 $txt['permissionhelp_modify_replies'] = 'This permission allows a user that started a topic to modify all replies to their topic.';
 $txt['permissionname_delete_replies'] = 'Delete replies to own topics';
 $txt['permissionhelp_delete_replies'] = 'This permission allows a user that started a topic to remove all replies to their topic.';
-$txt['permissionname_announce_topic'] = 'Announce topic';
-$txt['permissionhelp_announce_topic'] = 'This allows a user to send an announcement e-mail about a topic to all members or to a few membergroups.';
 
 $txt['permissiongroup_post'] = 'Posts';
 $txt['permissionname_delete'] = 'Delete posts';

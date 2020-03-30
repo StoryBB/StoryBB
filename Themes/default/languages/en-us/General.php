@@ -92,7 +92,6 @@ $txt['character_name_title'] = 'Character Name';
 
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';
-$txt['notify_announcements'] = 'Allow the administrators to send me important news by email';
 
 $txt['position'] = 'Position';
 

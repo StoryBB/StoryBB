@@ -62,7 +62,6 @@ $txt['cannot_like_content'] = 'You are not able to like that content.';
 $txt['cannot_view_likes'] = 'You are not able to view who liked that content.';
 $txt['cannot_access_mod_center'] = 'You do not have permission to access the moderation center.';
 $txt['cannot_admin_forum'] = 'You are not allowed to administrate this forum.';
-$txt['cannot_announce_topic'] = 'You are not allowed to announce topics on this board.';
 $txt['cannot_approve_posts'] = 'You do not have permission to approve items.';
 $txt['cannot_post_unapproved_attachments'] = 'You do not have permission to post unapproved attachments.';
 $txt['cannot_post_unapproved_topics'] = 'You do not have permission to post unapproved topics.';

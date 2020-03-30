@@ -64,7 +64,6 @@ $txt['whoall_pm_removeall'] = 'Removing all their messages.';
 $txt['whoall_pm_send'] = 'Sending a message.';
 $txt['whoall_pm_send2'] = 'Sending a message.';
 
-$txt['whotopic_announce'] = 'Announcing the topic &quot;<a href="{scripturl}?topic=%1$d.0">%2$s</a>&quot;.';
 $txt['whotopic_attachapprove'] = 'Approving an attachment.';
 $txt['whotopic_dlattach'] = 'Viewing an attachment.';
 $txt['whotopic_deletemsg'] = 'Deleting a message.';

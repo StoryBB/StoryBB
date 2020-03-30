@@ -25,7 +25,7 @@ function ManageNews()
 	global $context, $txt;
 
 	// First, let's do a quick permissions check for the best error message possible.
-	isAllowedTo(['edit_news', 'send_mail', 'admin_forum']);
+	isAllowedTo(['send_mail', 'admin_forum']);
 
 	// Format: 'sub-action' => array('function', 'permission')
 	$subActions = [
@@ -38,7 +38,7 @@ function ManageNews()
 	routing_integration_hook('integrate_manage_news', [&$subActions]);
 
 	// Default to sub action 'main' or 'settings' depending on permissions.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('edit_news') ? 'editnews' : (allowedTo('send_mail') ? 'mailingmembers' : 'settings'));
+	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('send_mail') ? 'mailingmembers' : 'settings');
 
 	// Have you got the proper permissions?
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
@@ -49,8 +49,6 @@ function ManageNews()
 		'help' => 'edit_news',
 		'description' => $txt['admin_news_desc'],
 		'tabs' => [
-			'editnews' => [
-			],
 			'mailingmembers' => [
 				'description' => $txt['news_mailing_desc'],
 			],

@@ -143,7 +143,6 @@ function ModifyBasicSettings($return_config = false)
 			]],
 		'',
 			// Option-ish things... miscellaneous sorta.
-			['check', 'allow_disableAnnounce'],
 			['check', 'disallow_sendBody'],
 		'',
 			// Alerts stuff
@@ -1744,7 +1743,6 @@ function ModifyAlertsSettings()
 	global $context, $modSettings, $sourcedir, $txt;
 
 	// Dummy settings for the template...
-	$modSettings['allow_disableAnnounce'] = false;
 	$context['user']['is_owner'] = false;
 	$context['member'] = [];
 	$context['id_member'] = 0;

@@ -177,7 +177,6 @@ function Register($reg_errors = [])
 		'real_name' => isset($_POST['real_name']) ? StringLibrary::escape($_POST['real_name']) : '',
 		'first_char' => isset($_POST['first_char']) ? StringLibrary::escape($_POST['first_char']) : '',
 		'email' => isset($_POST['email']) ? StringLibrary::escape($_POST['email']) : '',
-		'notify_announcements' => !empty($_POST['notify_announcements']) ? 1 : 0,
 	];
 
 	// Were there any errors?
@@ -484,18 +483,6 @@ function Register2()
 
 	// Do our spam protection now.
 	spamProtection('register');
-
-	// Do they want to recieve announcements?
-	require_once($sourcedir . '/Subs-Notify.php');
-	$prefs = getNotifyPrefs($memberID, 'announcements', true);
-	$var = !empty($_POST['notify_announcements']);
-	$pref = !empty($prefs[$memberID]['announcements']);
-
-	// Don't update if the default is the same.
-	if ($var != $pref)
-	{
-		setNotifyPrefs($memberID, ['announcements' => (int) !empty($_POST['notify_announcements'])]);
-	}
 
 	// We'll do custom fields after as then we get to use the helper function!
 	if (!empty($_POST['customfield']))

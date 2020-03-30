@@ -222,7 +222,6 @@ function sbb_main()
 	$actionArray = [
 		'activate' => ['Register.php', 'Activate'],
 		'admin' => ['Admin.php', 'AdminMain'],
-		'announce' => ['Post.php', 'AnnounceTopic'],
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
 		'autocomplete' => ['Autocomplete.php', 'Autocomplete'],
 		'board' => ['MessageIndex.php', 'MessageIndex'],
