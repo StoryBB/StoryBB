@@ -105,7 +105,6 @@ $txt['board_is_ooc'] = 'Out of character';
 // Group Permissions.
 $txt['group_perms_name_access_mod_center'] = 'Access Moderation Center';
 $txt['group_perms_name_admin_forum'] = 'Admin forum';
-$txt['group_perms_name_edit_news'] = 'Edit forum news';
 $txt['group_perms_name_issue_warning'] = 'Issue warnings';
 $txt['group_perms_name_likes_like'] = 'Like content';
 $txt['group_perms_name_likes_view'] = 'View likes';

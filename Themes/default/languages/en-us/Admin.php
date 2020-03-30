@@ -15,8 +15,6 @@ $txt['settings_not_saved'] = 'Your changes were not saved because: %1$s';
 
 $txt['admin_boards'] = 'Boards and Categories';
 $txt['admin_users'] = 'Members';
-$txt['admin_newsletters'] = 'Newsletters';
-$txt['admin_edit_news'] = 'News';
 $txt['admin_groups'] = 'Membergroups';
 $txt['admin_members'] = 'Manage Members';
 $txt['admin_members_list'] = 'Below is a listing of all the members currently registered with your forum.';
@@ -34,7 +32,6 @@ $txt['admin_maintain'] = 'Enable Maintenance Mode';
 $txt['cookie_name'] = 'Cookie name';
 $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
-$txt['admin_news'] = 'Enable News';
 $txt['admin_guest_post'] = 'Enable guest posting';
 $txt['admin_manage_members'] = 'Members';
 $txt['admin_version_check'] = 'Detailed version check';
@@ -53,7 +50,6 @@ $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
 $txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank" rel="noopener">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="main_icons help" title="%3$s"></span> symbols for more information on the related functions.';
-$txt['admin_news_desc'] = 'Please place one news item per box. BBC tags, such as [b], [i] and [u] are allowed in your news, as well as smileys. Clear a news item\'s text box to remove it.';
 $txt['administrators'] = 'Forum Administrators';
 $txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
 $txt['admin_activation_email'] = 'Send activation email to new members upon registration';
@@ -61,7 +57,6 @@ $txt['admin_match_whole'] = 'Match whole name only. If unchecked, search within 
 $txt['admin_match_case'] = 'Match case. If unchecked, search will be case insensitive.';
 $txt['admin_check_user'] = 'Check username.';
 $txt['admin_check_display'] = 'Check display name.';
-$txt['admin_newsletter_send'] = 'You can email anyone from this page. The email addresses of the selected membergroups should appear below, but you may remove or add any email addresses you wish. Be sure that each address is separated in this fashion: \'address1; address2\'.';
 $txt['additional_options_collapsable'] = 'Enable collapsible additional post options';
 $txt['zero_for_no_limit'] = '(0 for no limit)';
 $txt['zero_to_disable'] = '(Set to 0 to disable.)';
@@ -129,15 +124,6 @@ $txt['member_id'] = 'ID';
 
 $txt['unknown'] = 'unknown';
 $txt['security_wrong'] = 'Administration login attempt!' . "\n" . 'Referer: %1$s' . "\n" . 'User agent: %2$s' . "\n" . 'IP: %3$s';
-
-$txt['email_preview_warning'] = 'The preview is not 100% accurate. In order to preserve the functionality of the page only the basic html tags are represented';
-$txt['email_as_html'] = 'Send in HTML format. (with this you can put normal HTML in the email.)';
-$txt['email_parsed_html'] = 'Add &lt;br /&gt;s and &amp;nbsp;s to this message.';
-$txt['email_variables'] = 'In this message you can use a few &quot;variables&quot;. Click <a href="{scripturl}?action=helpadmin;help=email_members" onclick="return reqOverlayDiv(this.href);" class="help">here</a> for more information.';
-$txt['email_force'] = 'Send this to members even if they have chosen not to receive announcements.';
-$txt['email_as_pms'] = 'Send this to these groups using personal messages.';
-$txt['email_continue'] = 'Continue';
-$txt['email_done'] = 'done.';
 
 $txt['warnings'] = 'Warnings';
 $txt['warnings_desc'] = 'This system allows administrators and moderators to issue warnings to users, and can automatically remove user rights as their warning level increases. To take full advantage of this system, &quot;Post Moderation&quot; should be enabled.';
@@ -478,10 +464,7 @@ $txt['attach_repair_avatar_no_member'] = '%1$d avatars no longer have a member a
 $txt['attach_repair_wrong_folder'] = '%1$d attachments are in the wrong directory';
 $txt['attach_repair_files_without_attachment'] = '%1$d files do not have a corresponding entry in the database. (These will be deleted)';
 
-$txt['news_title'] = 'News and Newsletters';
-$txt['news_settings_desc'] = 'Here you can change the settings and permissions related to news and newsletters.';
 $txt['news_settings_submit'] = 'Save';
-$txt['news_mailing_desc'] = 'From this menu you can send messages to all members who\'ve registered and entered their email addresses. You may edit the distribution list, or send messages to all. Useful for important update/news information.';
 $txt['xmlnews_enable'] = 'Enable XML/RSS news';
 $txt['xmlnews_maxlen'] = 'Maximum message length';
 $txt['xmlnews_maxlen_note'] = '(0 to disable, bad idea.)';
@@ -586,22 +569,6 @@ $txt['could_not_language_backup'] = 'A backup could not be made before removing 
 
 $txt['advanced'] = 'Advanced';
 $txt['simple'] = 'Simple';
-
-$txt['admin_news_newsletter_queue_done'] = 'The newsletter has been added to the mail queue successfully.';
-$txt['admin_news_select_recipients'] = 'Please select who should receive a copy of the newsletter';
-$txt['admin_news_select_group'] = 'Membergroups';
-$txt['admin_news_select_group_desc'] = 'Select the groups to receive this newsletter.';
-$txt['admin_news_select_members'] = 'Members';
-$txt['admin_news_select_members_desc'] = 'Additional members to receive newsletter.';
-$txt['admin_news_select_excluded_members'] = 'Excluded Members';
-$txt['admin_news_select_excluded_members_desc'] = 'Members who should not receive newsletter.';
-$txt['admin_news_select_excluded_groups'] = 'Excluded Groups';
-$txt['admin_news_select_excluded_groups_desc'] = 'Select groups who should definitely not receive the newsletter.';
-$txt['admin_news_select_email'] = 'Email Addresses';
-$txt['admin_news_select_email_desc'] = 'A semi-colon separated list of email addresses which should be sent a newsletter. (i.e. address1; address2) This is additional to the groups listed above.';
-$txt['admin_news_select_override_notify'] = 'Override notification settings';
-// Use entities in below.
-$txt['admin_news_cannot_pm_emails_js'] = 'You cannot send a personal message to an email address. If you continue all entered email addresses will be ignored.\\n\\nAre you sure you wish to do this?';
 
 $txt['mailqueue_browse'] = 'Browse Queue';
 $txt['mailqueue_settings'] = 'Settings';

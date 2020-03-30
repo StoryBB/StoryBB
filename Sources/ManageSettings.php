@@ -149,7 +149,15 @@ function ModifyBasicSettings($return_config = false)
 			['check', 'enable_ajax_alerts'],
 		'',
 			['text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']],
+		'',
+			['check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'],
+			['int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10],
+			['check', 'xmlnews_attachments', 'subtext' => $txt['xmlnews_attachments_note']],
 	];
+
+	// Add some javascript at the bottom...
+	addInlineJavaScript('
+	document.getElementById("xmlnews_maxlen").disabled = !document.getElementById("xmlnews_enable").checked;', true);
 
 	// Get all the time zones.
 	if (function_exists('timezone_identifiers_list') && function_exists('date_default_timezone_set'))

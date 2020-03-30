@@ -69,7 +69,6 @@ $txt['cannot_post_unapproved_replies_own'] = 'You do not have permission to post
 $txt['cannot_post_unapproved_replies_any'] = 'You do not have permission to post unapproved replies to other users\' topics.';
 $txt['cannot_remove_any'] = 'Sorry, but you don\'t have the privilege to remove just any topic. Check to make sure this topic wasn\'t just moved to another board.';
 $txt['cannot_remove_own'] = 'You cannot delete your own topics in this board. Check to make sure this topic wasn\'t just moved to another board.';
-$txt['cannot_edit_news'] = 'You are not allowed to edit news items on this forum.';
 $txt['cannot_pm_read'] = 'Sorry, you can\'t read your personal messages.';
 $txt['cannot_pm_send'] = 'You are not allowed to send personal messages.';
 $txt['cannot_lock_any'] = 'You are not allowed to lock just any topic here.';

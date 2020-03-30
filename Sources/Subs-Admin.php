@@ -482,10 +482,6 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 	require_once($sourcedir . '/Subs-Members.php');
 	$members = membersAllowedTo('admin_forum');
 
-	// Load their alert preferences
-	require_once($sourcedir . '/Subs-Notify.php');
-	$prefs = getNotifyPrefs($members, 'announcements', true);
-
 	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, lngfile, email_address
 		FROM {db_prefix}members
@@ -497,9 +493,6 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 	$emails_sent = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
-		if (empty($prefs[$row['id_member']]['announcements']))
-			continue;
-
 		// Stick their particulars in the replacement data.
 		$replacements['IDMEMBER'] = $row['id_member'];
 		$replacements['REALNAME'] = $row['member_name'];

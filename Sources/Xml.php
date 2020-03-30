@@ -75,7 +75,6 @@ function RetrievePreview()
 	global $context;
 
 	$items = [
-		'newsletterpreview',
 		'sig_preview',
 		'warning_preview',
 	];
@@ -86,32 +85,6 @@ function RetrievePreview()
 		return false;
 
 	$_POST['item']();
-}
-
-/**
- * Handles previewing newsletters
- */
-function newsletterpreview()
-{
-	global $context, $sourcedir, $txt;
-
-	require_once($sourcedir . '/Subs-Post.php');
-	require_once($sourcedir . '/ManageNews.php');
-	loadLanguage('Errors');
-
-	$context['post_error']['messages'] = [];
-	$context['send_pm'] = !empty($_POST['send_pm']) ? 1 : 0;
-	$context['send_html'] = !empty($_POST['send_html']) ? 1 : 0;
-
-	if (empty($_POST['subject']))
-		$context['post_error']['messages'][] = $txt['error_no_subject'];
-	if (empty($_POST['message']))
-		$context['post_error']['messages'][] = $txt['error_no_message'];
-
-	prepareMailingForPreview();
-
-	StoryBB\Template::set_layout('xml');
-	$context['sub_template'] = 'xml_pm_preview';
 }
 
 /**

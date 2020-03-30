@@ -292,7 +292,6 @@ $txt['new_posts'] = 'New Posts';
 $txt['old_posts'] = 'No New Posts';
 $txt['redirect_board'] = 'Redirect Board';
 
-$txt['sendtopic_send'] = 'Send';
 $txt['report_sent'] = 'Your report has been sent successfully.';
 $txt['post_becomesUnapproved'] = 'Your message became unapproved because it was posted on an unapproved topic, once the topic gets approved your message will be approved too.';
 

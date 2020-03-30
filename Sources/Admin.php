@@ -68,17 +68,6 @@ function AdminMain()
 						'alerts' => [$txt['notifications']],
 					],
 				],
-				'news' => [
-					'label' => $txt['news_title'],
-					'file' => 'ManageNews.php',
-					'function' => 'ManageNews',
-					'icon' => 'news',
-					'permission' => ['edit_news', 'send_mail', 'admin_forum'],
-					'subsections' => [
-						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
-						'settings' => [$txt['settings'], 'admin_forum'],
-					],
-				],
 				'languages' => [
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageLanguages.php',
@@ -597,7 +586,7 @@ function AdminSearchInternal()
 
 	// All the files we need to include.
 	$include_files = [
-		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
+		'ManageSettings', 'ManageBoards', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
 		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	];
 
@@ -612,7 +601,6 @@ function AdminSearchInternal()
 		['ManageAvatarSettings', 'area=manageattachments;sa=avatars'],
 		['EditBoardSettings', 'area=manageboards;sa=settings'],
 		['ModifyMailSettings', 'area=mailqueue;sa=settings'],
-		['ModifyNewsSettings', 'area=news;sa=settings'],
 		['ModifyPostSettings', 'area=postsettings;sa=posts'],
 		['ModifyTopicSettings', 'area=postsettings;sa=topics'],
 		['ModifyDraftSettings', 'area=postsettings;sa=drafts'],
