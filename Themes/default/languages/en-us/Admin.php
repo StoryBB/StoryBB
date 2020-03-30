@@ -34,9 +34,6 @@ $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
 $txt['admin_manage_members'] = 'Members';
-$txt['admin_version_check'] = 'Detailed version check';
-$txt['admin_storybbfile'] = 'StoryBB File';
-$txt['admin_storybbpackage'] = 'StoryBB Package';
 $txt['admin_plugins'] = 'Plugins';
 $txt['admin_plugins_list'] = 'Plugins List';
 $txt['admin_logoff'] = 'End Admin Session';
@@ -102,7 +99,6 @@ $txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 
-$txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="https://storybb.org/" target="_blank" rel="noopener">storybb.org</a>.';
 $txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
@@ -234,13 +230,7 @@ $txt['errlog_desc'] = 'The error log tracks every error encountered by your foru
 $txt['errlog_no_entries'] = 'There are currently no error log entries.';
 
 $txt['theme_settings'] = 'Theme Settings';
-
-$txt['dvc_your'] = 'Your Version';
-$txt['dvc_current'] = 'Current Version';
-$txt['dvc_sources'] = 'Sources';
-$txt['dvc_default'] = 'Default Templates';
-$txt['dvc_templates'] = 'Current Templates';
-$txt['dvc_languages'] = 'Language Files';
+$txt['default_templates'] = 'Default Templates';
 
 $txt['censor_test'] = 'Test censored words';
 $txt['censor_test_save'] = 'Test';

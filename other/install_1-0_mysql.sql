@@ -8,8 +8,7 @@
 INSERT INTO {$db_prefix}admin_info_files
   (id_file, filename, path, parameters, data, filetype)
 VALUES
-  (1, 'updates.json', '', '', '', 'application/json'),
-  (2, 'versions.json', '', '', '', 'application/json');
+  (1, 'updates.json', '', '', '', 'application/json');
 # --------------------------------------------------------
 
 #

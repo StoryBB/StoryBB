@@ -156,8 +156,6 @@ $txt['maintain_template_cache'] = 'Clear the template cache';
 $txt['maintain_template_cache_info'] = 'The templates for the forum are converted into usable code before they are used. This process is not especially fast, so they are stored ready-to-go. Sometimes you will need to clear the template cache to make changes visible.';
 $txt['maintain_optimize'] = 'Optimize all tables';
 $txt['maintain_optimize_info'] = 'This task allows you to optimize all tables. This will get rid of overhead, effectively making the tables smaller in size and your forum faster.';
-$txt['maintain_version'] = 'Check all files against current versions';
-$txt['maintain_version_info'] = 'This maintenance task allows you to do a detailed version check of all forum files against the official list of latest versions.';
 $txt['maintain_run_now'] = 'Run task now';
 $txt['maintain_return'] = 'Back to Forum Maintenance';
 
