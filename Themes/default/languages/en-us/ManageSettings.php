@@ -57,7 +57,6 @@ $txt['httponlyCookies'] = 'Force cookies to be made accessible only through the 
 $txt['securityDisable'] = 'Disable administration security';
 $txt['securityDisable_moderate'] = 'Disable moderation security';
 $txt['send_validation_onChange'] = 'Require reactivation after email change';
-$txt['allow_disableAnnounce'] = 'Allow users to disable announcements';
 $txt['timeBetweenPosts'] = 'Display "x days later" banner between posts after how many days';
 $txt['timeBetweenPostsBoards'] = 'When displaying "x days later" banner, which boards should this apply to?';
 $txt['disallow_sendBody'] = 'Don\'t allow post text in notifications';

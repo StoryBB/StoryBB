@@ -1820,7 +1820,7 @@ function setupMenuContext()
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
-	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys']);
+	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'manage_attachments', 'manage_smileys']);
 
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = $context['user']['can_mod'];

@@ -205,23 +205,6 @@ $txt['admin_register_immediate_body'] = 'Thank you for registering at {FORUMNAME
 {REGARDS}';
 
 /**
-	@additional_params: new_announcement
-		TOPICSUBJECT: The subject of the topic being announced.
-		MESSAGE: The message body of the first post of the announced topic.
-		TOPICLINK: A link to the topic being announced.
-	@description:
-*/
-$txt['new_announcement_subject'] = 'New announcement: {TOPICSUBJECT}';
-$txt['new_announcement_body'] = '{MESSAGE}
-
-To unsubscribe from these announcements, login to the forum and uncheck "Receive forum announcements and important notifications by email." in your profile.
-
-You can view the full announcement by following this link:
-{TOPICLINK}
-
-{REGARDS}';
-
-/**
 	@additional_params: notify_boards_once_body
 		TOPICSUBJECT: The subject of the topic causing the notification
 		TOPICLINK: A link to the topic.

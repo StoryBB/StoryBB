@@ -126,15 +126,6 @@ $txt['error_topic_unlocked'] = 'Warning - while you were typing the topic was un
 $txt['error_topic_stickied'] = 'Warning - while you were typing the topic was stickied. Please check the "Sticky this topic" box under "Attachments and other options" below if you do not wish to undo this action.';
 $txt['error_topic_unstickied'] = 'Warning - while you were typing the topic was unstickied. Please uncheck the "Sticky this topic" box under "Attachments and Other Options" below if you do not wish to undo this action.';
 
-$txt['announce_this_topic'] = 'Send an announcement about this topic to the members:';
-$txt['announce_title'] = 'Send an announcement';
-$txt['announce_desc'] = 'This form allows you to send an announcement to the selected membergroups about this topic.';
-$txt['announce_sending'] = 'Sending announcement of topic';
-$txt['announce_done'] = 'done';
-$txt['announce_continue'] = 'Continue';
-$txt['announce_topic'] = 'Announce topic.';
-$txt['announce_regular_members'] = 'Regular Members';
-
 $txt['digest_subject_daily'] = 'Daily Digest';
 $txt['digest_subject_weekly'] = 'Weekly Digest';
 $txt['digest_intro_daily'] = 'Below is a summary of all activity in your subscribed boards and topics at %1$s today. To unsubscribe please visit the link below.';
@@ -192,7 +183,6 @@ $txt['error_temp_attachments_found'] = 'The following attachments were found whi
 $txt['error_temp_attachments_lost'] = 'The following attachments were found which you had previously attached to another post but not posted. It is advisable that you do not upload any more attachments until these are removed or that post has been submitted.<br>Click <a href="%1$s">here</a> to remove these attachments.%2$s';
 $txt['error_temp_attachments_gone'] = 'Those attachments have now been removed and you have been returned to the page you were previously on';
 $txt['error_temp_attachments_flushed'] = 'Please note that any files which had been previously attached but not posted have now been removed.';
-$txt['error_topic_already_announced'] = 'Please note that this topic has already been announced.';
 
 $txt['cant_access_upload_path'] = 'Cannot access attachments upload path!';
 $txt['file_too_big'] = 'Your file is too large. The maximum attachment size allowed is %1$s KB.';

@@ -48,23 +48,6 @@ $helptxt['manage_boards'] = '
 	under each category, to reorder them (put &quot;Pinto&quot; below &quot;Chevy&quot;), or
 	to delete the board entirely.';
 
-$helptxt['edit_news'] = '
-	<ul class="normallist">
-		<li>
-			<strong>News</strong><br>
-			This page allows you to set the text for news items displayed on the Board Index page.
-			Add any item you want (e.g., &quot;Don\'t miss the conference this Tuesday&quot;). Each news item is displayed randomly and should be placed in a separate box.
-		</li>
-		<li>
-			<strong>Newsletters</strong><br>
-			This page allows you to send out newsletters to the members of the forum via personal message or email. First select the groups that you want to receive the newsletter, and those you don\'t want to receive the newsletter. If you wish, you can add additional members and email addresses that will receive the newsletter. Finally, input the message you want to send and select whether you want it to be sent to members as a personal message or as an email.
-		</li>
-		<li>
-			<strong>Settings</strong><br>
-				This page contains a few settings that relate to news and newsletters, including selecting which groups can edit forum news or send newsletters. There is also a setting to configure whether you want news feeds enabled on the forum, as well as a setting to configure the length (how many characters are displayed) for each news post from a news feed.
-		</li>
-	</ul>';
-
 $helptxt['view_members'] = '
 	<ul class="normallist">
 		<li>
@@ -212,7 +195,6 @@ $helptxt['cache_sqlite_cachedir'] = 'This setting is only for the SQLite databas
 $helptxt['enableErrorLogging'] = 'This will log any errors, like a failed login, so you can see what went wrong.';
 $helptxt['enableErrorQueryLogging'] = 'This will include the full query sent to the database in the error log. It requires error logging to be turned on.<br><br><strong>Note:  This will affect the ability to filter the error log by the error message.</strong>';
 $helptxt['log_ban_hits'] = 'If enabled, every time a banned user tries to access the site, this will be logged in the error log. If you do not care whether, or how often, banned users attempt to access the site, you can turn this off for a performance boost.';
-$helptxt['allow_disableAnnounce'] = 'This will allow users to opt out of notification of topics you announce by checking the &quot;announce topic&quot; checkbox when posting.';
 $helptxt['disallow_sendBody'] = 'This setting removes the option to receive the text of replies, posts, and personal messages in notification emails.<br><br>Often, members will reply to the notification email, which in most cases means the webmaster receives the reply.';
 $helptxt['enable_ajax_alerts'] = 'This option allows your members to receive AJAX notifications. This means that members don\'t need to refresh the page to get new notifications.<br><strong>DO NOTE:</strong> This option might cause a severe load at your server with many users online.';
 $helptxt['removeNestedQuotes'] = 'This will strip nested quotes from a post when citing the post in question via a quote link.';
@@ -299,16 +281,6 @@ $helptxt['securityDisable_moderate'] = 'This <em>disables</em> the additional pa
 $helptxt['securityDisable_moderate_why'] = 'This is your current password. (the same one you use to login).<br><br>The requirement to enter this helps ensure that you want to do whatever moderation you are doing, and that it is <strong>you</strong> doing it.';
 $helptxt['frame_security'] = 'Modern browsers now understand a security header presented by servers called X-Frame-Options. By setting this option you specify how you want to allow your site to be framed inside a frameset or a iframe. Disable will not send any header and is the most unsecure, however allows the most freedom. Deny will prevent all frames completely and is the most restrictive and secure. Allowing the Same Origin will only allow your domain to issue any frames and provides a middle ground for the previous two options.';
 $helptxt['proxy_ip_header'] = 'This is the server header that will be trusted by StoryBB for containing the actual users IP address. Changing this setting can cause unexpected IP results on members. Please check with your server administrator, CDN provider or proxy administrator prior to changing these settings. Most providers will understand and use HTTP_X_FORWARDED_FOR. You should fill out the list of Servers sending the reverse proxy headers for security to ensure these headers only come from valid sources.';
-$helptxt['email_members'] = 'In this message you can use a few &quot;variables&quot;. These are:<br>
-	{$board_url} - The URL to your forum.<br>
-	{$current_time} - The current time.<br>
-	{$member.email} - The current member\'s email.<br>
-	{$member.link} - The current member\'s link.<br>
-	{$member.id} - The current member\'s id.<br>
-	{$member.name} - The current member\'s name. (for personalization).<br>
-	{$latest_member.link} - The most recently registered member\'s link.<br>
-	{$latest_member.id} - The most recently registered member\'s id.<br>
-	{$latest_member.name} - The most recently registered member\'s name.';
 
 $helptxt['failed_login_threshold'] = 'Set the number of failed login attempts before directing the user to the password reminder page.';
 $helptxt['loginHistoryDays'] = 'The number of days to keep login history under user profile tracking. The default is 30 days.';

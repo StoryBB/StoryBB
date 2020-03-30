@@ -17,17 +17,6 @@
 		<div class="windowbg noup">
 			<dl class="settings">
 
-{{! Allow notification of announcements to be disabled? }}
-{{#if (eq_coerce modSettings.allow_disableAnnounce 1)}}
-				<dt>
-					<label for="notify_announcements">{{{txt.notify_important_email}}}</label>
-				</dt>
-				<dd>
-					<input type="hidden" name="notify_announcements" value="0">
-					<input type="checkbox" id="notify_announcements" name="notify_announcements" value="1"{{#if (eq_coerce context.member.notify_announcements 1)}} checked{{/if}}>
-				</dd>
-{{/if}}
-
 {{! Allow AJAX notifications for the user. }}
 {{#if (eq_coerce modSettings.enable_ajax_alerts 1)}}
 				<dt>
