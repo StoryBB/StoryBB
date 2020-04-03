@@ -85,6 +85,14 @@ $txt['setting_remove_unapproved_accounts_days'] = 'Remove unapproved accounts af
 $txt['setting_send_welcomeEmail'] = 'Send welcome email to new members';
 $txt['setting_show_cookie_notice'] = 'Show a cookie notice in the footer to guests';
 
+$txt['admin_reserved_set'] = 'Set reserved names';
+$txt['admin_reserved_line'] = 'One reserved word per line';
+$txt['setting_reserveNames'] = 'Reserved (disallowed) usernames';
+$txt['setting_reserveWord'] = 'Match whole name only. If unchecked, search within names.';
+$txt['setting_reserveCase'] = 'Match case. If unchecked, search will be case insensitive.';
+$txt['setting_reserveUser'] = 'Check username.';
+$txt['setting_reserveName'] = 'Check display name.';
+
 $txt['setting_registration_character'] = 'Whether users need to make characters on registration';
 $txt['setting_registration_character_disabled'] = 'No character creation on registration';
 $txt['setting_registration_character_optional'] = 'Character creation on registration is optional';

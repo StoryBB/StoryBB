@@ -33,7 +33,6 @@ function RegCenter()
 
 	$subActions = [
 		'register' => ['AdminRegister', 'moderate_forum'],
-		'reservednames' => ['SetReserved', 'admin_forum'],
 		'settings' => ['ModifyRegistrationSettings', 'admin_forum'],
 		'policies' => ['ManagePolicies', 'admin_forum'],
 	];
@@ -55,9 +54,6 @@ function RegCenter()
 		'tabs' => [
 			'register' => [
 				'description' => $txt['admin_register_desc'],
-			],
-			'reservednames' => [
-				'description' => $txt['admin_reserved_desc'],
 			],
 			'policies' => [
 				'description' => $txt['admin_policies_desc'],
@@ -170,49 +166,6 @@ function AdminRegister()
 }
 
 /**
- * Set the names under which users are not allowed to register.
- * Accessed by ?action=admin;area=regcenter;sa=reservednames.
- * Requires the admin_forum permission.
- *
- * @uses Register template, reserved_words sub-template.
- */
-function SetReserved()
-{
-	global $txt, $context, $modSettings;
-
-	// Submitting new reserved words.
-	if (!empty($_POST['save_reserved_names']))
-	{
-		checkSession();
-		validateToken('admin-regr');
-
-		// Set all the options....
-		updateSettings([
-			'reserveWord' => (isset($_POST['matchword']) ? '1' : '0'),
-			'reserveCase' => (isset($_POST['matchcase']) ? '1' : '0'),
-			'reserveUser' => (isset($_POST['matchuser']) ? '1' : '0'),
-			'reserveName' => (isset($_POST['matchname']) ? '1' : '0'),
-			'reserveNames' => str_replace("\r", '', $_POST['reserved'])
-		]);
-		$context['saved_successful'] = true;
-	}
-
-	// Get the reserved word options and words.
-	$modSettings['reserveNames'] = str_replace('\n', "\n", $modSettings['reserveNames']);
-	$context['reserved_words'] = explode("\n", $modSettings['reserveNames']);
-	$context['reserved_word_options'] = [];
-	$context['reserved_word_options']['match_word'] = $modSettings['reserveWord'] == '1';
-	$context['reserved_word_options']['match_case'] = $modSettings['reserveCase'] == '1';
-	$context['reserved_word_options']['match_user'] = $modSettings['reserveUser'] == '1';
-	$context['reserved_word_options']['match_name'] = $modSettings['reserveName'] == '1';
-
-	// Ready the template......
-	$context['sub_template'] = 'register_edit_reservedwords';
-	$context['page_title'] = $txt['admin_reserved_set'];
-	createToken('admin-regr');
-}
-
-/**
  * This function handles registration settings.
  * Accessed by ?action=admin;area=regcenter;sa=settings.
  * Requires the admin_forum permission.
@@ -242,6 +195,12 @@ function ModifyRegistrationSettings($return_config = false)
 			['check', 'age_on_registration'],
 		'',
 			['check', 'show_cookie_notice'],
+			['title', 'admin_reserved_set'],
+			['large_text', 'reserveNames', 'subtext' => $txt['admin_reserved_line']],
+			['check', 'reserveWord'],
+			['check', 'reserveCase'],
+			['check', 'reserveUser'],
+			['check', 'reserveName'],
 	];
 
 	settings_integration_hook('integrate_modify_registration_settings', [&$config_vars]);
@@ -255,6 +214,8 @@ function ModifyRegistrationSettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		checkSession();
+
+		$_POST['reserveNames'] = str_replace("\r", '', $_POST['reserveNames']);
 
 		settings_integration_hook('integrate_save_registration_settings');
 
