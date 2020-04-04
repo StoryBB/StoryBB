@@ -31,6 +31,7 @@ class Misc
 			'breakRow' => 'StoryBB\\Template\\Helper\\Misc::breakrow',
 			'is_numeric' => 'StoryBB\\Template\\Helper\\Misc::is_numeric',
 			'block_region' => 'StoryBB\\Template\\Helper\\Misc::block_region',
+			'buildlink' => 'StoryBB\\Template\\Helper\\Misc::buildlink',
 		]);
 	}
 
@@ -120,5 +121,21 @@ class Misc
 	public static function block_region($region)
 	{
 		return \StoryBB\Block\Manager::render_region($region);
+	}
+
+	public static function buildlink($link, ...$params): string
+	{
+		$container = \StoryBB\Container::instance();
+		$url = $container->get('urlgenerator');
+
+		try
+		{
+			return $url->generate($link, $params[0]['hash'] ?? []);
+		}
+		catch (\Throwable $e)
+		{
+			log_error('Link ' . $link . ' not defined');
+			return '';
+		}
 	}
 }

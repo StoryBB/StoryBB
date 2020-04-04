@@ -56,32 +56,14 @@ class App
 		static::setMemoryLimit('128M');
 	}
 
-	public static function load_router()
-	{
-		global $routes; // @todo This is what DI is for, plz use.
-
-		if (empty($routes))
-		{
-			$routes = new RouteCollection;
-
-			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
-			{
-				$controllable::register_own_routes($routes);
-			}
-		}
-
-		return $routes;
-	}
-
-	public static function dispatch_request(RequestContext $context)
+	public static function dispatch_request(RequestContext $request_context)
 	{
 		global $smcFunc;
 
-		$routes = static::load_router();
-
 		$container = Container::instance();
+		$container->inject('cachedir', App::get_root_path() . '/cache');
+		$container->inject('requestcontext', $request_context);
 		$container->inject('database', $smcFunc['db']);
-		$container->inject('urlgenerator', new UrlGenerator($routes, $context));
 		$container->inject('filesystem', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Filesystem');
 		});
@@ -89,10 +71,25 @@ class App
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
 		});
 
+		$container->inject('router_public', function() {
+			$routes = new RouteCollection;
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
+			{
+				$controllable::register_own_routes($routes);
+			}
+
+			return $routes;
+		});
+		$container->inject('urlgenerator', function() use ($container) {
+			return new UrlGenerator($container->get('router_public'), $container->get('requestcontext'));
+		});
+		$container->inject('urlmatcher', function() use ($container) {
+			return new UrlMatcher($container->get('router_public'), $container->get('requestcontext'));
+		});
 		try
 		{
-			$matcher = new UrlMatcher($routes, $context);
-			$parameters = $matcher->match($context->getPathInfo());
+			$matcher = $container->get('urlmatcher');
+			$parameters = $matcher->match($container->get('requestcontext')->getPathInfo());
 
 			if (empty($parameters['_controller']))
 			{

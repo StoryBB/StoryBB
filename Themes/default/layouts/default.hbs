@@ -22,7 +22,7 @@
 	{{#if context.canonical_url}}<link rel="canonical" href="{{context.canonical_url}}">{{/if}}
 	{{#if context.allow_search}}<link rel="search" href="{{scripturl}}?action=search">{{/if}}
 
-	<link rel="help" href="{{scripturl}}?action=help">
+	<link rel="help" href="{{buildlink 'help'}}">
 	<link rel="contents" href="{{scripturl}}">
 	<link rel="alternate" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
 	<link rel="alternate" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">
@@ -188,7 +188,7 @@
 					<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
 				</li>
 				<li class="help">
-					<a href="{{scripturl}}?action=help">{{txt.help}}</a>
+					<a href="{{buildlink 'help'}}">{{txt.help}}</a>
 				</li>
 			
 {{#each context.footer_links}}
