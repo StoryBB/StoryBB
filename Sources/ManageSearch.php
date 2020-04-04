@@ -77,7 +77,7 @@ function ManageSearch()
  */
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $sourcedir, $modSettings, $smcFunc;
+	global $txt, $context, $scripturl, $sourcedir, $modSettings;
 
 	// What are we editing anyway?
 	$config_vars = [

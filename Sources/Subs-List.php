@@ -18,7 +18,7 @@ use StoryBB\StringLibrary;
  */
 function createList($listOptions)
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	assert(isset($listOptions['id']));
 	assert(isset($listOptions['columns']));

@@ -1499,7 +1499,7 @@ function Post2()
 
 		// Can they approve it?
 		$can_approve = allowedTo('approve_posts');
-		$approve_checked = (!empty($REQUEST['approve']) ? 1 : 0);
+		$approve_checked = (!empty($_REQUEST['approve']) ? 1 : 0);
 		$becomesApproved = $can_approve && !$row['approved'] ? $approve_checked : $row['approved'];
 		$approve_has_changed = $row['approved'] != $becomesApproved;
 

@@ -622,7 +622,7 @@ function SetThemeOptions()
  */
 function SetThemeSettings()
 {
-	global $txt, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $context, $settings, $smcFunc;
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 		return ThemeAdmin();
@@ -734,7 +734,7 @@ function SetThemeSettings()
 	$context['sub_template'] = 'admin_themes_settings';
 	$context['page_title'] = $txt['theme_settings'];
 
-	foreach ($settings as $setting => $dummy)
+	foreach (array_keys($settings) as $setting)
 	{
 		if (!in_array($setting, ['theme_url', 'theme_dir', 'images_url', 'template_dirs']))
 			$settings[$setting] = htmlspecialchars__recursive($settings[$setting]);
@@ -798,7 +798,7 @@ function SetThemeSettings()
  */
 function RemoveTheme()
 {
-	global $context;
+	global $context, $txt;
 
 	checkSession('get');
 
@@ -892,7 +892,7 @@ function PickTheme()
 	if (isset($_POST['save']))
 	{
 		// Which theme?
-		foreach ($_POST['save'] as $k => $v)
+		foreach (array_keys($_POST['save']) as $k)
 			$_GET['th'] = (int) $k;
 
 		if (isset($_POST['vrt'][$k]))
@@ -1215,7 +1215,7 @@ function PickTheme()
 function ThemeInstall()
 {
 	global $sourcedir, $txt, $context, $boarddir, $boardurl;
-	global $themedir, $themeurl, $smcFunc;
+	global $themedir, $themeurl;
 
 	checkSession('request');
 	isAllowedTo('admin_forum');
@@ -1272,7 +1272,7 @@ function ThemeInstall()
  */
 function InstallCopy()
 {
-	global $themedir, $themeurl, $settings, $smcFunc, $context;
+	global $themedir, $themeurl, $settings, $context;
 
 	// There's gotta be something to work with.
 	if (!isset($_REQUEST['copy']) || empty($_REQUEST['copy']))

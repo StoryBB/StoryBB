@@ -19,7 +19,7 @@
  */
 function BoardIndex()
 {
-	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
+	global $txt, $sourcedir, $modSettings, $context, $scripturl;
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;

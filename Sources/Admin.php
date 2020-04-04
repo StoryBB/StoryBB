@@ -469,7 +469,7 @@ function AdminMain()
 */
 function AdminHome()
 {
-	global $sourcedir, $txt, $scripturl, $context, $user_info;
+	global $txt, $context, $user_info;
 
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
@@ -496,7 +496,7 @@ function AdminHome()
  */
 function AdminSearch()
 {
-	global $txt, $context, $smcFunc, $sourcedir;
+	global $txt, $context, $sourcedir;
 
 	isAllowedTo('admin_forum');
 
@@ -745,7 +745,7 @@ function AdminEndSession()
 	unset($_SESSION['admin_time']);
 
 	// Clean any admin tokens as well.
-	foreach ($_SESSION['token'] as $key => $token)
+	foreach (array_keys($_SESSION['token']) as $key)
 		if (strpos($key, '-admin') !== false)
 			unset($_SESSION['token'][$key]);
 

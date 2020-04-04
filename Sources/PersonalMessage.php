@@ -1032,7 +1032,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
  */
 function MessageSearch()
 {
-	global $context, $txt, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl;
 
 	if (isset($_REQUEST['params']))
 	{

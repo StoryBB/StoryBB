@@ -24,7 +24,7 @@ use StoryBB\Helper\IP;
  */
 function validateSession($type = 'admin')
 {
-	global $modSettings, $sourcedir, $user_info, $user_settings;
+	global $modSettings, $sourcedir, $user_info, $maintenance;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();

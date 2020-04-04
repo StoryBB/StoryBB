@@ -468,7 +468,7 @@ class Likes
 	 */
 	public function view()
 	{
-		global $smcFunc, $txt, $context, $memberContext;
+		global $smcFunc, $context, $memberContext;
 
 		// Firstly, load what we need. We already know we can see this, so that's something.
 		$context['likers'] = [];

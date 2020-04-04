@@ -858,7 +858,7 @@ function showCodeImage($code)
 	}
 
 	// Load all fonts and determine the maximum font height.
-	foreach ($loaded_fonts as $font_index => $dummy)
+	foreach (array_keys($loaded_fonts) as $font_index)
 		$loaded_fonts[$font_index] = imageloadfont($settings['default_theme_dir'] . '/fonts/' . $font_list[$font_index]);
 
 	// Determine the dimensions of each character.

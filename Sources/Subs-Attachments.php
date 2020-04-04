@@ -874,7 +874,7 @@ function assignAttachments($attachIDs = [], $msgID = 0)
  */
 function parseAttachBBC($attachID = 0)
 {
-	global $board, $modSettings, $context, $scripturl, $smcFunc;
+	global $board, $modSettings, $context, $scripturl;
 
 	$externalParse = false;
 

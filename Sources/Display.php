@@ -29,7 +29,7 @@ function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
 	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
-	global $attachments, $messages_request, $language, $smcFunc, $user_profile;
+	global $messages_request, $language, $smcFunc;
 	global $memberContext;
 
 	// What are you gonna display if these are empty?!
@@ -49,7 +49,7 @@ function Display()
 
 	// Let's do some work on what to search index.
 	if (count($_GET) > 2)
-		foreach ($_GET as $k => $v)
+		foreach (array_keys($_GET) as $k)
 		{
 			if (!in_array($k, ['topic', 'board', 'start', session_name()]))
 				$context['robot_no_index'] = true;

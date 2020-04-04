@@ -18,15 +18,13 @@ use StoryBB\Task\Scheduler;
  */
 function AutoTask()
 {
-	global $time_start, $smcFunc, $modSettings;
+	global $smcFunc;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
 		ReduceMailQueue();
 	else
 	{
-		$task_string = '';
-
 		// Select the next task to do.
 		$request = $smcFunc['db']->query('', '
 			SELECT id_task, next_time, time_offset, time_regularity, time_unit, class

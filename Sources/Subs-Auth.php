@@ -131,7 +131,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
  */
 function setTFACookie($cookie_length, $id, $secret, $preserve = false)
 {
-	global $modSettings, $cookiename, $boardurl;
+	global $modSettings, $cookiename;
 
 	$identifier = $cookiename . '_tfa';
 	$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
@@ -217,7 +217,7 @@ function KickGuest()
  */
 function InMaintenance()
 {
-	global $txt, $mtitle, $mmessage, $context, $smcFunc;
+	global $txt, $mtitle, $mmessage, $context;
 
 	loadLanguage('Login');
 	createToken('login');
@@ -242,7 +242,7 @@ function InMaintenance()
  */
 function adminLogin($type = 'admin')
 {
-	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
+	global $context, $txt, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
 
@@ -303,8 +303,6 @@ function adminLogin($type = 'admin')
  */
 function adminLogin_outputPostVars($k, $v)
 {
-	global $smcFunc;
-
 	if (!is_array($v))
 		return '
 <input type="hidden" name="' . StringLibrary::escape($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
@@ -523,7 +521,7 @@ function resetPassword($memID, $username = null)
  */
 function validateUsername($memID, $username, $return_error = false, $check_reserved_name = true)
 {
-	global $sourcedir, $txt, $smcFunc, $user_info;
+	global $sourcedir, $txt, $user_info;
 
 	$errors = [];
 
@@ -575,7 +573,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
  */
 function validatePassword($password, $username, $restrict_in = [])
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Perform basic requirements first.
 	if (StringLibrary::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
@@ -740,7 +738,7 @@ function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = ''
  */
 function hash_password($username, $password, $cost = null)
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
@@ -771,8 +769,6 @@ function hash_salt($password, $salt)
  */
 function hash_verify_password($username, $password, $hash)
 {
-	global $smcFunc;
-
 	return password_verify(StringLibrary::toLower($username) . $password, $hash);
 }
 

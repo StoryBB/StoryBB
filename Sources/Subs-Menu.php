@@ -18,7 +18,7 @@
  */
 function createMenu($menuData, $menuOptions = [])
 {
-	global $context, $settings, $txt, $scripturl, $user_info;
+	global $context, $settings, $txt, $scripturl;
 
 	/* Note menuData is array of form:
 

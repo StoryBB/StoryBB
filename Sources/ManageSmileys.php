@@ -18,7 +18,7 @@ use StoryBB\StringLibrary;
  */
 function ManageSmileys()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt;
 
 	isAllowedTo('manage_smileys');
 
@@ -67,11 +67,10 @@ function ManageSmileys()
  */
 function AddSmiley()
 {
-	global $modSettings, $context, $txt, $boarddir, $smcFunc;
+	global $context;
 
 	$container = Container::instance();
 	$smiley_helper = $container->get('smileys');
-	$filesystem = $container->get('filesystem');
 
 	$context['sub_template'] = 'admin_smiley_add';
 
@@ -148,7 +147,7 @@ function AddSmiley()
  */
 function EditSmileys()
 {
-	global $modSettings, $context, $txt, $boarddir;
+	global $context, $txt;
 	global $smcFunc, $scripturl, $sourcedir;
 
 	$container = Container::instance();
@@ -499,7 +498,7 @@ function EditSmileyOrder()
 	$context['sub_template'] = 'admin_smiley_reorder';
 
 	$container = Container::instance();
-	$smileys_helper = $container->get('smileys');
+	$smiley_helper = $container->get('smileys');
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))

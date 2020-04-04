@@ -338,7 +338,7 @@ function list_getLanguages()
  */
 function ModifyLanguage()
 {
-	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $sourcedir, $language, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	loadLanguage('ManageSettings');
 
@@ -388,10 +388,6 @@ function ModifyLanguage()
 			unset($themes[$id]);
 		elseif (is_dir($data['theme_dir'] . '/languages'))
 			$lang_dirs[$id] = $data['theme_dir'] . '/languages';
-
-		// How about image directories?
-		if (is_dir($data['theme_dir'] . '/images/' . $context['lang_id']))
-			$images_dirs[$id] = $data['theme_dir'] . '/images/' . $context['lang_id'];
 	}
 
 	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $context['lang_id'] . '/' . $file_id . '.php' : '';

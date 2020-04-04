@@ -95,7 +95,7 @@ function ModifyFeatureSettings()
  */
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context;
 
 	$config_vars = [
 			// Basic stuff, titles, permissions...
@@ -322,7 +322,7 @@ function ModifyWarningSettings($return_config = false)
  */
 function ModifyAntispamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;
+	global $txt, $scripturl, $context, $modSettings, $sourcedir;
 
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');
@@ -1748,7 +1748,7 @@ function ModifyLogSettings($return_config = false)
  */
 function ModifyAlertsSettings()
 {
-	global $context, $modSettings, $sourcedir, $txt;
+	global $context, $sourcedir, $txt;
 
 	// Dummy settings for the template...
 	$context['user']['is_owner'] = false;

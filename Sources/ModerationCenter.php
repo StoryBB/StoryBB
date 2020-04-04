@@ -269,7 +269,7 @@ function ModerationHome()
 	call_integration_hook('integrate_mod_centre_blocks', [&$valid_blocks]);
 
 	$context['mod_blocks'] = [];
-	foreach ($valid_blocks as $k => $block)
+	foreach ($valid_blocks as $block)
 	{
 		$block = 'ModBlock' . $block;
 		if (function_exists($block))
@@ -525,7 +525,7 @@ function ModBlockReportedPosts()
 	}
 
 	$context['reported_posts'] = [];
-	foreach ($reported_posts as $i => $row)
+	foreach ($reported_posts as $row)
 	{
 		$context['reported_posts'][] = [
 			'id' => $row['id_report'],
@@ -638,7 +638,7 @@ function ModBlockReportedMembers()
 	}
 
 	$context['reported_users'] = [];
-	foreach ($reported_users as $i => $row)
+	foreach ($reported_users as $row)
 	{
 		$context['reported_users'][] = [
 			'id' => $row['id_report'],
@@ -1400,7 +1400,7 @@ function ViewWarnings()
  */
 function ViewWarningLog()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $sourcedir;
+	global $modSettings, $context, $txt, $scripturl, $sourcedir;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
@@ -2008,7 +2008,7 @@ function ModEndSession()
 	unset($_SESSION['moderate_time']);
 
 	// Clean any moderator tokens as well.
-	foreach ($_SESSION['token'] as $key => $token)
+	foreach (array_key($_SESSION['token']) as $key)
 		if (strpos($key, '-mod') !== false)
 			unset($_SESSION['token'][$key]);
 

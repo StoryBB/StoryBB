@@ -312,9 +312,6 @@ function MembergroupMembers()
 		checkSession();
 		validateToken('mod-mgm');
 
-		$member_query = [];
-		$member_parameters = [];
-
 		$ids = [];
 		foreach ($_REQUEST['toAdd'] as $id)
 		{
@@ -572,7 +569,7 @@ function GroupRequests()
 			// Some changes to log?
 			if (!empty($log_changes))
 			{
-				foreach ($log_changes as $id_request => $details)
+				foreach ($log_changes as $details)
 				{
 					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}log_group_requests

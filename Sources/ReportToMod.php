@@ -72,7 +72,7 @@ function ReportToModerator()
 	{
 		// Check the message's ID - don't want anyone reporting a post they can't even see!
 		$result = $smcFunc['db']->query('', '
-			SELECT m.id_msg, m.id_member, t.id_member_started
+			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 			WHERE m.id_msg = {int:id_msg}
@@ -85,9 +85,8 @@ function ReportToModerator()
 		);
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_board', false);
-		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db']->fetch_row($result);
+		list ($_REQUEST['msg']) = $smcFunc['db']->fetch_row($result);
 		$smcFunc['db']->free_result($result);
-
 
 		// This is here so that the user could, in theory, be redirected back to the topic.
 		$context['start'] = $_REQUEST['start'];
@@ -100,7 +99,7 @@ function ReportToModerator()
 	{
 		// Check the user's ID
 		$result = $smcFunc['db']->query('', '
-			SELECT id_member, real_name, member_name
+			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_user}',
 			[
@@ -110,7 +109,7 @@ function ReportToModerator()
 
 		if ($smcFunc['db']->num_rows($result) == 0)
 			fatal_lang_error('no_user', false);
-		list($_REQUEST['u'], $display_name, $username) = $smcFunc['db']->fetch_row($result);
+		list($_REQUEST['u'], $display_name) = $smcFunc['db']->fetch_row($result);
 
 		$context['current_user'] = $_REQUEST['u'];
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
@@ -158,7 +157,7 @@ function ReportToModerator()
  */
 function ReportToModerator2()
 {
-	global $txt, $sourcedir, $context, $smcFunc;
+	global $txt, $sourcedir, $context;
 
 	// Sorry, no guests allowed... Probably just trying to spam us anyway
 	is_not_guest();

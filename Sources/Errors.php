@@ -28,7 +28,7 @@ use StoryBB\StringLibrary;
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error, $context, $db_show_debug;
+	global $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error, $db_show_debug;
 	static $tried_hook = false;
 	static $error_call = 0;
 
@@ -216,7 +216,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = [], $status = 403
  */
 function sbb_error_handler($error_level, $error_string, $file, $line)
 {
-	global $settings, $modSettings, $db_show_debug;
+	global $settings, $db_show_debug;
 
 	// Ignore errors if we're ignoring them.
 	if (error_reporting() == 0)
@@ -383,14 +383,10 @@ function display_maintenance_message()
  */
 function display_db_error()
 {
-	global $modSettings, $maintenance;
-	global $webmaster_email, $smcFunc, $sourcedir;
+	global $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');
 	set_fatal_error_headers();
-
-	// For our purposes, we're gonna want this on if at all possible.
-	$modSettings['cache_enable'] = '1';
 
 	// What to do?  Language files haven't and can't be loaded yet...
 	echo '<!DOCTYPE html>

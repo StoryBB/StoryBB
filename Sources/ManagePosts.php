@@ -151,7 +151,7 @@ function ModifyBBCSettings($return_config = false)
  */
 function SetCensor()
 {
-	global $txt, $modSettings, $context, $smcFunc, $sourcedir;
+	global $txt, $modSettings, $context, $sourcedir;
 
 	if (!empty($_POST['save_censor']))
 	{
@@ -407,7 +407,7 @@ function ModifyTopicSettings($return_config = false)
  */
 function ModifyDraftSettings($return_config = false)
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
+	global $context, $txt, $sourcedir, $scripturl;
 
 	// Here are all the draft settings, a bit lite for now, but we can add more :P
 	$config_vars = [

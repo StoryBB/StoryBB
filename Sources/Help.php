@@ -150,7 +150,7 @@ function HelpPolicy()
  */
 function HelpSmileys()
 {
-	global $smcFunc, $scripturl, $context, $txt, $modSettings;
+	global $scripturl, $context, $txt;
 
 	$container = Container::instance();
 	$smiley_helper = $container->get('smileys');
@@ -226,6 +226,6 @@ function ShowAdminHelp()
 		$context['help_text'] = $_GET['help'];
 
 	// Does this text contain a link that we should fill in?
-	if (preg_match('~%([0-9]+\$)?s\?~', $context['help_text'], $match))
+	if (preg_match('~%([0-9]+\$)?s\?~', $context['help_text']))
 		$context['help_text'] = sprintf($context['help_text'], $scripturl, $context['session_id'], $context['session_var']);
 }

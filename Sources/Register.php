@@ -25,8 +25,8 @@ use StoryBB\StringLibrary;
  */
 function Register($reg_errors = [])
 {
-	global $txt, $boarddir, $context, $modSettings, $user_info;
-	global $language, $scripturl, $smcFunc, $sourcedir, $cur_profile;
+	global $txt, $context, $modSettings, $user_info;
+	global $language, $scripturl, $sourcedir, $cur_profile;
 
 	// Is this an incoming AJAX check?
 	if (isset($_GET['sa']) && $_GET['sa'] == 'usernamecheck')
@@ -504,7 +504,7 @@ function Register2()
 	}
 	else
 	{
-		(new Observable\Account\Activated($ergOptions['username'], $memberID))->execute();
+		(new Observable\Account\Activated($regOptions['username'], $memberID))->execute();
 
 		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
 

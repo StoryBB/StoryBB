@@ -24,7 +24,7 @@ function ModifyProfile($post_errors = [])
 {
 	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
 	global $modSettings, $memberContext, $profile_vars, $post_errors, $user_settings;
-	global $db_show_debug, $smcFunc, $settings;
+	global $smcFunc, $settings;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))

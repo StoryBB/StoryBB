@@ -467,7 +467,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
  */
 function showAlerts($memID)
 {
-	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
+	global $context, $txt, $sourcedir, $scripturl;
 
 	require_once($sourcedir . '/Profile-Modify.php');
 

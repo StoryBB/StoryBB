@@ -114,7 +114,7 @@ function ManageMaintenance()
  */
 function MaintainDatabase()
 {
-	global $context, $db_type, $db_character_set, $modSettings, $smcFunc, $txt;
+	global $context, $db_type, $modSettings, $smcFunc, $txt;
 
 	if ($db_type == 'mysql')
 	{

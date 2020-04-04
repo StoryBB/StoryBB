@@ -344,7 +344,7 @@ function ManageAvatarSettings($return_config = false)
 function BrowseFiles()
 {
 	global $context, $txt, $scripturl, $modSettings;
-	global $smcFunc, $sourcedir, $settings;
+	global $sourcedir, $settings;
 
 	// What type of thing are we doing?
 	$titles = [

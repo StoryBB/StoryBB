@@ -160,7 +160,7 @@ function char_template_edit()
  */
 function char_template_save()
 {
-	global $context, $smcFunc, $sourcedir;
+	global $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -375,7 +375,7 @@ function CharacterSheets()
  */
 function CharacterImmersion($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;
+	global $txt, $scripturl, $context, $sourcedir;
 
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');

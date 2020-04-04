@@ -175,7 +175,7 @@ function sig_preview()
  */
 function warning_preview()
 {
-	global $context, $sourcedir, $smcFunc, $txt, $user_info, $scripturl;
+	global $context, $sourcedir, $txt, $user_info, $scripturl;
 
 	require_once($sourcedir . '/Subs-Post.php');
 	loadLanguage('Errors');

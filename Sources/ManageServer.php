@@ -229,7 +229,7 @@ $(function()
  */
 function AlignURLsWithSSLSetting($new_force_ssl = 0)
 {
-	global $boardurl, $modSettings, $sourcedir, $db_prefix, $smcFunc;
+	global $boardurl, $modSettings, $sourcedir, $smcFunc;
 	require_once($sourcedir . '/Subs-Admin.php');
 
 	// Check $boardurl
@@ -508,7 +508,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
  */
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $cacheAPI;
+	global $context, $scripturl, $txt;
 
 	// Detect all available optimizers
 	$detected = StoryBB\Cache::list_available();
@@ -616,7 +616,7 @@ function ModifyCacheSettings($return_config = false)
  */
 function prepareServerSettingsContext(&$config_vars)
 {
-	global $context, $modSettings, $smcFunc;
+	global $context, $modSettings;
 
 	$context['config_vars'] = [];
 	foreach ($config_vars as $identifier => $config_var)
@@ -626,7 +626,7 @@ function prepareServerSettingsContext(&$config_vars)
 		else
 		{
 			$varname = $config_var[0];
-			global $$varname;
+			global $$varname; // @todo Remove.
 
 			// Set the subtext in case it's part of the label.
 			// @todo Temporary. Preventing divs inside label tags.
@@ -700,7 +700,7 @@ function prepareServerSettingsContext(&$config_vars)
  */
 function prepareDBSettingContext(&$config_vars)
 {
-	global $txt, $helptxt, $context, $modSettings, $sourcedir, $smcFunc;
+	global $txt, $helptxt, $context, $modSettings, $sourcedir;
 
 	loadLanguage('Help');
 
@@ -939,7 +939,7 @@ function prepareDBSettingContext(&$config_vars)
  */
 function saveSettings(&$config_vars)
 {
-	global $sourcedir, $context;
+	global $sourcedir;
 
 	validateToken('admin-ssc');
 

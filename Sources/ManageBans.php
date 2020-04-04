@@ -804,7 +804,7 @@ function banLoadAdditionalIPsError($member_id)
  */
 function banEdit2()
 {
-	global $smcFunc, $context;
+	global $context;
 
 	checkSession();
 	validateToken('admin-bet');
@@ -1689,7 +1689,7 @@ function BanEditTrigger()
  */
 function BanBrowseTriggers()
 {
-	global $modSettings, $context, $scripturl, $smcFunc, $txt;
+	global $modSettings, $context, $scripturl, $txt;
 	global $sourcedir, $settings;
 
 	if (!empty($_POST['remove_triggers']) && !empty($_POST['remove']) && is_array($_POST['remove']))

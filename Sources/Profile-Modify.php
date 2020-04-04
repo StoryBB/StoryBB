@@ -592,7 +592,7 @@ function loadProfileFields($force_reload = false)
  */
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $txt, $modSetting, $scripturl;
+	global $profile_fields, $context, $cur_profile, $txt, $scripturl;
 
 	// Some default bits.
 	$context['profile_prehtml'] = '';
@@ -1777,7 +1777,7 @@ function notification($memID)
  */
 function alert_configuration($memID)
 {
-	global $txt, $user_profile, $context, $modSettings, $smcFunc, $sourcedir;
+	global $txt, $context, $modSettings, $smcFunc, $sourcedir;
 
 	if (!isset($context['token_check']))
 		$context['token_check'] = 'profile-nt' . $memID;
@@ -1960,7 +1960,7 @@ function alert_configuration($memID)
 		$update_prefs = [];
 
 		// Now the group level options
-		foreach ($context['alert_group_options'] as $opt_group => $group)
+		foreach ($context['alert_group_options'] as $group)
 		{
 			foreach ($group as $this_option)
 			{
@@ -1985,7 +1985,7 @@ function alert_configuration($memID)
 		}
 
 		// Now the individual options
-		foreach ($context['alert_types'] as $alert_group => $items)
+		foreach ($context['alert_types'] as $items)
 		{
 			foreach ($items as $item_key => $this_options)
 			{
@@ -2338,7 +2338,7 @@ function alert_notifications_boards($memID)
 	$context['sub_template'] = 'profile_alerts_watchedboards';
 
 	// Because of the way this stuff works, we want to do this ourselves.
-	if (isset($_POST['edit_notify_boards']) || isset($_POSt['remove_notify_boards']))
+	if (isset($_POST['edit_notify_boards']) || isset($_POST['remove_notify_boards']))
 	{
 		checkSession();
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
@@ -2454,7 +2454,7 @@ function alert_notifications_boards($memID)
  */
 function list_getTopicNotificationCount($memID)
 {
-	global $smcFunc, $user_info, $modSettings;
+	global $smcFunc;
 
 	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
@@ -2486,7 +2486,7 @@ function list_getTopicNotificationCount($memID)
  */
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $scripturl, $user_info, $modSettings, $sourcedir;
+	global $smcFunc, $scripturl, $user_info, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($memID);
@@ -3310,7 +3310,7 @@ function profileSaveAvatarData(&$value)
  */
 function profileValidateSignature(&$value)
 {
-	global $sourcedir, $modSettings, $smcFunc, $txt;
+	global $sourcedir, $modSettings, $txt;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -3384,7 +3384,7 @@ function profileValidateSignature(&$value)
 			// And stick the HTML in the BBC.
 			if (!empty($matches2))
 			{
-				foreach ($matches2[0] as $ind => $dummy)
+				foreach (array_keys($matches2[0]) as $ind)
 				{
 					$matches[0][] = $matches2[0][$ind];
 					$matches[1][] = '';
@@ -3530,7 +3530,7 @@ function profileValidateEmail($email, $memID = 0)
  */
 function profileReloadUser()
 {
-	global $modSettings, $context, $cur_profile;
+	global $context, $cur_profile;
 
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
 		setLoginCookie(0, $context['id_member'], hash_salt($_POST['passwrd1'], $cur_profile['password_salt']));
@@ -3895,7 +3895,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	}
 
 	// Finally, we can make the changes!
-	foreach ($addGroups as $id => $dummy)
+	foreach (array_keys($addGroups) as $id)
 		if (empty($id))
 			unset($addGroups[$id]);
 	$addGroups = implode(',', array_flip($addGroups));
@@ -3918,7 +3918,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
  */
 function tfasetup($memID)
 {
-	global $user_info, $context, $user_settings, $sourcedir, $modSettings;
+	global $user_info, $context, $user_settings, $sourcedir, $modSettings, $maintenance;
 
 	$context['sub_template'] = 'profile_tfasetup';
 

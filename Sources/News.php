@@ -385,8 +385,6 @@ function fix_possible_url($val)
  */
 function cdata_parse($data, $ns = '', $force = false)
 {
-	global $smcFunc;
-
 	// Do we even need to do this?
 	if (strpbrk($data, '<>&') == false && $force !== true)
 		return $data;

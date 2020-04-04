@@ -84,7 +84,7 @@ function ManagePaidSubscriptions()
  */
 function ModifySubscriptionSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $sourcedir, $smcFunc, $scripturl, $boardurl;
+	global $context, $txt, $modSettings, $sourcedir, $scripturl, $boardurl;
 
 	if (!empty($modSettings['paid_enabled']))
 	{

@@ -28,7 +28,7 @@ use StoryBB\StringLibrary;
  */
 function html_to_bbc($text)
 {
-	global $modSettings, $smcFunc, $scripturl, $context;
+	global $smcFunc, $scripturl, $context;
 
 	// Replace newlines with spaces, as that's how browsers usually interpret them.
 	$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);
@@ -289,7 +289,6 @@ function html_to_bbc($text)
 		// End tag?
 		if ($matches[4] != '/' && strpos($text, '</' . $matches[1] . '>', $start_pos) !== false)
 		{
-			$end_length = strlen('</' . $matches[1] . '>');
 			$end_pos = strpos($text, '</' . $matches[1] . '>', $start_pos);
 
 			// Remove the align from that tag so it's never checked again.
@@ -1334,8 +1333,8 @@ function legalise_bbc($text)
  */
 function create_control_richedit($editorOptions)
 {
-	global $txt, $modSettings, $options, $smcFunc, $editortxt;
-	global $context, $settings, $user_info, $scripturl;
+	global $txt, $modSettings, $options, $editortxt;
+	global $context, $settings;
 
 	// Load the Post language file... for the moment at least.
 	loadLanguage('Post+Editor');

@@ -26,7 +26,7 @@ use StoryBB\Hook\Observable;
  */
 function deleteMembergroups($groups)
 {
-	global $smcFunc, $modSettings, $txt;
+	global $smcFunc, $txt;
 
 	// Make sure it's an array.
 	if (!is_array($groups))

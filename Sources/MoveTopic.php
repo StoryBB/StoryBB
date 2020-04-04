@@ -129,7 +129,7 @@ function MoveTopic()
  */
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $sourcedir, $modSettings, $context;
+	global $txt, $board, $topic, $scripturl, $sourcedir, $context;
 	global $board, $language, $user_info, $smcFunc;
 
 	if (empty($topic))

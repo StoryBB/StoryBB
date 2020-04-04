@@ -375,7 +375,7 @@ function deleteErrors()
  */
 function ViewFile()
 {
-	global $context, $boarddir, $sourcedir, $cachedir, $smcFunc;
+	global $context, $boarddir, $sourcedir, $cachedir;
 
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');

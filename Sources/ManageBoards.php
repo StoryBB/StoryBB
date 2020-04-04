@@ -78,7 +78,7 @@ function ManageBoards()
  */
 function ManageBoardsMain()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $sourcedir, $smcFunc;
+	global $txt, $context, $cat_tree, $boards, $boardList, $sourcedir;
 
 	$context['sub_template'] = 'admin_boards';
 
@@ -130,7 +130,7 @@ function ManageBoardsMain()
  */
 function EditCategory()
 {
-	global $txt, $context, $cat_tree, $boardList, $boards, $smcFunc, $sourcedir;
+	global $txt, $context, $cat_tree, $boardList, $boards, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
@@ -225,7 +225,7 @@ function EditCategory()
  */
 function EditCategory2()
 {
-	global $sourcedir, $smcFunc, $context;
+	global $sourcedir, $context;
 
 	checkSession();
 	validateToken('admin-bc-' . $_REQUEST['cat']);

@@ -93,7 +93,7 @@ function AdminRegister()
 
 		foreach ($_POST as $key => $value)
 			if (!is_array($_POST[$key]))
-				$_POST[$key] = htmltrim__recursive(str_replace(["\n", "\r"], '', $_POST[$key]));
+				$_POST[$key] = htmltrim__recursive(str_replace(["\n", "\r"], '', $value));
 
 		$regOptions = [
 			'interface' => 'admin',
@@ -175,7 +175,7 @@ function AdminRegister()
  */
 function ModifyRegistrationSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $modSettings, $sourcedir;
+	global $txt, $context, $scripturl, $sourcedir;
 
 	// This is really quite wanting.
 	require_once($sourcedir . '/ManageServer.php');
@@ -237,7 +237,7 @@ function ModifyRegistrationSettings($return_config = false)
  */
 function ManagePolicies()
 {
-	global $txt, $context, $sourcedir, $smcFunc;
+	global $txt, $context, $sourcedir;
 	loadLanguage('Login');
 
 	$context['policies'] = Policy::get_policy_list();

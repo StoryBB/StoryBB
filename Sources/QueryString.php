@@ -43,7 +43,7 @@ function cleanRequest()
 			die('Numeric request keys are invalid.');
 
 	// Numeric keys in cookies are less of a problem. Just unset those.
-	foreach ($_COOKIE as $key => $value)
+	foreach (array_keys($_COOKIE) as $key)
 		if (is_numeric($key))
 			unset($_COOKIE[$key]);
 
@@ -449,8 +449,6 @@ function escapestring__recursive($var)
  */
 function htmlspecialchars__recursive($var, $level = 0)
 {
-	global $smcFunc;
-
 	if (!is_array($var))
 		return StringLibrary::escape($var, ENT_QUOTES);
 
@@ -552,8 +550,6 @@ function stripslashes__recursive($var, $level = 0)
  */
 function htmltrim__recursive($var, $level = 0)
 {
-	global $smcFunc;
-
 	// Remove spaces (32), tabs (9), returns (13, 10, and 11), nulls (0), and hard spaces. (160)
 	if (!is_array($var))
 	{
@@ -580,8 +576,6 @@ function htmltrim__recursive($var, $level = 0)
  */
 function cleanXml($string)
 {
-	global $context;
-
 	// https://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
 	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{FFFE}\x{FFFF}]~u', '', $string);
 }

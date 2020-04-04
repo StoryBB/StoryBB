@@ -15,8 +15,6 @@
  */
 function Autocomplete()
 {
-	global $context;
-
 	// These are all registered types.
 	$searchTypes = StoryBB\Helper\Autocomplete::get_registered_types();
 
