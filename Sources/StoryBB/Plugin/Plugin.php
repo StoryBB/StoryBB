@@ -93,7 +93,7 @@ class Plugin
 					break;
 				}
 
-				if (empty($hook_detail->priority))
+				if (empty($hook_details->priority))
 				{
 					$this->manifest->hooks->$hook_class->priority = 50;
 				}

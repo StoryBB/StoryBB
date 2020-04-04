@@ -27,7 +27,6 @@ class Installer
 
 	public function upload_favicon(): int
 	{
-		$db = $this->db();
 		$filesystem = $this->filesystem();
 
 		$filesystem->copy_physical_file(App::get_root_path() . '/install_resources/favicon.ico', 'favicon.ico', 'image/x-icon', 'favicon', 0);

@@ -176,7 +176,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 				$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 
 				// And do the actual sending...
-				foreach ($recipients as $id_member => $email_address)
+				foreach ($recipients as $email_address)
 					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'report' . $this->_details['report_id'], $emaildata['is_html'], 2);
 			}
 		}

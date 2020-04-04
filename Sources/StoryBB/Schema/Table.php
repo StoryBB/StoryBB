@@ -129,7 +129,7 @@ class Table
 			}
 		}
 
-		throw new InvalidIndexException('Table ' . $table . ' defines an autoincrement on ' . $auto_increment . ' but does not define the primary key as this column');
+		throw new InvalidIndexException('Table ' . $this->table_name . ' defines an autoincrement on ' . $auto_increment . ' but does not define the primary key as this column');
 	}
 
 	/**

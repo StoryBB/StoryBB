@@ -44,7 +44,7 @@ class Manager
 			return;
 		}
 
-		foreach (static::$hooks[$classname] as $priority => $priorityhooks)
+		foreach (static::$hooks[$classname] as $priorityhooks)
 		{
 			foreach ($priorityhooks as $hookpoint)
 			{

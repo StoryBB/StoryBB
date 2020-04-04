@@ -128,7 +128,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 				$emaildata = loadEmailTemplate('report_member_profile', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 
 				// And do the actual sending...
-				foreach ($recipients as $id_member => $email_address)
+				foreach ($recipients as $email_address)
 					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'ureport' . $this->_details['report_id'], $emaildata['is_html'], 2);
 			}
 		}

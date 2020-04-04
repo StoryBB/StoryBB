@@ -89,7 +89,7 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-		$smcFunc['db']->connect($options);
+		$smcFunc['db']->connect();
 
 		if (!$smcFunc['db']->connection_active())
 		{
@@ -220,10 +220,6 @@ class Behat extends RawMinkContext implements Context
 
 			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 			{
-				// Use the appropriate function based on the DB type
-				if ($db_type == 'mysql' || $db_type == 'mysqli')
-					$db_errorno = 'mysqli_errno';
-
 				// Error 1050: Table already exists!
 				// @todo Needs to be made better!
 				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db']->error_code() == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)

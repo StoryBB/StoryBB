@@ -33,6 +33,6 @@ class Helper
 		if (empty(self::$escaper)) {
 			self::$escaper = new \Behat\Mink\Selector\Xpath\Escaper();
 		}
-		return self::$escaper->escapeLiteral($label);
+		return self::$escaper->escapeLiteral($text);
 	}
 }

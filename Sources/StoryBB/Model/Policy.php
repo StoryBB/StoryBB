@@ -316,7 +316,7 @@ class Policy
 		// Having fetched all possible policies for this user, let's figure out whether they have agreed to anything.
 		foreach ($policies as $policy_type => $languages)
 		{
-			foreach ($languages as $language_name => $language_version_details)
+			foreach ($languages as $language_version_details)
 			{
 				if ($language_version_details['last_acceptance'] >= $language_version_details['last_revision'])
 				{

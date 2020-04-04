@@ -145,10 +145,9 @@ class FTP
 	 * Changes a files atrributes (chmod)
 	 *
 	 * @param string $ftp_file The file to CHMOD
-	 * @param int|string $chmod The value for the CHMOD operation
 	 * @return boolean Whether or not the operation was successful
 	 */
-	public function chmod($ftp_file, $chmod)
+	public function chmod($ftp_file)
 	{
 		if (!is_resource($this->connection))
 			return false;

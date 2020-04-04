@@ -204,7 +204,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 	{
 		global $smcFunc, $language;
 
-		$export = [];
+		$exports = [];
 		$main_char = 0;
 
 		$request = $smcFunc['db']->query('', '
@@ -284,7 +284,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Export the data we have to the archive.
-		foreach ($exports as $id_character => $character)
+		foreach ($exports as $character)
 		{
 			$zip->addEmptyDir('account_and_characters/' . $character['export_folder']);
 
@@ -510,7 +510,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				AND a.attachment_type = {int:attachment}
 			ORDER BY a.id_attach
 			LIMIT {int:start}, {int:step_size}',
-			$data = [
+			[
 				'member' => $this->_details['id_member'],
 				'attachment' => 0,
 				'start' => $this->_details['start_from'],

@@ -247,12 +247,12 @@ class TLD
 	 */
 	public static function build_regex($strings, $delim = null, $returnArray = false)
 	{
-			if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
-			{
+		if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
+		{
 			// Save the current encoding just in case.
-				$current_encoding = mb_internal_encoding();
-				mb_internal_encoding($string_encoding);
-			}
+			$current_encoding = mb_internal_encoding();
+			mb_internal_encoding($string_encoding);
+		}
 
 		// This recursive function creates the index array from the strings
 		$add_string_to_index = function ($string, $index) use (&$add_string_to_index)

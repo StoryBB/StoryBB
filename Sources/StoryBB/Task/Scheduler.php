@@ -39,7 +39,7 @@ class Scheduler
 			WHERE class = {string:class}',
 			[
 				'disabled' => $enabled_state ? 0 : 1,
-				'class' => 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs',
+				'class' => $class,
 			]
 		);
 	}

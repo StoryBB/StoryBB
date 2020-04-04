@@ -218,7 +218,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$result = $smcFunc['db']->query('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
 				AND id_lang = {string:lang_id}

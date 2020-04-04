@@ -193,6 +193,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				$replacements = [
 					'TOPICSUBJECT' => $subject,
 					'POSTERNAME' => $poster_name,
+					'COMMENT' => $comment,
 					'COMMENTERNAME' => $this->_details['sender_name'],
 					'TOPICLINK' => $scripturl . '?topic=' . $this->_details['topic_id'] . '.msg' . $this->_details['msg_id'] . '#msg' . $this->_details['msg_id'],
 					'REPORTLINK' => $scripturl . '?action=moderate;area=reportedposts;sa=details;rid=' . $this->_details['report_id'],
@@ -201,7 +202,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				$emaildata = loadEmailTemplate('reply_to_moderator', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 
 				// And do the actual sending...
-				foreach ($recipients as $id_member => $email_address)
+				foreach ($recipients as $email_address)
 					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'rptrpy' . $this->_details['comment_id'], $emaildata['is_html'], 3);
 			}
 		}

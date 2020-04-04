@@ -100,8 +100,6 @@ class ClassManager
 	 */ 
 	protected static function get_oo_from_basepath(string $path): array
 	{
-		$ooables = [];
-
 		$pathiterator = new \RecursiveDirectoryIterator($path);
 		$fileiterator = new \RecursiveIteratorIterator($pathiterator);
 		$filteriterator = new \RegexIterator($fileiterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);

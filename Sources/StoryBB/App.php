@@ -199,19 +199,4 @@ class App
 		}
 		return $num;
 	}
-
-	/**
-	 * Instantiate and run the application style we plan to run this invocation.
-	 *
-	 * @param string $class The class to instantiate and run.
-	 */
-	public static function run(string $class): App
-	{
-		if (!is_subclass_of($class, self::class))
-		{
-			throw new RuntimeException($class . ' is not an instance of StoryBB\\App');
-		}
-
-		$app = new $class(new Container);
-	}
 }

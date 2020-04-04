@@ -96,10 +96,7 @@ abstract class AbstractCompletable
 	 * @param int $maximum The expected maximum of allowed entries; 0 for no limit.
 	 * @return string The JavaScript to initialise this widget.
 	 */
-	public function get_js(string $target, int $maximum = 1): string
-	{
-		return '';
-	}
+	abstract public function get_js(string $target, int $maximum = 1): string;
 
 	/**
 	 * Returns the name of the searchtype that would be used by the autocomplete route from the client.

@@ -59,9 +59,7 @@ abstract class AbstractSearchable
 	 * @param string $b Word B
 	 * @return int An integer indicating how the words should be sorted
 	 */
-	public function searchSort($a, $b)
-	{
-	}
+	abstract public function searchSort($a, $b);
 
 	/**
 	 * Callback while preparing indexes for searching
@@ -71,9 +69,7 @@ abstract class AbstractSearchable
 	 * @param array $wordsExclude Words to exclude
 	 * @param bool $isExcluded Whether the specfied word should be excluded
 	 */
-	public function prepareIndexes($word, array &$wordsSearch, array &$wordsExclude, $isExcluded)
-	{
-	}
+	abstract public function prepareIndexes($word, array &$wordsSearch, array &$wordsExclude, $isExcluded);
 
 	/**
 	 * Search for indexed words.
@@ -82,9 +78,7 @@ abstract class AbstractSearchable
 	 * @param array $search_data An array of search data
 	 * @return mixed
 	 */
-	public function indexedWordQuery(array $words, array $search_data)
-	{
-	}
+	abstract public function indexedWordQuery(array $words, array $search_data);
 
 	/**
 	 * Callback when a post is created
@@ -95,9 +89,7 @@ abstract class AbstractSearchable
 	 * @param array $posterOptions An array of info about the person who made this post
 	 * @return void
 	 */
-	public function postCreated(array &$msgOptions, array &$topicOptions, array &$posterOptions)
-	{
-	}
+	abstract public function postCreated(array &$msgOptions, array &$topicOptions, array &$posterOptions);
 
 	/**
 	 * Callback when a post is modified
@@ -108,9 +100,7 @@ abstract class AbstractSearchable
 	 * @param array $posterOptions An array of info about the person who made this post
 	 * @return void
 	 */
-	public function postModified(array &$msgOptions, array &$topicOptions, array &$posterOptions)
-	{
-	}
+	abstract public function postModified(array &$msgOptions, array &$topicOptions, array &$posterOptions);
 
 	/**
 	 * Callback when a post is removed
@@ -118,9 +108,7 @@ abstract class AbstractSearchable
 	 * @param int $id_msg The ID of the post that was removed
 	 * @return void
 	 */
-	public function postRemoved($id_msg)
-	{
-	}
+	abstract public function postRemoved($id_msg);
 
 	/**
 	 * Callback when a topic is removed
@@ -128,9 +116,7 @@ abstract class AbstractSearchable
 	 * @param array $topics The ID(s) of the removed topic(s)
 	 * @return void
 	 */
-	public function topicsRemoved(array $topics)
-	{
-	}
+	abstract public function topicsRemoved(array $topics);
 
 	/**
 	 * Callback when a topic is moved
@@ -139,9 +125,7 @@ abstract class AbstractSearchable
 	 * @param int $board_to The board that the topics were moved to
 	 * @return void
 	 */
-	public function topicsMoved(array $topics, $board_to)
-	{
-	}
+	abstract public function topicsMoved(array $topics, $board_to);
 
 	/**
 	 * Callback for actually performing the search query
@@ -153,7 +137,5 @@ abstract class AbstractSearchable
 	 * @param array $searchArray
 	 * @return mixed
 	 */
-	public function searchQuery(array $query_params, array $searchWords, array $excludedIndexWords, array &$participants, array &$searchArray)
-	{
-	}
+	abstract public function searchQuery(array $query_params, array $searchWords, array $excludedIndexWords, array &$participants, array &$searchArray);
 }

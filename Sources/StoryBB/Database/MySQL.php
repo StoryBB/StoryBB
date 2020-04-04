@@ -298,7 +298,7 @@ class MySQL implements DatabaseAdapter
 		// Log the error.
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
 		{
-			log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
+			log_error($txt['database_error'] . ': (' . $function . ') ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
 		}
 
 		// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
@@ -964,7 +964,7 @@ class MySQL implements DatabaseAdapter
 			$ai = 0;
 			for($i = 0; $i < $count; $i++)
 			{
-				$old_id = $this->inserted_id();
+				$last_id = $this->inserted_id();
 				
 				$result = $this->query('', '
 					' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)

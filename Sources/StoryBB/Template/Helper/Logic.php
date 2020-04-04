@@ -140,7 +140,7 @@ class Logic
 	 */
 	public static function op_and(...$args)
 	{
-		$context = array_pop($args);
+		array_pop($args);
 		
 		foreach ($args as $arg) 
 		{
@@ -162,7 +162,7 @@ class Logic
 	 */
 	public static function op_or(...$args) 
 	{
-		$context = array_pop($args);
+		array_pop($args);
 		
 		foreach ($args as $arg) 
 		{

@@ -737,7 +737,7 @@ class Parser
 			];
 			if (!isset($disabled['li']) && !isset($disabled['list']))
 			{
-				foreach ($itemcodes as $c => $dummy)
+				foreach (array_keys($itemcodes) as $c)
 					$bbc_codes[$c] = [];
 			}
 

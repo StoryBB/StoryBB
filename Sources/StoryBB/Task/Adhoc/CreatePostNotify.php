@@ -410,7 +410,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 	{
 		global $scripturl, $language, $modSettings;
 
-		foreach ($members as $id_chr => $member)
+		foreach ($members as $member)
 		{
 			$id = $member['id_member'];
 			if ($member['retired_chr'])
