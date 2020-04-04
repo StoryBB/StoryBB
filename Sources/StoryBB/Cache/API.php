@@ -198,11 +198,21 @@ abstract class API implements API_Interface
 	}
 
 	/**
+	 * Specify the version of the cache backend client (whatever connector talks to the backend)
+	 *
+	 * @return string Version number
+	 */
+	public function getClientVersion(): string
+	{
+		return '';
+	}
+
+	/**
 	 * Specify the version of the cache backend (notionally of whatever service is serving cache)
 	 *
 	 * @return string Version number
 	 */
-	public function getVersion(): string
+	public function getServerVersion(): string
 	{
 		return '';
 	}

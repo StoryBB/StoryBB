@@ -176,11 +176,21 @@ class Memcached extends API
 	}
 
 	/**
+	 * Return the version of the Memcached client.
+	 *
+	 * @return string Version number
+	 */
+	public function getClientVersion(): string
+	{
+		return phpversion('memcached');
+	}
+
+	/**
 	 * Return the version of the Memcache server.
 	 *
 	 * @return string Version number
 	 */
-	public function getVersion(): string
+	public function getServerVersion(): string
 	{
 		return $this->memcached->getVersion();
 	}

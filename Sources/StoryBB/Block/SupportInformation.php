@@ -13,6 +13,7 @@
 namespace StoryBB\Block;
 
 use StoryBB\App;
+use StoryBB\Cache;
 
 class SupportInformation extends AbstractBlock implements Block
 {
@@ -38,7 +39,7 @@ class SupportInformation extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $txt, $scripturl, $smcFunc, $sourcedir, $_PHPA, $cache_accelerator;
+		global $txt, $scripturl, $smcFunc, $sourcedir, $_PHPA;
 
 		require_once($sourcedir . '/Subs-Admin.php');
 		loadLanguage('Admin');
@@ -123,38 +124,35 @@ class SupportInformation extends AbstractBlock implements Block
 				'version' => $_PHPA['VERSION'],
 			];
 		}
-		if (extension_loaded('apcu'))
-		{
-			$versions['apcu'] = [
-				'title' => 'Alternative PHP Cache',
-				'version' => phpversion('apcu'),
-			];
-		}
-		if (function_exists('memcache_set'))
-		{
-			// If we're using memcache we need the server info.
-			$memcache_version = '';
-			if (!empty($cache_accelerator) && ($cache_accelerator == 'memcached' || $cache_accelerator == 'memcache') && !empty($cache_memcached) && !empty($cacheAPI))
-			{
-				$memcache_version = $cacheAPI->getVersion();
-			}
-			$versions['memcache'] = ['title' => 'Memcached', 'version' => $memcache_version ? $memcache_version : '???'];
-		}
 
-		if (class_exists('Redis'))
-		{
-			$versions['redis'] = [
-				'title' => 'Redis',
-				'version' => phpversion('redis') . ' (client)'
-			];
+		$caches = [
+			'apcu' => Cache\Apcu::class,
+			'memcache' => Cache\Memcache::class,
+			'memcached' => Cache\Memcached::class,
+			'redis' => Cache\Redis::class,
+		];
 
-			$redis = new \StoryBB\Cache\Redis;
-			if ($redis->isSupported())
+		foreach ($caches as $cache_name => $cache_class)
+		{
+			$cache = new $cache_class;
+			if ($cache->isSupported(true))
 			{
-				$redisversion = $redis->getVersion();
-				if (!empty($redisversion))
+				$versions[$cache_name] = [
+					'title' => $cache->getName(),
+					'version' => '',
+				];
+				if ($client_version = $cache->getClientVersion())
 				{
-					$versions['redis']['version'] .= ' ' . $redisversion . ' (server)';
+					$versions[$cache_name]['version'] = $client_version . ' (client)';
+				}
+				if ($cache->isSupported() && $server_version = $cache->getServerVersion())
+				{
+					$versions[$cache_name]['version'] .= ' ' . $server_version . ' (server)';
+				}
+
+				if (!trim($versions[$cache_name]['version']))
+				{
+					$versions[$cache_name]['version'] = '???';
 				}
 			}
 		}

@@ -177,7 +177,7 @@ class Memcache extends API
 	 *
 	 * @return string Version number
 	 */
-	public function getVersion(): string
+	public function getServerVersion(): string
 	{
 		return $this->memcache->getVersion();
 	}

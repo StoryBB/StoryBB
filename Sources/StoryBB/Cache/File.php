@@ -83,6 +83,7 @@ class File extends API
 				@apc_delete_file($cachedir . '/data_' . $key . '.php');
 
 			// php will cache file_exists et all, we can't 100% depend on its results so proceed with caution
+			$expired = true;
 			@include($cachedir . '/data_' . $key . '.php');
 			if (!empty($expired) && isset($value))
 			{
