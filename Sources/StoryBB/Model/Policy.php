@@ -375,7 +375,7 @@ class Policy
 	 */
 	public static function agree_to_policy(array $agreed, string $user_language, int $user_id)
 	{
-		global $smcFunc, $user_info;
+		global $smcFunc;
 
 		if (empty($agreed))
 		{

@@ -92,7 +92,7 @@ class Theme
 	 */
 	private static function parse_section(string $section): array
 	{
-		global $txt, $context;
+		global $txt;
 
 		$theme_json = self::get_theme_json();
 
@@ -153,7 +153,7 @@ class Theme
 	 */
 	public static function get_theme_list(): array
 	{
-		global $smcFunc, $settings;
+		global $smcFunc;
 		static $cache = null;
 
 		if ($cache !== null)

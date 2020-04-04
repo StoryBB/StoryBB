@@ -52,7 +52,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $txt, $scripturl, $sourcedir, $smcFunc, $modSettings, $context;
+		global $txt, $scripturl, $sourcedir, $smcFunc, $context;
 
 		// We'll want this...
 		require_once($sourcedir . '/Subs-Post.php');

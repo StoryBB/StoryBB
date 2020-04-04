@@ -135,7 +135,7 @@ class Manager
 
 	public static function rebuild_cache(): array
 	{
-		global $context, $modSettings, $cachedir;
+		global $modSettings, $cachedir;
 
 		$pluginsdir = static::get_plugin_dir();
 		$cachefile = '<?php if (!defined(\'STORYBB\')) die; ';

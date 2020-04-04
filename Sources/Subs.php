@@ -1117,8 +1117,6 @@ function session_flash_retrieve()
  */
 function url_image_size($url)
 {
-	global $sourcedir;
-
 	// Make sure it is a proper URL.
 	$url = str_replace(' ', '%20', $url);
 

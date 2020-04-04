@@ -23,7 +23,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 	 */
 	public function execute()
 	{
-		global $txt, $smcFunc, $txtBirthdayEmails, $language, $modSettings, $sourcedir;
+		global $txt, $smcFunc, $txtBirthdayEmails, $modSettings, $sourcedir;
 
 		$greeting = isset($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday';
 

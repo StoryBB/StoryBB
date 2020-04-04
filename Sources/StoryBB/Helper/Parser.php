@@ -40,7 +40,7 @@ class Parser
 	 */
 	public static function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
 	{
-		global $smcFunc, $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
+		global $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
 		static $bbc_codes = [], $itemcodes = [], $no_autolink_tags = [];
 		static $disabled;
 
@@ -1657,7 +1657,6 @@ class Parser
 	 */
 	public static function parse_smileys(string &$message)
 	{
-		global $modSettings, $txt, $user_info, $context, $smcFunc;
 		static $smileyPregSearch = null, $smileyPregReplacements = [];
 
 		// No smiley set at all?!
@@ -1746,8 +1745,6 @@ class Parser
 	 */
 	public static function sanitizeMSCutPaste(string $string): string
 	{
-		global $context;
-
 		if (empty($string))
 			return $string;
 

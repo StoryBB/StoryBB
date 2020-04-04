@@ -112,7 +112,7 @@ class Language
 	 */
 	public static function cache_language(int $theme_id, string $lang_id, string $lang_file)
 	{
-		global $settings, $cachedir;
+		global $cachedir;
 
 		$overall_language_entries = [];
 

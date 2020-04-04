@@ -35,7 +35,7 @@ class StoryBBNews extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $txt, $scripturl, $sourcedir, $user_info;
+		global $txt, $sourcedir, $user_info;
 
 		require_once($sourcedir . '/Subs-Admin.php');
 		loadLanguage('Admin');

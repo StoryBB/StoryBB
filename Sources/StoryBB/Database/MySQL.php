@@ -503,7 +503,7 @@ class MySQL implements DatabaseAdapter
 	public function query($identifier, $db_string, $db_values = [])
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
-		global $db_unbuffered, $db_callback, $modSettings;
+		global $db_unbuffered, $modSettings;
 
 		// Comments that are allowed in a query are preg_removed.
 		static $allowed_comments_from = [
@@ -1377,8 +1377,6 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function create_word_search($size)
 	{
-		global $smcFunc;
-
 		if ($size == 'small')
 			$size = 'smallint(5)';
 		elseif ($size == 'medium')

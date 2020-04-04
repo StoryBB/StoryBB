@@ -96,7 +96,7 @@ class Group extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc, $modSettings, $settings;
+		global $smcFunc, $settings;
 
 		if (empty($this->term))
 			return [];

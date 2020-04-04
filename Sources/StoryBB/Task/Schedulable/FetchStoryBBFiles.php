@@ -45,7 +45,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $sourcedir, $txt, $language, $modSettings, $smcFunc, $context;
+		global $txt, $language, $modSettings, $smcFunc;
 
 		// What files do we want to get
 		$request = $smcFunc['db']->query('', '

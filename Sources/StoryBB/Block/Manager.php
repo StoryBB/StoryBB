@@ -108,7 +108,7 @@ class Manager
 
 	public static function render_region(string $region)
 	{
-		global $context, $options;
+		global $context;
 
 		if (empty($context['page_blocks'][$region]))
 		{

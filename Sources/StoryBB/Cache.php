@@ -78,7 +78,7 @@ class Cache
 	 */
 	public static function get($key, $ttl = 120)
 	{
-		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
+		global $cache_enable;
 		global $cache_hits, $cache_count, $cache_misses, $cache_count_misses, $db_show_debug;
 
 		if (empty($cache_enable) || empty(self::$cacheAPI))
@@ -122,7 +122,7 @@ class Cache
 	 */
 	public static function put(string $key, $value, int $ttl = 120)
 	{
-		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
+		global $cache_enable;
 		global $cache_hits, $cache_count, $db_show_debug;
 
 		if (empty($cache_enable) || empty(self::$cacheAPI))

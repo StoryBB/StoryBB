@@ -142,7 +142,7 @@ class Custom extends AbstractSearchable implements Searchable
 	 */
 	public function prepareIndexes($word, array &$wordsSearch, array &$wordsExclude, $isExcluded)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		$subwords = text2words($word, $this->min_word_length, true);
 

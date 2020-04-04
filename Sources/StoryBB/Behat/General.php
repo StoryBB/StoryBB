@@ -336,7 +336,7 @@ class General extends RawMinkContext implements Context
 	 */
 	private function create_boards(TableNode $table)
 	{
-		global $smcFunc, $sourcedir, $boards, $cat_tree;
+		global $smcFunc, $sourcedir;
 		require_once($sourcedir . '/Subs-Boards.php');
 		/*
 				And the following "boards" exist:

@@ -139,7 +139,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 	 */
 	public function searchSort($a, $b)
 	{
-		global $excludedWords, $smcFunc;
+		global $excludedWords;
 
 		$x = StringLibrary::strlen($a) - (in_array($a, $excludedWords) ? 1000 : 0);
 		$y = StringLibrary::strlen($b) - (in_array($b, $excludedWords) ? 1000 : 0);
@@ -157,7 +157,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 	 */
 	public function prepareIndexes($word, array &$wordsSearch, array &$wordsExclude, $isExcluded)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		$subwords = text2words($word, null, false);
 

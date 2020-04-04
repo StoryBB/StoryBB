@@ -225,8 +225,6 @@ class Mail
 	 */
 	public static function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $line_break = "\r\n", $custom_charset = null)
 	{
-		global $context;
-
 		$charset = $custom_charset !== null ? $custom_charset : 'UTF-8';
 
 		// This is the fun part....

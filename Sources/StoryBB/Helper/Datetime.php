@@ -26,7 +26,7 @@ class Datetime
 	 */
 	public static function list_timezones($when = 'now')
 	{
-		global $smcFunc, $modSettings;
+		global $modSettings;
 		static $timezones = null, $lastwhen = null;
 
 		// No point doing this over if we already did it once

@@ -99,7 +99,7 @@ class Template
 	 */
 	protected static function refresh_paths()
 	{
-		global $settings, $context;
+		global $settings;
 
 		if (static::$paths !== null)
 		{
@@ -167,8 +167,6 @@ class Template
 	 */
 	public static function load($template)
 	{
-		global $settings;
-
 		static::refresh_paths();
 
 		foreach (static::$paths['template'] as $source => $path) {
@@ -190,8 +188,6 @@ class Template
 	 */
 	public static function load_partial($partial, $fatal_on_fail = true): string
 	{
-		global $settings;
-
 		static::refresh_paths();
 
 		foreach (static::$paths['partial'] as $source => $path) {
@@ -217,7 +213,7 @@ class Template
 	 */
 	public static function compile(string $template, array $options = [], string $cache_id = '')
 	{
-		global $context, $cachedir, $modSettings;
+		global $modSettings;
 
 		$phpStr = Cache::fetch($cache_id);
 		if (!empty($phpStr))

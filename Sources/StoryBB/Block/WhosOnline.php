@@ -40,7 +40,7 @@ class WhosOnline extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $user_info, $txt, $scripturl, $modSettings;
+		global $txt, $scripturl, $modSettings;
 
 		if ($this->content !== null)
 		{
@@ -95,7 +95,7 @@ class WhosOnline extends AbstractBlock implements Block
 	 */
 	public function get_online_numbers($membersOnlineOptions)
 	{
-		global $smcFunc, $scripturl, $user_info, $modSettings, $txt;
+		global $smcFunc, $scripturl, $user_info, $txt;
 
 		// The list can be sorted in several ways.
 		$allowed_sort_options = [

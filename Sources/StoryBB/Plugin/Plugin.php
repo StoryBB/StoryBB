@@ -135,25 +135,21 @@ class Plugin
 
 	public function name(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->name);
 	}
 
 	public function author(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->author);
 	}
 
 	public function description(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->description);
 	}
 
 	public function version(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->version);
 	}
 

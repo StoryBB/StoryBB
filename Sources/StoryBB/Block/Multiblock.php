@@ -42,8 +42,6 @@ class Multiblock extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $context, $txt, $sourcedir;
-
 		if ($this->content !== null)
 		{
 			return $this->content;

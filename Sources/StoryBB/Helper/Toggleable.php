@@ -59,7 +59,6 @@ class Toggleable
 
 	public function addLinkToggle(string $selector, string $expanded = null, string $collapsed = null): Toggleable
 	{
-		global $txt;
 		$this->config['link_toggles'][] = [
 			'sId' => $selector,
 			'msgExpanded' => !empty($expanded) ? $expanded : $this->config['name'],

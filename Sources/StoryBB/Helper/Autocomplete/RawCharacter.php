@@ -64,7 +64,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc, $modSettings, $settings;
+		global $smcFunc;
 
 		if (empty($this->term))
 			return [];

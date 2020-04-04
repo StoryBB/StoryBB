@@ -197,8 +197,6 @@ class Mentions
 	 */
 	protected static function getPossibleMentions($body)
 	{
-		global $smcFunc;
-
 		// preparse code does a few things which might mess with our parsing
 		$body = htmlspecialchars_decode(preg_replace('~<br\s*/?\>~', "\n", str_replace('&nbsp;', ' ', $body)), ENT_QUOTES);
 

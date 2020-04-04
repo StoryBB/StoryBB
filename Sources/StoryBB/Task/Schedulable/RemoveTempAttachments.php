@@ -44,7 +44,7 @@ class RemoveTempAttachments implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $modSettings, $context, $txt;
+		global $modSettings, $txt;
 
 		// We need to know where this thing is going.
 		if (!empty($modSettings['currentAttachmentUploadDir']))
