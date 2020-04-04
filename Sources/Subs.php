@@ -1300,9 +1300,6 @@ function setupThemeContext($forceload = false)
 	// Setup the main menu items.
 	setupMenuContext();
 
-	// This is here because old index templates might still use it.
-	$context['show_news'] = !empty($settings['enable_news']);
-
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
 	var sbb_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');

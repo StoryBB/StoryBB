@@ -25,11 +25,6 @@
         },
         "",
         {
-            "id": "enable_news",
-            "label": "enable_random_news"
-        },
-        "",
-        {
             "id": "sub_boards_columns",
             "label": "sub_boards_columns",
             "options": {
