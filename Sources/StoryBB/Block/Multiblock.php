@@ -13,6 +13,7 @@
 namespace StoryBB\Block;
 
 use StoryBB\Template;
+use StoryBB\Block\Manager;
 
 /**
  * A multiple-block block.
@@ -78,7 +79,7 @@ class Multiblock extends AbstractBlock implements Block
 				'instance' => 'multiblock' . static::$instancecount++,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
-				'blocktype' => strtolower(basename(get_class($instance))),
+				'blocktype' => Manager::get_blocktype($instance),
 				'icon' => !empty($block_config['icon']) ? $block_config['icon'] : '',
 				'collapsible' => false,
 				'collapsed' => false,

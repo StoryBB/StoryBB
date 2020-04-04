@@ -1120,10 +1120,14 @@ function DatabasePopulation()
 	$installer = $container->instantiate('StoryBB\\Helper\\Installer');
 
 	// 1. Favicon.
-	$installer->upload_favicon();
+	$incontext['sql_results']['inserts'] += $installer->upload_favicon();
 
 	// 2. Smileys.
-	$installer->upload_smileys();
+	$incontext['sql_results']['inserts'] += $installer->upload_smileys();
+
+	// 3. Blocks.
+	$incontext['sql_results']['inserts'] += $installer->add_standard_blocks();
+	$incontext['sql_results']['inserts'] += $installer->add_admin_blocks();
 
 	// Sort out the context for the SQL.
 	foreach ($incontext['sql_results'] as $key => $number)

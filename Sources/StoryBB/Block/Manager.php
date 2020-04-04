@@ -157,7 +157,7 @@ class Manager
 				'instance' => $instance_id,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
-				'blocktype' => strtolower(basename(get_class($instance))),
+				'blocktype' => self::get_blocktype($instance),
 				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
 				'collapsible' => !empty($toggle),
 				'collapsed' => $toggle && $toggle->currently_collapsed(),
@@ -171,5 +171,11 @@ class Manager
 			'region' => $region,
 			'instances' => $block_context['instances'],
 		]));
+	}
+
+	public static function get_blocktype(Block $instance)
+	{
+		$classname = get_class($instance);
+		return strtolower(substr(strrchr($classname, '\\'), 1));
 	}
 }

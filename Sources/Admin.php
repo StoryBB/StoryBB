@@ -474,32 +474,8 @@ function AdminHome()
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
 
-	// Find all of this forum's administrators...
-	require_once($sourcedir . '/Subs-Membergroups.php');
-	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
-	{
-		// Add a 'more'-link if there are more than 32.
-		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
-	}
-
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
-	$context['forum_version'] = App::SOFTWARE_VERSION;
-
-	// Get a list of current server versions.
-	require_once($sourcedir . '/Subs-Admin.php');
-	$checkFor = [
-		'gd',
-		'imagemagick',
-		'db_server',
-		'phpa',
-		'apcu',
-		'memcache',
-		'redis',
-		'php',
-		'server',
-	];
-	$context['current_versions'] = getServerVersions($checkFor);
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
@@ -513,21 +489,6 @@ function AdminHome()
 		'description' => '<strong>' . $txt['hello_guest'] . ' ' . $context['user']['name'] . '!</strong>
 					' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 	];
-
-	$context['admin_news'] = getAdminFile('updates.json');
-	if (empty($context['admin_news']))
-	{
-		$context['admin_news'] = [
-			'current_version' => '??',
-			'sbbAnnouncements' => [],
-			'needs_update' => false,
-		];
-	}
-
-	if (!empty($context['admin_news']['current_version']))
-	{
-		$context['admin_news']['needs_update'] = version_compare($context['forum_version'], $context['admin_news']['current_version'], '<');
-	}
 }
 
 /**

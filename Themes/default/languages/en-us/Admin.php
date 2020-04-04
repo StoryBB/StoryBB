@@ -46,7 +46,6 @@ $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
 $txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank" rel="noopener">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="main_icons help" title="%3$s"></span> symbols for more information on the related functions.';
-$txt['administrators'] = 'Forum Administrators';
 $txt['admin_activation_email'] = 'Send activation email to new members upon registration';
 
 $txt['additional_options_collapsable'] = 'Enable collapsible additional post options';
@@ -93,8 +92,6 @@ $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
 $txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
-
-$txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
 
