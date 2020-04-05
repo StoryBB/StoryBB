@@ -151,18 +151,6 @@ function reloadSettings()
 		]);
 	}
 
-	// Any files to pre include?
-	if (!empty($modSettings['integrate_pre_include']))
-	{
-		$pre_includes = explode(',', $modSettings['integrate_pre_include']);
-		foreach ($pre_includes as $include)
-		{
-			$include = strtr(trim($include), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir]);
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
-
 	// This determines the server... not used in many places, except for login fixing.
 	$context['server'] = [
 		'is_iis' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false,
