@@ -160,7 +160,6 @@ function reloadSettings()
 		'is_nginx' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false,
 		'is_cgi' => isset($_SERVER['SERVER_SOFTWARE']) && strpos(php_sapi_name(), 'cgi') !== false,
 		'is_windows' => strpos(PHP_OS, 'WIN') === 0,
-		'iso_case_folding' => ord(strtolower(chr(138))) === 154,
 	];
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
@@ -2190,7 +2189,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'sbb_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
 		'sbb_images_url' => '"' . $settings['images_url'] . '"',
 		'sbb_scripturl' => '"' . $scripturl . '"',
-		'sbb_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
 		'sbb_session_id' => '"' . $context['session_id'] . '"',
 		'sbb_session_var' => '"' . $context['session_var'] . '"',
 		'sbb_member_id' => $context['user']['id'],
