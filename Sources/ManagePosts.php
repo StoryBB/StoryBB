@@ -294,20 +294,6 @@ function ModifyPostSettings($return_config = false)
 	{
 		checkSession();
 
-		// If we're changing the message length (and we are using MySQL) let's check the column is big enough.
-		if (isset($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'] && ($db_type == 'mysql'))
-		{
-			db_extend('packages');
-
-			$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
-			foreach ($colData as $column)
-				if ($column['name'] == 'body')
-					$body_type = $column['type'];
-
-			if (isset($body_type) && ($_POST['max_messageLength'] > 65535 || $_POST['max_messageLength'] == 0) && $body_type == 'text')
-				fatal_lang_error('convert_to_mediumtext', false, [$scripturl . '?action=admin;area=maintain;sa=database']);
-		}
-
 		// If we're changing the post preview length let's check its valid
 		if (!empty($_POST['preview_characters']))
 			$_POST['preview_characters'] = (int) min(max(0, $_POST['preview_characters']), 512);

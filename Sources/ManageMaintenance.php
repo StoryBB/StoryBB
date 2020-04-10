@@ -58,7 +58,6 @@ function ManageMaintenance()
 			'activities' => [
 				'optimize' => 'OptimizeTables',
 				'convertutf8' => 'ConvertUtf8',
-				'convertmsgbody' => 'ConvertMsgBody',
 			],
 		],
 		'members' => [
@@ -115,20 +114,6 @@ function ManageMaintenance()
 function MaintainDatabase()
 {
 	global $context, $db_type, $modSettings, $smcFunc, $txt;
-
-	if ($db_type == 'mysql')
-	{
-		db_extend('packages');
-
-		$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
-		foreach ($colData as $column)
-			if ($column['name'] == 'body')
-				$body_type = $column['type'];
-
-		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
-		$context['convert_to_title'] = $txt[$context['convert_to'] . '_title'];
-		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
-	}
 }
 
 /**
@@ -292,151 +277,6 @@ function MaintainEmptyUnimportantLogs()
 	updateSettings(['search_pointer' => 0]);
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
-}
-
-/**
- * Convert the column "body" of the table {db_prefix}messages from TEXT to MEDIUMTEXT and vice versa.
- * It requires the admin_forum permission.
- * This is needed only for MySQL.
- * During the conversion from MEDIUMTEXT to TEXT it check if any of the posts exceed the TEXT length and if so it aborts.
- * This action is linked from the maintenance screen (if it's applicable).
- * Accessed by ?action=admin;area=maintain;sa=database;activity=convertmsgbody.
- *
- * @uses the convert_msgbody sub template of the Admin template.
- */
-function ConvertMsgBody()
-{
-	global $scripturl, $context, $txt, $db_type;
-	global $modSettings, $smcFunc, $time_start;
-
-	// Show me your badge!
-	isAllowedTo('admin_forum');
-
-	if ($db_type != 'mysql')
-		return;
-
-	db_extend('packages');
-
-	$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
-	foreach ($colData as $column)
-		if ($column['name'] == 'body')
-			$body_type = $column['type'];
-
-	$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
-
-	if ($body_type == 'text' || ($body_type != 'text' && isset($_POST['do_conversion'])))
-	{
-		checkSession();
-		validateToken('admin-maint');
-
-		// Make it longer so we can do their limit.
-		if ($body_type == 'text')
-			$smcFunc['db_change_column']('{db_prefix}messages', 'body', ['type' => 'mediumtext']);
-		// Shorten the column so we can have a bit (literally per record) less space occupied
-		else
-			$smcFunc['db_change_column']('{db_prefix}messages', 'body', ['type' => 'text']);
-
-		// 3rd party integrations may be interested in knowning about this.
-		call_integration_hook('integrate_convert_msgbody', [$body_type]);
-
-		$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
-		foreach ($colData as $column)
-			if ($column['name'] == 'body')
-				$body_type = $column['type'];
-
-		session_flash('success', sprintf($txt['maintain_done'], $txt[$context['convert_to'] . '_title']));
-		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
-		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
-
-		return;
-	}
-	elseif ($body_type != 'text' && (!isset($_POST['do_conversion']) || isset($_POST['cont'])))
-	{
-		checkSession();
-		if (empty($_REQUEST['start']))
-			validateToken('admin-maint');
-		else
-			validateToken('admin-convertMsg');
-
-		$context['page_title'] = $txt['not_done_title'];
-		$context['continue_post_data'] = '';
-		$context['continue_countdown'] = 3;
-		$context['sub_template'] = 'not_done';
-		$increment = 500;
-		$id_msg_exceeding = isset($_POST['id_msg_exceeding']) ? explode(',', $_POST['id_msg_exceeding']) : [];
-
-		$request = $smcFunc['db']->query('', '
-			SELECT COUNT(*) as count
-			FROM {db_prefix}messages',
-			[]
-		);
-		list($max_msgs) = $smcFunc['db']->fetch_row($request);
-		$smcFunc['db']->free_result($request);
-
-		// Try for as much time as possible.
-		@set_time_limit(600);
-
-		while ($_REQUEST['start'] < $max_msgs)
-		{
-			$request = $smcFunc['db']->query('', '
-				SELECT /*!40001 SQL_NO_CACHE */ id_msg
-				FROM {db_prefix}messages
-				WHERE id_msg BETWEEN {int:start} AND {int:start} + {int:increment}
-					AND LENGTH(body) > 65535',
-				[
-					'start' => $_REQUEST['start'],
-					'increment' => $increment - 1,
-				]
-			);
-			while ($row = $smcFunc['db']->fetch_assoc($request))
-				$id_msg_exceeding[] = $row['id_msg'];
-			$smcFunc['db']->free_result($request);
-
-			$_REQUEST['start'] += $increment;
-
-			if (microtime(true) - $time_start > 3)
-			{
-				createToken('admin-convertMsg');
-				$context['continue_post_data'] = '
-					<input type="hidden" name="' . $context['admin-convertMsg_token_var'] . '" value="' . $context['admin-convertMsg_token'] . '">
-					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-					<input type="hidden" name="id_msg_exceeding" value="' . implode(',', $id_msg_exceeding) . '">';
-
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=convertmsgbody;start=' . $_REQUEST['start'];
-				$context['continue_percent'] = round(100 * $_REQUEST['start'] / $max_msgs);
-
-				return;
-			}
-		}
-		createToken('admin-maint');
-		$context['page_title'] = $txt[$context['convert_to'] . '_title'];
-		$context['convert_to_title'] = $context['page_title'];
-		$context['sub_template'] = 'admin_maintain_convertmsg';
-
-		if (!empty($id_msg_exceeding))
-		{
-			if (count($id_msg_exceeding) > 100)
-			{
-				$query_msg = array_slice($id_msg_exceeding, 0, 100);
-				$context['exceeding_messages_morethan'] = sprintf($txt['exceeding_messages_morethan'], count($id_msg_exceeding));
-			}
-			else
-				$query_msg = $id_msg_exceeding;
-
-			$context['exceeding_messages'] = [];
-			$request = $smcFunc['db']->query('', '
-				SELECT id_msg, id_topic, subject
-				FROM {db_prefix}messages
-				WHERE id_msg IN ({array_int:messages})',
-				[
-					'messages' => $query_msg,
-				]
-			);
-			while ($row = $smcFunc['db']->fetch_assoc($request))
-				$context['exceeding_messages'][] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
-			$smcFunc['db']->free_result($request);
-		}
-	}
 }
 
 /**

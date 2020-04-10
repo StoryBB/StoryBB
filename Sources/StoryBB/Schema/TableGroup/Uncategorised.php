@@ -831,7 +831,7 @@ class Uncategorised
 					'modified_time' => Column::int(),
 					'modified_name' => Column::varchar(255),
 					'modified_reason' => Column::varchar(255),
-					'body' => Column::text(),
+					'body' => Column::mediumtext(),
 					'approved' => Column::tinyint()->default(1),
 					'likes' => Column::smallint(),
 				],
