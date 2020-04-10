@@ -28,10 +28,6 @@ class Database
 	public static function update_schema(bool $safe_mode = true)
 	{
 		global $smcFunc;
-		if (!isset($smcFunc['db_table_structure']))
-		{
-			db_extend('packages');
-		}
 
 		$queries = [];
 		$schema = Schema::get_tables();
@@ -43,7 +39,7 @@ class Database
 			}
 			if ($table->exists())
 			{
-				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
+				$existing_table = $smcFunc['db']->get_table_structure('{db_prefix}' . $table->get_table_name());
 				$queries[] = $existing_table->update_to($table, $safe_mode);
 			}
 			else

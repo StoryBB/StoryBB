@@ -79,7 +79,6 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc = [];
 		define('STORYBB', 1);
 
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 		require_once($boarddir . '/Themes/default/languages/en-us/Install.php');
 		$txt['english_name'] = 'English';
 		$txt['native_name'] = 'English';
@@ -95,7 +94,6 @@ class Behat extends RawMinkContext implements Context
 		{
 			die('Database could not be connected - error given: ' . $smcFunc['db']->error_message());
 		}
-		db_extend('packages');
 
 		// Make a database.
 		$smcFunc['db']->query('', "
@@ -303,8 +301,7 @@ class Behat extends RawMinkContext implements Context
 	 */
 	public function init_tables()
 	{
-		global $smcFunc, $db_prefix, $reservedTables;
-		$reservedTables = [];
+		global $smcFunc, $db_prefix;
 
 		$tables = $smcFunc['db']->list_tables();
 		$non_prefixed_tables = preg_grep('/^(?!behat_).*/i', $tables);

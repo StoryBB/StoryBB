@@ -14,6 +14,6 @@ namespace StoryBB\Database\Exception;
 /**
  * Exceptions from within the database system.
  */
-class InvaliAdapterException extends \StoryBB\Database\Exception
+class InvalidAdapterException extends \StoryBB\Database\Exception
 {
 }

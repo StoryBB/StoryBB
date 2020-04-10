@@ -13,6 +13,7 @@
 namespace StoryBB\Database;
 
 use StoryBB\Database\DatabaseAdapter;
+use StoryBB\Database\Exception\InvalidAdapterException;
 
 /**
  * Provides a DatabaseAdapter object based on the type of database connector needed.

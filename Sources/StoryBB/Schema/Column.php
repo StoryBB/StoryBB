@@ -193,6 +193,30 @@ class Column
 	}
 
 	/**
+	 * Factory function to create a new Column of blob type.
+	 *
+	 * @return Column instance
+	 */
+	public static function blob()
+	{
+		return new Column([
+			'type' => 'blob',
+		]);
+	}
+
+	/**
+	 * Factory function to create a new Column of mediumblob type.
+	 *
+	 * @return Column instance
+	 */
+	public static function mediumblob()
+	{
+		return new Column([
+			'type' => 'mediumblob',
+		]);
+	}
+
+	/**
 	 * Factory function to create a new Column of date type.
 	 *
 	 * @return Column instance
@@ -260,7 +284,7 @@ class Column
 	 */
 	public function default($value)
 	{
-		if (in_array($this->column['type'], ['text', 'mediumtext']))
+		if (in_array($this->column['type'], ['text', 'mediumtext', 'blob', 'mediumblob']))
 		{
 			throw new InvalidColumnTypeException($this->column['type'] . ' cannot have a default value');
 		}
@@ -293,10 +317,10 @@ class Column
 	}
 
 	/**
-	 * Returns an array suitable for db_create_table to create the table.
+	 * Returns an array suitable for DatabaseAdapter::create_table to create the table.
 	 *
 	 * @param string $column_name The name of the final column itself.
-	 * @return array Data for db_create_table
+	 * @return array Data for DatabaseAdapter::create_table
 	 */
 	public function create_data(string $column_name): array
 	{

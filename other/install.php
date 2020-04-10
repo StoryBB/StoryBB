@@ -14,6 +14,7 @@ use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Schema\Schema;
 use StoryBB\Database\AdapterFactory;
+use StoryBB\Database\Exception\InvalidAdapterException;
 
 $GLOBALS['current_sbb_version'] = '1.0 Alpha 1';
 $GLOBALS['db_script_version'] = '1-0';
@@ -300,8 +301,6 @@ function load_database()
 	// Connect the database.
 	if (empty($smcFunc['db']))
 	{
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
 		$db_options = ['persist' => $db_persist];
 		$port = '';
 
@@ -767,23 +766,22 @@ function DatabaseSettings()
 		if (empty($sourcedir))
 			$sourcedir = dirname(__FILE__) . '/Sources';
 
-		// Better find the database file!
-		if (!file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
-		{
-			$incontext['error'] = sprintf($txt['error_db_file'], 'Subs-Db-' . $db_type . '.php');
-			return false;
-		}
-
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))
 			$smcFunc = [];
 
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
 
-		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		try
+		{
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		}
+		catch (InvalidAdapterException $e)
+		{
+			$incontext['error'] = $txt['error_db_file'];
+			return false;
+		}
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 		$smcFunc['db']->connect(['non_fatal' => true, 'dont_select_db' => !$needsDB]);

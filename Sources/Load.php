@@ -2984,7 +2984,7 @@ function template_include($filename, $once = false)
 function loadDatabase()
 {
 	global $db_persist, $db_server, $db_user, $db_passwd;
-	global $db_type, $db_name, $sourcedir, $db_prefix, $db_port, $smcFunc;
+	global $db_type, $db_name, $db_prefix, $db_port, $smcFunc;
 
 	if (empty($smcFunc))
 	{
@@ -2992,11 +2992,10 @@ function loadDatabase()
 	}
 
 	// Figure out what type of database we are using.
-	if (empty($db_type) || !file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
+	if (empty($db_type))
+	{
 		$db_type = 'mysql';
-
-	// Load the file for the database.
-	require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
+	}
 
 	$db_options = [];
 
@@ -3004,7 +3003,8 @@ function loadDatabase()
 	if (!empty($db_port))
 		$db_options['port'] = $db_port;
 
-	try {
+	try
+	{
 		$options = array_merge($db_options, ['persist' => $db_persist]);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);

@@ -222,10 +222,6 @@ class Table
 			$parameters['engine'] = $this->get_engine([]);
 		}
 
-		if (!isset($smcFunc['db_create_table']))
-		{
-			db_extend('Packages');
-		}
 		if ($safe_mode)
 		{
 			$parameters['safe_mode'] = true;
@@ -233,11 +229,11 @@ class Table
 			{
 				$parameters['on_create_table'] = $this->opts['on_create'](true);
 			}
-			return $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+			return $smcFunc['db']->create_table('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 		}
 		else
 		{
-			$result = $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+			$result = $smcFunc['db']->create_table('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 			if ($result)
 			{
 				self::$table_cache[] = $db_prefix . $this->table_name;
@@ -298,7 +294,7 @@ class Table
 			}
 			else
 			{
-				$change_column = $smcFunc['db_compare_column']($this->columns[$column_name], $column, $column_name);
+				$change_column = $smcFunc['db']->compare_column($this->columns[$column_name], $column, $column_name);
 				if ($change_column)
 				{
 					$changes['change_columns'][$column_name] = $change_column;
@@ -306,7 +302,7 @@ class Table
 			}
 		}
 
-		$extra_indexes = $smcFunc['db_compare_indexes']($this->indexes, $dest_indexes);
+		$extra_indexes = $smcFunc['db']->compare_indexes($this->indexes, $dest_indexes);
 		if (!empty($extra_indexes))
 		{
 			$changes['add_indexes'] = $extra_indexes;
@@ -315,7 +311,7 @@ class Table
 		$result = '';
 		if (!empty($changes))
 		{
-			$result = $smcFunc['db_change_table']('{db_prefix}' . $this->get_table_name(), $changes, $safe_mode);
+			$result = $smcFunc['db']->change_table('{db_prefix}' . $this->get_table_name(), $changes, $safe_mode);
 		}
 
 		if ($safe_mode)

@@ -252,7 +252,7 @@ function SetCensor()
  */
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc, $db_type;
+	global $context, $txt, $modSettings, $scripturl, $sourcedir, $db_type;
 
 	// All the settings...
 	$config_vars = [

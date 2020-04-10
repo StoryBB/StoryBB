@@ -113,9 +113,9 @@ class Index
 	}
 
 	/**
-	 * Returns an array suitable for db_create_table to create the indexes on that table.
+	 * Returns an array suitable for DatabaseAdapter::create_table to create the indexes on that table.
 	 *
-	 * @return array Data for db_create_table
+	 * @return array Data for DatabaseAdapter::create_table
 	 */
 	public function create_data()
 	{
