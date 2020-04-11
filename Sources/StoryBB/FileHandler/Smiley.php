@@ -14,6 +14,7 @@ namespace StoryBB\FileHandler;
 
 use DateInterval;
 use Datetime;
+use StoryBB\Controller\Unloggable;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\Filesystem;
 use StoryBB\Dependency\UrlGenerator;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class Smiley implements Servable
+class Smiley implements Servable, Unloggable
 {
 	use Database;
 	use UrlGenerator;
