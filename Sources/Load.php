@@ -34,30 +34,16 @@ function reloadSettings()
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
 	if (($modSettings = cache_get_data('modSettings', 90)) == null)
 	{
-		$request = $smcFunc['db']->query('', '
-			SELECT variable, value
-			FROM {db_prefix}settings',
-			[
-			]
-		);
-		$modSettings = [];
-		if (!$request)
+		try
+		{
+			$container = Container::instance();
+			$site_settings = $container->get('site_settings');
+			$modSettings = $site_settings->get_all();
+		}
+		catch (RuntimeException $e)
 		{
 			display_db_error();
 		}
-		while ($row = $smcFunc['db']->fetch_row($request))
-			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db']->free_result($request);
-
-		// Do a few things to protect against missing settings or settings with invalid values...
-		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
-			$modSettings['defaultMaxTopics'] = 20;
-		if (empty($modSettings['defaultMaxMessages']) || $modSettings['defaultMaxMessages'] <= 0 || $modSettings['defaultMaxMessages'] > 999)
-			$modSettings['defaultMaxMessages'] = 15;
-		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
-			$modSettings['defaultMaxMembers'] = 30;
-		if (empty($modSettings['defaultMaxListItems']) || $modSettings['defaultMaxListItems'] <= 0 || $modSettings['defaultMaxListItems'] > 999)
-			$modSettings['defaultMaxListItems'] = 15;
 
 		if (!is_array($modSettings['attachmentUploadDir']))
 			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);

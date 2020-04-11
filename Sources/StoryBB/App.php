@@ -64,6 +64,11 @@ class App
 		$container->inject('cachedir', App::get_root_path() . '/cache');
 		$container->inject('requestcontext', $request_context);
 		$container->inject('database', $smcFunc['db']);
+
+		$container->inject('site_settings', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
+		});
+
 		$container->inject('filesystem', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Filesystem');
 		});
