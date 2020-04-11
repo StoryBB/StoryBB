@@ -83,6 +83,7 @@ $smcFunc = [];
 // This is our general bootstrap but a bit minimal.
 unset ($db_show_debug);
 loadDatabase();
+StoryBB\App::build_container();
 reloadSettings();
 
 // We need to init some super-default things because there's a lot of code that might accidentally rely on it.

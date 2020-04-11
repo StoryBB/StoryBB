@@ -41,8 +41,10 @@ require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
 
+
 unset ($db_show_debug);
 loadDatabase();
+StoryBB\App::build_container();
 reloadSettings();
 
 require_once($sourcedir . '/Subs-Admin.php');
