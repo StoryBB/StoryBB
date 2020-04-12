@@ -2324,49 +2324,6 @@ function call_helper($string, $return = false)
 }
 
 /**
- * Prepares an array of "likes" info for the topic specified by $topic
- * @param integer $topic The topic ID to fetch the info from.
- * @return array An array of IDs of messages in the specified topic that the current user likes
- */
-function prepareLikesContext($topic)
-{
-	global $user_info, $smcFunc;
-
-	// Make sure we have something to work with.
-	if (empty($topic))
-		return [];
-
-
-	// We already know the number of likes per message, we just want to know whether the current user liked it or not.
-	$user = $user_info['id'];
-	$cache_key = 'likes_topic_' . $topic . '_' . $user;
-	$ttl = 180;
-
-	if (($temp = cache_get_data($cache_key, $ttl)) === null)
-	{
-		$temp = [];
-		$request = $smcFunc['db']->query('', '
-			SELECT content_id
-			FROM {db_prefix}user_likes AS l
-				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
-			WHERE l.id_member = {int:current_user}
-				AND l.content_type = {literal:msg}
-				AND m.id_topic = {int:topic}',
-			[
-				'current_user' => $user,
-				'topic' => $topic,
-			]
-		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-			$temp[] = (int) $row['content_id'];
-
-		cache_put_data($cache_key, $temp, $ttl);
-	}
-
-	return $temp;
-}
-
-/**
  * Decode numeric html entities to their ascii or UTF8 equivalent character.
  *
  * Callback function for preg_replace_callback in subs-members

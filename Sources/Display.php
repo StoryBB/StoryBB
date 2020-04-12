@@ -1622,32 +1622,6 @@ function prepareDisplayContext($reset = false)
 }
 
 /**
- * Once upon a time, this function handled downloading attachments.
- * Now it's just an alias retained for the sake of backwards compatibility.
- * @todo check if it can truly be removed
- */
-function Download()
-{
-	global $sourcedir;
-	require_once($sourcedir . '/ShowAttachments.php');
-	showAttachment();
-}
-
-/**
- * A sort function for putting unapproved attachments first.
- * @param array $a An array of info about one attachment
- * @param array $b An array of info about a second attachment
- * @return int -1 if $a is approved but $b isn't, 0 if both are approved/unapproved, 1 if $b is approved but a isn't
- */
-function approved_attach_sort($a, $b)
-{
-	if ($a['is_approved'] == $b['is_approved'])
-		return 0;
-
-	return $a['is_approved'] > $b['is_approved'] ? -1 : 1;
-}
-
-/**
  * In-topic quick moderation.
  */
 function QuickInTopicModeration()
@@ -1769,4 +1743,47 @@ function QuickInTopicModeration()
 	}
 
 	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);
+}
+
+/**
+ * Prepares an array of "likes" info for the topic specified by $topic
+ * @param integer $topic The topic ID to fetch the info from.
+ * @return array An array of IDs of messages in the specified topic that the current user likes
+ */
+function prepareLikesContext($topic)
+{
+	global $user_info, $smcFunc;
+
+	// Make sure we have something to work with.
+	if (empty($topic))
+		return [];
+
+
+	// We already know the number of likes per message, we just want to know whether the current user liked it or not.
+	$user = $user_info['id'];
+	$cache_key = 'likes_topic_' . $topic . '_' . $user;
+	$ttl = 180;
+
+	if (($temp = cache_get_data($cache_key, $ttl)) === null)
+	{
+		$temp = [];
+		$request = $smcFunc['db']->query('', '
+			SELECT content_id
+			FROM {db_prefix}user_likes AS l
+				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
+			WHERE l.id_member = {int:current_user}
+				AND l.content_type = {literal:msg}
+				AND m.id_topic = {int:topic}',
+			[
+				'current_user' => $user,
+				'topic' => $topic,
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+			$temp[] = (int) $row['content_id'];
+
+		cache_put_data($cache_key, $temp, $ttl);
+	}
+
+	return $temp;
 }
