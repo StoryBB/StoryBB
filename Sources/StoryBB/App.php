@@ -17,8 +17,10 @@ use StoryBB\Container;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
+use Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper;
+use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
+use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
@@ -75,8 +77,7 @@ class App
 		$container->inject('smileys', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
 		});
-
-		$container->inject('router_public', function() {
+		$container->inject('router_public', function() use ($container) {
 			$routes = new RouteCollection;
 			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
 			{
@@ -85,11 +86,61 @@ class App
 
 			return $routes;
 		});
+		$container->inject('compiled_matcher', function() use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_matcher.php';
+			if (file_exists($compiled_routes))
+			{
+				try
+				{
+					$routes = include($compiled_routes);
+					if ($array = unserialize($routes))
+					{
+						return $array;
+					}
+				}
+				catch (\Throwable $e)
+				{
+					@unlink($compiled_routes);
+				}
+			}
+
+			$routes = $container->get('router_public');
+			$compilation = (new CompiledUrlMatcherDumper($routes))->getCompiledRoutes();
+
+			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
+
+			return $compilation;
+		});
+		$container->inject('compiled_generator', function() use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_generator.php';
+			if (file_exists($compiled_routes))
+			{
+				try
+				{
+					$routes = include($compiled_routes);
+					if ($array = unserialize($routes))
+					{
+						return $array;
+					}
+				}
+				catch (\Throwable $e)
+				{
+					@unlink($compiled_routes);
+				}
+			}
+
+			$routes = $container->get('router_public');
+			$compilation = (new CompiledUrlGeneratorDumper($routes))->getCompiledRoutes();
+
+			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
+
+			return $compilation;
+		});
 		$container->inject('urlgenerator', function() use ($container) {
-			return new UrlGenerator($container->get('router_public'), $container->get('requestcontext'));
+			return new CompiledUrlGenerator($container->get('compiled_generator'), $container->get('requestcontext'));
 		});
 		$container->inject('urlmatcher', function() use ($container) {
-			return new UrlMatcher($container->get('router_public'), $container->get('requestcontext'));
+			return new CompiledUrlMatcher($container->get('compiled_matcher'), $container->get('requestcontext'));
 		});
 		$container->inject('templater', function() use ($container) {
 			$latte = new \Latte\Engine;
