@@ -280,4 +280,87 @@ class Fulltext extends AbstractSearchable implements Searchable
 
 		return $ignoreRequest;
 	}
+
+	/**
+	 * Callback when a post is created
+	 * @see createPost()
+	 *
+	 * @todo fix
+	 * @param array $msgOptions An array of post data
+	 * @param array $topicOptions An array of topic data
+	 * @param array $posterOptions An array of info about the person who made this post
+	 * @return void
+	 */
+	public function postCreated(array &$msgOptions, array &$topicOptions, array &$posterOptions)
+	{
+		return;
+	}
+
+	/**
+	 * Callback when a post is modified
+	 * @see modifyPost()
+	 *
+	 * @todo fix
+	 * @param array $msgOptions An array of post data
+	 * @param array $topicOptions An array of topic data
+	 * @param array $posterOptions An array of info about the person who made this post
+	 * @return void
+	 */
+	public function postModified(array &$msgOptions, array &$topicOptions, array &$posterOptions)
+	{
+		return;
+	}
+
+	/**
+	 * Callback when a post is removed
+	 *
+	 * @todo fix
+	 * @param int $id_msg The ID of the post that was removed
+	 * @return void
+	 */
+	public function postRemoved($id_msg)
+	{
+		return;
+	}
+
+	/**
+	 * Callback when a topic is removed
+	 *
+	 * @todo fix
+	 * @param array $topics The ID(s) of the removed topic(s)
+	 * @return void
+	 */
+	public function topicsRemoved(array $topics)
+	{
+		return;
+	}
+
+	/**
+	 * Callback when a topic is moved
+	 *
+	 * @todo fix
+	 * @param array $topics The ID(s) of the moved topic(s)
+	 * @param int $board_to The board that the topics were moved to
+	 * @return void
+	 */
+	public function topicsMoved(array $topics, $board_to)
+	{
+		return;
+	}
+
+	/**
+	 * Callback for actually performing the search query
+	 *
+	 * @todo fix
+	 * @param array $query_params An array of parameters for the query
+	 * @param array $searchWords The words that were searched for
+	 * @param array $excludedIndexWords Indexed words that should be excluded
+	 * @param array $participants
+	 * @param array $searchArray
+	 * @return mixed
+	 */
+	public function searchQuery(array $query_params, array $searchWords, array $excludedIndexWords, array &$participants, array &$searchArray)
+	{
+		return '';
+	}
 }
