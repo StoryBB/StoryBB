@@ -11,6 +11,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
@@ -37,7 +38,7 @@ function reloadSettings()
 		try
 		{
 			$container = Container::instance();
-			$site_settings = $container->get('site_settings');
+			$site_settings = $container->get('sitesettings');
 			$modSettings = $site_settings->get_all();
 		}
 		catch (RuntimeException $e)

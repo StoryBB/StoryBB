@@ -19,7 +19,7 @@ trait SiteSettings
 {
 	protected $_sitesettings;
 
-	public function _accept_settings(StoryBB_SiteSettings $sitesettings) : void
+	public function _accept_sitesettings(StoryBB_SiteSettings $sitesettings) : void
 	{
 		$this->_sitesettings = $sitesettings;
 	}

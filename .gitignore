@@ -9,6 +9,7 @@ cache/template*.php
 cache/lang/*.php
 cache/images/*
 cache/files/
+cache/template/
 *.*~
 attachments/
 custom_avatar/

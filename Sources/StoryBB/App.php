@@ -56,16 +56,16 @@ class App
 		static::setMemoryLimit('128M');
 	}
 
-	public static function dispatch_request(RequestContext $request_context)
+	public static function build_container()
 	{
 		global $smcFunc;
 
 		$container = Container::instance();
 		$container->inject('cachedir', App::get_root_path() . '/cache');
-		$container->inject('requestcontext', $request_context);
+
 		$container->inject('database', $smcFunc['db']);
 
-		$container->inject('site_settings', function() use ($container) {
+		$container->inject('sitesettings', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
 		});
 
@@ -91,6 +91,43 @@ class App
 		$container->inject('urlmatcher', function() use ($container) {
 			return new UrlMatcher($container->get('router_public'), $container->get('requestcontext'));
 		});
+		$container->inject('templater', function() use ($container) {
+			$latte = new \Latte\Engine;
+			$latte->setTempDirectory($container->get('cachedir') . '/template');
+
+			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/default/templates');
+			$latte->setLoader($loader);
+
+			$latte->addFilter('translate', function ($string, $langfile = '') {
+				return $string . ($langfile ? ' (' . $langfile . ')' : '');
+			});
+			$latte->addFunction('link', function($url, $params = []) use ($container) {
+				try
+				{
+					$urlgenerator = $container->get('urlgenerator');
+					return $urlgenerator->generate($url, $params);
+				}
+				catch (\Exception $e)
+				{
+					return $e->getMessage();
+				}
+			});
+			return $latte;
+		});
+
+		return $container;
+	}
+
+	public static function dispatch_request(Request $request)
+	{
+		$container = Container::instance();
+		static::build_container();
+		$container->inject('requestvars', $request);
+		$request_context = (new RequestContext('/'))->fromRequest($request);
+		$container->inject('requestcontext', function() use ($container) {
+			return (new RequestContext('/'))->fromRequest($container->get('requestvars'));
+		});
+
 		try
 		{
 			$matcher = $container->get('urlmatcher');
