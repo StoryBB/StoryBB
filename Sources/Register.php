@@ -508,7 +508,7 @@ function Register2()
 
 		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
 
-		redirectexit('action=login2;sa=check;member=' . $memberID, $context['server']['needs_login_fix']);
+		redirectexit('action=login2;sa=check;member=' . $memberID);
 	}
 }
 

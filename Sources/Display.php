@@ -193,7 +193,7 @@ function Display()
 				['id_member', 'id_topic']
 			);
 		}
-		redirectexit('topic=' . $context['topicinfo']['id_redirect_topic'] . '.0', false, true);
+		redirectexit('topic=' . $context['topicinfo']['id_redirect_topic'] . '.0', true);
 	}
 
 	// Short-cut to know if this user can see unapproved messages.

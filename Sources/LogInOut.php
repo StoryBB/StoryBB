@@ -498,7 +498,7 @@ function DoLogin()
 
 	// Just log you back out if it's in maintenance mode and you AREN'T an admin.
 	if (empty($maintenance) || allowedTo('admin_forum'))
-		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
+		redirectexit('action=login2;sa=check;member=' . $user_info['id']);
 	else
 		redirectexit($urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]));
 }
@@ -573,7 +573,7 @@ function Logout($internal = false, $redirect = true)
 	if ($redirect)
 	{
 		if (empty($_SESSION['logout_url']))
-			redirectexit('', $context['server']['needs_login_fix']);
+			redirectexit();
 		elseif (!empty($_SESSION['logout_url']) && (strpos($_SESSION['logout_url'], 'http://') === false && strpos($_SESSION['logout_url'], 'https://') === false))
 		{
 			unset ($_SESSION['logout_url']);
@@ -584,7 +584,7 @@ function Logout($internal = false, $redirect = true)
 			$temp = $_SESSION['logout_url'];
 			unset($_SESSION['logout_url']);
 
-			redirectexit($temp, $context['server']['needs_login_fix']);
+			redirectexit($temp);
 		}
 	}
 }

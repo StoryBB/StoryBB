@@ -925,7 +925,7 @@ function forum_time($use_user_offset = true, $timestamp = null)
  * @param bool $refresh Whether to use a meta refresh instead
  * @param bool $permanent Whether to send a 301 Moved Permanently instead of a 302 Moved Temporarily
  */
-function redirectexit($setLocation = '', $refresh = false, $permanent = false)
+function redirectexit($setLocation = '', $permanent = false)
 {
 	global $scripturl, $context, $db_show_debug, $db_cache;
 

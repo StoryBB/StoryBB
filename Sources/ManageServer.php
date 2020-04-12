@@ -417,7 +417,7 @@ function ModifyCookieSettings($return_config = false)
 			$cookiename = !empty($_POST['cookiename']) ? $_POST['cookiename'] : $cookiename;
 			setLoginCookie(0, $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
 
-			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id, $context['server']['needs_login_fix']);
+			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id);
 		}
 
 		//If we disabled 2FA, reset all members and membergroups settings.
