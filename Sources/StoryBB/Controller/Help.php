@@ -12,6 +12,8 @@
 
 namespace StoryBB\Controller;
 
+use StoryBB\Dependency\Page;
+use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Routing\RenderResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -20,6 +22,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Help implements Routable
 {
+	use Page;
+	use UrlGenerator;
+
 	public static function register_own_routes(RouteCollection $routes): void
 	{
 		$routes->add('help', new Route('/help', ['_controller' => [static::class, 'help']]));
@@ -39,6 +44,10 @@ class Help implements Routable
 	{
 		$container = \StoryBB\Container::instance();
 		$smiley_helper = $container->get('smileys');
+
+		$page = $this->page();
+		$page->addLinktree('General:help', $this->urlgenerator()->generate('help'));
+		$page->addLinktree('Manual:manual_smileys', $this->urlgenerator()->generate('help_smileys'));
 
 		$smileys = [];
 		foreach ($smiley_helper->get_smileys() as $smiley)

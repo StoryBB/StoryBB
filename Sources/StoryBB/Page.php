@@ -18,6 +18,7 @@ class Page
 		'name' => [],
 		'property' => [],
 	];
+	protected $linktree = [];
 
 	public function addMetaName(string $name, string $content): void
 	{
@@ -59,5 +60,15 @@ class Page
 		{
 			$this->removeMetaName('robots');
 		}
+	}
+
+	public function addLinktree(string $name, string $url): void
+	{
+		$this->linktree[] = ['name' => $name] + ($url ? ['url' => $url] : []);
+	}
+
+	public function getLinktree(): array
+	{
+		return $this->linktree;
 	}
 }
