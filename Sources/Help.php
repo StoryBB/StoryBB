@@ -30,7 +30,6 @@ function ShowHelp()
 
 	$subActions = [
 		'index' => 'HelpIndex',
-		'smileys' => 'HelpSmileys',
 	];
 
 	$context['manual_sections'] = [
@@ -146,40 +145,6 @@ function HelpPolicy()
 
 	$context['page_title'] = $context['policy_name'];
 	$context['sub_template'] = 'help_policy';
-}
-
-/**
- * The smileys list in the Help section
- */
-function HelpSmileys()
-{
-	global $scripturl, $context, $txt;
-
-	$container = Container::instance();
-	$smiley_helper = $container->get('smileys');
-
-	// Build the link tree.
-	$context['linktree'][] = [
-		'url' => $scripturl . '?action=help',
-		'name' => $txt['help'],
-	];
-	$context['linktree'][] = [
-		'url' => $scripturl . '?action=help;sa=smileys',
-		'name' => $txt['manual_smileys'],
-	];
-
-	$context['smileys'] = [];
-	foreach ($smiley_helper->get_smileys() as $smiley)
-	{
-		$context['smileys'][] = [
-			'text' => $smiley['description'],
-			'code' => explode("\n", $smiley['code']),
-			'image' => $smiley['url'],
-		];
-	}
-
-	$context['page_title'] = $txt['manual_smileys'];
-	$context['sub_template'] = 'help_smileys';
 }
 
 /**
