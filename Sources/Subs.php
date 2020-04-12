@@ -12,6 +12,7 @@
 
 use LightnCandy\LightnCandy;
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -1794,6 +1795,9 @@ function setupMenuContext()
 {
 	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings, $smcFunc;
 
+	$container = \StoryBB\Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
 	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'manage_attachments', 'manage_smileys']);
@@ -1951,7 +1955,7 @@ function setupMenuContext()
 			],
 			'logout' => [
 				'title' => $txt['logout'],
-				'href' => $scripturl . '?action=logout;%1$s=%2$s',
+				'href' => $urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]),
 				'show' => !$user_info['is_guest'],
 				'sub_buttons' => [
 				],
@@ -2026,10 +2030,6 @@ function setupMenuContext()
 	}
 
 	$context['menu_buttons'] = $menu_buttons;
-
-	// Logging out requires the session id in the url.
-	if (isset($context['menu_buttons']['logout']))
-		$context['menu_buttons']['logout']['href'] = sprintf($context['menu_buttons']['logout']['href'], $context['session_var'], $context['session_id']);
 
 	// Figure out which action we are doing so we can set the active tab.
 	// Default to home.
@@ -2917,10 +2917,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
  */
 function httpsOn()
 {
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') 
-		return true;
-	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') 
-		return true;
-
-	return false;
+	$container = Container::instance();
+	$request = $container->get('requestvars');
+	return $request->isSecure();
 }

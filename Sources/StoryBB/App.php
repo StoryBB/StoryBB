@@ -14,8 +14,11 @@ namespace StoryBB;
 
 use ReflectionMethod;
 use StoryBB\Container;
+use StoryBB\Controller\Unloggable;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
 use Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper;
@@ -73,6 +76,52 @@ class App
 
 		$container->inject('filesystem', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Filesystem');
+		});
+		$container->inject('session', function() use ($container) {
+			global $cookiename, $sc;
+
+			$site_settings = $container->get('sitesettings');
+			if ($site_settings->databaseSession_enable)
+			{
+				$session_storage = new NativeSessionStorage([], $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
+				$session = new Session($session_storage);
+			}
+			else
+			{
+				$session = new Session;
+			}
+
+			$session->setName($cookiename);
+			$session->start();
+
+			// if ($this->sitesettings()->globalCookies))
+			// {
+			// 	$parsed_url = parse_url($boardurl);
+
+			// 	if (!IP::is_valid_ipv4($parsed_url['host']) && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
+			// 		@ini_set('session.cookie_domain', '.' . $parts[1]);
+			// }
+			// // @todo Set the session cookie path?
+
+			// // If it's already been started... probably best to skip this.
+			// if ((ini_get('session.auto_start') == 1 && !empty($modSettings['databaseSession_enable'])) || session_id() == '')
+			// {
+			// 	// Attempt to end the already-started session.
+			// 	if (ini_get('session.auto_start') == 1)
+			// 		session_write_close();
+
+			// Change it so the cache settings are a little looser than default.
+			header('Cache-Control: private');
+
+			if (!$session->has('session_var'))
+			{
+				$session->set('session_value', md5($session->getId() . mt_rand()));
+				$session->set('session_var', substr(preg_replace('~^\d+~', '', sha1(mt_rand() . $session->getId() . mt_rand())), 0, mt_rand(7, 12)));
+
+				$sc = $session->get('session_value');
+			}
+
+			return $session;
 		});
 		$container->inject('smileys', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
@@ -164,6 +213,10 @@ class App
 				}
 			});
 			return $latte;
+		});
+
+		$container->inject('page', function() use ($container) {
+			return $container->instantiate('StoryBB\\Page');
 		});
 
 		return $container;

@@ -51,7 +51,9 @@ function setLoginCookie($cookie_length, $id, $password = '')
 
 		// Out with the old, in with the new!
 		if (isset($old_domain) && $old_domain != $cookie_url[0] || isset($old_path) && $old_path != $cookie_url[1])
-			sbb_setcookie($cookiename, json_encode([0, '', 0, $old_domain, $old_path], JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
+		{
+			//sbb_setcookie($cookiename, json_encode([0, '', 0, $old_domain, $old_path], JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
+		}
 	}
 
 	// Get the data and path to set it on.
@@ -64,11 +66,13 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	$data = json_encode(array_merge($data, $custom_data), JSON_FORCE_OBJECT);
 
 	// Set the cookie, $_COOKIE, and session variable.
-	sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], $cookie_url[0]);
+	//sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], $cookie_url[0]);
 
 	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
 	if (empty($id) && !empty($modSettings['globalCookies']))
-		sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
+	{
+		//sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
+	}
 
 	// Any alias URLs?  This is mainly for use with frames, etc.
 	if (!empty($modSettings['forum_alias_urls']))
@@ -92,7 +96,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
 			$alias_data[4] = $cookie_url[1];
 			$alias_data = json_encode($alias_data, JSON_FORCE_OBJECT);
 
-			sbb_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
+			//sbb_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
 		}
 
 		$boardurl = $temp;
@@ -109,12 +113,12 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		// Backup and remove the old session.
 		$oldSessionData = $_SESSION;
 		$_SESSION = [];
-		session_destroy();
+		// session_destroy();
 
-		// Recreate and restore the new session.
-		loadSession();
-		// @todo should we use session_regenerate_id(true); now that we are 5.1+
-		session_regenerate_id();
+		// // Recreate and restore the new session.
+		// loadSession();
+		// // @todo should we use session_regenerate_id(true); now that we are 5.1+
+		// session_regenerate_id();
 		$_SESSION = $oldSessionData;
 
 		$_SESSION['login_' . $cookiename] = $data;

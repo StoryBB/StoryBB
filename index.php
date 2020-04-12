@@ -62,6 +62,15 @@ $smcFunc = [];
 // Initiate the database connection and define some database functions to use.
 loadDatabase();
 
+$result = App::dispatch_request(Request::createFromGlobals());
+
+if ($result && $result instanceof Response)
+{
+	ob_end_clean();
+	$result->send();
+	exit;
+}
+
 // Load the settings from the settings table, and perform operations like optimizing.
 $context = [];
 reloadSettings();
@@ -80,25 +89,12 @@ if (isset($_GET['scheduled']))
 }
 
 // And important includes.
-require_once($sourcedir . '/Session.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Logging.php');
 require_once($sourcedir . '/Security.php');
 
 // Register an error handler.
 set_error_handler('sbb_error_handler');
-
-// Start the session. (assuming it hasn't already been.)
-loadSession();
-
-$result = App::dispatch_request((new RequestContext('/'))->fromRequest(Request::createFromGlobals()));
-
-if ($result && $result instanceof Response)
-{
-	ob_end_clean();
-	$result->send();
-	exit;
-}
 
 // What function shall we execute? (done like this for memory's sake.)
 call_user_func(sbb_main());

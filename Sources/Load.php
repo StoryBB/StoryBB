@@ -18,6 +18,7 @@ use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
+use StoryBB\Hook\Mutatable;
 use StoryBB\Plugin\Manager as PluginManager;
 use StoryBB\StringLibrary;
 
@@ -208,53 +209,20 @@ function loadUserSettings()
 	global $cookiename, $user_info, $language, $context, $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
 	// Check first the integration, then the cookie, and last the session.
-	if (count($integration_ids = call_integration_hook('integrate_verify_user')) > 0)
+	$id_member = 0;
+	(new Mutatable\Account\Authenticates($id_member))->execute();
+	$already_verified = !empty($id_member);
+
+	if (!$id_member)
 	{
-		$id_member = 0;
-		foreach ($integration_ids as $integration_id)
+		// Check the session.
+		$container = Container::instance();
+		$session = $container->get('session');
+
+		if ($session->has('userid'))
 		{
-			$integration_id = (int) $integration_id;
-			if ($integration_id > 0)
-			{
-				$id_member = $integration_id;
-				$already_verified = true;
-				break;
-			}
+			$id_member = $session->get('userid');
 		}
-	}
-	else
-		$id_member = 0;
-
-	if (empty($id_member) && isset($_COOKIE[$cookiename]))
-	{
-		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
-
-		// Malformed or was reset
-		if (empty($cookie_data))
-			$cookie_data = [0, '', 0, '', ''];
-
-		if (count($cookie_data) < 5)
-			$cookie_data = array_pad($cookie_data, 5, '');
-
-		list ($id_member, $password, $login_span, $cookie_domain, $cookie_path) = $cookie_data;
-
-		$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
-
-		// Make sure the cookie is set to the correct domain and path
-		require_once($sourcedir . '/Subs-Auth.php');
-		if ([$cookie_domain, $cookie_path] != url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies'])))
-			setLoginCookie($login_span - time(), $id_member);
-	}
-	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
-	{
-		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		$cookie_data = sbb_json_decode($_SESSION['login_' . $cookiename], true);
-
-		if (empty($cookie_data))
-			$cookie_data = [0, '', 0];
-
-		list ($id_member, $password, $login_span) = $cookie_data;
-		$id_member = !empty($id_member) && strlen($password) == 128 && $login_span > time() ? (int) $id_member : 0;
 	}
 
 	// Only load this stuff if the user isn't a guest.
@@ -291,34 +259,14 @@ function loadUserSettings()
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
-			// As much as the password should be right, we can assume the integration set things up.
-			if (!empty($already_verified) && $already_verified === true)
-				$check = true;
-			// SHA-512 hash should be 128 characters long.
-			elseif (strlen($password) == 128)
-				$check = hash_salt($user_settings['passwd'], $user_settings['password_salt']) == $password;
-			else
-				$check = false;
-
 			// Wrong password or not activated - either way, you're going nowhere.
-			$id_member = $check && ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
+			$id_member = ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
 		}
 		else
 			$id_member = 0;
 
 		// If we no longer have the member maybe they're being all hackey, stop brute force!
-		if (!$id_member)
-		{
-			require_once($sourcedir . '/LogInOut.php');
-			validatePasswordFlood(
-				!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member,
-				!empty($user_settings['member_name']) ? $user_settings['member_name'] : '',
-				!empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false,
-				$id_member != 0
-			);
-		}
-		// Validate for Two Factor Authentication
-		elseif (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login2', 'logintfa'])))
+		if (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login2', 'logintfa'])))
 		{
 			$tfacookie = $cookiename . '_tfa';
 			$tfasecret = null;
@@ -476,8 +424,8 @@ function loadUserSettings()
 		$user_info = ['groups' => [-1]];
 		$user_settings = [];
 
-		if (isset($_COOKIE[$cookiename]) && empty($context['tfa_member']))
-			$_COOKIE[$cookiename] = '';
+		// if (isset($_COOKIE[$cookiename]) && empty($context['tfa_member']))
+		// 	$_COOKIE[$cookiename] = '';
 
 		// Expire the 2FA cookie
 		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
@@ -2005,10 +1953,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!isset($context['javascript_vars']))
 		$context['javascript_vars'] = [];
 
-	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=login2';
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
+	$context['login_url'] = $urlgenerator->generate('login_login');
 	$context['menu_separator'] = ' ';
-	$context['session_var'] = $_SESSION['session_var'];
-	$context['session_id'] = $_SESSION['session_value'];
+
+	$session = $container->get('session');
+	$context['session_var'] = $session->get('session_var');
+	$context['session_id'] = $session->get('session_value');
 	$context['forum_name'] = $modSettings['forum_name'];
 	$context['forum_name_html_safe'] = StringLibrary::escape($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : StringLibrary::escape($settings['header_logo_url']);

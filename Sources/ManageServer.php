@@ -346,7 +346,6 @@ function ModifyCookieSettings($return_config = false)
 		'',
 		// Sessions
 		['databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'],
-		['databaseSession_loose', $txt['databaseSession_loose'], 'db', 'check', false, 'databaseSession_loose'],
 		['databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime', 'postinput' => $txt['seconds']],
 		'',
 		// 2FA

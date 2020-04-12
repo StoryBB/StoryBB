@@ -130,7 +130,7 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_instance']),
-				],
+				]
 			),
 			Table::make('board_permissions',
 				[
@@ -736,7 +736,8 @@ class Uncategorised
 					'buddy_list' => Column::text(),
 					'pm_ignore_list' => Column::varchar(255),
 					'pm_prefs' => Column::mediumint(),
-					'passwd' => Column::varchar(64),
+					'passwd' => Column::varchar(255),
+					'auth' => Column::varchar(255),
 					'email_address' => Column::varchar(255),
 					'birthdate' => Column::date()->default('1004-01-01'),
 					'birthday_visibility' => Column::tinyint(),
@@ -1075,9 +1076,10 @@ class Uncategorised
 			),
 			Table::make('sessions',
 				[
-					'session_id' => Column::varchar(128),
-					'last_update' => Column::int(),
-					'data' => Column::text(),
+					'session_id' => Column::varbinary(128),
+					'data' => Column::mediumblob(),
+					'session_time' => Column::int(),
+					'lifetime' => Column::int(),
 				],
 				[
 					Index::primary(['session_id']),

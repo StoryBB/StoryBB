@@ -92,42 +92,8 @@ function Login2()
 		StoryBB\Template::remove_all_layers();
 	}
 
-	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
-	{
-		// First check for JSON format cookie in $_COOKIE
-		if (isset($_COOKIE[$cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_COOKIE[$cookiename]) === 1)
-			list (,, $timeout) = sbb_json_decode($_COOKIE[$cookiename], true);
-
-		// Try checking for JSON format cookie in $_SESSION
-		elseif (isset($_SESSION['login_' . $cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_SESSION['login_' . $cookiename]) === 1)
-			list (,, $timeout) = sbb_json_decode($_SESSION['login_' . $cookiename]);
-
-		else
-			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
-
-		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData($user_info['id'], ['password_salt' => $user_settings['password_salt']]);
-
-		// Preserve the 2FA cookie?
-		if (!empty($modSettings['tfa_mode']) && !empty($_COOKIE[$cookiename . '_tfa']))
-		{
-			$tfadata = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
-
-			list ($tfamember, $tfasecret, $exp, $domain, $path, $preserve) = $tfadata;
-
-			// If we're preserving the cookie, reset it with updated salt
-			if (isset($tfamember, $tfasecret, $exp, $domain, $path, $preserve) && $preserve && time() < $exp)
-				setTFACookie(3153600, $user_info['password_salt'], hash_salt($user_settings['tfa_backup'], $user_settings['password_salt']), true);
-			else
-				setTFACookie(-3600, 0, '');
-		}
-
-		setLoginCookie($timeout - time(), $user_info['id'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
-
-		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
-	}
 	// Double check the cookie...
-	elseif (isset($_GET['sa']) && $_GET['sa'] == 'check')
+	if (isset($_GET['sa']) && $_GET['sa'] == 'check')
 	{
 		// Strike!  You're outta there!
 		if ($_GET['member'] != $user_info['id'])
@@ -526,11 +492,15 @@ function DoLogin()
 			]
 		);
 
+	$container = \StoryBB\Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+	$urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]);
+
 	// Just log you back out if it's in maintenance mode and you AREN'T an admin.
 	if (empty($maintenance) || allowedTo('admin_forum'))
 		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
 	else
-		redirectexit('action=logout;' . $context['session_var'] . '=' . $context['session_id'], $context['server']['needs_login_fix']);
+		redirectexit($urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]));
 }
 
 /**
@@ -630,61 +600,6 @@ function md5_hmac($data, $key)
 {
 	$key = str_pad(strlen($key) <= 64 ? $key : pack('H*', md5($key)), 64, chr(0x00));
 	return md5(($key ^ str_repeat(chr(0x5c), 64)) . pack('H*', md5(($key ^ str_repeat(chr(0x36), 64)) . $data)));
-}
-
-/**
- * Custom encryption for phpBB3 based passwords.
- *
- * @param string $passwd The raw (unhashed) password
- * @param string $passwd_hash The hashed password
- * @return string The hashed version of $passwd
- */
-function phpBB3_password_check($passwd, $passwd_hash)
-{
-	// Too long or too short?
-	if (strlen($passwd_hash) != 34)
-		return;
-
-	// Range of characters allowed.
-	$range = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-	// Tests
-	$strpos = strpos($range, $passwd_hash[3]);
-	$count = 1 << $strpos;
-	$salt = substr($passwd_hash, 4, 8);
-
-	$hash = md5($salt . $passwd, true);
-	for (; $count != 0; --$count)
-		$hash = md5($hash . $passwd, true);
-
-	$output = substr($passwd_hash, 0, 12);
-	$i = 0;
-	while ($i < 16)
-	{
-		$value = ord($hash[$i++]);
-		$output .= $range[$value & 0x3f];
-
-		if ($i < 16)
-			$value |= ord($hash[$i]) << 8;
-
-		$output .= $range[($value >> 6) & 0x3f];
-
-		if ($i++ >= 16)
-			break;
-
-		if ($i < 16)
-			$value |= ord($hash[$i]) << 16;
-
-		$output .= $range[($value >> 12) & 0x3f];
-
-		if ($i++ >= 16)
-			break;
-
-		$output .= $range[($value >> 18) & 0x3f];
-	}
-
-	// Return now.
-	return $output;
 }
 
 /**

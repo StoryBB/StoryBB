@@ -232,7 +232,7 @@ class Template
 			if (!isset($options['flags'])) {
 				$options['flags'] = LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL;
 			}
-			$options['flags'] |= LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG;
+			$options['flags'] |= LightnCandy::FLAG_ERROR_EXCEPTION;
 		}
 
 		$phpStr = LightnCandy::compile($template, [

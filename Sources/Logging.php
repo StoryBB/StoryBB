@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -67,7 +68,11 @@ function writeLog($force = false)
 
 		// In the case of a dlattach action, session_var may not be set.
 		if (!isset($context['session_var']))
-			$context['session_var'] = $_SESSION['session_var'];
+		{
+			$container = Container::instance();
+			$session = $container->get('session');
+			$context['session_var'] = $session->get('session_var');
+		}
 
 		unset($encoded_get['sesc'], $encoded_get[$context['session_var']]);
 		$encoded_get = json_encode($encoded_get);
