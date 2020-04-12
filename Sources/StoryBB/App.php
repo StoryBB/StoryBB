@@ -216,7 +216,9 @@ class App
 		});
 
 		$container->inject('page', function() use ($container) {
-			return $container->instantiate('StoryBB\\Page');
+			$page = $container->instantiate('StoryBB\\Page');
+			$page->addMetaProperty('og:site_name', $container->get('sitesettings')->forum_name);
+			return $page;
 		});
 
 		return $container;

@@ -29,7 +29,12 @@ class Page
 		unset($this->meta['name'][$name]);
 	}
 
-	public function addMetaProperty(string $property, string $content)
+	public function getMetaNames(): array
+	{
+		return $this->meta['name'];
+	}
+
+	public function addMetaProperty(string $property, string $content): void
 	{
 		$this->meta['property'][$property] = $content;
 	}
@@ -39,7 +44,12 @@ class Page
 		unset($this->meta['property'][$property]);
 	}
 
-	public function excludeRobots(bool $state = true)
+	public function getMetaProperties(): array
+	{
+		return $this->meta['property'];
+	}
+
+	public function excludeRobots(bool $state = true): void
 	{
 		if ($state)
 		{
