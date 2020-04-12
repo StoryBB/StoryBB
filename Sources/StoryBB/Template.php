@@ -368,7 +368,7 @@ class Template
 			'modSettings' => $modSettings,
 			'options' => $options,
 			'user_info' => $user_info,
-			'copyright' => theme_copyright(),
+			'copyright' => sprintf('<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>', App::SOFTWARE_VERSION, App::SOFTWARE_YEAR),
 		]);
 	}
 

@@ -1436,17 +1436,6 @@ function template_header()
 }
 
 /**
- * Show the copyright.
- */
-function theme_copyright()
-{
-	global $txt;
-
-	// Put in the version...
-	return sprintf($txt['copyright'], App::SOFTWARE_VERSION, App::SOFTWARE_YEAR);
-}
-
-/**
  * Output the Javascript files
  * 	- tabbing in this function is to make the HTML source look good proper
  *  - if defered is set function will output all JS (source & inline) set to load at page end

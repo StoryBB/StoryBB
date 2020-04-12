@@ -482,8 +482,6 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go up';
 $txt['go_down'] = 'Go down';
 
-$txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>';
-
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';
 $txt['calendar_day'] = 'Day';
