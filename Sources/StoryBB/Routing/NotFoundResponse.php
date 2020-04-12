@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A class for serving smileys.
+ * A class for serving 404s.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2020 StoryBB and individual contributors (see contributors.txt)

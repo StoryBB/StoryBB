@@ -25,6 +25,9 @@ function ShowHelp()
 
 	loadLanguage('Manual');
 
+	$container = \StoryBB\Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
 	$subActions = [
 		'index' => 'HelpIndex',
 		'smileys' => 'HelpSmileys',
@@ -32,7 +35,7 @@ function ShowHelp()
 
 	$context['manual_sections'] = [
 		'smileys' => [
-			'link' => $scripturl . '?action=help;sa=smileys',
+			'link' => $urlgenerator->generate('help_smileys'),
 			'title' => $txt['manual_smileys'],
 			'desc' => $txt['manual_smileys_desc'],
 		],
