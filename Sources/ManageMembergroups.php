@@ -774,7 +774,6 @@ function EditMembergroup()
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
 		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 && (empty($inherit_type) || $inherit_type != 1) ? (int) $_POST['group_inherit'] : -2;
-		$_POST['group_tfa_force'] = (empty($modSettings['tfa_mode']) || $modSettings['tfa_mode'] != 2 || empty($_POST['group_tfa_force'])) ? 0 : 1;
 
 		//@todo Don't set online_color for the Moderators group?
 
@@ -784,7 +783,7 @@ function EditMembergroup()
 			SET group_name = {string:group_name}, online_color = {string:online_color},
 				max_messages = {int:max_messages}, icons = {string:icons},
 				description = {string:group_desc}, group_type = {int:group_type}, hidden = {int:group_hidden},
-				id_parent = {int:group_inherit}, tfa_required = {int:tfa_required}
+				id_parent = {int:group_inherit}
 			WHERE id_group = {int:current_group}',
 			[
 				'max_messages' => $_POST['max_messages'],
@@ -796,7 +795,6 @@ function EditMembergroup()
 				'online_color' => $_POST['online_color'],
 				'icons' => $_POST['icons'],
 				'group_desc' => $_POST['group_desc'],
-				'tfa_required' => $_POST['group_tfa_force'],
 			]
 		);
 
@@ -1011,7 +1009,7 @@ function EditMembergroup()
 
 	// Fetch the current group information.
 	$request = $smcFunc['db']->query('', '
-		SELECT group_name, is_character, description, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
+		SELECT group_name, is_character, description, online_color, max_messages, icons, group_type, hidden, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}
 		LIMIT 1',
@@ -1043,7 +1041,6 @@ function EditMembergroup()
 		'inherited_from' => $row['id_parent'],
 		'allow_delete' => !in_array($_REQUEST['group'], [1, 3]),
 		'allow_protected' => allowedTo('admin_forum'),
-		'tfa_required' => $row['tfa_required'],
 	];
 
 	// Get any moderators for this group

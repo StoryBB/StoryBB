@@ -709,7 +709,6 @@ class Uncategorised
 					'group_type' => Column::tinyint(),
 					'hidden' => Column::tinyint(),
 					'id_parent' => Column::smallint()->signed()->default(-2),
-					'tfa_required' => Column::tinyint(),
 					'is_character' => Column::tinyint(),
 					'badge_order' => Column::smallint(),
 				],
@@ -764,8 +763,6 @@ class Uncategorised
 					'passwd_flood' => Column::varchar(12),
 					'pm_receive_from' => Column::tinyint()->default(1),
 					'timezone' => Column::varchar(80)->default('UTC'),
-					'tfa_secret' => Column::varchar(24),
-					'tfa_backup' => Column::varchar(64),
 					'policy_acceptance' => Column::tinyint(),
 				],
 				[

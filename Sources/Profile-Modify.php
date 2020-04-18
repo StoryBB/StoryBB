@@ -505,19 +505,6 @@ function loadProfileFields($force_reload = false)
 				return true;
 			},
 		],
-		'tfa' => [
-			'type' => 'callback',
-			'callback_func' => 'tfa',
-			'permission' => 'profile_password',
-			'enabled' => !empty($modSettings['tfa_mode']),
-			'preload' => function() use (&$context, $cur_profile, $modSettings, $scripturl)
-			{
-				$context['tfa_enabled'] = !empty($cur_profile['tfa_secret']);
-				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=profile;area=tfasetup';
-
-				return true;
-			},
-		],
 		'time_format' => [
 			'type' => 'select',
 			'options' => array_merge(['' => $txt['timeformat_default']], \StoryBB\Helper\Datetime::list_dateformats()),
@@ -1651,7 +1638,6 @@ function account($memID)
 			'id_group', 'hr',
 			'email_address', 'show_online', 'hr',
 			'immersive_mode', 'hr',
-			'tfa', 'hr',
 			'passwrd1', 'passwrd2', 'hr',
 			'secret_question', 'secret_answer',
 		]
@@ -3909,94 +3895,4 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	updateMemberData($memID, ['id_group' => $newPrimary, 'additional_groups' => $addGroups]);
 
 	return $changeType;
-}
-
-/**
- * Provides interface to setup Two Factor Auth in StoryBB
- *
- * @param int $memID The ID of the member
- */
-function tfasetup($memID)
-{
-	global $user_info, $context, $user_settings, $sourcedir, $modSettings, $maintenance;
-
-	$context['sub_template'] = 'profile_tfasetup';
-
-	require_once($sourcedir . '/Class-TOTP.php');
-	require_once($sourcedir . '/Subs-Auth.php');
-
-	// If TFA has not been setup, allow them to set it up
-	if (empty($user_settings['tfa_secret']) && $context['user']['is_owner'])
-	{
-		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
-			fatal_lang_error('login_ssl_required');
-
-		// In some cases (forced 2FA or backup code) they would be forced to be redirected here,
-		// we do not want too much AJAX to confuse them.
-		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && !isset($_REQUEST['backup']) && !isset($_REQUEST['forced']))
-		{
-			$context['from_ajax'] = true;
-			StoryBB\Template::set_layout('raw');
-			StoryBB\Template::remove_all_layers();
-		}
-
-		// When the code is being sent, verify to make sure the user got it right
-		if (!empty($_REQUEST['save']) && !empty($_SESSION['tfa_secret']))
-		{
-			$code = $_POST['tfa_code'];
-			$totp = new \TOTP\Auth($_SESSION['tfa_secret']);
-			$totp->setRange(1);
-			$valid_password = hash_verify_password($user_settings['member_name'], trim($_POST['passwd']), $user_settings['passwd']);
-			$valid_code = strlen($code) == $totp->getCodeLength() && $totp->validateCode($code);
-
-			if ($valid_password && $valid_code)
-			{
-				$backup = substr(sha1(mt_rand()), 0, 16);
-				$backup_encrypted = hash_password($user_settings['member_name'], $backup);
-
-				updateMemberData($memID, [
-					'tfa_secret' => $_SESSION['tfa_secret'],
-					'tfa_backup' => $backup_encrypted,
-				]);
-
-				setTFACookie(3153600, $memID, hash_salt($backup_encrypted, $user_settings['password_salt']));
-
-				unset($_SESSION['tfa_secret']);
-
-				$context['tfa_backup'] = $backup;
-				$context['sub_template'] = 'profile_tfasetup_backup';
-
-				return;
-			}
-			else
-			{
-				$context['tfa_secret'] = $_SESSION['tfa_secret'];
-				$context['tfa_error'] = !$valid_code;
-				$context['tfa_pass_error'] = !$valid_password;
-				$context['tfa_pass_value'] = $_POST['passwd'];
-				$context['tfa_value'] = $_POST['tfa_code'];
-			}
-		}
-		else
-		{
-			$totp = new \TOTP\Auth();
-			$secret = $totp->generateCode();
-			$_SESSION['tfa_secret'] = $secret;
-			$context['tfa_secret'] = $secret;
-			$context['tfa_backup'] = isset($_REQUEST['backup']);
-		}
-
-		$context['tfa_qr_url'] = $totp->getQrCodeUrl($context['forum_name'] . ':' . $user_info['name'], $context['tfa_secret']);
-	}
-	elseif (isset($_REQUEST['disable']))
-	{
-		updateMemberData($memID, [
-			'tfa_secret' => '',
-			'tfa_backup' => '',
-		]);
-		redirectexit('action=profile;area=account;u=' . $memID);
-	}
-	else
-		redirectexit('action=profile;area=account;u=' . $memID);
 }

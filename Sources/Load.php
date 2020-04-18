@@ -263,76 +263,6 @@ function loadUserSettings()
 		else
 			$id_member = 0;
 
-		// If we no longer have the member maybe they're being all hackey, stop brute force!
-		if (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login2', 'logintfa'])))
-		{
-			$tfacookie = $cookiename . '_tfa';
-			$tfasecret = null;
-
-			$verified = call_integration_hook('integrate_verify_tfa', [$id_member, $user_settings]);
-
-			if (empty($verified) || !in_array(true, $verified))
-			{
-				if (!empty($_COOKIE[$tfacookie]))
-				{
-					$tfa_data = sbb_json_decode($_COOKIE[$tfacookie]);
-
-					list ($tfamember, $tfasecret) = $tfa_data;
-
-					if (!isset($tfamember, $tfasecret) || (int) $tfamember != $id_member)
-						$tfasecret = null;
-				}
-
-				if (empty($tfasecret) || hash_salt($user_settings['tfa_backup'], $user_settings['password_salt']) != $tfasecret)
-				{
-					$id_member = 0;
-					redirectexit('action=logintfa');
-				}
-			}
-		}
-		// When authenticating their two factor code, make sure to reset their ID for security
-		elseif (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && $_REQUEST['action'] == 'logintfa')
-		{
-			$id_member = 0;
-			$context['tfa_member'] = $user_settings;
-			$user_settings = [];
-		}
-		// Are we forcing 2FA? Need to check if the user groups actually require 2FA
-		elseif (!empty($modSettings['tfa_mode']) && $modSettings['tfa_mode'] >= 2 && $id_member && empty($user_settings['tfa_secret']))
-		{
-			if ($modSettings['tfa_mode'] == 2) //only do this if we are just forcing SOME membergroups
-			{
-				//Build an array of ALL user membergroups.
-				$full_groups = [$user_settings['id_group']];
-				if (!empty($user_settings['additional_groups']))
-				{
-					$full_groups = array_merge($full_groups, explode(',', $user_settings['additional_groups']));
-					$full_groups = array_unique($full_groups); //duplicates, maybe?
-				}
-
-				//Find out if any group requires 2FA
-				$request = $smcFunc['db']->query('', '
-					SELECT COUNT(id_group) AS total
-					FROM {db_prefix}membergroups
-					WHERE tfa_required = {int:tfa_required}
-						AND id_group IN ({array_int:full_groups})',
-					[
-						'tfa_required' => 1,
-						'full_groups' => $full_groups,
-					]
-				);
-				$row = $smcFunc['db']->fetch_assoc($request);
-				$smcFunc['db']->free_result($request);
-			}
-			else
-				$row['total'] = 1; //simplifies logics in the next "if"
-
-			$area = !empty($_REQUEST['area']) ? $_REQUEST['area'] : '';
-			$action = !empty($_REQUEST['action']) ? $_REQUEST['action'] : '';
-
-			if ($row['total'] > 0 && !in_array($action, ['profile', 'logout']) || ($action == 'profile' && $area != 'tfasetup'))
-				redirectexit('action=profile;area=tfasetup;forced');
-		}
 	}
 
 	// Found 'im, let's set up the variables.
@@ -343,7 +273,7 @@ function loadUserSettings()
 		// 2. If it was set within this session, no need to set it again.
 		// 3. New session, yet updated < five hours ago? Maybe cache can help.
 		// 4. We're still logging in or authenticating
-		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
@@ -422,22 +352,8 @@ function loadUserSettings()
 		$user_info = ['groups' => [-1]];
 		$user_settings = [];
 
-		// if (isset($_COOKIE[$cookiename]) && empty($context['tfa_member']))
+		// if (isset($_COOKIE[$cookiename]))
 		// 	$_COOKIE[$cookiename] = '';
-
-		// Expire the 2FA cookie
-		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
-		{
-			$tfa_data = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
-
-			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
-
-			if (!isset($id, $user, $exp, $domain, $path, $preserve) || !$preserve || time() > $exp)
-			{
-				$_COOKIE[$cookiename . '_tfa'] = '';
-				setTFACookie(-3600, 0, '');
-			}
-		}
 
 		// Create a login token if it doesn't exist yet.
 		if (!isset($_SESSION['token']['post-login']))
@@ -1094,7 +1010,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			break;
 		case 'profile':
 			$select_columns .= ', mem.additional_groups, mem.id_theme, mem.pm_ignore_list, mem.pm_receive_from,
-			mem.time_format, mem.timezone, mem.secret_question, mem.tfa_secret,
+			mem.time_format, mem.timezone, mem.secret_question,
 			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts,
 			lo.id_character AS online_character, chars.is_main, chars.main_char_group, chars.char_groups,
 			cg.online_color AS char_group_color, COALESCE(cg.group_name, {string:blank_string}) AS character_group,

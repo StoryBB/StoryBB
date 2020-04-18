@@ -297,16 +297,6 @@ function ModifyProfile($post_errors = [])
 						'any' => ['profile_identity_any', 'profile_password_any', 'manage_membergroups'],
 					],
 				],
-				'tfasetup' => [
-					'file' => 'Profile-Modify.php',
-					'function' => 'tfasetup',
-					'token' => 'profile-tfa%u',
-					'enabled' => !empty($modSettings['tfa_mode']),
-					'permission' => [
-						'own' => ['profile_password_own'],
-						'any' => ['profile_password_any'],
-					],
-				],
 				'forumprofile' => [
 					'label' => $txt['forumprofile'],
 					'file' => 'Profile-Modify.php',

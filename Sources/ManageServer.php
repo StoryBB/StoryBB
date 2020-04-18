@@ -347,16 +347,6 @@ function ModifyCookieSettings($return_config = false)
 		// Sessions
 		['databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'],
 		['databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime', 'postinput' => $txt['seconds']],
-		'',
-		// 2FA
-		['tfa_mode', $txt['tfa_mode'], 'db', 'select', [
-			0 => $txt['tfa_mode_disabled'],
-			1 => $txt['tfa_mode_enabled'],
-		] + (empty($user_settings['tfa_secret']) ? [] : [
-			2 => $txt['tfa_mode_forced'],
-		]) + (empty($user_settings['tfa_secret']) ? [] : [
-			3 => $txt['tfa_mode_forcedall'],
-		]), 'subtext' => $txt['tfa_mode_subtext'] . (empty($user_settings['tfa_secret']) ? '<br /><strong>' . $txt['tfa_mode_forced_help'] . '</strong>' : ''), 'tfa_mode'],
 	];
 
 	addInlineJavaScript('
@@ -375,9 +365,6 @@ function ModifyCookieSettings($return_config = false)
 	$("#localCookies, #globalCookies").click(function() {
 		hideGlobalCookies();
 	});', true);
-
-	if (empty($user_settings['tfa_secret']))
-		addInlineJavaScript('');
 
 	settings_integration_hook('integrate_cookie_settings', [&$config_vars]);
 
@@ -418,25 +405,6 @@ function ModifyCookieSettings($return_config = false)
 			setLoginCookie(0, $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
 
 			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id);
-		}
-
-		//If we disabled 2FA, reset all members and membergroups settings.
-		if (isset($_POST['tfa_mode']) && empty($_POST['tfa_mode']))
-		{
-			$smcFunc['db']->query('', '
-				UPDATE {db_prefix}membergroups
-				SET tfa_required = {int:zero}',
-				[
-					'zero' => 0,
-				]
-			);
-			$smcFunc['db']->query('', '
-				UPDATE {db_prefix}members
-				SET tfa_secret = {string:empty}, tfa_backup = {string:empty}',
-				[
-					'empty' => '',
-				]
-			);
 		}
 
 		session_flash('success', $txt['settings_saved']);

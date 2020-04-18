@@ -4507,13 +4507,6 @@ span.member.hidden {
 	display: none;
 }
 
-/* Two-Factor Auth code container */
-.tfacode {
-	background: #D0E7F8;
-	padding: 5px;
-	width: 20%;
-}
-
 /* AJAX notification bar */
 #ajax_in_progress {
 	background: #fff;

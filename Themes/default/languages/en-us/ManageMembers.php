@@ -70,8 +70,6 @@ $txt['membergroup_no_images'] = 'There are no images in the Themes/default/image
 
 $txt['membergroups_max_messages'] = 'Max personal messages';
 $txt['membergroups_max_messages_note'] = '0 = unlimited';
-$txt['membergroups_tfa_force'] = 'Force Two-Factor-Authentication (2FA) for this membergroup';
-$txt['membergroups_tfa_force_note'] = 'Be sure to warn your users before you activate this!';
 $txt['membergroups_edit_save'] = 'Save';
 $txt['membergroups_delete'] = 'Delete';
 $txt['membergroups_confirm_delete'] = 'Are you sure you want to delete this group?';

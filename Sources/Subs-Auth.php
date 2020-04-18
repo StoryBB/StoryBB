@@ -126,37 +126,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 }
 
 /**
- * Sets Two Factor Auth cookie
- *
- * @param int $cookie_length How long the cookie should last, in minutes
- * @param int $id The ID of the member
- * @param string $secret Should be a salted secret using hash_salt
- * @param bool $preserve Whether to preserve the cookie for 30 days
- */
-function setTFACookie($cookie_length, $id, $secret, $preserve = false)
-{
-	global $modSettings, $cookiename;
-
-	$identifier = $cookiename . '_tfa';
-	$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-
-	if ($preserve)
-		$cookie_length = 81600 * 30;
-
-	// Get the data and path to set it on.
-	$data = json_encode(empty($id) ? [0, '', 0, $cookie_url[0], $cookie_url[1], false] : [$id, $secret, time() + $cookie_length, $cookie_url[0], $cookie_url[1], $preserve], JSON_FORCE_OBJECT);
-
-	// Set the cookie, $_COOKIE, and session variable.
-	sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0]);
-
-	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
-	if (empty($id) && !empty($modSettings['globalCookies']))
-		sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], '');
-
-	$_COOKIE[$identifier] = $data;
-}
-
-/**
  * Get the domain and path for the cookie
  * - normally, local and global should be the localCookies and globalCookies settings, respectively.
  * - uses boardurl to determine these two things.

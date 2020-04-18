@@ -154,17 +154,6 @@
 					</dd>
 {{/if}}
 
-{{! Force 2FA for this membergroup? }}
-{{#if (eq modSettings.tfa_mode '2')}}
-					<dt>
-						<label for="group_tfa_force_input"><strong>{{{txt.membergroups_tfa_force}}}:</strong></label><br>
-						<span class="smalltext">{{{txt.membergroups_tfa_force_note}}}</span>
-					</dt>
-					<dd>
-						<input type="checkbox" name="group_tfa_force"{{#if context.group.tfa_required}} checked{{/if}}>
-					</dd>
-{{/if}}
-
 {{#if context.categories}}
 					<dt>
 						<strong>{{{txt.membergroups_new_board}}}:</strong>

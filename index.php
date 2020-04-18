@@ -156,17 +156,17 @@ function sbb_main()
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
 		// You can only login.... otherwise, you're getting the "maintenance mode" display.
-		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], ['login2', 'logintfa', 'logout'])))
+		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], ['login2', 'logout'])))
 		{
 			require_once($sourcedir . '/LogInOut.php');
-			return ($_REQUEST['action'] == 'login2' ? 'Login2' : ($_REQUEST['action'] == 'logintfa' ? 'LoginTFA' : 'Logout'));
+			return ($_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout');
 		}
 		// Don't even try it, sonny.
 		else
 			return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login', 'login2', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
 		return 'KickGuest';
 
 	// Apply policy settings if appropriate.
@@ -239,7 +239,6 @@ function sbb_main()
 		'lockvoting' => ['Poll.php', 'LockVoting'],
 		'login' => ['LogInOut.php', 'Login'],
 		'login2' => ['LogInOut.php', 'Login2'],
-		'logintfa' => ['LogInOut.php', 'LoginTFA'],
 		'logout' => ['LogInOut.php', 'Logout'],
 		'markasread' => ['Subs-Boards.php', 'MarkRead'],
 		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
