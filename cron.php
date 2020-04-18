@@ -17,6 +17,10 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+use StoryBB\Cli\App as CliApp;
+use StoryBB\Container;
+
 define('STORYBB', 'BACKGROUND');
 define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 
@@ -37,25 +41,23 @@ global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
 define('TIME_START', microtime(true));
 
-// Just being safe...
-foreach (['cachedir'] as $variable)
-	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
+require_once(__DIR__ . '/vendor/autoload.php');
 
-// Get the forum's settings for database and file paths.
-require_once(dirname(__FILE__) . '/Settings.php');
+App::start(__DIR__);
 
-// Make absolutely sure the cache directory is defined.
-if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-	$cachedir = $boarddir . '/cache';
+if (App::in_maintenance())
+{
+	die(App::get_global_config_item('maintenance_message'));
+}
+$container = Container::instance();
+CliApp::build_container(App::get_global_config());
 
-// Don't do john didley if the forum's been shut down competely.
-if ($maintenance == 2)
-	die($mmessage);
+$smcFunc = [
+	'db' => $container->get('database'),
+];
 
-// Fix for using the current directory as a path.
-if (substr($sourcedir, 0, 1) == '.' && substr($sourcedir, 1, 1) != '.')
-	$sourcedir = dirname(__FILE__) . substr($sourcedir, 1);
+$sourcedir = App::get_sources_path();
+$cachedir = $container->get('cachedir');
 
 // Have we already turned this off? If so, exist gracefully.
 if (file_exists($cachedir . '/cron.lock'))
@@ -70,20 +72,12 @@ if (!FROM_CLI)
 		obExit_cron();
 }
 
-require_once($boarddir . '/vendor/autoload.php');
-
 // Load the most important includes. In general, a background should be loading its own dependencies.
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
 
-// Create a variable to store some StoryBB specific functions in.
-$smcFunc = [];
-
 // This is our general bootstrap but a bit minimal.
-unset ($db_show_debug);
-loadDatabase();
-StoryBB\App::build_container();
 reloadSettings();
 
 // We need to init some super-default things because there's a lot of code that might accidentally rely on it.
@@ -103,13 +97,14 @@ cleanRequest_cron();
 
 // At this point we could reseed the RNG but I don't think we need to risk it being seeded *even more*.
 // Meanwhile, time we got on with the real business here.
-while ($task_details = fetch_task())
+$db = $container->get('database');
+while ($task_details = fetch_task($db))
 {
 	$result = perform_task($task_details);
 	if ($result)
 	{
-		$smcFunc['db']->query('', '
-			DELETE FROM {db_prefix}background_tasks
+		$db->query('', '
+			DELETE FROM {db_prefix}adhoc_tasks
 			WHERE id_task = {int:task}',
 			[
 				'task' => $task_details['id_task'],
@@ -124,10 +119,8 @@ exit;
  * The heart of this cron handler...
  * @return bool|array False if there's nothing to do or an array of info about the task
  */
-function fetch_task()
+function fetch_task($db)
 {
-	global $smcFunc;
-
 	// Check we haven't run over our time limit.
 	if (microtime(true) - TIME_START > MAX_CRON_TIME)
 		return false;
@@ -135,21 +128,21 @@ function fetch_task()
 	// Try to find a task. Specifically, try to find one that hasn't been claimed previously, or failing that,
 	// a task that was claimed but failed for whatever reason and failed long enough ago. We should not care
 	// what task it is, merely that it is one in the queue, the order is irrelevant.
-	$request = $smcFunc['db']->query('', '
+	$request = $db->query('', '
 		SELECT id_task, task_file, task_class, task_data, claimed_time
-		FROM {db_prefix}background_tasks
+		FROM {db_prefix}adhoc_tasks
 		WHERE claimed_time < {int:claim_limit}
 		LIMIT 1',
 		[
 			'claim_limit' => time() - MAX_CLAIM_THRESHOLD,
 		]
 	);
-	if ($row = $smcFunc['db']->fetch_assoc($request))
+	if ($row = $db->fetch_assoc($request))
 	{
 		// We found one. Let's try and claim it immediately.
-		$smcFunc['db']->free_result($request);
-		$smcFunc['db']->query('', '
-			UPDATE {db_prefix}background_tasks
+		$db->free_result($request);
+		$db->query('', '
+			UPDATE {db_prefix}adhoc_tasks
 			SET claimed_time = {int:new_claimed}
 			WHERE id_task = {int:task}
 				AND claimed_time = {int:old_claimed}',
@@ -160,7 +153,7 @@ function fetch_task()
 			]
 		);
 		// Could we claim it? If so, return it back.
-		if ($smcFunc['db']->affected_rows() != 0)
+		if ($db->affected_rows() != 0)
 		{
 			// Update the time and go back.
 			$row['claimed_time'] = time();
@@ -171,13 +164,13 @@ function fetch_task()
 		else
 		{
 			// Uh oh, we just missed it. Try to claim another one, and let it fall through if there aren't any.
-			return fetch_task();
+			return fetch_task($db);
 		}
 	}
 	else
 	{
 		// No dice. Clean up and go home.
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 		return false;
 	}
 }

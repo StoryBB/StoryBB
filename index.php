@@ -43,7 +43,7 @@ $time_start = microtime(true);
 ob_start();
 
 // Load the settings...
-require_once(dirname(__FILE__) . '/Settings.php');
+require(dirname(__FILE__) . '/Settings.php');
 
 // Without those we can't go anywhere
 require_once($sourcedir . '/QueryString.php');
@@ -55,12 +55,6 @@ require_once($sourcedir . '/Load.php');
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();
-
-// Create a variable to store some StoryBB specific functions in.
-$smcFunc = [];
-
-// Initiate the database connection and define some database functions to use.
-loadDatabase();
 
 $result = App::dispatch_request(Request::createFromGlobals());
 
@@ -237,9 +231,7 @@ function sbb_main()
 		'likes' => ['Likes.php', 'Likes::call#'],
 		'lock' => ['Topic.php', 'LockTopic'],
 		'lockvoting' => ['Poll.php', 'LockVoting'],
-		'login' => ['LogInOut.php', 'Login'],
 		'login2' => ['LogInOut.php', 'Login2'],
-		'logout' => ['LogInOut.php', 'Logout'],
 		'markasread' => ['Subs-Boards.php', 'MarkRead'],
 		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
 		'mlist' => ['Memberlist.php', 'Memberlist'],
