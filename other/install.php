@@ -1037,8 +1037,8 @@ function DatabasePopulation()
 	$schema = Schema::get_tables();
 	foreach ($schema as $count => $table)
 	{
-		if (!$table->exists()) {
-			$result = $table->create();
+		if (!$table->exists($smcFunc['db'])) {
+			$result = $table->create($smcFunc['db']);
 			if ($result)
 			{
 				$incontext['sql_results']['tables']++;
