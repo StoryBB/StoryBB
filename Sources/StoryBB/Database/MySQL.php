@@ -56,6 +56,11 @@ class MySQL implements DatabaseAdapter
 		return 'MySQL';
 	}
 
+	public function get_prefix(): string
+	{
+		return $this->db_prefix;
+	}
+
 	/**
 	 * Sets the database table prefix this instance should use.
 	 *
@@ -2052,8 +2057,7 @@ class MySQL implements DatabaseAdapter
 		}
 
 		// Now do the things to the thing!
-		$query = '
-			ALTER TABLE ' . $table_name . "\n\t\t" . implode(",\n\t\t", $sql_changes);
+		$query = "\n\t" . 'ALTER TABLE ' . $table_name . "\n\t\t" . implode(",\n\t\t", $sql_changes);
 
 		if ($safe_mode)
 		{
