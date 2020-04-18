@@ -317,6 +317,24 @@ class Column
 	}
 
 	/**
+	 * Returns if this column is (fully or portially) the primary key or not.
+	 *
+	 * @return bool True if column is part of the primary key.
+	 */
+	public function is_primary(): bool
+	{
+		return !empty($this->column['auto']);
+	}
+
+	/**
+	 * @todo document and make it more useful
+	 */
+	public function get_simple_type(): string
+	{
+		return $this->column['type'];
+	}
+
+	/**
 	 * Returns an array suitable for DatabaseAdapter::create_table to create the table.
 	 *
 	 * @param string $column_name The name of the final column itself.

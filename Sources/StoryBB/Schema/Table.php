@@ -176,6 +176,16 @@ class Table
 	}
 
 	/**
+	 * Returns the constraints in this table.
+	 *
+	 * @return array An array of Constraint objects that this table cares about.
+	 */
+	public function get_constraints(): array
+	{
+		return $this->constraints;
+	}
+
+	/**
 	 * Identify whether a given table exists (silently taking account of the prefix)
 	 *
 	 * @return True if the database table this object describes already exists in the database.

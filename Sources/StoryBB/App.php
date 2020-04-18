@@ -15,6 +15,7 @@ namespace StoryBB;
 use ReflectionMethod;
 use StoryBB\Container;
 use StoryBB\Controller\Unloggable;
+use StoryBB\Database\AdapterFactory;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
@@ -33,6 +34,7 @@ class App
 	const SOFTWARE_YEAR = 2020;
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
+	protected static $global_config = [];
 	protected static $storybb_root = '';
 	protected static $storybb_sources = '';
 
@@ -40,6 +42,34 @@ class App
 	{
 		static::$storybb_root = $path;
 		static::$storybb_sources = $path . '/Sources';
+
+		require($path . '/Settings.php');
+
+		static::$global_config = [
+			'maintenance' => $maintenance ?? 0,
+			'maintenance_title' => $mtitle ?? '',
+			'maintenance_message' => $mmessage ?? '',
+			'language' => $language ?? 'en-us',
+			'boardurl' => $boardurl ?? 'http://localhost/',
+			'webmaster_email' => $webmaster_email ?? 'root@localhost',
+			'cookiename' => $cookiename ?? 'SBBCookie123',
+			'db_type' => $db_type ?? 'mysql',
+			'db_server' => $db_server ?? 'localhost',
+			'db_port' => $db_port ?? false,
+			'db_name' => $db_name ?? 'storybb',
+			'db_user' => $db_user ?? 'root',
+			'db_passwd' => $db_passwd ?? '',
+			'db_prefix' => $db_prefix ?? 'sbb_',
+			'db_persist' => $db_persist ?? 0,
+			'db_show_debug' => isset($db_show_debug) && $db_show_debug === true,
+			'cache_accelerator' => $cache_accelerator ?? '',
+			'cache_enable' => $cache_enable ?? 0,
+			'cache_memcached' => $cache_memcached ?? '',
+			'cache_redis' => $cache_redis ?? '',
+			'image_proxy_enabled' => $image_proxy_enabled ?? 0,
+			'image_proxy_secret' => $image_proxy_secret ?? 'invalidhash',
+			'image_proxy_maxsize' => $image_proxy_maxsize ?? 5120,
+		];
 
 		static::set_base_environment();
 	}
@@ -52,6 +82,21 @@ class App
 	public static function get_sources_path(): string
 	{
 		return static::$storybb_sources;
+	}
+
+	public static function get_global_config_item(string $key)
+	{
+		return static::$global_config[$key] ?? null;
+	}
+
+	public static function get_global_config()
+	{
+		return static::$global_config;
+	}
+
+	public static function in_maintenance()
+	{
+		return static::$global_config['maintenance'] > 0;
 	}
 
 	public static function set_base_environment()
@@ -68,7 +113,27 @@ class App
 		$container = Container::instance();
 		$container->inject('cachedir', App::get_root_path() . '/cache');
 
-		$container->inject('database', $smcFunc['db']);
+		$global_config = static::get_global_config();
+		$container->inject('database', function() use ($container, $global_config) {
+			// Add in the port if needed
+			$db_options = [];
+			if (!empty($global_config['db_port']))
+			{
+				$db_options['port'] = $global_config['db_port'];
+			}
+
+			$options = array_merge($db_options, ['persist' => $global_config['db_persist']]);
+
+			$db = AdapterFactory::get_adapter($global_config['db_type']);
+			$db->set_prefix($global_config['db_prefix']);
+			$db->set_server($global_config['db_server'], $global_config['db_name'], $global_config['db_user'], $global_config['db_passwd']);
+			$db->connect($options);
+
+			return $db;
+		});
+		$smcFunc = [
+			'db' => $container->get('database'),
+		];
 
 		$container->inject('sitesettings', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
