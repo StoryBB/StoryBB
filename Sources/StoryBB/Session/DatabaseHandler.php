@@ -45,151 +45,151 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHand
  */
 class DatabaseHandler extends AbstractSessionHandler
 {
-    use Database;
-    use SiteSettings;
+	use Database;
+	use SiteSettings;
 
-    private const MAX_LIFETIME = 315576000;
+	private const MAX_LIFETIME = 315576000;
 
-    /**
-     * @var bool True when the current session exists but expired according to session.gc_maxlifetime
-     */
-    private $sessionExpired = false;
+	/**
+	 * @var bool True when the current session exists but expired according to session.gc_maxlifetime
+	 */
+	private $sessionExpired = false;
 
-    /**
-     * @var bool Whether gc() has been called
-     */
-    private $gcCalled = false;
+	/**
+	 * @var bool Whether gc() has been called
+	 */
+	private $gcCalled = false;
 
 
-    public function isSessionExpired()
-    {
-        return $this->sessionExpired;
-    }
+	public function isSessionExpired()
+	{
+		return $this->sessionExpired;
+	}
 
-    public function open($save_path, $session_name)
-    {
-        parent::open($save_path, $session_name);
-        $this->sessionExpired = false;
+	public function open($save_path, $session_name)
+	{
+		parent::open($save_path, $session_name);
+		$this->sessionExpired = false;
 
-        return true;
-    }
+		return true;
+	}
 
-    public function gc($maxlifetime)
-    {
-        // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
-        // This way, pruning expired sessions does not block them from being started while the current session is used.
-        $this->gcCalled = true;
+	public function gc($maxlifetime)
+	{
+		// We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
+		// This way, pruning expired sessions does not block them from being started while the current session is used.
+		$this->gcCalled = true;
 
-        return true;
-    }
+		return true;
+	}
 
-    protected function doDestroy($session_id)
-    {
-        $this->db()->query('', '
-            DELETE FROM {db_prefix}sessions
-            WHERE session_id = {string:session_id}',
-            [
-                'session_id' => $session_id,
-            ]
-        );
+	protected function doDestroy($session_id)
+	{
+		$this->db()->query('', '
+			DELETE FROM {db_prefix}sessions
+			WHERE session_id = {string:session_id}',
+			[
+				'session_id' => $session_id,
+			]
+		);
 
-        return true;
-    }
+		return true;
+	}
 
-    protected function doWrite($session_id, $data)
-    {
-        $maxlifetime = (int) ini_get('session.gc_maxlifetime'); // @todo databaseSession_lifetime ?
+	protected function doWrite($session_id, $data)
+	{
+		$maxlifetime = (int) ini_get('session.gc_maxlifetime'); // @todo databaseSession_lifetime ?
 
-        $db = $this->db();
+		$db = $this->db();
 
-        $db->query('', '
-            UPDATE {db_prefix}sessions
-            SET data = {string:data},
-                lifetime = {int:expiry},
-                session_time = {int:time}
-            WHERE session_id = {string:session_id}',
-            [
-                'session_id' => $session_id,
-                'data' => $data,
-                'expiry' => time() + $maxlifetime,
-                'time' => time(),
-            ]
-        );
+		$db->query('', '
+			UPDATE {db_prefix}sessions
+			SET data = {string:data},
+				lifetime = {int:expiry},
+				session_time = {int:time}
+			WHERE session_id = {string:session_id}',
+			[
+				'session_id' => $session_id,
+				'data' => $data,
+				'expiry' => time() + $maxlifetime,
+				'time' => time(),
+			]
+		);
 
-        if ($db->affected_rows() == 0)
-        {
-            $db->insert(DatabaseAdapter::INSERT_INSERT,
-                '{db_prefix}sessions',
-                ['session_id' => 'string', 'data' => 'string', 'lifetime' => 'int', 'session_time' => 'int'],
-                [$session_id, $data, time() + $maxlifetime, time()],
-                ['session_id'],
-                DatabaseAdapter::RETURN_NOTHING
-            );
-        }
+		if ($db->affected_rows() == 0)
+		{
+			$db->insert(DatabaseAdapter::INSERT_INSERT,
+				'{db_prefix}sessions',
+				['session_id' => 'string', 'data' => 'string', 'lifetime' => 'int', 'session_time' => 'int'],
+				[$session_id, $data, time() + $maxlifetime, time()],
+				['session_id'],
+				DatabaseAdapter::RETURN_NOTHING
+			);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public function updateTimestamp($session_id, $data)
-    {
-        $expiry = time() + (int) ini_get('session.gc_maxlifetime');
+	public function updateTimestamp($session_id, $data)
+	{
+		$expiry = time() + (int) ini_get('session.gc_maxlifetime');
 
-        $this->db()->query('', '
-            UPDATE {db_prefix}sessions
-            SET lifetime = {int:expiry},
-                session_time = {int:time}
-            WHERE session_id = {string:session_id}',
-            [
-                'session_id' => $session_id,
-                'expiry' => time() + $expiry,
-                'time' => time(),
-            ]
-        );
+		$this->db()->query('', '
+			UPDATE {db_prefix}sessions
+			SET lifetime = {int:expiry},
+				session_time = {int:time}
+			WHERE session_id = {string:session_id}',
+			[
+				'session_id' => $session_id,
+				'expiry' => time() + $expiry,
+				'time' => time(),
+			]
+		);
 
-        return true;
-    }
+		return true;
+	}
 
-    public function close()
-    {
-        if ($this->gcCalled) {
-            $this->gcCalled = false;
+	public function close()
+	{
+		if ($this->gcCalled) {
+			$this->gcCalled = false;
 
-            $this->db()->query('', '
-                DELETE FROM {db_prefix}sessions
-                WHERE lifetime <= {int:time}
-                    AND lifetime > {int:min}',
-                [
-                    'time' => time(),
-                    'min' => self::MAX_LIFETIME, // @ databaseSession_lifetime ?
-                ]
-            );
+			$this->db()->query('', '
+				DELETE FROM {db_prefix}sessions
+				WHERE lifetime <= {int:time}
+					AND lifetime > {int:min}',
+				[
+					'time' => time(),
+					'min' => self::MAX_LIFETIME, // @ databaseSession_lifetime ?
+				]
+			);
 
-        }
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    protected function doRead($session_id)
-    {
-        $db = $this->db();
-        $result = $db->query('', '
-            SELECT data, lifetime
-            FROM {db_prefix}sessions
-            WHERE session_id = {string:session_id}
-            LIMIT 1',
-            [
-                'session_id' => $session_id,
-            ]
-        );
-        list ($sess_data, $expiry) = $db->fetch_row($result);
-        $db->free_result($result);
+	protected function doRead($session_id)
+	{
+		$db = $this->db();
+		$result = $db->query('', '
+			SELECT data, lifetime
+			FROM {db_prefix}sessions
+			WHERE session_id = {string:session_id}
+			LIMIT 1',
+			[
+				'session_id' => $session_id,
+			]
+		);
+		list ($sess_data, $expiry) = $db->fetch_row($result);
+		$db->free_result($result);
 
-        if ($expiry <= time())
-        {
-            $this->sessionExpired = true;
-            return '';
-        }
+		if ($expiry <= time())
+		{
+			$this->sessionExpired = true;
+			return '';
+		}
 
-        return $sess_data ?? '';
-    }
+		return $sess_data ?? '';
+	}
 }

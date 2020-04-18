@@ -120,10 +120,10 @@ body#chrome #quick_search form input {
 /* Live news from StoryBB and support information. */
 
 .block-region-admin-home {
-    display:grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto;
-    grid-column-gap: 10px;
+	display:grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: auto;
+	grid-column-gap: 10px;
 }
 
 .block-region-admin-home > .block .information.block_content {
@@ -131,11 +131,11 @@ body#chrome #quick_search form input {
 }
 
 .blocktype_storybbnews {
-    grid-column: span 8;
+	grid-column: span 8;
 }
 
 .blocktype_supportinformation {
-    grid-column: span 4;
+	grid-column: span 4;
 }
 
 #admin_main_section {

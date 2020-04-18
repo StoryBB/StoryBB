@@ -28,10 +28,10 @@ class Logout implements Routable
 
 	public static function register_own_routes(RouteCollection $routes): void
 	{
-		$routes->add('logout', (new Route('/logout', ['_controller' => [static::class, 'logout']])));
+		$routes->add('logout', (new Route('/logout', ['_controller' => [static::class, 'logout_action']])));
 	}
 
-	public function logout(): Response
+	public function logout_action(): Response
 	{
 		$request = $this->requestvars();
 		if ($token = $request->query->get('t', ''))

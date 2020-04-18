@@ -50,5 +50,5 @@ abstract class Base
 		return $data[$this->name] ?? null;
 	}
 
-	abstract function render(Engine $templater, array $rawdata): string;
+	abstract public function render(Engine $templater, array $rawdata): string;
 }

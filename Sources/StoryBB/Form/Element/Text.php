@@ -21,8 +21,6 @@ class Text extends Traits\Base implements Inputtable
 	use Traits\Labelable;
 	use Traits\Requirable;
 
-	protected $value;
-
 	public function render(Engine $templater, array $rawdata): string
 	{
 		$rendercontext = [

@@ -27,14 +27,14 @@ class Help implements Routable
 
 	public static function register_own_routes(RouteCollection $routes): void
 	{
-		$routes->add('help', new Route('/help', ['_controller' => [static::class, 'help']]));
+		$routes->add('help', new Route('/help', ['_controller' => [static::class, 'help_index']]));
 		$routes->add('help_smileys', new Route('/help/smileys', ['_controller' => [static::class, 'smileys']]));
 	}
 
 	/**
 	 * @deprecated This is a placeholder for the link system to prove it works at all.
 	 */
-	public function help(): Response
+	public function help_index(): Response
 	{
 		global $boardurl;
 		return new RedirectResponse($boardurl . '/index.php?action=help');
