@@ -201,6 +201,12 @@ class App
 			$latte->addFilter('translate', function ($string, $langfile = '') {
 				return $string . ($langfile ? ' (' . $langfile . ')' : '');
 			});
+			$latte->addFilter('slugify', function ($string) {
+				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+				$string = strtolower($string);
+				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
+				return trim($string, '-');
+			});
 			$latte->addFunction('link', function($url, $params = []) use ($container) {
 				try
 				{

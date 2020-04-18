@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait RequestVars
 {
-	protected $_requestvars;
+	protected $_requestvars = null;
 
 	public function _accept_requestvars(Request $request) : void
 	{
@@ -26,7 +26,7 @@ trait RequestVars
 
 	protected function requestvars() : Request
 	{
-		if (empty($this->_requestvars))
+		if (!isset($this->_requestvars))
 		{
 			throw new RuntimeException('Request not initialised');
 		}
