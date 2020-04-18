@@ -72,18 +72,6 @@ class Uncategorised
 					Index::key(['attachment_type']),
 				]
 			),
-			Table::make('background_tasks',
-				[
-					'id_task' => Column::int()->auto_increment(),
-					'task_file' => Column::varchar(255),
-					'task_class' => Column::varchar(255),
-					'task_data' => Column::mediumtext(),
-					'claimed_time' => Column::int(),
-				],
-				[
-					Index::primary(['id_task']),
-				]
-			),
 			Table::make('ban_groups',
 				[
 					'id_ban_group' => Column::mediumint()->auto_increment(),
@@ -593,17 +581,6 @@ class Uncategorised
 					Index::key(['id_member']),
 				]
 			),
-			Table::make('log_scheduled_tasks',
-				[
-					'id_log' => Column::mediumint()->auto_increment(),
-					'id_task' => Column::smallint(),
-					'time_run' => Column::int(),
-					'time_taken' => Column::float(),
-				],
-				[
-					Index::primary(['id_log']),
-				]
-			),
 			Table::make('log_search_messages',
 				[
 					'id_search' => Column::tinyint(),
@@ -1044,22 +1021,6 @@ class Uncategorised
 				[
 					Index::primary(['id_question']),
 					Index::key(['lngfile' => 30]),
-				]
-			),
-			Table::make('scheduled_tasks',
-				[
-					'id_task' => Column::smallint()->auto_increment(),
-					'next_time' => Column::int(),
-					'time_offset' => Column::int(),
-					'time_regularity' => Column::smallint(),
-					'time_unit' => Column::varchar(1)->default('h'),
-					'disabled' => Column::tinyint(),
-					'class' => Column::varchar(255),
-				],
-				[
-					Index::primary(['id_task']),
-					Index::key(['next_time']),
-					Index::key(['disabled']),
 				]
 			),
 			Table::make('settings',

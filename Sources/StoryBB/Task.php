@@ -37,7 +37,7 @@ class Task
 			return false;
 		}
 
-		$smcFunc['db']->insert('insert', '{db_prefix}background_tasks',
+		$smcFunc['db']->insert('insert', '{db_prefix}adhoc_tasks',
 			['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
 			['', $class, !empty($data) ? json_encode($data) : '', 0],
 			['id_task']
@@ -78,7 +78,7 @@ class Task
 				$rows[] = ['', $task[0], !empty($task[1]) ? json_encode($task[1]) : '', 0];
 			}
 
-			$smcFunc['db']->insert('insert', '{db_prefix}background_tasks',
+			$smcFunc['db']->insert('insert', '{db_prefix}adhoc_tasks',
 				['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
 				$rows,
 				['id_task']
