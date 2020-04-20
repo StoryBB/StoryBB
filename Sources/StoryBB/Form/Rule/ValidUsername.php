@@ -13,14 +13,19 @@
 namespace StoryBB\Form\Rule;
 
 use StoryBB\Form\Rule\Exception as RuleException;
+use StoryBB\StringLibrary;
 
 class ValidUsername
 {
 	public function validate($value): void
 	{
+		if (StringLibrary::strlen($value) > 80)
+		{
+			throw new RuleException('Error:username_too_long');
+		}
 		if (preg_match('~[<>&"\'=\\\]~', preg_replace('~(&#(\\d{1,7}|x[0-9a-fA-F]{1,6});)~', '', $value)))
 		{
-			throw new RuleException('Error::error_invalid_characters_username');
+			throw new RuleException('Error:error_invalid_characters_username');
 		}
 	}
 }
