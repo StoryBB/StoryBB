@@ -1060,10 +1060,11 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
  */
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
+	$container = \StoryBB\Container::instance();
 	return new \LightnCandy\SafeString(sprintf($string,
 		$guest_title, 
 		$forum_name, 
-		$scripturl . '?action=login', 
+		$container->get('urlgenerator')->generate('login'), 
 		'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
 		$scripturl . '?action=signup'
 	));

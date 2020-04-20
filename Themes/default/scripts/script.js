@@ -209,6 +209,11 @@ function reqOverlayDiv(desktopURL, sHeader, sIcon)
 		},
 		success: function (data, textStatus, xhr) {
 			var help_content = $('<div id="temp_help">').html(data).find('a[href$="self.close();"]').hide().prev('br').hide().parent().html();
+			// Legacy hack to fix ability to send straight HTML snippets.
+			if (!help_content && data)
+			{
+				help_content = data;
+			}
 			oPopup_body.html(help_content);
 		},
 		error: function (xhr, textStatus, errorThrown) {
