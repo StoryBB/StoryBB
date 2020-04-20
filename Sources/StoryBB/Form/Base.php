@@ -28,6 +28,8 @@ abstract class Base
 
 	protected $sections = [];
 
+	protected $hidden = [];
+
 	protected $data;
 	protected $errors = [];
 
@@ -89,12 +91,26 @@ abstract class Base
 	{
 		$this->populate_raw_data();
 		$this->secondary_definition();
+
+		$session = $this->session();
+		$this->hidden['session'][$session->get('session_var')] = $session->get('session_value');
+
 		$this->finalised = true;
 	}
 
 	public function validate(array $data): array
 	{
 		$this->errors = [];
+
+		if (isset($this->hidden['session']))
+		{
+			$stored_sessionvar = array_keys($this->hidden['session'])[0];
+			if (!isset($data[$stored_sessionvar]) || $data[$stored_sessionvar] !== $this->hidden['session'][$stored_sessionvar])
+			{
+				$this->errors['_form'][] = 'Errors:session_timeout';
+			}
+		}
+
 		foreach ($this->sections as $section)
 		{
 			foreach ($section->get_fields() as $field)
@@ -135,7 +151,36 @@ abstract class Base
 		{
 			$section->inject_templater($templater, $this->data);
 		}
+
+		// We store the hidden items in a slightly different way, let's flatten that out.
+		$hidden = [];
+		foreach ($this->hidden as $key => $value)
+		{
+			if (is_bool($value))
+			{
+				$hidden[$key] = $value ? 1 : 0;
+				continue;
+			}
+
+			if (is_scalar($value))
+			{
+				$hidden[$key] = $value;
+				continue;
+			}
+
+			if (is_array($value))
+			{
+				foreach ($value as $subkey => $subvalue)
+				{
+					$hidden[$subkey] = $subvalue;
+				}
+				continue;
+			}
+
+			throw new RuntimeException('Hidden value ' . $key . ' of unsupported type');
+		}
 		$rendercontext = [
+			'hidden' => $hidden,
 			'action' => $this->action,
 			'sections' => $this->sections,
 			'errors' => $this->errors,

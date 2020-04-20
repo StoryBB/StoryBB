@@ -1,4 +1,14 @@
 <form action="{$action}" method="post" accept-charset="UTF-8">
+	{if isset($errors['_form'])}
+		<ul class="form-errors">
+			{foreach $errors['_form'] as $error}
+				{$error}
+			{/foreach}
+		</ul>
+	{/if}
+	{foreach $hidden as $key => $value}
+		<input type="hidden" name="{$key}" value="{$value}">
+	{/foreach}
 	{foreach $sections as $section_name => $section}
 		<fieldset id="section-{$section_name|slugify}">
 			{if $section->has_label()}
