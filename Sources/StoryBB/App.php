@@ -359,7 +359,18 @@ class App
 			}
 
 			$instance = $container->instantiate($class);
-			return $instance->$method(...$args);
+
+			$result = $instance->$method(...$args);
+			// There's a bit of logging we're going to be doing here, potentially.
+			if (!$instance instanceof Unloggable)
+			{
+				// @todo log the hit
+
+				$log = $parameters;
+				unset ($log['_controller']);
+				$container->get('session')->set('last_url', ['route' => $log]);
+			}
+			return $result;
 		}
 		catch (ResourceNotFoundException $e)
 		{

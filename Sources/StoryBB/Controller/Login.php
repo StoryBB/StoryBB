@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller;
 
+use Exception;
 use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Dependency\Database;
@@ -52,6 +53,24 @@ class Login implements Routable
 		if ($this->requestvars()->headers->get('x-requested-with') == 'XMLHttpRequest')
 		{
 			return (new Response)->setContent($form->render());
+		}
+
+		// If there is an existing URL to return to, put that in the right place in the session.
+		$session = $this->session();
+		if ($session->has('last_url'))
+		{
+			try
+			{
+				$last_url = $session->get('last_url');
+				if (isset($last_url['_route']))
+				{
+					$session->set('login_url', $this->urlgenerator()->generate($last_url['_route'], $last_url));
+				}
+			}
+			catch (Exception $e)
+			{
+				$session->remove('login_url');
+			}
 		}
 
 		return $this->return_login_form($form);
@@ -145,11 +164,17 @@ class Login implements Routable
 
 	protected function get_post_login_redirect()
 	{
-		$redirecturl = $this->session()->get('login_url', '/');
+		$redirecturl = '/';
+
 		// Needs to be a real URL.
-		if (!isset($_SESSION['login_url']) || (strpos($_SESSION['login_url'], 'http://') === false && strpos($_SESSION['login_url'], 'https://') === false))
+		$session = $this->session();
+		if ($session->has('login_url'))
 		{
-			$redirecturl = '/';
+			$redirecturl = $session->get('login_url');
+			if (strpos($redirecturl, 'http://') === false && strpos($redirecturl, 'https://') === false)
+			{
+				$redirecturl = '/';
+			}
 		}
 
 		return $redirecturl;
