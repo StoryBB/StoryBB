@@ -12,6 +12,7 @@
 
 namespace StoryBB\Form;
 
+use StoryBB\Form\Base;
 use StoryBB\Form\Element\Inputtable;
 use StoryBB\Form\Element\Traits;
 use StoryBB\Form\Exception as FormException;
@@ -28,6 +29,13 @@ class Section
 
 	protected $templater = null;
 	protected $rawdata = null;
+
+	protected $form;
+
+	public function __construct(Base $form)
+	{
+		$this->form = $form;
+	}
 
 	public function expanded(): Section
 	{

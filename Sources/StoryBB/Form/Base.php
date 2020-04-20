@@ -136,7 +136,7 @@ abstract class Base
 			throw new RuntimeException('Section ' . $name . ' already exists');
 		}
 
-		$section = new Section;
+		$section = new Section($this);
 		$this->sections[$name] = $section;
 		return $this->sections[$name];
 	}
