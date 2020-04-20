@@ -1043,6 +1043,20 @@ class Uncategorised
 					Index::primary(['session_id']),
 				]
 			),
+			Table::make('sessions_persist',
+				[
+					'id_persist' => Column::int()->auto_increment(),
+					'id_member' => Column::mediumint(),
+					'persist_key' => Column::varbinary(32),
+					'timecreated' => Column::int(),
+					'timeexpires' => Column::int(),
+				],
+				[
+					Index::primary(['id_persist']),
+					Index::unique(['id_member', 'persist_key']),
+					Index::key(['timeexpires']),
+				]
+			),
 			Table::make('smileys',
 				[
 					'id_smiley' => Column::smallint()->auto_increment(),

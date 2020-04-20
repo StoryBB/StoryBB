@@ -18,6 +18,7 @@ use StoryBB\Controller\Unloggable;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -159,21 +160,29 @@ class App
 			$session->setName($cookiename);
 			$session->start();
 
-			// if ($this->sitesettings()->globalCookies))
-			// {
-			// 	$parsed_url = parse_url($boardurl);
-
-			// 	if (!IP::is_valid_ipv4($parsed_url['host']) && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
-			// 		@ini_set('session.cookie_domain', '.' . $parts[1]);
-			// }
-			// // @todo Set the session cookie path?
-
-			// // If it's already been started... probably best to skip this.
-			// if ((ini_get('session.auto_start') == 1 && !empty($modSettings['databaseSession_enable'])) || session_id() == '')
-			// {
-			// 	// Attempt to end the already-started session.
-			// 	if (ini_get('session.auto_start') == 1)
-			// 		session_write_close();
+			if (!$session->has('userid'))
+			{
+				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
+				$request = $container->get('requestvars');
+				if ($request->cookies->has($persist_cookie))
+				{
+					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
+					$userid = $persistence->validate_persist_token($request->cookies->get($persist_cookie));
+					if ($userid)
+					{
+						$session->set('userid', $userid);
+					}
+					else
+					{
+						$session->set('userid', 0);
+						// @todo we should remove the persist_cookie as it didn't match, but we don't have a global response headers bag to put that into yet...
+					}
+				}
+				else
+				{
+					$session->set('userid', 0);
+				}
+			}
 
 			// Change it so the cache settings are a little looser than default.
 			header('Cache-Control: private');

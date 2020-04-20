@@ -511,7 +511,7 @@ class MySQL implements DatabaseAdapter
 	 * @param array $db_values = [] The values to be inserted into the string
 	 * @return mixed Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed, or the fixed up string if in safe mode
 	 */
-	public function query($identifier, $db_string, $db_values = [])
+	public function query(string $identifier, string $db_string, $db_values = [])
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
 		global $db_unbuffered, $modSettings;
@@ -832,6 +832,16 @@ class MySQL implements DatabaseAdapter
 				case 'raw':
 					return $replacement;
 				break;
+
+				case 'binary':
+				case 'varbinary':
+					if ($replacement == 'null' || $replacement == '')
+					{
+						return null;
+					}
+
+					return sprintf('unhex(\'%1$s\')', bin2hex($replacement));
+					break;
 
 				case 'inet':
 					if ($replacement == 'null' || $replacement == '')

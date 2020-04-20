@@ -1,12 +1,13 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
+/**
+ * The session database handler.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Session;
@@ -17,31 +18,7 @@ use StoryBB\Dependency\SiteSettings;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHandler;
 
 /**
- * Session handler using a PDO connection to read and write data.
- *
- * It works with MySQL, PostgreSQL, Oracle, SQL Server and SQLite and implements
- * different locking strategies to handle concurrent access to the same session.
- * Locking is necessary to prevent loss of data due to race conditions and to keep
- * the session data consistent between read() and write(). With locking, requests
- * for the same session will wait until the other one finished writing. For this
- * reason it's best practice to close a session as early as possible to improve
- * concurrency. PHPs internal files session handler also implements locking.
- *
- * Attention: Since SQLite does not support row level locks but locks the whole database,
- * it means only one session can be accessed at a time. Even different sessions would wait
- * for another to finish. So saving session in SQLite should only be considered for
- * development or prototypes.
- *
- * Session data is a binary string that can contain non-printable characters like the null byte.
- * For this reason it must be saved in a binary column in the database like BLOB in MySQL.
- * Saving it in a character column could corrupt the data. You can use createTable()
- * to initialize a correctly defined table.
- *
- * @see https://php.net/sessionhandlerinterface
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Michael Williams <michael.williams@funsational.com>
- * @author Tobias Schultze <http://tobion.de>
+ * Session handler using a StoryBB connection. This is based on Symfony's PDO connector.
  */
 class DatabaseHandler extends AbstractSessionHandler
 {

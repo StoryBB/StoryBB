@@ -246,9 +246,17 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 		// Some OS's don't seem to clean out their sessions.
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}sessions
-			WHERE last_update < {int:last_update}',
+			WHERE lifetime < {int:expires}',
 			[
-				'last_update' => time() - 86400,
+				'expires' => time(),
+			]
+		);
+
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}sessions_persist
+			WHERE timeexpires < {int:expires}',
+			[
+				'expires' => time(),
 			]
 		);
 	}
