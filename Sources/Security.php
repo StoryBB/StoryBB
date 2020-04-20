@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Helper\IP;
 
 /**
@@ -121,7 +122,8 @@ function is_not_guest($message = '', bool $redirect = false)
 	if ($redirect)
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
-		redirectexit('action=login');
+		$container = Container::instance();
+		redirectexit($container->get('urlgenerator')->generate('login'));
 	}
 	else
 	{
