@@ -241,7 +241,7 @@ class Table
 			$result = $db->create_table('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 			if ($result)
 			{
-				self::$table_cache[] = $db_prefix . $this->table_name;
+				self::$table_cache[] = $db->get_prefix() . $this->table_name;
 			}
 			return $result;
 		}
