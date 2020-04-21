@@ -171,6 +171,7 @@ class App
 					if ($userid)
 					{
 						$session->set('userid', $userid);
+						// @todo we should extend the persist_cookie but we don't have a global response headers bag to put that into yet...
 					}
 					else
 					{

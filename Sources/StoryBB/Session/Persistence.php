@@ -68,7 +68,7 @@ class Persistence
 
 		$db = $this->db();
 		$result = $db->query('', '
-			SELECT id_member
+			SELECT id_persist, id_member
 			FROM {db_prefix}sessions_persist
 			WHERE id_member = {int:id_member}
 				AND persist_key = {binary:hash}
@@ -84,6 +84,17 @@ class Persistence
 		if ($row = $db->fetch_assoc($result))
 		{
 			$row['id_member'] = (int) $row['id_member'];
+
+			// Extend the lifetime of this token for another month.
+			$db->query('', '
+				UPDATE {db_prefix}sessions_persist
+				SET timeexpires = {int:expires}
+				WHERE id_persist = {int:persist}',
+				[
+					'persist' => $row['id_persist'],
+					'expires' => strtotime('+1 month'),
+				]
+			);
 		}
 
 		$db->free_result($result);
