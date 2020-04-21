@@ -166,8 +166,6 @@ $txt['mc_warning_template_personal_desc'] = 'If you select this option only you 
 $txt['mc_warning_template_error_no_title'] = 'You must set title.';
 $txt['mc_warning_template_error_no_body'] = 'You must set a notification body.';
 
-$txt['mc_logoff'] = 'End Moderator Session';
-
 // Use entities in the below string.
 $txt['mc_click_add_note'] = 'Add a new note';
 $txt['mc_add_note'] = 'Add';

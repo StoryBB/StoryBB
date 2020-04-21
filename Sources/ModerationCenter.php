@@ -55,12 +55,6 @@ function ModerationMain($dont_call = false)
 					'function' => 'ModerationHome',
 					'icon' => 'administration',
 				],
-				'modlogoff' => [
-					'label' => $txt['mc_logoff'],
-					'function' => 'ModEndSession',
-					'enabled' => empty($modSettings['securityDisable_moderate']),
-					'icon' => 'exit',
-				],
 				'notice' => [
 					'file' => 'ModerationCenter.php',
 					'function' => 'ShowNotice',
@@ -174,9 +168,6 @@ function ModerationMain($dont_call = false)
 			],
 		]
 	];
-
-	// Make sure the administrator has a valid session...
-	validateSession('moderate');
 
 	// I don't know where we're going - I don't know where we've been...
 	$menuOptions = [
@@ -1997,20 +1988,4 @@ function ModifyWarningTemplate()
 	}
 
 	createToken('mod-wt');
-}
-
-/**
- * This ends a moderator session, requiring authentication to access the MCP again.
- */
-function ModEndSession()
-{
-	// This is so easy!
-	unset($_SESSION['moderate_time']);
-
-	// Clean any moderator tokens as well.
-	foreach (array_key($_SESSION['token']) as $key)
-		if (strpos($key, '-mod') !== false)
-			unset($_SESSION['token'][$key]);
-
-	redirectexit();
 }

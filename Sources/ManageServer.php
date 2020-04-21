@@ -430,7 +430,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			['int', 'loginHistoryDays', 'subtext' => $txt['zero_to_disable']],
 		'',
 			['check', 'securityDisable'],
-			['check', 'securityDisable_moderate'],
 		'',
 			// Reactive on email, and approve on delete
 			['check', 'send_validation_onChange'],

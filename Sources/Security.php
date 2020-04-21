@@ -31,9 +31,9 @@ function validateSession($type = 'admin')
 	is_not_guest();
 
 	// Validate what type of session check this is.
-	$types = [];
+	$types = 'admin'];
 	call_integration_hook('integrate_validateSession', [&$types]);
-	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
+	$type = in_array($type, $types) ? $type : 'admin';
 
 	// If we're using XML give an additional ten minutes grace as an admin can't log on in XML mode.
 	$refreshTime = isset($_GET['xml']) ? 4200 : 3600;
@@ -678,9 +678,6 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		$error = 'verify_url_fail';
 		$log_error = true;
 	}
-
-	if (strtolower($_SERVER['HTTP_USER_AGENT']) == 'hacker')
-		fatal_error('Sound the alarm!  It\'s a hacker!  Close the castle gates!!', false);
 
 	// Everything is ok, return an empty string.
 	if (!isset($error))

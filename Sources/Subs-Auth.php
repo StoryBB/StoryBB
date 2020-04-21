@@ -211,7 +211,7 @@ function InMaintenance()
  * - sends data to template so the admin is sent on to the page they
  *   wanted if their password is correct, otherwise they can try again.
  *
- * @param string $type What login type is this - can be 'admin' or 'moderate'
+ * @param string $type What login type is this - can be 'admin'
  */
 function adminLogin($type = 'admin')
 {
@@ -220,9 +220,9 @@ function adminLogin($type = 'admin')
 	loadLanguage('Admin');
 
 	// Validate what type of session check this is.
-	$types = [];
+	$types = ['admin'];
 	call_integration_hook('integrate_validateSession', [&$types]);
-	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
+	$type = in_array($type, $types) ? $type : 'admin';
 
 	// They used a wrong password, log it and unset that.
 	if (isset($_POST[$type . '_hash_pass']) || isset($_POST[$type . '_pass']))
