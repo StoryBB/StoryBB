@@ -1078,14 +1078,12 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
  */
 function session_flash(string $status, string $message)
 {
+	$container = Container::instance();
 	if (!in_array($status, ['success', 'warning', 'error']))
 	{
 		fatal_error('Invalid session flash');
 	}
-	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
-	{
-		$_SESSION['flash'][$status][] = $message;
-	}
+	$container->get('session')->getFlashBag()->add($status, $message);
 }
 
 /**
@@ -1095,12 +1093,14 @@ function session_flash(string $status, string $message)
  */
 function session_flash_retrieve()
 {
+	$container = Container::instance();
+	$session = $container->get('session');
+
 	$messages = [];
 	foreach (['error', 'warning', 'success'] as $status)
 	{
-		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
+		$messages[$status] = $session->getFlashBag()->get($status);
 	}
-	unset ($_SESSION['flash']);
 	return $messages;
 }
 
