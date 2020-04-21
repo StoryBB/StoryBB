@@ -2478,17 +2478,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 			$context['locale'] = str_replace("_", "-", substr($txt['lang_locale'], 0, strcspn($txt['lang_locale'], ".")));
 		}
-
-		// For the sake of backward compatibility
-		if (!empty($txt['emails']))
-		{
-			foreach ($txt['emails'] as $key => $value)
-			{
-				$txt[$key . '_subject'] = $value['subject'];
-				$txt[$key . '_body'] = $value['body'];
-			}
-			$txt['emails'] = [];
-		}
 	}
 
 	// Keep track of what we're up to soldier.
@@ -2746,90 +2735,6 @@ function censorText(&$text, $force = false)
 		$text = preg_replace($censor_vulgar, $censor_proper, $text);
 
 	return $text;
-}
-
-/**
- * Load the language file using require
- * 	- loads the language file specified by filename.
- * 	- outputs a parse error if the file did not exist or contained errors.
- * 	- attempts to detect the error and line, and show detailed information.
- *
- * @param string $filename The name of the file to include
- * @param bool $once If true only includes the file once (like include_once)
- */
-function template_include($filename, $once = false)
-{
-	global $context, $txt;
-	global $maintenance, $mtitle, $mmessage;
-	static $templates = [];
-
-	// We want to be able to figure out any errors...
-	@ini_set('track_errors', '1');
-
-	// Don't include the file more than once, if $once is true.
-	if ($once && in_array($filename, $templates))
-		return;
-	// Add this file to the include list, whether $once is true or not.
-	else
-		$templates[] = $filename;
-
-	$file_found = file_exists($filename);
-
-	if ($once && $file_found)
-		require_once($filename);
-	elseif ($file_found)
-		require($filename);
-
-	if ($file_found !== true)
-	{
-		ob_end_clean();
-		ob_start();
-
-		if (isset($_GET['debug']))
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
-
-		// Don't cache error pages!!
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Cache-Control: no-cache');
-
-		if (!isset($txt['template_parse_error']))
-		{
-			$txt['template_parse_error'] = 'Template Parse Error!';
-			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system.  This problem should only be temporary, so please come back later and try again.  If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_errmsg'] = 'Unfortunately more information is not available at this time as to exactly what is wrong.';
-		}
-
-		// First, let's get the doctype and language information out of the way.
-		echo '<!DOCTYPE html>
-<html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="UTF-8">';
-
-		if (!empty($maintenance) && !allowedTo('admin_forum'))
-			echo '
-		<title>', $mtitle, '</title>
-	</head>
-	<body>
-		<h3>', $mtitle, '</h3>
-		', $mmessage, '
-	</body>
-</html>';
-		else
-		{
-			echo '
-		}
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', $txt['template_parse_error_message'], '
-	</body>
-</html>';
-		}
-
-		die;
-	}
 }
 
 /**
