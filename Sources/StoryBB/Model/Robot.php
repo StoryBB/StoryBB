@@ -28,21 +28,32 @@ class Robot
 		// First, a list of known robots - identifiers in user agent => generic identifier code.
 		$known_robots = [
 			'abcdatos' => 'abcdatos',
+			'adbeat' => 'adbeat',
+			'ahrefsbot' => 'ahrefs',
 			'adidxbot' => 'bingads',
+			'adsbot-google' => 'googleadsence',
 			'alexabot' => 'alexacertify',
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
 			'baiduspider' => 'baidu',
 			'bingbot' => 'bing',
+			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
+			'deadlinkchecker' => 'deadlinkchecker',
 			'duckduckbot' => 'duckduckgo',
 			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
 			'facebot' => 'facebook',
 			'feedly' => 'feedly',
+			'feedvalidator' => 'w3c-feedvalidator',
+			'gigabot' => 'gigablast',
+			'google-sa' => 'googlesearchappliance',
 			'googlebot' => 'google',
 			'google favicon' => 'google',
+			'gsitecrawler' => 'gsitecrawler',
 			'ia_archiver' => 'alexa',
+			'jigsaw' => 'w3c_css',
+			'kalooga' => 'kalooga',
 			'magpie-crawler' => 'brandwatch',
 			'mediapartners-google' => 'googleadsense',
 			'megaindex' => 'megaindex',
@@ -50,16 +61,26 @@ class Robot
 			'msnbot-media' => 'bingmedia',
 			'msnbot' => 'bing',
 			'netvibes' => 'netvibes',
+			'ning/1' => 'w3c_suite',
 			'omgili' => 'webhose',
 			'pingdom.com_bot' => 'pingdom',
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
+			'scrubby' => 'scrubtheweb',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
+			'speedy spider' => 'entireweb',
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
 			'uptimerobot' => 'uptimerobot',
+			'validator.nu' => 'w3c_validator_nu',
+			'w3c-checklink' => 'w3c_checklink',
+			'w3c_css_validator' => 'w3c_css',
+			'w3c_i18n-checker' => 'w3c_i18n',
+			'w3c-mobileok' => 'w3c_validator_mobile',
+			'w3c_unicorn' => 'w3c_unicorn',
 			'w3c_validator' => 'w3c_validator',
+			'xenu link sleuth' => 'xenulinksleuth',
 			'yacybot' => 'yacy',
 			'yahoo! slurp' => 'yahoo',
 			'yandex' => 'yandex',
@@ -89,6 +110,14 @@ class Robot
 			'abcdatos' => [
 				'title' => 'ABCDatos',
 				'link' => 'http://www.abcdatos.com/botlink/',
+			],
+			'adbeat' => [
+				'title' => 'Adbeat',
+				'link' => 'https://adbeat.com/operation_policy',
+			],
+			'ahrefs' => [
+				'title' => 'Ahrefs',
+				'link' => 'https://ahrefs.com/robot',
 			],
 			'alexa' => [
 				'title' => 'Alexa',
@@ -126,9 +155,17 @@ class Robot
 				'title' => 'Brandwatch',
 				'link' => 'https://www.brandwatch.com/legal/magpie-crawler/',
 			],
+			'deadlinkchecker' => [
+				'title' => 'Dead Link Checker',
+				'link' => 'https://www.deadlinkchecker.com/',
+			],
 			'duckduckgo' => [
 				'title' => 'DuckDuckGo',
 				'link' => 'http://duckduckgo.com/duckduckbot.html',
+			],
+			'entireweb' => [
+				'title' => 'EntireWeb',
+				'link' => 'https://www.entireweb.com/',
 			],
 			'exalead' => [
 				'title' => 'ExaLead',
@@ -142,6 +179,10 @@ class Robot
 				'title' => 'Feedly',
 				'link' => 'https://www.feedly.com/fetcher.html',
 			],
+			'gigablast' => [
+				'title' => 'GigaBlast',
+				'link' => 'https://gigablast.com/',
+			],
 			'google' => [
 				'title' => 'Google',
 				'link' => 'https://support.google.com/webmasters/answer/182072',
@@ -149,6 +190,18 @@ class Robot
 			'googleadsense' => [
 				'title' => 'Google (Adsense)',
 				'link' => 'https://support.google.com/webmasters/answer/182072',
+			],
+			'googlesearchappliance' => [
+				'title' => 'Google Search Appliances',
+				'link' => 'https://support.google.com/gsa',
+			],
+			'gsitecrawler' => [
+				'title' => 'GSiteCrawler',
+				'link' => 'http://www.gsitecrawler.com/',
+			],
+			'kalooga' => [
+				'title' => 'Kalooga',
+				'link' => 'https://kalooga.com/',
 			],
 			'majestic12' => [
 				'title' => 'Majestic12',
@@ -169,6 +222,10 @@ class Robot
 			'proximic' => [
 				'title' => 'Proximic',
 				'link' => 'http://www.proximic.com/info/spider.php',
+			],
+			'scrubtheweb' => [
+				'title' => 'ScrubTheWeb',
+				'link' => 'https://scrubtheweb.com/',
 			],
 			'scoutjet' => [
 				'title' => 'ScoutJet',
@@ -194,13 +251,49 @@ class Robot
 				'title' => 'UptimeRobot',
 				'link' => 'https://uptimerobot.com/about',
 			],
+			'w3c_checklink' => [
+				'title' => 'W3C Link Checker',
+				'link' => 'https://validator.w3.org/checklink'
+			],
+			'w3c_css' => [
+				'title' => 'W3C CSS Validator',
+				'link' => 'https://jigsaw.w3.org/css-validator/',
+			],
+			'w3c-feedvalidator' => [
+				'title' => 'W3C Feed Validation',
+				'link' => 'https://validator.w3.org/feed/',
+			],
+			'w3c_i18n' => [
+				'title' => 'W3C Internationalization Checker',
+				'link' => 'https://validator.w3.org/i18n-checker/',
+			],
+			'w3c_suite' => [
+				'title' => 'W3C Validator Suite',
+				'link' => 'https://validator-suite.w3.org/',
+			],
+			'w3c_unicorn' => [
+				'title' => 'W3C Unicorn',
+				'link' => 'https://validator.w3.org/unicorn/',
+			],
 			'w3c_validator' => [
 				'title' => 'W3C Validator',
-				'link' => 'http://validator.w3.org',
+				'link' => 'https://validator.w3.org',
+			],
+			'w3c_validator_mobile' => [
+				'title' => 'W3C Mobile OK Checker',
+				'link' => 'https://validator.w3.org/mobile/',
+			],
+			'w3c_validator_nu' => [
+				'title' => 'Validator.nu',
+				'link' => 'https://validator.w3.org/nu/',
 			],
 			'webhose' => [
 				'title' => 'Webhose.io (Omgilibot)',
 				'link' => 'https://blog.webhose.io/2017/12/28/what-is-the-omgili-bot-and-why-is-it-crawling-your-website/',
+			],
+			'xenulinksleuth' => [
+				'title' => 'Xenu\'s Link Sleuth',
+				'link' => 'http://home.snafu.de/tilman/xenulink.html',
 			],
 			'yacy' => [
 				'title' => 'YaCy',
