@@ -31,7 +31,7 @@ function validateSession($type = 'admin')
 	is_not_guest();
 
 	// Validate what type of session check this is.
-	$types = 'admin'];
+	$types = ['admin'];
 	call_integration_hook('integrate_validateSession', [&$types]);
 	$type = in_array($type, $types) ? $type : 'admin';
 
