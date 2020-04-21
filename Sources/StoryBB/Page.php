@@ -18,6 +18,7 @@ class Page
 		'name' => [],
 		'property' => [],
 	];
+	protected $link = [];
 	protected $linktree = [];
 
 	public function addMetaName(string $name, string $content): void
@@ -70,5 +71,35 @@ class Page
 	public function getLinktree(): array
 	{
 		return $this->linktree;
+	}
+
+	public function addLink(string $rel, string $href, bool $replace = false): void
+	{
+		if ($replace)
+		{
+			$this->link[$rel] = [$href];
+		}
+		else
+		{
+			$this->link[$rel][] = $href;
+		}
+	}
+
+	public function getLink(): array
+	{
+		$links = [];
+		foreach ($this->link as $rel => $hrefs)
+		{
+			foreach ($hrefs as $href)
+			{
+				$links[] = (object) ['rel' => $rel, 'href' => $href];
+			}
+		}
+		return $links;
+	}
+
+	public function setCanonical($url): void
+	{
+		$this->addLink('canonical', $url, true);
 	}
 }

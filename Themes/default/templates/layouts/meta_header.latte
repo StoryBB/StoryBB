@@ -1,0 +1,14 @@
+	<meta charset="UTF-8">
+	<title>{block title|stripHtml|trim}{/block}</title>
+	{if $site_settings->analytics_google_id?}
+		{include '../includes/analytics_google.latte'}
+	{/if}
+	{foreach $page->getMetaNames() as $name => $content}
+		<meta name="{$name}" content="{$content}">
+	{/foreach}
+	{foreach $page->getMetaProperties() as $property => $content}
+		<meta property="{$property}" content="{$content}">
+	{/foreach}
+	{foreach $page->getLink() as $link}
+		<link rel="{$link->rel}" href="{$link->href}">
+	{/foreach}

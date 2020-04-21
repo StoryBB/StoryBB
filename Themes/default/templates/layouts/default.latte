@@ -1,27 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{block title|stripHtml|trim}{/block}</title>
-	{if $site_settings->analytics_google_id?}
-		{include '../includes/analytics_google.latte'}
-	{/if}
-	{foreach $page->getMetaNames() as $name => $content}
-		<meta name="{$name}" content="{$content}">
-	{/foreach}
-	{foreach $page->getMetaProperties() as $property => $content}
-		<meta name="{$property}" content="{$content}">
-	{/foreach}
+	{include 'meta_header.latte'}
 </head>
 <body>
 	{include '../includes/linktree.latte'}
 
 	{block content}{/block}
 
-	<footer>
-		<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB {=StoryBB\App::SOFTWARE_VERSION} &copy; {=StoryBB\App::SOFTWARE_YEAR}, StoryBB project</a>
-
-		<a href="{link(help_smileys)}">{_help}</a>
-		<a href="{link(help_policy, [policy => terms])}">{_'General:terms'}</a>
-	</footer>
+	{include 'theme_footer.latte'}
 </body>
 </html>

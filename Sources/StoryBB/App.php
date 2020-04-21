@@ -298,7 +298,10 @@ class App
 
 		$container->inject('page', function() use ($container) {
 			$page = $container->instantiate('StoryBB\\Page');
+			$urlgenerator = $container->get('urlgenerator');
 			$page->addMetaProperty('og:site_name', $container->get('sitesettings')->forum_name);
+
+			$page->addLink('help', $urlgenerator->generate('help'));
 			return $page;
 		});
 
