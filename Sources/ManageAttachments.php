@@ -402,7 +402,7 @@ function BrowseFiles()
 					'value' => $txt['attachment_name'],
 				],
 				'data' => [
-					'function' => function($rowData) use ($modSettings, $context, $scripturl, $smcFunc)
+					'function' => function($rowData) use ($modSettings, $context, $scripturl)
 					{
 						$link = '<a href="';
 
@@ -462,7 +462,7 @@ function BrowseFiles()
 					'value' => ($context['browse_type'] == 'avatars' || $context['browse_type'] == 'exports') ? $txt['attachment_manager_member'] : $txt['posted_by'],
 				],
 				'data' => [
-					'function' => function($rowData) use ($scripturl, $context, $smcFunc)
+					'function' => function($rowData) use ($scripturl, $context)
 					{
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData['id_member']))
