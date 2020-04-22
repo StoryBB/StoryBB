@@ -1127,6 +1127,9 @@ function DatabasePopulation()
 	$incontext['sql_results']['inserts'] += $installer->add_standard_blocks();
 	$incontext['sql_results']['inserts'] += $installer->add_admin_blocks();
 
+	// 4. User preferences
+	$incontext['sql_results']['inserts'] += $installer->add_default_user_preferences();
+
 	// Sort out the context for the SQL.
 	foreach ($incontext['sql_results'] as $key => $number)
 	{
@@ -1508,6 +1511,7 @@ function DeleteInstall()
 	{
 		$_SERVER['HTTP_USER_AGENT'] = substr($_SERVER['HTTP_USER_AGENT'], 0, 211);
 
+		// @todo fix
 		$smcFunc['db']->insert('replace',
 			'{db_prefix}sessions',
 			[

@@ -1219,6 +1219,21 @@ class Uncategorised
 					Index::key(['id_member']),
 				]
 			),
+			Table::make('user_preferences',
+				[
+					'id_preference' => Column::int()->auto_increment(),
+					'id_member' => Column::mediumint(),
+					'preference' => Column::varchar(255),
+					'value' => Column::text(),
+				],
+				[
+					Index::primary(['id_preference']),
+					Index::key(['id_member', 'preference']),
+				],
+				[
+					Constraint::from('user_preferences.id_member')->to('members.id_member'),
+				]
+			),
 		];
 	}
 

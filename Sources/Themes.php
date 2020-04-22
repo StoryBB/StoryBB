@@ -28,6 +28,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -546,7 +547,9 @@ function SetThemeOptions()
 	loadLanguage('PersonalMessage');
 
 	// Let the theme take care of the settings.
-	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$context['theme_options'] = $prefs_manager->get_default_preferences();
 
 	$context['sub_template'] = 'admin_themes_options';
 	$context['page_title'] = $txt['theme_settings'];

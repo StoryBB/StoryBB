@@ -29,7 +29,7 @@
 			<ul class="user_info">
 
 {{! avatar }}
-{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+{{#if (and ../modSettings.show_user_images ../options.show_avatars member.avatar.image)}}
 				<li class="avatar">
 					<a href="{{member.href}}">{{{member.avatar.image}}}</a>
 				</li>
@@ -336,7 +336,7 @@
 			</div>
 {{/if}}
 
-{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
+{{#if (and ../options.show_signatures ../context.signature_enabled member.signature)}}
 			<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>
 				{{{member.signature}}}
 			</div>

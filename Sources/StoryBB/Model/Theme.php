@@ -75,16 +75,6 @@ class Theme
 	}
 
 	/**
-	 * Returns the user preferences from a theme
-	 *
-	 * @return array The user-preferences from the theme
-	 */
-	public static function get_user_options(): array
-	{
-		return self::parse_section('user_options');
-	}
-
-	/**
 	 * Returns a specific section of configuration, having fetched language strings etc.
 	 *
 	 * @param string $section The key from the configuration to be parsed

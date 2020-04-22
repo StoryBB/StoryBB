@@ -346,8 +346,8 @@ $txt['timeformat_easy5'] = 'DD-MM-YYYY, HH:MM:SS';
 
 $txt['poster'] = 'Poster';
 
-$txt['show_no_avatars'] = 'Don\'t show users\' avatars.';
-$txt['show_no_signatures'] = 'Don\'t show users\' signatures.';
+$txt['show_avatars'] = 'Show users\' avatars.';
+$txt['show_signatures'] = 'Show users\' signatures.';
 $txt['show_no_censored'] = 'Leave words uncensored.';
 $txt['topics_per_page'] = 'Topics to display per page:';
 $txt['messages_per_page'] = 'Messages to display per page:';

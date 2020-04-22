@@ -1309,7 +1309,7 @@ function EditCustomProfiles()
 		$show_display = isset($_POST['display']) ? 1 : 0;
 		$show_mlist = isset($_POST['mlist']) ? 1 : 0;
 		$bbc = isset($_POST['bbc']) ? 1 : 0;
-		$show_profile = $_POST['profile_area'];
+		$show_profile = in_array($_POST['profile_area'], ['forumprofile', 'account']) ? $_POST['profile_area'] : 'forumprofile';
 		$active = isset($_POST['active']) ? 1 : 0;
 		$private = isset($_POST['private']) ? (int) $_POST['private'] : 0;
 		$can_search = isset($_POST['can_search']) ? 1 : 0;

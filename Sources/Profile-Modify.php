@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Autocomplete;
@@ -928,111 +929,85 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
  */
 function makeThemeChanges($memID, $id_theme)
 {
-	global $modSettings, $smcFunc, $context, $user_info;
+	global $context;
 
-	$reservedVars = [
-		'actual_theme_url',
-		'actual_images_url',
-		'base_theme_dir',
-		'base_theme_url',
-		'default_images_url',
-		'default_theme_dir',
-		'default_theme_url',
-		'default_template',
-		'images_url',
-		'theme_dir',
-		'theme_id',
-		'theme_url',
-	];
-
-	// Can't change reserved vars.
-	if ((isset($_POST['options']) && count(array_intersect(array_keys($_POST['options']), $reservedVars)) != 0) || (isset($_POST['default_options']) && count(array_intersect(array_keys($_POST['default_options']), $reservedVars)) != 0))
-		fatal_lang_error('no_access', false);
-
-	// Don't allow any overriding of custom fields with default or non-default options.
-	$request = $smcFunc['db']->query('', '
-		SELECT col_name
-		FROM {db_prefix}custom_fields
-		WHERE active = {int:is_active}',
-		[
-			'is_active' => 1,
-		]
-	);
-	$custom_fields = [];
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$custom_fields[] = $row['col_name'];
-	$smcFunc['db']->free_result($request);
-
-	// These are the theme changes...
-	$themeSetArray = [];
-	if (isset($_POST['options']) && is_array($_POST['options']))
+	if (!empty($context['password_auth_failed']))
 	{
-		foreach ($_POST['options'] as $opt => $val)
-		{
-			if (in_array($opt, $custom_fields))
-				continue;
-
-			// These need to be controlled.
-			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
-				$val = max(0, min($val, 50));
-			// We don't set this per theme anymore.
-			elseif ($opt == 'allow_no_censored')
-				continue;
-
-			$themeSetArray[] = [$memID, $id_theme, $opt, is_array($val) ? implode(',', $val) : $val];
-		}
+		return;
 	}
 
-	$erase_options = [];
-	if (isset($_POST['default_options']) && is_array($_POST['default_options']))
-		foreach ($_POST['default_options'] as $opt => $val)
-		{
-			if (in_array($opt, $custom_fields))
-				continue;
-
-			// These need to be controlled.
-			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
-				$val = max(0, min($val, 50));
-			// Only let admins and owners change the censor.
-			elseif ($opt == 'allow_no_censored' && !$user_info['is_admin'] && !$context['user']['is_owner'])
-					continue;
-
-			$themeSetArray[] = [$memID, 1, $opt, is_array($val) ? implode(',', $val) : $val];
-			$erase_options[] = $opt;
-		}
-
-	// If themeSetArray isn't still empty, send it to the database.
-	if (empty($context['password_auth_failed']))
+	if (isset($_POST['options']) && is_array($_POST['options']))
 	{
-		if (!empty($themeSetArray))
+		// Load up the system theme options to validate what we're checking against.
+		$container = Container::instance();
+		$site_settings = $container->get('sitesettings');
+		$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+		$defaults = $prefs_manager->get_default_preferences();
+
+		$newprefs = [];
+
+		foreach ($defaults as $setting)
 		{
-			$smcFunc['db']->insert('replace',
-				'{db_prefix}themes',
-				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
-				$themeSetArray,
-				['id_member', 'id_theme', 'variable']
-			);
+			// If it's not an array, it's not a setting, move along.
+			if (!is_array($setting))
+			{
+				continue;
+			}
+
+			// If the setting is disabled in configuration, skip it.
+			if (isset($setting['disableOn']) && $site_settings->{$setting['disableOn']})
+			{
+				continue;
+			}
+
+			if (!isset($_POST['options'][$setting['id']]))
+			{
+				continue;
+			}
+
+			if (!isset($setting['type']) || $setting['type'] == 'bool')
+				$type = 'checkbox';
+			elseif ($setting['type'] == 'int' || $setting['type'] == 'integer')
+				$type = 'number';
+			elseif ($setting['type'] == 'string')
+				$type = 'text';
+
+			if (isset($setting['options']))
+				$type = 'list';
+
+			switch ($type)
+			{
+				case 'checkbox':
+					$newprefs[$setting['id']] = $_POST['options'][$setting['id']] ? 1 : 0;
+					break;
+
+				case 'number':
+					$newprefs[$setting['id']] = (int) $_POST['options'][$setting['id']];
+					if (isset($setting['max']) && $newprefs[$setting['id']] > $setting['max'])
+					{
+						$newprefs[$setting['id']] = $setting['max'];
+					}
+					if (isset($setting['min']) && $newprefs[$setting['id']] < $setting['min'])
+					{
+						$newprefs[$setting['id']] = $setting['min'];
+					}
+					break;
+
+				case 'text':
+					$newprefs[$setting['id']] = StringLibrary::escape($_POST['options'][$setting['id']]);
+					break;
+
+				case 'list':
+					$newprefs[$setting['id']] = $_POST['options'][$setting['id']];
+					if (!isset($setting['options'][$newprefs[$setting['id']]]))
+					{
+						$newprefs[$setting['id']] = array_keys($setting['options'])[0];
+					}
+					break;
+			}
 		}
 
-		if (!empty($erase_options))
-		{
-			$smcFunc['db']->query('', '
-				DELETE FROM {db_prefix}themes
-				WHERE id_theme != {int:id_theme}
-					AND variable IN ({array_string:erase_variables})
-					AND id_member = {int:id_member}',
-				[
-					'id_theme' => 1,
-					'id_member' => $memID,
-					'erase_variables' => $erase_options
-				]
-			);
-		}
-
-		// Admins can choose any theme, even if it's not enabled...
-		$themes = allowedTo('admin_forum') ? explode(',', $modSettings['knownThemes']) : explode(',', $modSettings['enableThemes']);
-		foreach ($themes as $t)
-			cache_put_data('theme_settings-' . $t . ':' . $memID, null, 60);
+		$prefs_manager->save_preferences($memID, $newprefs);
 	}
 }
 
@@ -1665,7 +1640,6 @@ function forumProfile($memID)
 		[
 			'avatar_choice', 'hr',
 			'birthday_date', 'birthday_visibility', 'hr',
-			'signature', 'hr',
 			'website_title', 'website_url',
 		]
 	);
@@ -1680,11 +1654,11 @@ function theme($memID)
 {
 	global $txt, $context, $modSettings;
 
-	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$context['theme_options'] = $prefs_manager->get_default_preferences();
 
 	loadThemeOptions($memID);
-	if (allowedTo(['profile_extra_own', 'profile_extra_any']))
-		loadCustomFields($memID, 'theme');
 
 	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['theme_info'];
@@ -1693,7 +1667,13 @@ function theme($memID)
 	foreach ($context['theme_options'] as $id => $setting)
 	{
 		if (!is_array($setting))
+		{
+			$context['theme_options'][$id] = $txt[$setting];
 			continue;
+		}
+
+		$context['theme_options'][$id]['label'] = $txt[$setting['label']];
+
 		// If it's going to be disabled through a modSettings entry, do that first.
 		if (!empty($setting['disableOn']) && !empty($modSettings[$setting['disableOn']])) {
 			unset ($context['theme_options'][$id]);
@@ -1709,7 +1689,16 @@ function theme($memID)
 			$context['theme_options'][$id]['type'] = 'text';
 
 		if (isset($setting['options']))
+		{
 			$context['theme_options'][$id]['type'] = 'list';
+			foreach ($setting['options'] as $opt_key => $opt_val)
+			{
+				if (is_string($opt_val))
+				{
+					$context['theme_options'][$id]['options'][$opt_key] = isset($txt[$opt_val]) ? $txt[$opt_val] : $opt_val;
+				}
+			}
+		}
 
 		// Make the value more readily available to the template.
 		$context['theme_options'][$id]['user_value'] = '';
@@ -2601,37 +2590,9 @@ function loadThemeOptions($memID)
 	}
 	else
 	{
-		$request = $smcFunc['db']->query('', '
-			SELECT id_member, variable, value
-			FROM {db_prefix}themes
-			WHERE id_theme IN (1, {int:member_theme})
-				AND id_member IN (-1, {int:selected_member})',
-			[
-				'member_theme' => (int) $cur_profile['id_theme'],
-				'selected_member' => $memID,
-			]
-		);
-		$temp = [];
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-		{
-			if ($row['id_member'] == -1)
-			{
-				$temp[$row['variable']] = $row['value'];
-				continue;
-			}
-
-			if (isset($_POST['options'][$row['variable']]))
-				$row['value'] = $_POST['options'][$row['variable']];
-			$context['member']['options'][$row['variable']] = $row['value'];
-		}
-		$smcFunc['db']->free_result($request);
-
-		// Load up the default theme options for any missing.
-		foreach ($temp as $k => $v)
-		{
-			if (!isset($context['member']['options'][$k]))
-				$context['member']['options'][$k] = $v;
-		}
+		$container = Container::instance();
+		$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+		$context['member']['options'] = $prefs_manager->get_preferences_for_user($memID);
 	}
 }
 

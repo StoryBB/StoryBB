@@ -702,10 +702,6 @@ VALUES (1, 'name', '{$default_theme_name}'),
   (1, 'drafts_show_saved_enabled', '1'),
   (1, 'sub_boards_columns', '2');
 
-INSERT INTO {$db_prefix}themes
-  (id_member, id_theme, variable, value)
-VALUES (-1, 1, 'posts_apply_ignore_list', '1'),
-  (-1, 1, 'return_to_post', '1');
 # --------------------------------------------------------
 
 #

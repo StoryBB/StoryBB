@@ -150,4 +150,22 @@ class Installer
 
 		return 1;
 	}
+
+	public function add_default_user_preferences(): int
+	{
+		$db = $this->db();
+
+		$db->insert(DatabaseAdapter::INSERT_INSERT,
+			'{db_prefix}user_preferences',
+			['id_member' => 'int', 'preference' => 'string', 'value' => 'string'],
+			[
+				[0, 'posts_apply_ignore_list', '1'],
+				[0, 'return_to_post', 1],
+				[0, 'show_avatars', 1],
+				[0, 'show_signatures', 1],
+			],
+			['id_preference'],
+			DatabaseAdapter::RETURN_NOTHING
+		);
+	}
 }

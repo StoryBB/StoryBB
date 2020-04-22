@@ -203,7 +203,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings, $sourcedir, $smcFunc;
+	global $modSettings, $user_settings, $sourcedir;
 	global $cookiename, $user_info, $language, $context, $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
 	// Check first the integration, then the cookie, and last the session.
@@ -211,12 +211,14 @@ function loadUserSettings()
 	(new Mutatable\Account\Authenticates($id_member))->execute();
 	$already_verified = !empty($id_member);
 
+	$container = Container::instance();
+	$db = $container->get('database');
+
 	if (!$id_member)
 	{
 		// Check the session.
-		$container = Container::instance();
+		
 		$session = $container->get('session');
-
 		if ($session->has('userid'))
 		{
 			$id_member = $session->get('userid');
@@ -229,7 +231,7 @@ function loadUserSettings()
 		// Is the member data cached?
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
-			$request = $smcFunc['db']->query('', '
+			$request = $db->query('', '
 				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
 					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
 				FROM {db_prefix}members AS mem
@@ -242,10 +244,10 @@ function loadUserSettings()
 					'id_member' => $id_member,
 				]
 			);
-			$user_settings = $smcFunc['db']->fetch_assoc($request);
+			$user_settings = $db->fetch_assoc($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
 			$user_settings['avatar'] = $user_settings['char_avatar'];
-			$smcFunc['db']->free_result($request);
+			$db->free_result($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
 				$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
@@ -277,7 +279,7 @@ function loadUserSettings()
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
-			$result = $smcFunc['db']->query('', '
+			$result = $db->query('', '
 				SELECT poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -286,8 +288,8 @@ function loadUserSettings()
 					'id_msg' => $user_settings['id_msg_last_visit'],
 				]
 			);
-			list ($visitTime) = $smcFunc['db']->fetch_row($result);
-			$smcFunc['db']->free_result($result);
+			list ($visitTime) = $db->fetch_row($result);
+			$db->free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
@@ -1268,13 +1270,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 	$dataLoaded[$user] = true;
 	$profile = &$user_profile[$user];
 
-	// Censor everything.
-	censorText($profile['signature']);
-
-	// Set things up to be used before hand.
-	$profile['signature'] = str_replace(["\n", "\r"], ['<br>', ''], $profile['signature']);
-	$profile['signature'] = Parser::parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
-
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	$profile['icons'] = empty($profile['icons']) ? ['', ''] : explode('#', $profile['icons']);
 	// Setup the buddy status here (One whole in_array call saved :P)
@@ -1335,7 +1330,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			],
 			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : $profile['birthdate'],
 			'birthday_visibility' => $profile['birthday_visibility'],
-			'signature' => $profile['signature'],
 			'real_posts' => $profile['posts'],
 			'posts' => comma_format($profile['posts']),
 			'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
@@ -1379,6 +1373,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		// First, find their OOC character.
 		foreach ($profile['characters'] as $character) {
 			if ($character['is_main']) {
+				$profile['signature'] = $character['signature'];
 				$profile['avatar'] = $character['avatar'];
 				$profile['filename'] = $character['avatar_filename'];
 				$profile['id_attach'] = $character['id_attach'];
@@ -1625,21 +1620,19 @@ function loadTheme($id_theme = 0, $initialize = true)
 	else
 		$id_theme = (int) $id_theme;
 
-	$member = empty($user_info['id']) ? -1 : $user_info['id'];
-
 	// Disable image proxy if we don't have SSL enabled
 	if (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] < 2)
 		$image_proxy_enabled = false;
 
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $modSettings['settings_updated'])
+	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme, 60)) != null && time() - 60 > $modSettings['settings_updated'])
 	{
 		$themeData = $temp;
 		$flag = true;
 	}
 	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $modSettings['settings_updated'])
-		$themeData = $temp + [$member => []];
+		$themeData = $temp;
 	else
-		$themeData = [-1 => [], 0 => [], $member => []];
+		$themeData = [-1 => [], 0 => []];
 
 	if (empty($flag))
 	{
@@ -1647,46 +1640,40 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$result = $smcFunc['db']->query('', '
 			SELECT variable, value, id_member, id_theme
 			FROM {db_prefix}themes
-			WHERE id_member' . (empty($themeData[0]) ? ' IN (-1, 0, {int:id_member})' : ' = {int:id_member}') . '
+			WHERE id_member = 0
 				AND id_theme' . ($id_theme == 1 ? ' = {int:id_theme}' : ' IN ({int:id_theme}, 1)'),
 			[
 				'id_theme' => $id_theme,
-				'id_member' => $member,
 			]
 		);
 		// Pick between $settings and $options depending on whose data it is.
 		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
-			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], ['actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'theme_dir', 'theme_id', 'theme_url']))
-				continue;
-
 			// If this is the theme_dir of the default theme, store it.
-			if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1' && empty($row['id_member']))
+			if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1')
+			{
 				$themeData[0]['default_' . $row['variable']] = $row['value'];
+			}
 
 			// If this isn't set yet, is a theme option, or is not the default theme..
-			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
-				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
+			if (!isset($themeData[0][$row['variable']]) || $row['id_theme'] != '1')
+			{
+				$themeData[0][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
+			}
 		}
 		$smcFunc['db']->free_result($result);
 
-		if (!empty($themeData[-1]))
-			foreach ($themeData[-1] as $k => $v)
-			{
-				if (!isset($themeData[$member][$k]))
-					$themeData[$member][$k] = $v;
-			}
-
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-			cache_put_data('theme_settings-' . $id_theme . ':' . $member, $themeData, 60);
+			cache_put_data('theme_settings-' . $id_theme, $themeData, 60);
 		// Only if we didn't already load that part of the cache...
 		elseif (!isset($temp))
-			cache_put_data('theme_settings-' . $id_theme, [-1 => $themeData[-1], 0 => $themeData[0]], 90);
+			cache_put_data('theme_settings-' . $id_theme, $themeData, 90);
 	}
 
 	$settings = $themeData[0];
-	$options = $themeData[$member];
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$options = $prefs_manager->get_preferences_for_user($user_info['id'] ? (int) $user_info['id'] : 0);
 
 	$settings['theme_id'] = $id_theme;
 
