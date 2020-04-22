@@ -244,7 +244,7 @@ function un_preparsecode($message)
 
 	$message = implode('', $parts);
 
-	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m) use ($smcFunc)
+	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m)
 	{
 		return "[html]" . strtr(StringLibrary::escape("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
 	}, $message);
