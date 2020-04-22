@@ -41,8 +41,7 @@ function ManageSmileys()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['smileys_manage'],
-		'help' => 'smileys',
-		'description' => $txt['smiley_settings_explain'],
+		'help' => '',
 		'tabs' => [
 			'addsmiley' => [
 				'description' => $txt['smiley_addsmiley_explain'],

@@ -48,7 +48,7 @@ function ManageSearch()
 	// Create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['manage_search'],
-		'help' => 'search',
+		'help' => '',
 		'description' => $txt['search_settings_desc'],
 		'tabs' => [
 			'method' => [

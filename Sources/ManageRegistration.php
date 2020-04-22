@@ -49,7 +49,7 @@ function RegCenter()
 	// Next create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['registration_center'],
-		'help' => 'registrations',
+		'help' => '',
 		'description' => $txt['admin_settings_desc'],
 		'tabs' => [
 			'register' => [

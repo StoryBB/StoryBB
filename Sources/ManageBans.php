@@ -48,7 +48,7 @@ function Ban()
 	// Tabs for browsing the different ban functions.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['ban_title'],
-		'help' => 'ban_members',
+		'help' => '',
 		'description' => $txt['ban_description'],
 		'tabs' => [
 			'list' => [

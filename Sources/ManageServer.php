@@ -78,7 +78,7 @@ function ModifySettings()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['admin_server_settings'],
-		'help' => 'serversettings',
+		'help' => '',
 		'description' => $txt['admin_basic_settings'],
 	];
 

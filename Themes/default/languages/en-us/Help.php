@@ -14,100 +14,6 @@ global $helptxt;
 
 $txt['close_window'] = 'Close window';
 
-$helptxt['manage_boards'] = '
-	<strong>Edit Boards</strong><br>
-	On this page you can create/reorder/remove boards, and the categories
-	above them. For example, if you had a wide-ranging
-	site that offered information on &quot;Sports&quot; and &quot;Cars&quot; and &quot;Music&quot;, these
-	would be the top-level Categories you\'d create. Under each of these
-	categories you\'d likely want to create &quot;Boards&quot; for topics within each. It\'s a simple hierarchy, with this structure: <br>
-	<ul class="normallist">
-		<li>
-			<strong>Sports</strong>
-			&nbsp;- A &quot;category&quot;
-			<ul class="normallist">
-				<li>
-					<strong>Baseball</strong>
-					&nbsp;- A board under the category of &quot;Sports&quot;
-					<ul class="normallist">
-						<li>
-							<strong>Stats</strong>
-							&nbsp;- A sub-board under the board of &quot;Baseball&quot;
-						</li>
-					</ul>
-				</li>
-				<li><strong>Football</strong>
-				&nbsp;- A board under the category of &quot;Sports&quot;</li>
-			</ul>
-		</li>
-	</ul>
-	Categories allow you to break down the boards into broad topics (&quot;Cars,
-	Sports&quot;), and the &quot;Boards&quot; under them allow users to post actual topics.
-	A user interested in Pintos	would post a message under &quot;Cars->Pinto&quot;.
-	Administrative functions for this page are to create new boards
-	under each category, to reorder them (put &quot;Pinto&quot; below &quot;Chevy&quot;), or
-	to delete the board entirely.';
-
-$helptxt['view_members'] = '
-	<ul class="normallist">
-		<li>
-			<strong>View all Members</strong><br>
-			View all members in the board. You are presented with a hyperlinked list of member names. You may click
-			on any of the names to find details of the members (homepage, age, etc.), and as Administrator
-			you are able to modify these parameters. You have complete control over members, including the
-			ability to delete them from the forum.<br><br>
-		</li>
-		<li>
-			<strong>Awaiting Approval</strong><br>
-			This page is only shown if you have enabled admin approval of all new registrations. Anyone who registers to join your
-			forum will only become a full member once they have been approved by an admin. The page lists all those members who
-			are still awaiting approval, along with their email and IP address. You can choose to either accept or reject (delete)
-			any member on the list by checking the box next to the member and choosing the action from the drop-down box at the bottom
-			of the page. When rejecting a member you can choose to delete the member either with or without notifying them of your decision.<br><br>
-		</li>
-		<li>
-			<strong>Awaiting Activation</strong><br>
-			This page will only be visible if you have email activation of new member accounts enabled on the forum. This page will list all
-			members who have still not activated their new accounts. From this page you can choose to either accept, reject or remind
-			members with outstanding registrations. As above you can also choose to email the member to inform them of the
-			action you have taken.<br><br>
-		</li>
-	</ul>';
-
-$helptxt['ban_members'] = '<strong>Ban Members</strong><br>
-	StoryBB provides the ability to &quot;ban&quot; users, which can be a useful course of action against users that have
-	violated the trust of the forum	by spamming or trolling, etc. This allows you to exclude users that are detrimental
-	to your forum. As an admin, when you view posts made on your forum, you can see the IP address that the user had at the time of posting.
-	In the ban list, you simply type that IP address in, save, and they can no longer post from that location.<br>You can also
-	ban people through their email address.';
-
-$helptxt['registrations'] = '<strong>Registration Management</strong><br>
-	This page contains all the functions that could be necessary to manage new registrations on the forum. It contains up to four
-	pages which are visible depending on your forum settings. These are:<br><br>
-	<ul class="normallist">
-		<li>
-			<strong>Register new member</strong><br>
-			From this page you can choose to register accounts for new members on their behalf. This can be useful in forums where registration is closed
-			to new members, or in cases where the admin wishes to create a test account. If the setting to require activation of the account
-			is selected the member will be emailed an activation link which must be clicked before they can use the account. Similarly you can
-			select to email the user\'s new password to the stated email address.<br><br>
-		</li>
-		<li>
-			<strong>Edit Registration Agreement</strong><br>
-			This page allows you to set the text for the registration agreement displayed when members sign up for your forum.
-			You can add or remove anything from the default registration agreement, which is included in StoryBB.<br><br>
-		</li>
-		<li>
-			<strong>Set Reserved Names</strong><br>
-			Using this page you can specify words or names which may not be used by your users.<br><br>
-		</li>
-		<li>
-			<strong>Settings</strong><br>
-			This page will only be visible if you have permission to administrate the forum. From this page you can decide on the registration method
-			to use on your forum, as well as other registration related settings.
-		</li>
-	</ul>';
-
 $helptxt['modlog'] = '<strong>Moderation Log</strong><br>
 	This page allows members of the moderation team to track all the moderation actions that the forum moderators have performed. Note that
 	clearing the log will be logged to prevent abuse.';
@@ -135,29 +41,6 @@ $helptxt['theme_settings'] = '<strong>Theme Settings</strong><br>
 	The settings page allows you to change settings specific to a theme. These settings include options such as the themes directory and URL information but
 	also options that affect the layout of a theme on your forum. Most themes will have a variety of user configurable settings, allowing you to adapt a theme
 	to suit your individual forum needs.';
-$helptxt['smileys'] = '<strong>Smiley Center</strong><br>
-	Here you can add and remove smileys';
-
-$helptxt['serversettings'] = '<strong>Server Settings</strong><br>
-	Here you can perform some core configuration for your forum. This page includes the database and url settings, as well as other
-	important configuration items such as mail settings and caching. Think carefully whenever editing these settings as an error may
-	render the forum inaccessible';
-$helptxt['manage_files'] = '
-	<ul class="normallist">
-		<li>
-			<strong>Browse Files</strong><br>
-			Browse through all the attachments, avatars and thumbnails stored by StoryBB.<br><br>
-		</li><li>
-			<strong>Attachment Settings</strong><br>
-			Configure where attachments are stored and set restrictions on the types of attachments.<br><br>
-		</li><li>
-			<strong>Avatar Settings</strong><br>
-			Configure where avatars are stored and manage the resizing of avatars.<br><br>
-		</li><li>
-			<strong>File Maintenance</strong><br>
-			Check and repair any error in the attachment directory and delete selected attachments.<br><br>
-		</li>
-	</ul>';
 
 $helptxt['topicSummaryPosts'] = 'This allows you to set the number of previous posts shown in the topic summary on the reply page.';
 $helptxt['enableAllMessages'] = 'Set this to the <em>maximum</em> number of posts a topic can have to show the <em>all</em> link. Setting this lower than &quot;Maximum messages to display in a topic page&quot; will simply mean it never gets shown, and setting it too high could slow down your forum.';
@@ -198,7 +81,6 @@ $helptxt['enable_ajax_alerts'] = 'This option allows your members to receive AJA
 $helptxt['removeNestedQuotes'] = 'This will strip nested quotes from a post when citing the post in question via a quote link.';
 $helptxt['max_image_width'] = 'This allows you to set a maximum size for posted pictures. Pictures smaller than the maximum will not be affected. This also determines how attached images are displayed when a thumbnail is clicked on.';
 $helptxt['mail_type'] = 'This setting allows you to choose either PHP\'s default settings, or to override those settings with SMTP. PHP doesn\'t support using authentication with SMTP (which many hosts now require), so if you want that you should select SMTP. Please note that SMTP can be slower, and some servers will not accept usernames and passwords.<br><br>You don\'t need to fill in the SMTP settings if this is set to PHP\'s default.';
-$helptxt['attachment_manager_settings'] = 'Attachments are files that members can upload and attach to a post. Different sites may use these in different ways, which you can configure here.';
 $helptxt['attachmentCheckExtensions'] = 'For some communities, you may wish to limit the types of files that users can upload by checking the extension: e.g. myphoto.jpg has an extension of jpg.';
 $helptxt['attachmentExtensions'] = 'If "check attachment\'s extension" above is ticked, these are the extensions that will be permitted for new attachments.';
 $helptxt['attachmentUploadDir'] = 'The path to your attachment folder on the server<br>(example: /home/sites/yoursite/www/forum/attachments)';
@@ -256,8 +138,6 @@ $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tag
 		<li>&lt;pre&gt;, &lt;blockquote&gt;</li>
 	</ul>';
 
-$helptxt['themes'] = 'Here you can select whether the default theme can be chosen, what theme guests will use,
-	as well as other settings. Click on a theme to the right to change the settings for it.';
 $helptxt['theme_install'] = 'This allows you to install new themes. You can do this from an existing directory, by uploading an archive for the theme, or by copying the default theme.<br><br>Note that the archive or directory must have a <pre>theme.json</pre> definition file.';
 $helptxt['xmlnews_enable'] = 'Allows people to link to <a href="%1$s?action=.xml;sa=news" target="_blank" rel="noopener">Recent news</a>
 	and similar data. It is also recommended that you limit the size of recent posts/news because some clients expect the RSS data to be truncated for display.';
@@ -375,29 +255,11 @@ $helptxt['avatar_download_png'] = 'PNGs are larger, but offer better quality com
 
 $helptxt['disableHostnameLookup'] = 'This disables host name lookups, which on some servers are very slow. Note that this will make banning less effective.';
 
-$helptxt['search'] = 'Adjust all settings for the search function here.';
 $helptxt['search_why_use_index'] = 'A search index can greatly improve the performance of searches on your forum. Especially when the number of messages on a forum grows bigger, searching without an index can take a long time and increase the pressure on your database. If your forum is bigger than 50.000 messages, you might want to consider creating a search index to assure peak performance of your forum.<br><br>Note that a search index can take up quite some space. A fulltext index is a built-in index of MySQL. It\'s relatively compact (approximately the same size as the message table), but a lot of words aren\'t indexed and it can, in some search queries, turn out to be very slow. The custom index is often bigger (depending on your configuration it can be up to 3 times the size of the messages table) but it\'s performance is better than fulltext and relatively stable.';
 
 $helptxt['whytwoip'] = 'StoryBB uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case StoryBB logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
 
 $helptxt['ban_cannot_post'] = 'The \'cannot post\' restriction turns the forum into read-only mode for the banned user. The user cannot create new topics, or reply to existing ones, send personal messages or vote in polls. The banned user can however still read personal messages and topics.<br><br>A warning message is shown to the users that are banned this way.';
-
-$helptxt['posts_and_topics'] = '
-	<ul class="normallist">
-		<li>
-			<strong>Post Settings</strong><br>
-			Modify the settings related to the posting of messages and the way messages are shown.
-		</li><li>
-			<strong>Bulletin Board Code</strong><br>
-			Enable the code that shows forum messages in the right layout. Also adjust which codes are allowed and which aren\'t.
-		</li><li>
-			<strong>Censored Words</strong>
-			In order to keep the language on your forum under control, you can censor certain words. This function allows you to convert forbidden words into innocent versions.
-		</li><li>
-			<strong>Topic Settings</strong>
-			Modify the settings related to topics. The number of topics per page, whether the print-page view is enabled, etc.
-		</li>
-	</ul>';
 
 $helptxt['birthday_email'] = 'Choose the index of the birthday email message to use. A preview will be shown in the Email Subject and Email Body fields.<br><strong>Note:</strong> Selecting this setting does not automatically enable birthday emails. To enable birthday emails use the <a href="%1$s?action=admin;area=scheduledtasks;%3$s=%2$s" target="_blank" rel="noopener">Scheduled Tasks</a> page and enable the birthday email task.';
 $helptxt['pm_bcc'] = 'When sending a personal message you can choose to add a recipient as BCC (Blind Carbon Copy). BCC recipients do not have their identities revealed to the other recipients of the message.';

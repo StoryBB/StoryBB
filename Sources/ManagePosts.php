@@ -45,7 +45,7 @@ function ManagePostSettings()
 	// Tabs for browsing the different post functions.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['manageposts_title'],
-		'help' => 'posts_and_topics',
+		'help' => '',
 		'description' => $txt['manageposts_description'],
 		'tabs' => [
 			'posts' => [

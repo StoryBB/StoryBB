@@ -51,7 +51,7 @@ function ManageAttachments()
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['attachments_avatars'],
-		'help' => 'manage_files',
+		'help' => '',
 		'description' => $txt['attachments_desc'],
 	];
 
@@ -244,7 +244,6 @@ function ManageAttachmentSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
 	$context['settings_title'] = $txt['attachment_manager_settings'];
-	$context['settings_title_help'] = 'attachment_manager_settings';
 	prepareDBSettingContext($config_vars);
 }
 

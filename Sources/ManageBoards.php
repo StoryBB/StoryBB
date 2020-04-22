@@ -44,7 +44,7 @@ function ManageBoards()
 	// Create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['boards_and_cats'],
-		'help' => 'manage_boards',
+		'help' => '',
 		'description' => $txt['boards_and_cats_desc'],
 		'tabs' => [
 			'main' => [

@@ -80,7 +80,7 @@ function ViewMembers()
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['admin_members'],
-		'help' => 'view_members',
+		'help' => '',
 		'description' => $txt['admin_members_list'],
 		'tabs' => [],
 	];
