@@ -1025,11 +1025,11 @@ class Uncategorised
 			),
 			Table::make('settings',
 				[
-					'variable' => Column::varchar(255),
+					'variable' => Column::varchar(64),
 					'value' => Column::text(),
 				],
 				[
-					Index::primary(['variable' => 30]),
+					Index::primary(['variable']),
 				]
 			),
 			Table::make('sessions',
@@ -1095,11 +1095,11 @@ class Uncategorised
 				[
 					'id_member' => Column::mediumint()->signed(),
 					'id_theme' => Column::tinyint()->default(1),
-					'variable' => Column::varchar(255),
+					'variable' => Column::varchar(64),
 					'value' => Column::text(),
 				],
 				[
-					Index::primary(['id_theme', 'id_member', 'variable' => 30]),
+					Index::primary(['id_theme', 'id_member', 'variable']),
 					Index::key(['id_member']),
 				]
 			),
