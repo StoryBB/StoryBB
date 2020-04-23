@@ -38,7 +38,7 @@ class Installer
 	{
 		$db = $this->db();
 		$filesystem = $this->filesystem();
-		$smileydir = App::get_root_path() . '/Smileys';
+		$smileydir = App::get_root_path() . '/install_resources/smileys';
 
 		// First, get the smileys.
 		$request = $db->query('', '
@@ -167,5 +167,7 @@ class Installer
 			['id_preference'],
 			DatabaseAdapter::RETURN_NOTHING
 		);
+
+		return 4;
 	}
 }

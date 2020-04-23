@@ -43,8 +43,12 @@ function validateSession($type = 'admin')
 		return;
 
 	// Or are they already logged in?, Moderator or admin session is need for this area
-	if ((!empty($_SESSION[$type . '_time']) && $_SESSION[$type . '_time'] + $refreshTime >= time()) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
+	$container = Container::instance();
+	$session = $container->get('session');
+	if ($session->get($type . '_time', 0) + $refreshTime >= time())
+	{
 		return;
+	}
 
 	require_once($sourcedir . '/Subs-Auth.php');
 
@@ -62,7 +66,7 @@ function validateSession($type = 'admin')
 		// Password correct?
 		if ($good_password || hash_verify_password($user_info['username'], $_POST[$type . '_pass'], $user_info['passwd']))
 		{
-			$_SESSION[$type . '_time'] = time();
+			$session->set($type . '_time', time());
 			unset($_SESSION['request_referer']);
 			return;
 		}
@@ -598,30 +602,35 @@ function isBannedEmail($email, $restriction, $error)
  */
 function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
-	global $sc, $modSettings, $boardurl;
+	global $modSettings, $boardurl;
+
+	$container = Container::instance();
+	$session = $container->get('session');
+	$session_var = $session->get('session_var');
+	$session_value = $session->get('session_value');
 
 	// Is it in as $_POST['sc']?
 	if ($type == 'post')
 	{
-		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
-		if ($check !== $sc)
+		$check = isset($_POST[$session_var]) ? $_POST[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
+		if ($check !== $session_value)
 			$error = 'session_timeout';
 	}
 
 	// How about $_GET['sesc']?
 	elseif ($type == 'get')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
-		if ($check !== $sc)
+		$check = isset($_GET[$session_var]) ? $_GET[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
+		if ($check !== $session_value)
 			$error = 'session_verify_fail';
 	}
 
 	// Or can it be in either?
 	elseif ($type == 'request')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
+		$check = isset($_GET[$session_var]) ? $_GET[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$session_var]) ? $_POST[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
 
-		if ($check !== $sc)
+		if ($check !== $session_value)
 			$error = 'session_verify_fail';
 	}
 

@@ -11,6 +11,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -741,8 +742,8 @@ function AdminLogs()
  */
 function AdminEndSession()
 {
-	// This is so easy!
-	unset($_SESSION['admin_time']);
+	$container = Container::instance();
+	$container->get('session')->remove('admin_time');
 
 	// Clean any admin tokens as well.
 	foreach (array_keys($_SESSION['token']) as $key)

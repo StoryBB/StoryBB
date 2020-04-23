@@ -11,6 +11,7 @@
  */
 
 use StoryBB\ClassManager;
+use StoryBB\Container;
 
 /**
  * Main entry point for the admin search settings screen.
@@ -385,8 +386,10 @@ function CreateMessageIndex()
 		$context['step'] = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 0;
 
 		// admin timeouts are painful when building these long indexes - but only if we actually have such things enabled
-		if (empty($modSettings['securityDisable']) && $_SESSION['admin_time'] + 3300 < time() && $context['step'] >= 1)
-			$_SESSION['admin_time'] = time();
+		$container = Container::instance();
+		$session = $container->get('session');
+		if (empty($modSettings['securityDisable']) && $session->get('admin_time') + 3300 < time() && $context['step'] >= 1)
+			$session->set('admin_time', time());
 	}
 
 	if ($context['step'] !== 0)
