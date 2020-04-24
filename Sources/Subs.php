@@ -1083,7 +1083,12 @@ function session_flash(string $status, string $message)
 	{
 		fatal_error('Invalid session flash');
 	}
-	$container->get('session')->getFlashBag()->add($status, $message);
+	$flashbag = $container->get('session')->getFlashBag();
+	$current_messages = $flashbag->peekAll();
+	if (!isset($current_messages[$status]) || !in_array($message, $current_messages[$status]))
+	{
+		$flashbag->add($status, $message);
+	}
 }
 
 /**
