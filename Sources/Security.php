@@ -712,28 +712,6 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 }
 
 /**
- * Check if a specific confirm parameter was given.
- *
- * @param string $action The action we want to check against
- * @return bool|string True if the check passed or a token
- */
-function checkConfirm($action)
-{
-	global $modSettings;
-
-	if (isset($_GET['confirm']) && isset($_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['confirm_' . $action])
-		return true;
-
-	else
-	{
-		$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed']);
-		$_SESSION['confirm_' . $action] = md5($token . $_SERVER['HTTP_USER_AGENT']);
-
-		return $token;
-	}
-}
-
-/**
  * Lets give you a token of our appreciation.
  *
  * @param string $action The action to create the token for
