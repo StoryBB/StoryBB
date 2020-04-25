@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller;
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
@@ -46,7 +47,20 @@ class Logout implements Routable
 
 				// Destroy the session, and return it to being a normal short-lived session cookie.
 				$this->session()->invalidate();
-				return new RedirectResponse('/');
+
+				$response = new RedirectResponse('/');
+
+				$container = Container::instance();
+ 				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
+ 				if ($request->cookies->has($persist_cookie))
+ 				{
+ 					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
+ 					$persistence->invalidate_persist_token($request->cookies->get($persist_cookie));
+
+ 					$response->headers->clearCookie($persist_cookie);
+ 				};
+
+				return $response;
 			}
 		}
 

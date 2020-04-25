@@ -101,4 +101,26 @@ class Persistence
 
 		return !empty($row['id_member']) ? $row['id_member'] : 0;
 	}
+
+	public function invalidate_persist_token(string $token)
+	{
+		if (strpos($token, ':') === false)
+		{
+			// If the token is the wrong format, abort.
+			return;
+		}
+
+		list ($userid, $hash) = explode(':', $token, 2);
+		$hash = @base64_decode($hash);
+
+		$this->db()->query('', '
+			DELETE FROM {db_prefix}sessions_persist
+			WHERE id_member = {int:id_member}
+				AND persist_key = {binary:hash}',
+			[
+				'id_member' => $userid,
+				'hash' => $hash,
+			]
+		);
+	}
 }
