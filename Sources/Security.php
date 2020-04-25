@@ -722,10 +722,13 @@ function createToken($action, $type = 'post')
 {
 	global $modSettings, $context;
 
+	$container = Container::instance();
+	$session = $container->get('session');
+
 	$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed'] . $type);
 	$token_var = substr(preg_replace('~^\d+~', '', md5(mt_rand() . (string) microtime() . mt_rand())), 0, mt_rand(7, 12));
 
-	$_SESSION['token'][$type . '-' . $action] = [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token];
+	$session->set('token/' . $type . '-' . $action, [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token]);
 
 	$context[$action . '_token'] = $token;
 	$context[$action . '_token_var'] = $token_var;
@@ -757,6 +760,11 @@ function validateToken($action, $type = 'post', $reset = true)
 		else
 			return '';
 	}
+	$container = Container::instance();
+	$session = $container->get('session');
+
+	$tokenstring = 'token/' . $type . '-' . $action;
+	$token = $session->get($tokenstring, false);
 
 	// This nasty piece of code validates a token.
 	/*
@@ -766,12 +774,15 @@ function validateToken($action, $type = 'post', $reset = true)
 		4. Match that result against what is in the session.
 		5. If it matches, success, otherwise we fallout.
 	*/
-	if (isset($_SESSION['token'][$type . '-' . $action], $GLOBALS['_' . strtoupper($type)][$_SESSION['token'][$type . '-' . $action][0]]) && md5($GLOBALS['_' . strtoupper($type)][$_SESSION['token'][$type . '-' . $action][0]] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['token'][$type . '-' . $action][1])
+	if ($token)
 	{
-		// Invalidate this token now.
-		unset($_SESSION['token'][$type . '-' . $action]);
+		if (isset($GLOBALS['_' . strtoupper($type)][$token[0]]) && md5($GLOBALS['_' . strtoupper($type)][$token[0]] . $_SERVER['HTTP_USER_AGENT']) === $token[1])
+		{
+			// Invalidate this token now.
+			$session->remove($tokenstring);
 
-		return true;
+			return true;
+		}
 	}
 
 	// Patrons with invalid tokens get the boot.
@@ -787,7 +798,9 @@ function validateToken($action, $type = 'post', $reset = true)
 	}
 	// Remove this token as its useless
 	else
-		unset($_SESSION['token'][$type . '-' . $action]);
+	{
+		$session->remove($tokenstring);
+	}
 
 	// Randomly check if we should remove some older tokens.
 	if (mt_rand(0, 138) == 23)
@@ -805,14 +818,23 @@ function validateToken($action, $type = 'post', $reset = true)
  */
 function cleanTokens($complete = false)
 {
+	$container = Container::instance();
+	$session = $container->get('session');
+
 	// We appreciate cleaning up after yourselves.
-	if (!isset($_SESSION['token']))
+	if (!$session->has('token'))
+	{
 		return;
+	}
 
 	// Clean up tokens, trying to give enough time still.
-	foreach ($_SESSION['token'] as $key => $data)
-		if ($data[2] + 10800 < time() || $complete)
-			unset($_SESSION['token'][$key]);
+	foreach ($session->get('token') as $key => $data)
+	{
+		if (time() > $data[2] + 10800 || $complete)
+		{
+			$session->remove('token/' . $key);
+		}
+	}
 }
 
 /**
