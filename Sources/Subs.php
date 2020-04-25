@@ -2136,14 +2136,6 @@ function setupMenuContext()
 }
 
 /**
- * Generate a random seed and ensure it's stored in settings.
- */
-function sbb_seed_generator()
-{
-	updateSettings(['rand_seed' => (float) microtime() * 1000000]);
-}
-
-/**
  * This functions exactly the same as call_integration_hook but allows for classifying hooks
  * that are for updating settings as opposed to routing or general runtime manipulation.
  * @param string $hook The hook name

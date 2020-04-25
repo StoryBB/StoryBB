@@ -11,6 +11,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Helper\Random;
 use StoryBB\Model\Policy;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
@@ -1627,16 +1628,5 @@ function populateDuplicateMembers(&$members)
  */
 function generateValidationCode()
 {
-	global $smcFunc, $modSettings;
-
-	$request = $smcFunc['db']->query('get_random_number', '
-		SELECT RAND()',
-		[
-		]
-	);
-
-	list ($dbRand) = $smcFunc['db']->fetch_row($request);
-	$smcFunc['db']->free_result($request);
-
-	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);
+	return bin2hex(Random::get_random_bytes(10));
 }

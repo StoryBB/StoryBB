@@ -13,6 +13,7 @@
 
 use StoryBB\Container;
 use StoryBB\Helper\IP;
+use StoryBB\Helper\Random;
 
 /**
  * Check if the user is who he/she says he is
@@ -725,7 +726,7 @@ function createToken($action, $type = 'post')
 	$container = Container::instance();
 	$session = $container->get('session');
 
-	$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed'] . $type);
+	$token = bin2hex(Random::get_random_bytes(32));
 	$token_var = substr(preg_replace('~^\d+~', '', md5(mt_rand() . (string) microtime() . mt_rand())), 0, mt_rand(7, 12));
 
 	$session->set('token/' . $type . '-' . $action, [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token]);
