@@ -238,7 +238,7 @@ abstract class Base
 		$session = $this->session();
 		$formtokens = $session->get('formtokens');
 
-		foreach ($formtoken as $key => $token)
+		foreach ($formtokens as $key => $token)
 		{
 			[$token, $expiry] = $token;
 			if ($expiry < time())
