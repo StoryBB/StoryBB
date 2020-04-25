@@ -19,6 +19,7 @@ use StoryBB\Database\AdapterFactory;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -150,11 +151,11 @@ class App
 			if ($site_settings->databaseSession_enable)
 			{
 				$session_storage = new NativeSessionStorage([], $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
-				$session = new Session($session_storage);
+				$session = new Session($session_storage, new NamespacedAttributeBag);
 			}
 			else
 			{
-				$session = new Session;
+				$session = new Session(null, new NamespacedAttributeBag);
 			}
 
 			$session->setName($cookiename);
