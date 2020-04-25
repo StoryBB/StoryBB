@@ -1128,7 +1128,6 @@ function spamProtection($error_type, $only_return_result = false)
 		'login' => 2,
 		'register' => 2,
 		'remind' => 30,
-		'sendmail' => $modSettings['spamWaitTime'] * 5,
 		'reporttm' => $modSettings['spamWaitTime'] * 4,
 		'search' => !empty($modSettings['search_floodcontrol_time']) ? $modSettings['search_floodcontrol_time'] : 1,
 	];

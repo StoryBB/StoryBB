@@ -195,7 +195,6 @@ $txt['register_WaitTime_broken'] = 'You already registered just %1$d seconds ago
 $txt['login_WaitTime_broken'] = 'You will have to wait about %1$d seconds to login again, sorry.';
 $txt['pm_WaitTime_broken'] = 'The last personal message from your IP was less than %1$d seconds ago. Please try again later.';
 $txt['reporttm_WaitTime_broken'] = 'The last topic report from your IP was less than %1$d seconds ago. Please try again later.';
-$txt['sendmail_WaitTime_broken'] = 'The last email sent from your IP was less than %1$d seconds ago. Please try again later.';
 $txt['search_WaitTime_broken'] = 'Your last search was less than %1$d seconds ago. Please try again later.';
 $txt['remind_WaitTime_broken'] = 'Your last reminder was less than %1$d seconds ago. Please try again later.';
 
