@@ -279,24 +279,7 @@ function sbb_main()
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($actionArray[$_REQUEST['action']]))
 	{
-		if (!empty($modSettings['integrate_fallback_action']))
-		{
-			$fallbackAction = explode(',', $modSettings['integrate_fallback_action']);
-
-			// Sorry, only one fallback action is needed.
-			$fallbackAction = $fallbackAction[0];
-
-			$call = call_helper($fallbackAction, true);
-
-			if (!empty($call))
-				return $call;
-		}
-
-		// No fallback action, huh?
-		else
-		{
-			fatal_lang_error('not_found', false, [], 404);
-		}
+		fatal_lang_error('not_found', false, [], 404);
 	}
 
 	// Otherwise, it was set - so let's go to that action.
