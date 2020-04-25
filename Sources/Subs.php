@@ -1298,10 +1298,6 @@ function setupThemeContext($forceload = false)
 		{
 			$txt['welcome_guest_register'] .= str_replace('{scripturl}', $scripturl, $txt['welcome_guest_activate']);
 		}
-
-		// If we've upgraded recently, go easy on the passwords.
-		if (!empty($modSettings['disableHashTime']) && ($modSettings['disableHashTime'] == 1 || time() < $modSettings['disableHashTime']))
-			$context['disable_login_hashing'] = true;
 	}
 
 	// Setup the main menu items.
