@@ -21,6 +21,9 @@ use StoryBB\Form\Rule\ValidUsername;
 
 class Login extends Base
 {
+	// Login tokens should be valid for 20 minutes at a time.
+	const CSRF_TOKEN_EXPIRY = 1200;
+
 	public function define_form()
 	{
 		$general = $this->add_section('general')->label('General:login');

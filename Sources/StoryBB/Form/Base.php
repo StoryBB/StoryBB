@@ -16,6 +16,7 @@ use RuntimeException;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
 use StoryBB\Dependency\Templater;
+use StoryBB\Helper\Random;
 use StoryBB\Form\Rule\Exception as RuleException;
 
 abstract class Base
@@ -34,6 +35,8 @@ abstract class Base
 	protected $errors = [];
 
 	protected $finalised = false;
+
+	const CSRF_TOKEN_EXPIRY = 10800;
 
 	public function __construct(string $action)
 	{
@@ -95,6 +98,18 @@ abstract class Base
 		$session = $this->session();
 		$this->hidden['session'][$session->get('session_var')] = $session->get('session_value');
 
+		[$token, $expiry] = $this->get_form_token();
+		if ($token !== '' && $expiry > time())
+		{
+			// If the expiry time is still in the future, put the token into the form.
+			$this->hidden['csrftoken'] = $token;
+		}
+		else
+		{
+			// We either don't have a token, or it's expired.
+			$this->create_form_token();
+		}
+
 		$this->finalised = true;
 	}
 
@@ -108,6 +123,17 @@ abstract class Base
 			if (!isset($data[$stored_sessionvar]) || $data[$stored_sessionvar] !== $this->hidden['session'][$stored_sessionvar])
 			{
 				$this->errors['_form'][] = 'Errors:session_timeout';
+			}
+		}
+
+		if (isset($this->hidden['csrftoken']))
+		{
+			$class = get_class($this);
+			[$token, $expiry] = $this->get_form_token();
+			if ($data['csrftoken'] !== $token || $expiry < time())
+			{
+				$this->errors['_form'][] = 'Errors:token_verify_fail';
+				$this->create_form_token();
 			}
 		}
 
@@ -186,5 +212,39 @@ abstract class Base
 			'errors' => $this->errors,
 		];
 		return $this->templater()->renderToString('form/form.latte', $rendercontext);
+	}
+
+	protected function get_form_token()
+	{
+		$session = $this->session();
+		$class = get_class($this);
+
+		return $session->get('formtokens/' . $class, ['', 0]);
+	}
+
+	protected function create_form_token()
+	{
+		$session = $this->session();
+		$this->clean_expired_form_tokens();
+
+		$class = get_class($this);
+		// Creates a token and sets an expiry for three hours (by default) in the future.
+		$this->hidden['csrftoken'] = bin2hex(Random::get_random_bytes(32));
+		$session->set('formtokens/' . $class, [$this->hidden['csrftoken'], time() + static::CSRF_TOKEN_EXPIRY]);
+	}
+
+	protected function clean_expired_form_tokens()
+	{
+		$session = $this->session();
+		$formtokens = $session->get('formtokens');
+
+		foreach ($formtoken as $key => $token)
+		{
+			[$token, $expiry] = $token;
+			if ($expiry < time())
+			{
+				$session->remove('formtokens/' . $key);
+			}
+		}
 	}
 }
