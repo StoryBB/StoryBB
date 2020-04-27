@@ -610,8 +610,7 @@ $txt['you_likes_n'] = [
 $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';
 
-$txt['unread_topics_visit'] = 'Recent Unread Topics';
-$txt['unread_topics_visit_none'] = 'No unread topics found since your last visit. <a href="{scripturl}?action=unread;all">Click here to try all unread topics</a>.';
+$txt['unread_topics'] = 'Unread Topics';
 $txt['unread_topics_all'] = 'All Unread Topics';
 $txt['unread_replies'] = 'Updated Topics';
 
