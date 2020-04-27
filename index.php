@@ -265,7 +265,7 @@ function sbb_main()
 		'topic' => ['Display.php', 'Display'],
 		'trackip' => ['Profile-View.php', 'trackIP'],
 		'unread' => ['Recent.php', 'UnreadTopics'],
-		'unreadreplies' => ['Recent.php', 'UnreadTopics'],
+		'unreadreplies' => ['Recent.php', 'UnreadReplies'],
 		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'viewprofile' => ['Profile.php', 'ModifyProfile'],
