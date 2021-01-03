@@ -39,11 +39,7 @@ class Bookmark
 
 	protected static function sanitise_ids(array $ids): array
 	{
-		$ids = array_map(function ($x)
-			{
-				return (int) $x;
-			}, $ids
-		);
+		$ids = array_map('intval', $ids);
 		return array_filter($ids);
 	}
 
