@@ -199,6 +199,9 @@ class App
 
 			return $session;
 		});
+		$container->inject('currentuser', function() use ($container) {
+			return $container->instantiate('StoryBB\User\CurrentUser');
+		});
 		$container->inject('smileys', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
 		});

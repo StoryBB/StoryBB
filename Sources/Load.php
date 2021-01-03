@@ -226,35 +226,25 @@ function loadUserSettings()
 	}
 
 	// Only load this stuff if the user isn't a guest.
+	$user = $container->get('currentuser');
+	$user->load_user($id_member);
 	if ($id_member != 0)
 	{
-		// Is the member data cached?
-		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
-		{
-			$request = $db->query('', '
-				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
-					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
-				FROM {db_prefix}members AS mem
-					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
-					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-				WHERE mem.id_member = {int:id_member}
-				LIMIT 1',
-				[
-					'id_member' => $id_member,
-				]
-			);
-			$user_settings = $db->fetch_assoc($request);
-			$user_settings['id_theme'] = $user_settings['char_theme'];
-			$user_settings['avatar'] = $user_settings['char_avatar'];
-			$db->free_result($request);
-
-			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
-				$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
-
-			if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-				cache_put_data('user_settings-' . $id_member, $user_settings, 60);
-		}
+		$request = $db->query('', '
+			SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
+				chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
+			FROM {db_prefix}members AS mem
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
+				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
+				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
+			WHERE mem.id_member = {int:id_member}
+			LIMIT 1',
+			[
+				'id_member' => $id_member,
+			]
+		);
+		$user_settings = $db->fetch_assoc($request);
+		$db->free_result($request);
 
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
@@ -268,8 +258,19 @@ function loadUserSettings()
 	}
 
 	// Found 'im, let's set up the variables.
+	$user_info = [
+		'groups' => $user->get_groups(),
+	];
 	if ($id_member != 0)
 	{
+		$user_settings['id_theme'] = $user_settings['char_theme'];
+		$user_settings['avatar'] = $user_settings['char_avatar'];
+
+		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
+		{
+			$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
+		}
+
 		// Let's not update the last visit time in these cases...
 		// 1. RSS feeds and XMLHTTP requests don't count either.
 		// 2. If it was set within this session, no need to set it again.
@@ -311,21 +312,6 @@ function loadUserSettings()
 
 		$username = $user_settings['member_name'];
 
-		if (empty($user_settings['additional_groups']))
-			$user_info = [
-				'groups' => [$user_settings['id_group']]
-			];
-		else
-			$user_info = [
-				'groups' => array_merge(
-					[$user_settings['id_group']],
-					explode(',', $user_settings['additional_groups'])
-				)
-			];
-
-		// Because history has proven that it is possible for groups to go bad - clean up in case.
-		foreach ($user_info['groups'] as $k => $v)
-			$user_info['groups'][$k] = (int) $v;
 
 		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
@@ -351,17 +337,7 @@ function loadUserSettings()
 	{
 		// This is what a guest's variables should be.
 		$username = '';
-		$user_info = ['groups' => [-1]];
 		$user_settings = [];
-
-		// if (isset($_COOKIE[$cookiename]))
-		// 	$_COOKIE[$cookiename] = '';
-
-		// Create a login token if it doesn't exist yet.
-		if (!isset($_SESSION['token']['post-login']))
-			createToken('login');
-		else
-			list ($context['login_token_var'],,, $context['login_token']) = $_SESSION['token']['post-login'];
 
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
 		if (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300)
@@ -392,8 +368,8 @@ function loadUserSettings()
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 		'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 		'language' => empty($user_settings['lngfile']) || empty($modSettings['userLanguage']) ? $language : $user_settings['lngfile'],
-		'is_guest' => $id_member == 0,
-		'is_admin' => in_array(1, $user_info['groups']),
+		'is_guest' => !$user->is_authenticated(),
+		'is_admin' => $user->is_site_admin(),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
