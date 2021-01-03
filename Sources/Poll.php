@@ -12,6 +12,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Helper\Cookie;
 
 /**
  * Allow the user to vote.
@@ -205,8 +206,7 @@ function Vote()
 			]
 		);
 
-		require_once($sourcedir . '/Subs-Auth.php');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
 	}
 

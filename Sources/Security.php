@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Container;
+use StoryBB\Helper\Cookie;
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Random;
 
@@ -291,9 +292,8 @@ function is_not_banned($forceCheck = false)
 		// My mistake. Next time better.
 		if (!isset($_SESSION['ban']['cannot_access']))
 		{
-			require_once($sourcedir . '/Subs-Auth.php');
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-			//sbb_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
+			$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
 		}
 	}
 
@@ -331,9 +331,8 @@ function is_not_banned($forceCheck = false)
 		];
 
 		// A goodbye present.
-		require_once($sourcedir . '/Subs-Auth.php');
 		require_once($sourcedir . '/LogInOut.php');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
 
 		// Don't scare anyone, now.
