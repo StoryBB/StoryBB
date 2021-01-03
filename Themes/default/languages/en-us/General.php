@@ -578,6 +578,9 @@ $txt['quick_reply_verification_guests'] = '(required for all guests)';
 $txt['quick_reply_verification_posts'] = '(required for all users with less than %1$d posts)';
 $txt['wait_for_approval'] = 'Note: this post will not display until it\'s been approved by a moderator.';
 
+$txt['bookmark_topic'] = 'Bookmark topic';
+$txt['unbookmark_topic'] = 'Unbookmark topic';
+
 $txt['notification_enable_board'] = 'Are you sure you wish to enable notification of new topics for this board?';
 $txt['notification_disable_board'] = 'Are you sure you wish to disable notification of new topics for this board?';
 $txt['notification_enable_topic'] = 'Are you sure you wish to enable notification of new replies for this topic?';

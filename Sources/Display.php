@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\Model\Bookmark;
 use StoryBB\StringLibrary;
 
 /**
@@ -507,6 +508,17 @@ function Display()
 	$context['num_views'] = comma_format($context['topicinfo']['num_views']);
 	$context['num_views_text'] = numeric_context('read_times', $context['num_views']);
 	$context['mark_unread_time'] = !empty($virtual_msg) ? $virtual_msg : $context['topicinfo']['new_from'];
+
+	if ($context['user']['is_guest'])
+	{
+		$context['bookmarked'] = false;
+		$context['can_bookmark'] = false;
+	}
+	else
+	{
+		$context['bookmarked'] = Bookmark::is_bookmarked((int) $context['user']['id'], $topic);
+		$context['can_bookmark'] = true;
+	}
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.' . ($can_show_all ? '0;all' : $context['start']);
@@ -1199,6 +1211,11 @@ function Display()
 
 	if ($context['can_add_poll'])
 		$context['normal_buttons']['add_poll'] = ['text' => 'add_poll', 'image' => 'add_poll.png', 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']];
+
+	if ($context['can_bookmark'])
+	{
+		$context['normal_buttons']['bookmark'] = ['text' => $context['bookmarked'] ? 'unbookmark_topic' : 'bookmark_topic', 'image' => 'reply.png', 'url' => $scripturl . '?action=bookmark;topic=' . $context['current_topic'] . ';msg=' . $context['topic_last_message'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+	}
 
 	if ($context['can_mark_unread'])
 		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];

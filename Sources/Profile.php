@@ -177,6 +177,16 @@ function ModifyProfile($post_errors = [])
 						'any' => 'profile_view',
 					],
 				],
+				'bookmarks' => [
+					'label' => $txt['bookmark_profile'],
+					'file' => 'Profile-View.php',
+					'function' => 'bookmarks',
+					'icon' => 'bookmark',
+					'permission' => [
+						'own' => 'is_not_guest',
+						'any' => [],
+					],
+				],
 				'showposts' => [
 					'label' => $txt['showPosts'],
 					'file' => 'Profile-View.php',
@@ -872,6 +882,11 @@ function profile_popup($memID)
 		[
 			'menu' => 'edit_profile',
 			'area' => 'account',
+		],
+		[
+			'menu' => 'info',
+			'area' => 'bookmarks',
+			'title' => $txt['popup_bookmarks'],
 		],
 		[
 			'menu' => 'info',
