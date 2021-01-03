@@ -91,7 +91,6 @@ function ModifySettings()
 
 	$subActions = [
 		'general' => 'ModifyGeneralSettings',
-		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
 		'phpinfo' => 'ShowPHPinfoSettings',
@@ -322,92 +321,6 @@ function BoardurlMatch($url = '')
 		return false;
 	else
 		return true;
-}
-
-/**
- * This function handles cookies settings modifications.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyCookieSettings($return_config = false)
-{
-	global $context, $scripturl, $txt, $sourcedir, $modSettings, $cookiename, $user_settings, $boardurl, $smcFunc;
-
-	// Define the variables we want to edit.
-	$config_vars = [
-		// Cookies...
-		['cookiename', $txt['cookie_name'], 'file', 'text', 20],
-		['localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'],
-		['globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'],
-		['globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'],
-		['secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()],
-	];
-
-	addInlineJavaScript('
-	function hideGlobalCookies()
-	{
-		var usingLocal = $("#localCookies").prop("checked");
-		$("#setting_globalCookies").closest("dt").toggle(!usingLocal);
-		$("#globalCookies").closest("dd").toggle(!usingLocal);
-
-		var usingGlobal = !usingLocal && $("#globalCookies").prop("checked");
-		$("#setting_globalCookiesDomain").closest("dt").toggle(usingGlobal);
-		$("#globalCookiesDomain").closest("dd").toggle(usingGlobal);
-	};
-	hideGlobalCookies();
-
-	$("#localCookies, #globalCookies").click(function() {
-		hideGlobalCookies();
-	});', true);
-
-	settings_integration_hook('integrate_cookie_settings', [&$config_vars]);
-
-	if ($return_config)
-		return [$txt['cookies_sessions_settings'], $config_vars];
-
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cookie;save';
-	$context['settings_title'] = $txt['cookies_sessions_settings'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		settings_integration_hook('integrate_save_cookie_settings');
-
-		// Local and global do not play nicely together.
-		if (!empty($_POST['localCookies']) && empty($_POST['globalCookies']))
-			unset ($_POST['globalCookies']);
-
-		if (empty($modSettings['localCookies']) != empty($_POST['localCookies']) || empty($modSettings['globalCookies']) != empty($_POST['globalCookies']))
-			$scope_changed = true;
-
-		if (!empty($_POST['globalCookiesDomain']) && strpos($boardurl, $_POST['globalCookiesDomain']) === false)
-			fatal_lang_error('invalid_cookie_domain', false);
-
-		saveSettings($config_vars);
-
-		// If the cookie name or scope were changed, reset the cookie.
-		if ($cookiename != $_POST['cookiename'] || !empty($scope_changed))
-		{
-			$original_session_id = $context['session_id'];
-			include_once($sourcedir . '/Subs-Auth.php');
-
-			// Remove the old cookie.
-			setLoginCookie(-3600, 0);
-
-			// Set the new one.
-			$cookiename = !empty($_POST['cookiename']) ? $_POST['cookiename'] : $cookiename;
-			setLoginCookie(0, $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
-
-			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id);
-		}
-
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
 }
 
 /**

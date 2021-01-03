@@ -114,12 +114,6 @@ $helptxt['use_subdirectories_for_attachments'] = 'Create new directories.';
 $helptxt['max_image_height'] = 'As with the maximum width, this setting indicates the maximum height a posted image can be.';
 $helptxt['avatar_paranoid'] = 'Selecting this setting will enable very strict security checks on avatars. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with avatar re-encoding, in order to have StoryBB try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
 $helptxt['avatar_reencode'] = 'Selecting this setting will enable trying to re-encode the uploaded avatars. Image re-encoding offers better security. Note, however, that image re-encoding also renders all animated images static. <br> This feature is only possible if the GD module is installed on your server.';
-$helptxt['localCookies'] = 'StoryBB uses cookies to store login information on the client computer.
-	Cookies can be stored globally (myserver.com) or locally (myserver.com/path/to/forum).<br><br>
-	Try this setting if you\'re experiencing problems with users getting logged out automatically.<hr>
-	Globally stored cookies are less secure when used on a shared webserver (like Tripod).<hr>
-	Local cookies don\'t work outside the forum directory so, if your forum is stored at www.myserver.com/forum, pages like www.myserver.com/index.php cannot access the account information.<br><br>
-	Global cookies are generally recommended for most sites on their own domain.';
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
 $helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank" rel="noopener">PHP Site</a>.';
@@ -143,13 +137,6 @@ $helptxt['xmlnews_attachments'] = 'Allows links to attachments to be enclosed wi
 	The "view attachments" permission affects this setting. Members and guests will only see a post\'s attachments in the feed if they can also see the attachments on the post\'s web page. Keep in mind that most feed readers will access your feeds as a guest.
 	<br><br>
 	Some feed formats only allow one enclosed attachment per post. If a post has multiple attachments, StoryBB will enclose the largest one in these feeds.';
-$helptxt['globalCookies'] = 'Makes log in cookies available across subdomains. For example, if...<br>
-	your site is https://www.example.com/,<br>
-	and your forum is https://forum.example.com/,<br>
-	using this setting will allow you to access the forum\'s cookie on your site. Do not enable this if there are other subdomains (like hacker.example.com) not controlled by you.<br><br>
-	This setting does not function when local cookies are enabled.';
-$helptxt['globalCookiesDomain'] = 'When using subdomain independent cookies (global cookies), you can specify which domain should be used for them. This should, of course, be set to your main domain - for example, if you are using <em>forum.example.com</em> and <em>www.example.com</em>, the domain is <em>example.com</em> in this case. You should not put the <em>http://</em> or <em>https://</em> part in front of it.';
-$helptxt['secureCookies'] = 'Enabling this setting will force the cookies created for users on your forum to be marked as secure. Only enable this setting if you are using HTTPS throughout your site, otherwise it will mean no-one will be able to log in properly!';
 $helptxt['securityDisable'] = 'This <em>disables</em> the additional password check for the administration page. This is not recommended!';
 $helptxt['securityDisable_why'] = 'This is your current password. (the same one you use to login.)<br><br>The requirement to enter this helps ensure that you want to do whatever administration you are doing, and that it is <strong>you</strong> doing it.';
 $helptxt['frame_security'] = 'Modern browsers now understand a security header presented by servers called X-Frame-Options. By setting this option you specify how you want to allow your site to be framed inside a frameset or a iframe. Disable will not send any header and is the most unsecure, however allows the most freedom. Deny will prevent all frames completely and is the most restrictive and secure. Allowing the Same Origin will only allow your domain to issue any frames and provides a middle ground for the previous two options.';

@@ -311,7 +311,6 @@ function AdminMain()
 					'icon' => 'server',
 					'subsections' => [
 						'general' => [$txt['general_settings']],
-						'cookie' => [$txt['cookies_sessions_settings']],
 						'security' => [$txt['security_settings']],
 						'cache' => [$txt['caching_settings']],
 						'phpinfo' => [$txt['phpinfo_settings']],
@@ -567,7 +566,6 @@ function AdminSearchInternal()
 		['ModifyDraftSettings', 'area=postsettings;sa=drafts'],
 		['EditSearchSettings', 'area=managesearch;sa=settings'],
 		['ModifyGeneralSettings', 'area=serversettings;sa=general'],
-		['ModifyCookieSettings', 'area=serversettings;sa=cookie'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
 		['ModifyCacheSettings', 'area=serversettings;sa=cache'],
 		['ModifyRegistrationSettings', 'area=regcenter;sa=settings'],

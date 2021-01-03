@@ -28,7 +28,6 @@ $txt['admin_server_settings'] = 'Server Settings';
 
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
-$txt['cookie_name'] = 'Cookie name';
 $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
@@ -534,7 +533,6 @@ $txt['not_done_reason'] = 'To avoid overloading your server, the process has bee
 $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
-$txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
 $txt['phpinfo_settings'] = 'PHP Info';
