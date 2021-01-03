@@ -75,7 +75,7 @@ class DatabaseHandler extends AbstractSessionHandler
 
 	protected function doWrite($session_id, $data)
 	{
-		$maxlifetime = (int) ini_get('session.gc_maxlifetime'); // @todo databaseSession_lifetime ?
+		$maxlifetime = max((int) ini_get('session.gc_maxlifetime'), 2880);
 
 		$db = $this->db();
 
@@ -137,7 +137,7 @@ class DatabaseHandler extends AbstractSessionHandler
 					AND lifetime > {int:min}',
 				[
 					'time' => time(),
-					'min' => self::MAX_LIFETIME, // @ databaseSession_lifetime ?
+					'min' => self::MAX_LIFETIME,
 				]
 			);
 
