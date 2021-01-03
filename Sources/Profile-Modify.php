@@ -3479,8 +3479,11 @@ function profileReloadUser()
 {
 	global $context, $cur_profile;
 
-	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
-		setLoginCookie(0, $context['id_member'], hash_salt($_POST['passwrd1'], $cur_profile['password_salt']));
+	$container = Container::instance();
+	$session = $container->get('session');
+	$session->migrate(true, 3600);
+	$session->set('userid', $context['id_member']);
+	// @todo invalidate persistence tokens as well?
 
 	loadUserSettings();
 	writeLog();
