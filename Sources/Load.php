@@ -1695,19 +1695,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	if (isset($detected_url) && $detected_url != $boardurl)
 	{
-		// Try #1 - check if it's in a list of alias addresses.
-		if (!empty($modSettings['forum_alias_urls']))
-		{
-			$aliases = explode(',', $modSettings['forum_alias_urls']);
-
-			foreach ($aliases as $alias)
-			{
-				// Rip off all the boring parts, spaces, etc.
-				if ($detected_url == trim($alias) || strtr($detected_url, ['http://' => '', 'https://' => '']) == trim($alias))
-					$do_fix = true;
-			}
-		}
-
 		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
 		if (empty($do_fix) && strtr($detected_url, ['://' => '://www.']) == $boardurl && (empty($_GET) || count($_GET) == 1))
 		{

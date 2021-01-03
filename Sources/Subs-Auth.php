@@ -74,34 +74,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		//sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
 	}
 
-	// Any alias URLs?  This is mainly for use with frames, etc.
-	if (!empty($modSettings['forum_alias_urls']))
-	{
-		$aliases = explode(',', $modSettings['forum_alias_urls']);
-
-		$temp = $boardurl;
-		foreach ($aliases as $alias)
-		{
-			// Fake the $boardurl so we can set a different cookie.
-			$alias = strtr(trim($alias), ['http://' => '', 'https://' => '']);
-			$boardurl = 'http://' . $alias;
-
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-
-			if ($cookie_url[0] == '')
-				$cookie_url[0] = strtok($alias, '/');
-
-			$alias_data = sbb_json_decode($data);
-			$alias_data[3] = $cookie_url[0];
-			$alias_data[4] = $cookie_url[1];
-			$alias_data = json_encode($alias_data, JSON_FORCE_OBJECT);
-
-			//sbb_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
-		}
-
-		$boardurl = $temp;
-	}
-
 	$_COOKIE[$cookiename] = $data;
 
 	// Make sure the user logs in with a new session ID.
