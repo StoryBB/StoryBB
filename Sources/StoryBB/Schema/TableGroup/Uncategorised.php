@@ -163,6 +163,22 @@ class Uncategorised
 					Index::key(['member_groups' => 48]),
 				]
 			),
+			Table::make('bookmark',
+				[
+					'id_bookmark' => Column::int()->auto_increment(),
+					'id_member' => Column::mediumint(),
+					'id_topic' => Column::mediumint(),
+				],
+				[
+					Index::primary(['id_bookmark']),
+					Index::unique(['id_member', 'id_topic']),
+					Index::key(['id_topic', 'id_member']),
+				],
+				[
+					Constraint::from('bookmark.id_member')->to('members.id_member'),
+					Constraint::from('bookmark.id_topic')->to('topics.id_topic'),
+				]
+			),
 			Table::make('categories',
 				[
 					'id_cat' => Column::tinyint()->auto_increment(),

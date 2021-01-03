@@ -14,6 +14,14 @@
 $txt['popup_summary'] = 'My Profile';
 $txt['popup_showposts'] = 'My Posts';
 $txt['popup_ignore'] = 'Ignore People';
+$txt['popup_bookmarks'] = 'My Bookmarks';
+
+$txt['bookmark_profile'] = 'Bookmarks';
+$txt['bookmarks_ooc'] = 'Bookmarks in Out Of Character Boards';
+$txt['bookmarks_ic'] = 'Bookmarks in In Character Boards';
+$txt['no_topics_bookmarked'] = 'No topics bookmarked.';
+$txt['bookmarked_topic'] = 'Bookmarked Topic';
+$txt['remove_bookmarks'] = 'Remove Bookmarks';
 
 $txt['no_profile_edit'] = 'You are not allowed to change this person\'s profile.';
 $txt['website_title'] = 'Website title';

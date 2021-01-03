@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
+use StoryBB\Model\Bookmark;
 use StoryBB\StringLibrary;
 
 /**
@@ -3077,4 +3078,152 @@ function viewWarning($memID)
 			$context['current_class'] = $color;
 
 	$context['sub_template'] = 'profile_warning_view';
+}
+
+/**
+ * View a member's bookmarks
+ *
+ * @param int $memID The ID of the member
+ */
+function bookmarks($memID)
+{
+	global $context, $sourcedir, $txt, $scripturl;
+
+	// Firstly, can we actually even be here?
+	if (!$context['user']['is_owner'])
+	{
+		fatal_lang_error('no_access', false);
+	}
+
+	$context['token_check'] = str_replace('%u', $memID, 'profile-bm%u');
+
+	if (!empty($_POST['remove_bookmarks']) && !empty($_POST['bookmark']))
+	{
+		checkSession();
+		validateToken($context['token_check']);
+
+		Bookmark::unbookmark_topics((int) $context['user']['id'], (array) $_POST['bookmark']);
+	}
+
+	require_once($sourcedir . '/Subs-List.php');
+
+	
+	createToken($context['token_check'], 'post');
+
+	$listOptions = [
+		'id' => 'ooc_bookmarks',
+		'title' => $txt['bookmarks_ooc'],
+		'no_items_label' => $txt['no_topics_bookmarked'],
+		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=bookmarks',
+		'default_sort_col' => 'last_post',
+		'get_items' => [
+			'function' => [Bookmark::class, 'get_bookmarks'],
+			'params' => [
+				(int) $context['user']['id'],
+				0,
+			]
+		],
+		'columns' => [
+			'subject' => [
+				'header' => [
+					'value' => $txt['bookmarked_topic'],
+					'class' => 'lefttext',
+				],
+				'data' => [
+					'function' => function($topic) use ($txt)
+					{
+						$link = $topic['link'];
+
+						if ($topic['new'])
+						{
+							$link .= ' <a href="' . $topic['new_href'] . '" class="new_posts">' . $txt['new'] . '</a>';
+						}
+
+						$link .= '<br><span class="smalltext"><em>' . $txt['in'] . ' ' . $topic['board_link'] . '</em></span>';
+
+						return $link;
+					},
+				],
+				'sort' => [
+					'default' => 'ms.subject',
+					'reverse' => 'ms.subject DESC',
+				],
+			],
+			'started_by' => [
+				'header' => [
+					'value' => $txt['started_by'],
+					'class' => 'lefttext',
+				],
+				'data' => [
+					'db' => 'poster_link',
+				],
+				'sort' => [
+					'default' => 'real_name_col',
+					'reverse' => 'real_name_col DESC',
+				],
+			],
+			'last_post' => [
+				'header' => [
+					'value' => $txt['last_post'],
+					'class' => 'lefttext',
+				],
+				'data' => [
+					'sprintf' => [
+						'format' => '<span class="smalltext">%1$s<br>' . $txt['by'] . ' %2$s</span>',
+						'params' => [
+							'updated' => false,
+							'poster_updated_link' => false,
+						],
+					],
+				],
+				'sort' => [
+					'default' => 'ml.id_msg DESC',
+					'reverse' => 'ml.id_msg',
+				],
+			],
+			'delete' => [
+				'header' => [
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
+					'style' => 'width: 4%;',
+					'class' => 'centercol',
+				],
+				'data' => [
+					'sprintf' => [
+						'format' => '<input type="checkbox" name="bookmark[]" value="%1$d">',
+						'params' => [
+							'id' => false,
+						],
+					],
+					'class' => 'centercol',
+				],
+			],
+		],
+		'form' => [
+			'href' => $scripturl . '?action=profile;area=bookmarks',
+			'include_sort' => true,
+			'include_start' => true,
+			'hidden_fields' => [
+				'u' => $memID,
+				$context['session_var'] => $context['session_id'],
+			],
+			'token' => $context['token_check'],
+		],
+		'additional_rows' => [
+			[
+				'position' => 'bottom_of_list',
+				'value' => '<input type="submit" name="remove_bookmarks" value="' . $txt['remove_bookmarks'] . '">',
+				'class' => 'floatright',
+			],
+		],
+	];
+
+	createList($listOptions);
+
+	$listOptions['id'] = 'ic_bookmarks';
+	$listOptions['title'] = $txt['bookmarks_ic'];
+	$listOptions['get_items']['params'][1] = 1;
+
+	createList($listOptions);
+
+	$context['sub_template'] = 'profile_bookmarks';
 }

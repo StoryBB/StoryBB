@@ -204,6 +204,7 @@ function sbb_main()
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
 		'autocomplete' => ['Autocomplete.php', 'Autocomplete'],
 		'board' => ['MessageIndex.php', 'MessageIndex'],
+		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
 		'characters' => ['Profile-Chars.php', 'CharacterList'],
 		'contact' => ['Contact.php', 'Contact'],

@@ -1844,6 +1844,10 @@ img.icon.char_avatar {
 	background-position: -239px -5px;
 }
 
+.main_icons.bookmark::before {
+	background-position: -265px -5px;
+}
+
 /* 2nd row */
 .main_icons.move::before, .main_icons.next_page::before {
 	background-position: -5px -31px;
