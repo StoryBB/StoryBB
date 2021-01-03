@@ -10,9 +10,8 @@ declare(strict_types=1);
 namespace Latte\Runtime;
 
 
-interface HtmlString
+interface HtmlStringable
 {
-
 	/** @return string in HTML format */
 	function __toString(): string;
 }

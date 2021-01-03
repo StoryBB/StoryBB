@@ -46,7 +46,7 @@ class PdoSessionHandler extends AbstractSessionHandler
      * write will win in this case. It might be useful when you implement your own
      * logic to deal with this like an optimistic approach.
      */
-    const LOCK_NONE = 0;
+    public const LOCK_NONE = 0;
 
     /**
      * Creates an application-level lock on a session. The disadvantage is that the
@@ -55,7 +55,7 @@ class PdoSessionHandler extends AbstractSessionHandler
      * does not require a transaction.
      * This mode is not available for SQLite and not yet implemented for oci and sqlsrv.
      */
-    const LOCK_ADVISORY = 1;
+    public const LOCK_ADVISORY = 1;
 
     /**
      * Issues a real row lock. Since it uses a transaction between opening and
@@ -63,7 +63,7 @@ class PdoSessionHandler extends AbstractSessionHandler
      * that you also use for your application logic. This mode is the default because
      * it's the only reliable solution across DBMSs.
      */
-    const LOCK_TRANSACTIONAL = 2;
+    public const LOCK_TRANSACTIONAL = 2;
 
     private const MAX_LIFETIME = 315576000;
 
@@ -645,7 +645,7 @@ class PdoSessionHandler extends AbstractSessionHandler
                 throw new \RuntimeException('Failed to read session: INSERT reported a duplicate id but next SELECT did not return any data.');
             }
 
-            if (!filter_var(ini_get('session.use_strict_mode'), FILTER_VALIDATE_BOOLEAN) && self::LOCK_TRANSACTIONAL === $this->lockMode && 'sqlite' !== $this->driver) {
+            if (!filter_var(ini_get('session.use_strict_mode'), \FILTER_VALIDATE_BOOLEAN) && self::LOCK_TRANSACTIONAL === $this->lockMode && 'sqlite' !== $this->driver) {
                 // In strict mode, session fixation is not possible: new sessions always start with a unique
                 // random id, so that concurrency is not possible and this code path can be skipped.
                 // Exclusive-reading of non-existent rows does not block, so we need to do an insert to block

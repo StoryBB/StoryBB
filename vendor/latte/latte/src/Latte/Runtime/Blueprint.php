@@ -32,7 +32,8 @@ class Blueprint
 		$class = $namespace->addClass(Php\Helpers::extractShortName($name));
 
 		$this->addProperties($class, $template->getParameters(), true);
-		$this->addFunctions($class, (array) $template->global->fn);
+		$functions = array_diff_key((array) $template->global->fn, (new Defaults)->getFunctions());
+		$this->addFunctions($class, $functions);
 
 		$end = $this->printCanvas();
 		$this->printHeader('Native types');
@@ -46,6 +47,9 @@ class Blueprint
 	}
 
 
+	/**
+	 * @param  mixed[]  $vars
+	 */
 	public function printVars(array $vars): void
 	{
 		if (!class_exists(Php\Type::class)) {
@@ -54,7 +58,7 @@ class Blueprint
 
 		$res = '';
 		foreach ($vars as $name => $value) {
-			if ($name[0] === '_') {
+			if (Latte\Helpers::startsWith($name, 'ʟ_')) {
 				continue;
 			}
 			$type = Php\Type::getType($value) ?: 'mixed';
@@ -68,6 +72,9 @@ class Blueprint
 	}
 
 
+	/**
+	 * @param  mixed[]  $props
+	 */
 	public function addProperties(Php\ClassType $class, array $props, bool $native = null): void
 	{
 		$printer = new Php\Printer;
@@ -85,6 +92,9 @@ class Blueprint
 	}
 
 
+	/**
+	 * @param  callable[]  $funcs
+	 */
 	public function addFunctions(Php\ClassType $class, array $funcs): void
 	{
 		$printer = new Php\Printer;
@@ -103,13 +113,13 @@ class Blueprint
 	}
 
 
-	public function printHeader($string): void
+	public function printHeader(string $string): void
 	{
 		echo "<h1 style='all:initial;display:block;font-size:2em;margin:1em 0'>", htmlspecialchars($string), "</h1>\n";
 	}
 
 
-	public function printCode($code): void
+	public function printCode(string $code): void
 	{
 		echo "<xmp style='margin:0;user-select:all'>", $code, "</xmp>\n";
 	}

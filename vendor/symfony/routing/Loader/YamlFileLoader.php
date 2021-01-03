@@ -62,7 +62,7 @@ class YamlFileLoader extends FileLoader
         try {
             $parsedConfig = $this->yamlParser->parseFile($path, Yaml::PARSE_CONSTANT);
         } catch (ParseException $e) {
-            throw new \InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $path), 0, $e);
+            throw new \InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML: ', $path).$e->getMessage(), 0, $e);
         }
 
         $collection = new RouteCollection();
@@ -96,7 +96,7 @@ class YamlFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return \is_string($resource) && \in_array(pathinfo($resource, PATHINFO_EXTENSION), ['yml', 'yaml'], true) && (!$type || 'yaml' === $type);
+        return \is_string($resource) && \in_array(pathinfo($resource, \PATHINFO_EXTENSION), ['yml', 'yaml'], true) && (!$type || 'yaml' === $type);
     }
 
     /**
@@ -118,7 +118,7 @@ class YamlFileLoader extends FileLoader
 
         foreach ($requirements as $placeholder => $requirement) {
             if (\is_int($placeholder)) {
-                @trigger_error(sprintf('A placeholder name must be a string (%d given). Did you forget to specify the placeholder key for the requirement "%s" of route "%s" in "%s"?', $placeholder, $requirement, $name, $path), E_USER_DEPRECATED);
+                @trigger_error(sprintf('A placeholder name must be a string (%d given). Did you forget to specify the placeholder key for the requirement "%s" of route "%s" in "%s"?', $placeholder, $requirement, $name, $path), \E_USER_DEPRECATED);
             }
         }
 
@@ -216,6 +216,7 @@ class YamlFileLoader extends FileLoader
                         foreach ($prefix as $locale => $localePrefix) {
                             $localizedRoute = clone $route;
                             $localizedRoute->setDefault('_locale', $locale);
+                            $localizedRoute->setRequirement('_locale', preg_quote($locale, RouteCompiler::REGEX_DELIMITER));
                             $localizedRoute->setDefault('_canonical_route', $name);
                             $localizedRoute->setPath($localePrefix.(!$trailingSlashOnRoot && '/' === $route->getPath() ? '' : $route->getPath()));
                             $subCollection->add($name.'.'.$locale, $localizedRoute);

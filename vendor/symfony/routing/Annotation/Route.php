@@ -31,9 +31,6 @@ class Route
     private $methods = [];
     private $schemes = [];
     private $condition;
-    private $locale;
-    private $format;
-    private $utf8;
 
     /**
      * @param array $data An array of key/value parameters
@@ -67,7 +64,7 @@ class Route
         }
 
         if (isset($data['utf8'])) {
-            $data['options']['utf8'] = filter_var($data['utf8'], FILTER_VALIDATE_BOOLEAN) ?: false;
+            $data['options']['utf8'] = filter_var($data['utf8'], \FILTER_VALIDATE_BOOLEAN) ?: false;
             unset($data['utf8']);
         }
 

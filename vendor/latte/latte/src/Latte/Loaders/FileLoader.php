@@ -23,7 +23,7 @@ class FileLoader implements Latte\Loader
 	protected $baseDir;
 
 
-	public function __construct($baseDir = null)
+	public function __construct(string $baseDir = null)
 	{
 		$this->baseDir = $baseDir ? $this->normalizePath("$baseDir/") : null;
 	}
@@ -36,10 +36,10 @@ class FileLoader implements Latte\Loader
 	{
 		$file = $this->baseDir . $fileName;
 		if ($this->baseDir && !Latte\Helpers::startsWith($this->normalizePath($file), $this->baseDir)) {
-			throw new \RuntimeException("Template '$file' is not within the allowed path '$this->baseDir'.");
+			throw new Latte\RuntimeException("Template '$file' is not within the allowed path '{$this->baseDir}'.");
 
 		} elseif (!is_file($file)) {
-			throw new \RuntimeException("Missing template file '$file'.");
+			throw new Latte\RuntimeException("Missing template file '$file'.");
 
 		} elseif ($this->isExpired($fileName, time())) {
 			if (@touch($file) === false) {

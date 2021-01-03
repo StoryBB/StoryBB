@@ -26,12 +26,12 @@ class Tokenizer
 	/** @var string */
 	private $re;
 
-	/** @var array */
+	/** @var int[] */
 	private $types;
 
 
 	/**
-	 * @param  array  $patterns  of [(int) symbol type => pattern]
+	 * @param  array<int, string>  $patterns  of [(int) symbol type => pattern]
 	 * @param  string $flags  regular expression flag
 	 */
 	public function __construct(array $patterns, string $flags = '')
@@ -43,6 +43,7 @@ class Tokenizer
 
 	/**
 	 * Tokenizes string.
+	 * @return array<array{string, int, int}>
 	 */
 	public function tokenize(string $input): array
 	{
@@ -57,7 +58,7 @@ class Tokenizer
 			for ($i = 1; $i <= $count; $i++) {
 				if (!isset($match[$i])) {
 					break;
-				} elseif ($match[$i] != null) {
+				} elseif ($match[$i] !== '') {
 					$type = $this->types[$i - 1];
 					break;
 				}
@@ -76,7 +77,7 @@ class Tokenizer
 
 	/**
 	 * Returns position of token in input string.
-	 * @return array of [line, column]
+	 * @return array{int, int} of [line, column]
 	 */
 	public static function getCoordinates(string $text, int $offset): array
 	{

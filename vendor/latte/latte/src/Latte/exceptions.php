@@ -21,18 +21,18 @@ class CompileException extends \Exception
 	/** @var string */
 	public $sourceName;
 
-	/** @var int */
+	/** @var ?int */
 	public $sourceLine;
 
 
-	public function setSource(string $code, int $line, string $name = null)
+	public function setSource(string $code, ?int $line, string $name = null): self
 	{
 		$this->sourceCode = $code;
 		$this->sourceLine = $line;
 		$this->sourceName = $name;
 		if (@is_file($name)) { // @ - may trigger error
 			$this->message = rtrim($this->message, '.')
-				. ' in ' . str_replace(dirname(dirname($name)), '...', $name) . ($line ? ":$line" : '');
+				. ' in ' . str_replace(dirname($name, 2), '...', $name) . ($line ? ":$line" : '');
 		}
 		return $this;
 	}
@@ -54,7 +54,7 @@ class RegexpException extends \Exception
 	];
 
 
-	public function __construct($message, $code = null)
+	public function __construct(?string $message, int $code = null)
 	{
 		parent::__construct($message ?: (self::MESSAGES[$code] ?? 'Unknown error'), $code);
 	}
@@ -62,8 +62,13 @@ class RegexpException extends \Exception
 
 
 /**
- * The exception that indicates error during rendering template.
+ * Exception thrown when a not allowed construction is used in a template.
  */
-class RuntimeException extends \Exception
+class SecurityViolationException extends \Exception
+{
+}
+
+
+class RuntimeException extends \RuntimeException
 {
 }

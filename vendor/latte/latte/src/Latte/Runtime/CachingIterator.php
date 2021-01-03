@@ -21,8 +21,10 @@ use Latte;
  * @property-read bool $odd
  * @property-read bool $even
  * @property-read int $counter
+ * @property-read int $counter0
  * @property-read mixed $nextKey
  * @property-read mixed $nextValue
+ * @property-read ?self $parent
  * @internal
  */
 class CachingIterator extends \CachingIterator implements \Countable
@@ -32,8 +34,14 @@ class CachingIterator extends \CachingIterator implements \Countable
 	/** @var int */
 	private $counter = 0;
 
+	/** @var self|null */
+	private $parent;
 
-	public function __construct($iterator)
+
+	/**
+	 * @param  array|\Traversable|\stdClass|mixed  $iterator
+	 */
+	public function __construct($iterator, self $parent = null)
 	{
 		if (is_array($iterator) || $iterator instanceof \stdClass) {
 			$iterator = new \ArrayIterator($iterator);
@@ -52,12 +60,12 @@ class CachingIterator extends \CachingIterator implements \Countable
 		}
 
 		parent::__construct($iterator, 0);
+		$this->parent = $parent;
 	}
 
 
 	/**
 	 * Is the current element the first one?
-	 * @param  int  $width
 	 */
 	public function isFirst(int $width = null): bool
 	{
@@ -67,7 +75,6 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Is the current element the last one?
-	 * @param  int  $width
 	 */
 	public function isLast(int $width = null): bool
 	{
@@ -103,11 +110,29 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 
 	/**
-	 * Returns the counter.
+	 * Returns the 1-indexed counter.
 	 */
 	public function getCounter(): int
 	{
 		return $this->counter;
+	}
+
+
+	/**
+	 * Returns the 0-indexed counter.
+	 */
+	public function getCounter0(): int
+	{
+		return max(0, $this->counter - 1);
+	}
+
+
+	/**
+	 * Decrements counter.
+	 */
+	public function skipRound(): void
+	{
+		$this->counter = max($this->counter - 1, 0);
 	}
 
 
@@ -158,22 +183,33 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 
 	/**
-	 * Returns the next key.
+	 * Returns the next key or null if position is not valid.
 	 * @return mixed
 	 */
 	public function getNextKey()
 	{
-		return $this->getInnerIterator()->key();
+		$iterator = $this->getInnerIterator();
+		return $iterator->valid() ? $iterator->key() : null;
 	}
 
 
 	/**
-	 * Returns the next element.
+	 * Returns the next element or null if position is not valid.
 	 * @return mixed
 	 */
 	public function getNextValue()
 	{
-		return $this->getInnerIterator()->current();
+		$iterator = $this->getInnerIterator();
+		return $iterator->valid() ? $iterator->current() : null;
+	}
+
+
+	/**
+	 * Returns the iterator surrounding the current one.
+	 */
+	public function getParent(): ?self
+	{
+		return $this->parent;
 	}
 
 
@@ -182,22 +218,23 @@ class CachingIterator extends \CachingIterator implements \Countable
 
 	/**
 	 * Returns property value.
+	 * @return mixed
 	 * @throws \LogicException if the property is not defined.
 	 */
-	public function &__get($name)
+	public function &__get(string $name)
 	{
 		if (method_exists($this, $m = 'get' . $name) || method_exists($this, $m = 'is' . $name)) {
 			$ret = $this->$m();
 			return $ret;
 		}
-		throw new \LogicException('Attempt to read undeclared property ' . get_class($this) . "::\$$name.");
+		throw new \LogicException('Attempt to read undeclared property ' . static::class . "::\$$name.");
 	}
 
 
 	/**
 	 * Is property defined?
 	 */
-	public function __isset($name): bool
+	public function __isset(string $name): bool
 	{
 		return method_exists($this, 'get' . $name) || method_exists($this, 'is' . $name);
 	}

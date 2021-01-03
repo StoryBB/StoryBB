@@ -34,7 +34,7 @@ class MacroTokens extends TokenIterator
 
 
 	/**
-	 * @param  string|array  $input
+	 * @param  string|array<array{string, int, int}>  $input
 	 */
 	public function __construct($input = [])
 	{
@@ -43,18 +43,21 @@ class MacroTokens extends TokenIterator
 	}
 
 
+	/**
+	 * @return array<array{string, int, int}>
+	 */
 	public function parse(string $s): array
 	{
 		self::$tokenizer = self::$tokenizer ?: new Tokenizer([
 			self::T_WHITESPACE => '\s+',
 			self::T_COMMENT => '(?s)/\*.*?\*/',
 			self::T_STRING => Parser::RE_STRING,
-			self::T_KEYWORD => '(?:true|false|null|TRUE|FALSE|NULL|INF|NAN|and|or|xor|clone|new|instanceof|return|continue|break)(?!\w)', // keyword
+			self::T_KEYWORD => '(?:true|false|null|TRUE|FALSE|NULL|INF|NAN|and|or|xor|AND|OR|XOR|clone|new|instanceof|return|continue|break)(?!\w)', // keyword
 			self::T_CAST => '\((?:expand|string|array|int|integer|float|bool|boolean|object)\)', // type casting
 			self::T_VARIABLE => '\$\w+',
 			self::T_NUMBER => '[+-]?[0-9]+(?:\.[0-9]+)?(?:e[0-9]+)?',
 			self::T_SYMBOL => '\w+(?:-+\w+)*',
-			self::T_CHAR => '::|=>|->|\+\+|--|<<|>>|<=>|<=|>=|===|!==|==|!=|<>|&&|\|\||\?\?|\?>|\*\*|\.\.\.|[^"\']', // =>, any char except quotes
+			self::T_CHAR => '::|=>|->|\?->|\?\?->|\+\+|--|<<|>>|<=>|<=|>=|===|!==|==|!=|<>|&&|\|\||\?\?|\?>|\*\*|\.\.\.|[^"\']', // =>, any char except quotes
 		], 'u');
 		return self::$tokenizer->tokenize($s);
 	}
@@ -62,6 +65,7 @@ class MacroTokens extends TokenIterator
 
 	/**
 	 * Appends simple token or string (will be parsed).
+	 * @param  string|array{string, int, int}  $val
 	 * @return static
 	 */
 	public function append($val, int $position = null)
@@ -69,7 +73,7 @@ class MacroTokens extends TokenIterator
 		if ($val != null) { // intentionally @
 			array_splice(
 				$this->tokens,
-				$position === null ? count($this->tokens) : $position,
+				$position ?? count($this->tokens),
 				0,
 				is_array($val) ? [$val] : $this->parse($val)
 			);
@@ -80,6 +84,7 @@ class MacroTokens extends TokenIterator
 
 	/**
 	 * Prepends simple token or string (will be parsed).
+	 * @param  string|array{string, int, int}  $val
 	 * @return static
 	 */
 	public function prepend($val)
@@ -92,17 +97,30 @@ class MacroTokens extends TokenIterator
 
 
 	/**
-	 * Reads single token (optionally delimited by comma) from string.
+	 * Reads single expression optionally delimited by comma.
 	 */
 	public function fetchWord(): ?string
 	{
-		$words = $this->fetchWords();
-		return $words ? implode(':', $words) : null;
+		if ($this->isNext('(')) {
+			$expr = $this->nextValue('(') . $this->joinUntilSameDepth(')') . $this->nextValue(')');
+		} else {
+			$expr = $this->joinUntilSameDepth(self::T_WHITESPACE, ',');
+			if ($this->isNext(...[
+				'%', '&', '*', '.', '<', '=', '>', '?', '^', '|', ':',
+				'::', '=>', '->', '?->', '??->', '<<', '>>', '<=>', '<=', '>=', '===', '!==', '==', '!=', '<>', '&&', '||', '??', '**',
+				'instanceof',
+			])) {
+				$expr .= $this->joinUntilSameDepth(',');
+			}
+		}
+		$this->nextToken(',');
+		$this->nextAll(self::T_WHITESPACE, self::T_COMMENT);
+		return $expr === '' ? null : $expr;
 	}
 
 
 	/**
-	 * Reads single tokens delimited by colon from string.
+	 * @deprecated
 	 */
 	public function fetchWords(): array
 	{
@@ -120,6 +138,45 @@ class MacroTokens extends TokenIterator
 	}
 
 
+	/**
+	 * @param  int|string  ...$args  token type or value to stop before (required)
+	 */
+	public function joinUntilSameDepth(...$args): string
+	{
+		$depth = $this->depth;
+		$res = '';
+		do {
+			$res .= $this->joinUntil(...$args);
+			if ($this->depth === $depth) {
+				return $res;
+			}
+			$res .= $this->nextValue();
+		} while (true);
+	}
+
+
+	/**
+	 * @param  string|string[]  $modifiers
+	 * @return ?array{string, ?string}
+	 */
+	public function fetchWordWithModifier($modifiers): ?array
+	{
+		$modifiers = (array) $modifiers;
+		$pos = $this->position;
+		if (
+			($mod = $this->nextValue(...$modifiers))
+			&& $this->nextToken($this::T_WHITESPACE)
+			&& ($name = $this->fetchWord())
+		) {
+			return [$name, $mod];
+		}
+		$this->position = $pos;
+		$name = $this->fetchWord();
+		return $name === null ? null : [$name, null];
+	}
+
+
+	/** @return static */
 	public function reset()
 	{
 		$this->depth = 0;
