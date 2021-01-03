@@ -673,35 +673,6 @@ function rebuildModCache()
 }
 
 /**
- * A consistent cookie function that can be configured and integrated in
- * the wider environment, e.g. user configuration, plugins.
- *
- * @param string $name
- * @param string $value = ''
- * @param int $expire = 0
- * @param string $path = ''
- * @param string $domain = ''
- * @param bool $secure = false
- * @param bool $httponly = true
- */
-function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = '', $secure = null, $httponly = true)
-{
-	global $modSettings;
-
-	// In case a customization wants to override the default settings
-	if ($httponly === null)
-		$httponly = !empty($modSettings['httponlyCookies']);
-	if ($secure === null)
-		$secure = !empty($modSettings['secureCookies']);
-
-	// Intercept cookie?
-	call_integration_hook('integrate_cookie', [$name, $value, $expire, $path, $domain, $secure, $httponly]);
-
-	// This function is pointless if we have PHP >= 5.2.
-	return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
-}
-
-/**
  * Hashes username with password
  *
  * @param string $username The username
