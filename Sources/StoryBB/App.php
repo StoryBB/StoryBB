@@ -16,6 +16,7 @@ use ReflectionMethod;
 use StoryBB\Container;
 use StoryBB\Controller\Unloggable;
 use StoryBB\Database\AdapterFactory;
+use StoryBB\Helper\Cookie;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -148,14 +149,20 @@ class App
 			global $cookiename, $sc;
 
 			$site_settings = $container->get('sitesettings');
+			$cookie_url = Cookie::url_parts(!empty($site_settings->localCookies), !empty($site_settings->globalCookies));
+			$cookie_settings = [
+				'cookie_httponly' => true,
+				'cookie_domain' => $cookie_url[0],
+				'cookie_path' => $cookie_url[1],
+			];
 			if ($site_settings->databaseSession_enable)
 			{
-				$session_storage = new NativeSessionStorage(['cookie_httponly' => true], $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
+				$session_storage = new NativeSessionStorage($cookie_settings, $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
 				$session = new Session($session_storage, new NamespacedAttributeBag);
 			}
 			else
 			{
-				$session = new Session(null, new NamespacedAttributeBag);
+				$session = new Session($cookie_settings, new NamespacedAttributeBag);
 			}
 
 			$session->setName($cookiename);
