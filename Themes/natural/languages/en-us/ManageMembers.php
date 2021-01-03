@@ -66,7 +66,7 @@ $txt['membergroup_has_badge'] = 'Has badge?';
 $txt['membergroup_badge_preview'] = 'Preview:';
 $txt['membergroup_badge_show'] = 'Show: ';
 $txt['membergroup_badge_times'] = '&times;';
-$txt['membergroup_no_images'] = 'There are no images in the Themes/default/images/membericons folder - no badge can be set.';
+$txt['membergroup_no_images'] = 'There are no images in the Themes/natural/images/membericons folder - no badge can be set.';
 
 $txt['membergroups_max_messages'] = 'Max personal messages';
 $txt['membergroups_max_messages_note'] = '0 = unlimited';

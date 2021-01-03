@@ -287,7 +287,7 @@ class App
 			$latte = new \Latte\Engine;
 			$latte->setTempDirectory($container->get('cachedir') . '/template');
 
-			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/default/templates');
+			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/natural/templates');
 			$latte->setLoader($loader);
 
 			$latte->addFilter('translate', function ($string, $langfile = '') {

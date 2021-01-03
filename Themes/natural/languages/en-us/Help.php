@@ -220,7 +220,7 @@ $helptxt['membergroup_badge'] = 'When people post, either in their account or th
 <br>
 Sometimes you just want a single interesting bagde to show, other times you might want to show 5 of the same icons like stars or pips to show off what rank someone is. Either way, here is where you set the number of times the badge should be shown for this group, and what badge to show.<br>
 <br>
-You can always add new icons to this by uploading the images into the Themes/default/images/membericons/ folder as .gif, .jpg or .png files and they will show up in this list. You can also have different images in different themes - just name the file with the same name and put it in the images/membericons/ folder of your theme.<br>
+You can always add new icons to this by uploading the images into the Themes/natural/images/membericons/ folder as .gif, .jpg or .png files and they will show up in this list. You can also have different images in different themes - just name the file with the same name and put it in the images/membericons/ folder of your theme.<br>
 <br>
 Of course, you don\'t have to have a badge - just untick the box and no badge will be shown for people in this group.<br>
 <br>

@@ -692,9 +692,9 @@ VALUES (':)', 'smiley.png', '{$default_smiley_smiley}', 0, 0),
 INSERT INTO {$db_prefix}themes
   (id_theme, variable, value)
 VALUES (1, 'name', '{$default_theme_name}'),
-  (1, 'theme_url', '{$boardurl}/Themes/default'),
-  (1, 'images_url', '{$boardurl}/Themes/default/images'),
-  (1, 'theme_dir', '{$boarddir}/Themes/default'),
+  (1, 'theme_url', '{$boardurl}/Themes/natural'),
+  (1, 'images_url', '{$boardurl}/Themes/natural/images'),
+  (1, 'theme_dir', '{$boarddir}/Themes/natural'),
   (1, 'meta_theme_color', '#557EA0'),
   (1, 'show_latest_member', '1'),
   (1, 'drafts_show_saved_enabled', '1'),

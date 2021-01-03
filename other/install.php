@@ -177,7 +177,7 @@ function initialize_inputs()
 		}
 
 		// Now just redirect to a blank.png...
-		header('Location: http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 's' : '') . '://' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT']) . dirname($_SERVER['PHP_SELF']) . '/Themes/default/images/blank.png');
+		header('Location: http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 's' : '') . '://' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT']) . dirname($_SERVER['PHP_SELF']) . '/Themes/natural/images/blank.png');
 		exit;
 	}
 
@@ -215,7 +215,7 @@ function load_lang_file()
 	$incontext['detected_languages'] = [];
 
 	// Make sure the languages directory actually exists.
-	$langpath = __DIR__ . '/Themes/default/languages';
+	$langpath = __DIR__ . '/Themes/natural/languages';
 	if (file_exists($langpath))
 	{
 		// Find all the "Install" language files in the directory.
@@ -252,7 +252,7 @@ function load_lang_file()
 
 		<p>This installer was unable to find the installer\'s language file or files.  They should be found under:</p>
 
-		<div style="margin: 1ex; font-family: monospace; font-weight: bold;">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/default/languages</div>
+		<div style="margin: 1ex; font-family: monospace; font-weight: bold;">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/natural/languages</div>
 
 		<p>In some cases, FTP clients do not properly upload files with this many folders.  Please double check to make sure you <span style="font-weight: 600;">have uploaded all the files in the distribution</span>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
@@ -268,7 +268,7 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $_GET['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Themes/natural/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
 	{
 		// Use the first one...
 		list ($_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
@@ -279,7 +279,7 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
+	require_once(__DIR__ . '/Themes/natural/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
 }
 
 /**
@@ -1704,17 +1704,17 @@ function template_install_above()
 		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<title>', $txt['storybb_installer'], '</title>
-		<link rel="stylesheet" href="Themes/default/css/index.css?alp21">
-		<link rel="stylesheet" href="Themes/default/css/install.css?alp21">
-		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/default/css/rtl.css?alp21">' : '', '
+		<link rel="stylesheet" href="Themes/natural/css/index.css?alp21">
+		<link rel="stylesheet" href="Themes/natural/css/install.css?alp21">
+		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/natural/css/rtl.css?alp21">' : '', '
 
-		<script src="Themes/default/scripts/jquery-3.2.1.min.js"></script>
-		<script src="Themes/default/scripts/script.js"></script>
+		<script src="Themes/natural/scripts/jquery-3.2.1.min.js"></script>
+		<script src="Themes/natural/scripts/script.js"></script>
 	</head>
 	<body><div id="footerfix">
 		<div id="header">
 			<h1 class="forumtitle">', $txt['storybb_installer'], '</h1>
-			<img id="sbblogo" src="Themes/default/images/StoryBB.svg" alt="StoryBB" title="StoryBB">
+			<img id="sbblogo" src="Themes/natural/images/StoryBB.svg" alt="StoryBB" title="StoryBB">
 		</div>
 		<div id="wrapper">
 			<div id="upper_section">

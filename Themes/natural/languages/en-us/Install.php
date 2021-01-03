@@ -46,7 +46,7 @@ $txt['default_board_name'] = 'General Discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_category_name'] = 'General Category';
 $txt['default_reserved_names'] = 'Admin\nWebmaster\nGuest\nroot';
-$txt['default_theme_name'] = 'StoryBB Default Theme - Curve2';
+$txt['default_theme_name'] = 'StoryBB Natural Theme';
 
 $txt['default_policy_terms'] = 'Terms and Rules';
 $txt['default_policy_terms_desc'] = 'These are the site terms and rules you must agree to before using the site.';

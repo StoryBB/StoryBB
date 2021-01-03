@@ -15,9 +15,9 @@ cache/template/
 attachments/
 custom_avatar/
 /upgrade.php
-Themes/default/css/minified.css
-Themes/default/scripts/minified.js
-Themes/default/scripts/minified_deferred.js
+Themes/natural/css/minified.css
+Themes/natural/scripts/minified.js
+Themes/natural/scripts/minified_deferred.js
 
 # Compiled source #
 ###################
@@ -63,5 +63,5 @@ Thumbs.db
 .directory
 .idea/
 /test.php
-Themes/default/scripts/minified.js
-Themes/default/css/minified.css
+Themes/natural/scripts/minified.js
+Themes/natural/css/minified.css
