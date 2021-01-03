@@ -30,8 +30,8 @@ class UpdateSQL extends Command implements StoryBBCommand
 	public function configure()
 	{
 		$this->setName('schema:updatesql')
-			 ->setDescription('Provides SQL to update the schema to the current version.')
-			 ->setHelp('This command exports the necessary SQL to upgrade whatever is currently in the database, to the current database schema.');
+			->setDescription('Provides SQL to update the schema to the current version.')
+			->setHelp('This command exports the necessary SQL to upgrade whatever is currently in the database, to the current database schema.');
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output)

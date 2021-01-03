@@ -30,8 +30,8 @@ class Update extends Command implements StoryBBCommand
 	public function configure()
 	{
 		$this->setName('schema:update')
-			 ->setDescription('Update the schema to the current version.')
-			 ->setHelp('This command updates the database.');
+			->setDescription('Update the schema to the current version.')
+			->setHelp('This command updates the database.');
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output)

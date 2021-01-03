@@ -27,9 +27,9 @@ class ExportPlantUML extends Command implements StoryBBCommand
 	public function configure()
 	{
 		$this->setName('schema:exportuml')
-			 ->setDescription('Exports StoryBB schema as UML for documentation.')
-			 ->setHelp('This command exports the StoryBB schema to a specified destination path in PlantUML format.')
-			 ->addArgument('path', InputArgument::REQUIRED, 'The destination path to write to');
+			->setDescription('Exports StoryBB schema as UML for documentation.')
+			->setHelp('This command exports the StoryBB schema to a specified destination path in PlantUML format.')
+			->addArgument('path', InputArgument::REQUIRED, 'The destination path to write to');
 	}
 	public function execute(InputInterface $input, OutputInterface $output)
 	{

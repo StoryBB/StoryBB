@@ -879,11 +879,11 @@ function UnreadTopics()
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg' . ($modSettings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : '') . '',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'is_approved' => 1,
-			))
+			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
