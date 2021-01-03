@@ -4,7 +4,7 @@
  * Manage and maintain the boards and categories of the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -44,7 +44,7 @@ function ManageBoards()
 	// Create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['boards_and_cats'],
-		'help' => 'manage_boards',
+		'help' => '',
 		'description' => $txt['boards_and_cats_desc'],
 		'tabs' => [
 			'main' => [
@@ -78,7 +78,7 @@ function ManageBoards()
  */
 function ManageBoardsMain()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $sourcedir, $smcFunc;
+	global $txt, $context, $cat_tree, $boards, $boardList, $sourcedir;
 
 	$context['sub_template'] = 'admin_boards';
 
@@ -130,7 +130,7 @@ function ManageBoardsMain()
  */
 function EditCategory()
 {
-	global $txt, $context, $cat_tree, $boardList, $boards, $smcFunc, $sourcedir;
+	global $txt, $context, $cat_tree, $boardList, $boards, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
@@ -225,7 +225,7 @@ function EditCategory()
  */
 function EditCategory2()
 {
-	global $sourcedir, $smcFunc, $context;
+	global $sourcedir, $context;
 
 	checkSession();
 	validateToken('admin-bc-' . $_REQUEST['cat']);

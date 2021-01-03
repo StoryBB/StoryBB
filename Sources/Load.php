@@ -4,19 +4,21 @@
  * This file has the hefty job of loading information for the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
+use StoryBB\Hook\Mutatable;
 use StoryBB\Plugin\Manager as PluginManager;
 use StoryBB\StringLibrary;
 
@@ -25,7 +27,7 @@ use StoryBB\StringLibrary;
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $smcFunc, $txt;
+	global $modSettings, $boarddir, $smcFunc;
 	global $cache_enable, $sourcedir, $context;
 
 	// We need some caching support, maybe.
@@ -34,30 +36,16 @@ function reloadSettings()
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
 	if (($modSettings = cache_get_data('modSettings', 90)) == null)
 	{
-		$request = $smcFunc['db']->query('', '
-			SELECT variable, value
-			FROM {db_prefix}settings',
-			[
-			]
-		);
-		$modSettings = [];
-		if (!$request)
+		try
+		{
+			$container = Container::instance();
+			$site_settings = $container->get('sitesettings');
+			$modSettings = $site_settings->get_all();
+		}
+		catch (RuntimeException $e)
 		{
 			display_db_error();
 		}
-		while ($row = $smcFunc['db']->fetch_row($request))
-			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db']->free_result($request);
-
-		// Do a few things to protect against missing settings or settings with invalid values...
-		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
-			$modSettings['defaultMaxTopics'] = 20;
-		if (empty($modSettings['defaultMaxMessages']) || $modSettings['defaultMaxMessages'] <= 0 || $modSettings['defaultMaxMessages'] > 999)
-			$modSettings['defaultMaxMessages'] = 15;
-		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
-			$modSettings['defaultMaxMembers'] = 30;
-		if (empty($modSettings['defaultMaxListItems']) || $modSettings['defaultMaxListItems'] <= 0 || $modSettings['defaultMaxListItems'] > 999)
-			$modSettings['defaultMaxListItems'] = 15;
 
 		if (!is_array($modSettings['attachmentUploadDir']))
 			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
@@ -151,18 +139,6 @@ function reloadSettings()
 		]);
 	}
 
-	// Any files to pre include?
-	if (!empty($modSettings['integrate_pre_include']))
-	{
-		$pre_includes = explode(',', $modSettings['integrate_pre_include']);
-		foreach ($pre_includes as $include)
-		{
-			$include = strtr(trim($include), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir]);
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
-
 	// This determines the server... not used in many places, except for login fixing.
 	$context['server'] = [
 		'is_iis' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false,
@@ -172,10 +148,7 @@ function reloadSettings()
 		'is_nginx' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false,
 		'is_cgi' => isset($_SERVER['SERVER_SOFTWARE']) && strpos(php_sapi_name(), 'cgi') !== false,
 		'is_windows' => strpos(PHP_OS, 'WIN') === 0,
-		'iso_case_folding' => ord(strtolower(chr(138))) === 154,
 	];
-	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
-	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
 	// Define an array for custom profile fields placements.
 	$context['cust_profile_fields_placement'] = [
@@ -230,204 +203,84 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings, $sourcedir, $smcFunc;
+	global $modSettings, $user_settings, $sourcedir;
 	global $cookiename, $user_info, $language, $context, $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
 	// Check first the integration, then the cookie, and last the session.
-	if (count($integration_ids = call_integration_hook('integrate_verify_user')) > 0)
+	$id_member = 0;
+	(new Mutatable\Account\Authenticates($id_member))->execute();
+	$already_verified = !empty($id_member);
+
+	$container = Container::instance();
+	$db = $container->get('database');
+
+	if (!$id_member)
 	{
-		$id_member = 0;
-		foreach ($integration_ids as $integration_id)
+		// Check the session.
+		
+		$session = $container->get('session');
+		if ($session->has('userid'))
 		{
-			$integration_id = (int) $integration_id;
-			if ($integration_id > 0)
-			{
-				$id_member = $integration_id;
-				$already_verified = true;
-				break;
-			}
+			$id_member = $session->get('userid');
 		}
-	}
-	else
-		$id_member = 0;
-
-	if (empty($id_member) && isset($_COOKIE[$cookiename]))
-	{
-		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
-
-		// Malformed or was reset
-		if (empty($cookie_data))
-			$cookie_data = [0, '', 0, '', ''];
-
-		if (count($cookie_data) < 5)
-			$cookie_data = array_pad($cookie_data, 5, '');
-
-		list ($id_member, $password, $login_span, $cookie_domain, $cookie_path) = $cookie_data;
-
-		$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
-
-		// Make sure the cookie is set to the correct domain and path
-		require_once($sourcedir . '/Subs-Auth.php');
-		if ([$cookie_domain, $cookie_path] != url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies'])))
-			setLoginCookie($login_span - time(), $id_member);
-	}
-	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
-	{
-		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		$cookie_data = sbb_json_decode($_SESSION['login_' . $cookiename], true);
-
-		if (empty($cookie_data))
-			$cookie_data = [0, '', 0];
-
-		list ($id_member, $password, $login_span) = $cookie_data;
-		$id_member = !empty($id_member) && strlen($password) == 128 && $login_span > time() ? (int) $id_member : 0;
 	}
 
 	// Only load this stuff if the user isn't a guest.
+	$user = $container->get('currentuser');
+	$user->load_user($id_member);
 	if ($id_member != 0)
 	{
-		// Is the member data cached?
-		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
-		{
-			$request = $smcFunc['db']->query('', '
-				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
-					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
-				FROM {db_prefix}members AS mem
-					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
-					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-				WHERE mem.id_member = {int:id_member}
-				LIMIT 1',
-				[
-					'id_member' => $id_member,
-				]
-			);
-			$user_settings = $smcFunc['db']->fetch_assoc($request);
-			$user_settings['id_theme'] = $user_settings['char_theme'];
-			$user_settings['avatar'] = $user_settings['char_avatar'];
-			$smcFunc['db']->free_result($request);
-
-			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
-				$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
-
-			if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-				cache_put_data('user_settings-' . $id_member, $user_settings, 60);
-		}
+		$request = $db->query('', '
+			SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
+				chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
+			FROM {db_prefix}members AS mem
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
+				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
+				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
+			WHERE mem.id_member = {int:id_member}
+			LIMIT 1',
+			[
+				'id_member' => $id_member,
+			]
+		);
+		$user_settings = $db->fetch_assoc($request);
+		$db->free_result($request);
 
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
-			// As much as the password should be right, we can assume the integration set things up.
-			if (!empty($already_verified) && $already_verified === true)
-				$check = true;
-			// SHA-512 hash should be 128 characters long.
-			elseif (strlen($password) == 128)
-				$check = hash_salt($user_settings['passwd'], $user_settings['password_salt']) == $password;
-			else
-				$check = false;
-
 			// Wrong password or not activated - either way, you're going nowhere.
-			$id_member = $check && ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
+			$id_member = ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
 		}
 		else
 			$id_member = 0;
 
-		// If we no longer have the member maybe they're being all hackey, stop brute force!
-		if (!$id_member)
-		{
-			require_once($sourcedir . '/LogInOut.php');
-			validatePasswordFlood(
-				!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member,
-				!empty($user_settings['member_name']) ? $user_settings['member_name'] : '',
-				!empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false,
-				$id_member != 0
-			);
-		}
-		// Validate for Two Factor Authentication
-		elseif (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login2', 'logintfa'])))
-		{
-			$tfacookie = $cookiename . '_tfa';
-			$tfasecret = null;
-
-			$verified = call_integration_hook('integrate_verify_tfa', [$id_member, $user_settings]);
-
-			if (empty($verified) || !in_array(true, $verified))
-			{
-				if (!empty($_COOKIE[$tfacookie]))
-				{
-					$tfa_data = sbb_json_decode($_COOKIE[$tfacookie]);
-
-					list ($tfamember, $tfasecret) = $tfa_data;
-
-					if (!isset($tfamember, $tfasecret) || (int) $tfamember != $id_member)
-						$tfasecret = null;
-				}
-
-				if (empty($tfasecret) || hash_salt($user_settings['tfa_backup'], $user_settings['password_salt']) != $tfasecret)
-				{
-					$id_member = 0;
-					redirectexit('action=logintfa');
-				}
-			}
-		}
-		// When authenticating their two factor code, make sure to reset their ID for security
-		elseif (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && $_REQUEST['action'] == 'logintfa')
-		{
-			$id_member = 0;
-			$context['tfa_member'] = $user_settings;
-			$user_settings = [];
-		}
-		// Are we forcing 2FA? Need to check if the user groups actually require 2FA
-		elseif (!empty($modSettings['tfa_mode']) && $modSettings['tfa_mode'] >= 2 && $id_member && empty($user_settings['tfa_secret']))
-		{
-			if ($modSettings['tfa_mode'] == 2) //only do this if we are just forcing SOME membergroups
-			{
-				//Build an array of ALL user membergroups.
-				$full_groups = [$user_settings['id_group']];
-				if (!empty($user_settings['additional_groups']))
-				{
-					$full_groups = array_merge($full_groups, explode(',', $user_settings['additional_groups']));
-					$full_groups = array_unique($full_groups); //duplicates, maybe?
-				}
-
-				//Find out if any group requires 2FA
-				$request = $smcFunc['db']->query('', '
-					SELECT COUNT(id_group) AS total
-					FROM {db_prefix}membergroups
-					WHERE tfa_required = {int:tfa_required}
-						AND id_group IN ({array_int:full_groups})',
-					[
-						'tfa_required' => 1,
-						'full_groups' => $full_groups,
-					]
-				);
-				$row = $smcFunc['db']->fetch_assoc($request);
-				$smcFunc['db']->free_result($request);
-			}
-			else
-				$row['total'] = 1; //simplifies logics in the next "if"
-
-			$area = !empty($_REQUEST['area']) ? $_REQUEST['area'] : '';
-			$action = !empty($_REQUEST['action']) ? $_REQUEST['action'] : '';
-
-			if ($row['total'] > 0 && !in_array($action, ['profile', 'logout']) || ($action == 'profile' && $area != 'tfasetup'))
-				redirectexit('action=profile;area=tfasetup;forced');
-		}
 	}
 
 	// Found 'im, let's set up the variables.
+	$user_info = [
+		'groups' => $user->get_groups(),
+	];
 	if ($id_member != 0)
 	{
+		$user_settings['id_theme'] = $user_settings['char_theme'];
+		$user_settings['avatar'] = $user_settings['char_avatar'];
+
+		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
+		{
+			$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
+		}
+
 		// Let's not update the last visit time in these cases...
 		// 1. RSS feeds and XMLHTTP requests don't count either.
 		// 2. If it was set within this session, no need to set it again.
 		// 3. New session, yet updated < five hours ago? Maybe cache can help.
-		// 4. We're still logging in or authenticating
-		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		// 4. We're still logging in or authenticating @todo reinstate?
+		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
-			$result = $smcFunc['db']->query('', '
+			$result = $db->query('', '
 				SELECT poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -436,8 +289,8 @@ function loadUserSettings()
 					'id_msg' => $user_settings['id_msg_last_visit'],
 				]
 			);
-			list ($visitTime) = $smcFunc['db']->fetch_row($result);
-			$smcFunc['db']->free_result($result);
+			list ($visitTime) = $db->fetch_row($result);
+			$db->free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
@@ -459,21 +312,6 @@ function loadUserSettings()
 
 		$username = $user_settings['member_name'];
 
-		if (empty($user_settings['additional_groups']))
-			$user_info = [
-				'groups' => [$user_settings['id_group']]
-			];
-		else
-			$user_info = [
-				'groups' => array_merge(
-					[$user_settings['id_group']],
-					explode(',', $user_settings['additional_groups'])
-				)
-			];
-
-		// Because history has proven that it is possible for groups to go bad - clean up in case.
-		foreach ($user_info['groups'] as $k => $v)
-			$user_info['groups'][$k] = (int) $v;
 
 		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
@@ -499,31 +337,7 @@ function loadUserSettings()
 	{
 		// This is what a guest's variables should be.
 		$username = '';
-		$user_info = ['groups' => [-1]];
 		$user_settings = [];
-
-		if (isset($_COOKIE[$cookiename]) && empty($context['tfa_member']))
-			$_COOKIE[$cookiename] = '';
-
-		// Expire the 2FA cookie
-		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
-		{
-			$tfa_data = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
-
-			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
-
-			if (!isset($id, $user, $exp, $domain, $path, $preserve) || !$preserve || time() > $exp)
-			{
-				$_COOKIE[$cookiename . '_tfa'] = '';
-				setTFACookie(-3600, 0, '');
-			}
-		}
-
-		// Create a login token if it doesn't exist yet.
-		if (!isset($_SESSION['token']['post-login']))
-			createToken('login');
-		else
-			list ($context['login_token_var'],,, $context['login_token']) = $_SESSION['token']['post-login'];
 
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
 		if (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300)
@@ -554,8 +368,8 @@ function loadUserSettings()
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 		'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 		'language' => empty($user_settings['lngfile']) || empty($modSettings['userLanguage']) ? $language : $user_settings['lngfile'],
-		'is_guest' => $id_member == 0,
-		'is_admin' => in_array(1, $user_info['groups']),
+		'is_guest' => !$user->is_authenticated(),
+		'is_admin' => $user->is_site_admin(),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
@@ -1174,7 +988,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			break;
 		case 'profile':
 			$select_columns .= ', mem.additional_groups, mem.id_theme, mem.pm_ignore_list, mem.pm_receive_from,
-			mem.time_format, mem.timezone, mem.secret_question, mem.tfa_secret,
+			mem.time_format, mem.timezone, mem.secret_question,
 			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts,
 			lo.id_character AS online_character, chars.is_main, chars.main_char_group, chars.char_groups,
 			cg.online_color AS char_group_color, COALESCE(cg.group_name, {string:blank_string}) AS character_group,
@@ -1411,7 +1225,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
-	global $context, $modSettings, $settings, $smcFunc;
+	global $context, $modSettings, $settings;
 	static $dataLoaded = [];
 	static $loadedLanguages = [];
 
@@ -1431,13 +1245,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// Well, it's loaded now anyhow.
 	$dataLoaded[$user] = true;
 	$profile = &$user_profile[$user];
-
-	// Censor everything.
-	censorText($profile['signature']);
-
-	// Set things up to be used before hand.
-	$profile['signature'] = str_replace(["\n", "\r"], ['<br>', ''], $profile['signature']);
-	$profile['signature'] = Parser::parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	$profile['icons'] = empty($profile['icons']) ? ['', ''] : explode('#', $profile['icons']);
@@ -1499,7 +1306,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			],
 			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : $profile['birthdate'],
 			'birthday_visibility' => $profile['birthday_visibility'],
-			'signature' => $profile['signature'],
 			'real_posts' => $profile['posts'],
 			'posts' => comma_format($profile['posts']),
 			'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
@@ -1543,6 +1349,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		// First, find their OOC character.
 		foreach ($profile['characters'] as $character) {
 			if ($character['is_main']) {
+				$profile['signature'] = $character['signature'];
 				$profile['avatar'] = $character['avatar'];
 				$profile['filename'] = $character['avatar_filename'];
 				$profile['id_attach'] = $character['id_attach'];
@@ -1789,21 +1596,19 @@ function loadTheme($id_theme = 0, $initialize = true)
 	else
 		$id_theme = (int) $id_theme;
 
-	$member = empty($user_info['id']) ? -1 : $user_info['id'];
-
 	// Disable image proxy if we don't have SSL enabled
 	if (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] < 2)
 		$image_proxy_enabled = false;
 
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $modSettings['settings_updated'])
+	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme, 60)) != null && time() - 60 > $modSettings['settings_updated'])
 	{
 		$themeData = $temp;
 		$flag = true;
 	}
 	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $modSettings['settings_updated'])
-		$themeData = $temp + [$member => []];
+		$themeData = $temp;
 	else
-		$themeData = [-1 => [], 0 => [], $member => []];
+		$themeData = [-1 => [], 0 => []];
 
 	if (empty($flag))
 	{
@@ -1811,46 +1616,40 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$result = $smcFunc['db']->query('', '
 			SELECT variable, value, id_member, id_theme
 			FROM {db_prefix}themes
-			WHERE id_member' . (empty($themeData[0]) ? ' IN (-1, 0, {int:id_member})' : ' = {int:id_member}') . '
+			WHERE id_member = 0
 				AND id_theme' . ($id_theme == 1 ? ' = {int:id_theme}' : ' IN ({int:id_theme}, 1)'),
 			[
 				'id_theme' => $id_theme,
-				'id_member' => $member,
 			]
 		);
 		// Pick between $settings and $options depending on whose data it is.
 		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
-			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], ['actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'theme_dir', 'theme_id', 'theme_url']))
-				continue;
-
 			// If this is the theme_dir of the default theme, store it.
-			if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1' && empty($row['id_member']))
+			if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1')
+			{
 				$themeData[0]['default_' . $row['variable']] = $row['value'];
+			}
 
 			// If this isn't set yet, is a theme option, or is not the default theme..
-			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
-				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
+			if (!isset($themeData[0][$row['variable']]) || $row['id_theme'] != '1')
+			{
+				$themeData[0][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
+			}
 		}
 		$smcFunc['db']->free_result($result);
 
-		if (!empty($themeData[-1]))
-			foreach ($themeData[-1] as $k => $v)
-			{
-				if (!isset($themeData[$member][$k]))
-					$themeData[$member][$k] = $v;
-			}
-
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-			cache_put_data('theme_settings-' . $id_theme . ':' . $member, $themeData, 60);
+			cache_put_data('theme_settings-' . $id_theme, $themeData, 60);
 		// Only if we didn't already load that part of the cache...
 		elseif (!isset($temp))
-			cache_put_data('theme_settings-' . $id_theme, [-1 => $themeData[-1], 0 => $themeData[0]], 90);
+			cache_put_data('theme_settings-' . $id_theme, $themeData, 90);
 	}
 
 	$settings = $themeData[0];
-	$options = $themeData[$member];
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$options = $prefs_manager->get_preferences_for_user($user_info['id'] ? (int) $user_info['id'] : 0);
 
 	$settings['theme_id'] = $id_theme;
 
@@ -1896,19 +1695,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	if (isset($detected_url) && $detected_url != $boardurl)
 	{
-		// Try #1 - check if it's in a list of alias addresses.
-		if (!empty($modSettings['forum_alias_urls']))
-		{
-			$aliases = explode(',', $modSettings['forum_alias_urls']);
-
-			foreach ($aliases as $alias)
-			{
-				// Rip off all the boring parts, spaces, etc.
-				if ($detected_url == trim($alias) || strtr($detected_url, ['http://' => '', 'https://' => '']) == trim($alias))
-					$do_fix = true;
-			}
-		}
-
 		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
 		if (empty($do_fix) && strtr($detected_url, ['://' => '://www.']) == $boardurl && (empty($_GET) || count($_GET) == 1))
 		{
@@ -2031,10 +1817,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!isset($context['javascript_vars']))
 		$context['javascript_vars'] = [];
 
-	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=login2';
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
+	$context['login_url'] = $urlgenerator->generate('login_login');
 	$context['menu_separator'] = ' ';
-	$context['session_var'] = $_SESSION['session_var'];
-	$context['session_id'] = $_SESSION['session_value'];
+
+	$session = $container->get('session');
+	$context['session_var'] = $session->get('session_var');
+	$context['session_id'] = $session->get('session_value');
 	$context['forum_name'] = $modSettings['forum_name'];
 	$context['forum_name_html_safe'] = StringLibrary::escape($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : StringLibrary::escape($settings['header_logo_url']);
@@ -2202,7 +1993,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'sbb_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
 		'sbb_images_url' => '"' . $settings['images_url'] . '"',
 		'sbb_scripturl' => '"' . $scripturl . '"',
-		'sbb_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
 		'sbb_session_id' => '"' . $context['session_id'] . '"',
 		'sbb_session_var' => '"' . $context['session_var'] . '"',
 		'sbb_member_id' => $context['user']['id'],
@@ -2537,7 +2327,7 @@ function addInlineJavaScript($javascript, $defer = false)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $user_info, $language, $settings, $context, $modSettings;
+	global $user_info, $language, $settings, $context;
 	global $db_show_debug, $sourcedir, $cachedir;
 	global $txt, $helptxt, $txtBirthdayEmails, $editortxt;
 	static $already_loaded = [];
@@ -2593,7 +2383,15 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// If it still doesn't exist, abort!
 		if (!file_exists($path))
 		{
-			fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+			if ($fatal)
+			{
+				fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+			}
+			else
+			{
+				log_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+				return;
+			}
 		}
 
 		@include($path);
@@ -2629,17 +2427,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
 
 			$context['locale'] = str_replace("_", "-", substr($txt['lang_locale'], 0, strcspn($txt['lang_locale'], ".")));
-		}
-
-		// For the sake of backward compatibility
-		if (!empty($txt['emails']))
-		{
-			foreach ($txt['emails'] as $key => $value)
-			{
-				$txt[$key . '_subject'] = $value['subject'];
-				$txt[$key . '_body'] = $value['body'];
-			}
-			$txt['emails'] = [];
 		}
 	}
 
@@ -2750,7 +2537,7 @@ function getBoardParents($id_parent)
  */
 function getLanguages($use_cache = true)
 {
-	global $context, $smcFunc, $settings, $modSettings, $language;
+	global $context, $settings, $modSettings, $language;
 
 	// Either we don't use the cache, or its expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) === null)
@@ -2861,7 +2648,7 @@ function getLanguages($use_cache = true)
  */
 function censorText(&$text, $force = false)
 {
-	global $modSettings, $options, $txt;
+	global $modSettings, $options;
 	static $censor_vulgar = null, $censor_proper;
 
 	if ((!empty($options['show_no_censored']) && !empty($modSettings['allow_no_censored']) && !$force) || empty($modSettings['censor_vulgar']) || trim($text) === '')
@@ -2901,97 +2688,12 @@ function censorText(&$text, $force = false)
 }
 
 /**
- * Load the language file using require
- * 	- loads the language file specified by filename.
- * 	- outputs a parse error if the file did not exist or contained errors.
- * 	- attempts to detect the error and line, and show detailed information.
- *
- * @param string $filename The name of the file to include
- * @param bool $once If true only includes the file once (like include_once)
- */
-function template_include($filename, $once = false)
-{
-	global $context, $settings, $txt, $scripturl, $modSettings;
-	global $boardurl, $boarddir, $sourcedir;
-	global $maintenance, $mtitle, $mmessage;
-	static $templates = [];
-
-	// We want to be able to figure out any errors...
-	@ini_set('track_errors', '1');
-
-	// Don't include the file more than once, if $once is true.
-	if ($once && in_array($filename, $templates))
-		return;
-	// Add this file to the include list, whether $once is true or not.
-	else
-		$templates[] = $filename;
-
-	$file_found = file_exists($filename);
-
-	if ($once && $file_found)
-		require_once($filename);
-	elseif ($file_found)
-		require($filename);
-
-	if ($file_found !== true)
-	{
-		ob_end_clean();
-		ob_start();
-
-		if (isset($_GET['debug']))
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
-
-		// Don't cache error pages!!
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Cache-Control: no-cache');
-
-		if (!isset($txt['template_parse_error']))
-		{
-			$txt['template_parse_error'] = 'Template Parse Error!';
-			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system.  This problem should only be temporary, so please come back later and try again.  If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_errmsg'] = 'Unfortunately more information is not available at this time as to exactly what is wrong.';
-		}
-
-		// First, let's get the doctype and language information out of the way.
-		echo '<!DOCTYPE html>
-<html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="UTF-8">';
-
-		if (!empty($maintenance) && !allowedTo('admin_forum'))
-			echo '
-		<title>', $mtitle, '</title>
-	</head>
-	<body>
-		<h3>', $mtitle, '</h3>
-		', $mmessage, '
-	</body>
-</html>';
-		else
-		{
-			echo '
-		}
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', $txt['template_parse_error_message'], '
-	</body>
-</html>';
-		}
-
-		die;
-	}
-}
-
-/**
  * Initialize a database connection.
  */
 function loadDatabase()
 {
 	global $db_persist, $db_server, $db_user, $db_passwd;
-	global $db_type, $db_name, $sourcedir, $db_prefix, $db_port, $smcFunc;
+	global $db_type, $db_name, $db_prefix, $db_port, $smcFunc;
 
 	if (empty($smcFunc))
 	{
@@ -2999,11 +2701,10 @@ function loadDatabase()
 	}
 
 	// Figure out what type of database we are using.
-	if (empty($db_type) || !file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
+	if (empty($db_type))
+	{
 		$db_type = 'mysql';
-
-	// Load the file for the database.
-	require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
+	}
 
 	$db_options = [];
 
@@ -3011,7 +2712,8 @@ function loadDatabase()
 	if (!empty($db_port))
 		$db_options['port'] = $db_port;
 
-	try {
+	try
+	{
 		$options = array_merge($db_options, ['persist' => $db_persist]);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
@@ -3130,7 +2832,7 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret, $settings;
+	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings;
 
 	// Come on!
 	if (empty($data))
@@ -3244,8 +2946,6 @@ function get_char_membergroup_data()
  */
 function get_labels_and_badges($group_list)
 {
-	global $settings, $context;
-
 	$group_title = null;
 	$group_color = '';
 	$groups = get_char_membergroup_data();

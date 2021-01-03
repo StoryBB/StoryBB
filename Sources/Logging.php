@@ -4,12 +4,13 @@
  * This file concerns itself with logging, whether in the database or files.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -41,7 +42,7 @@ function truncateArray($arr, $max_length=1900)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc, $sourcedir;
+	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($settings['display_who_viewing']) && ($topic || $board))
@@ -67,7 +68,11 @@ function writeLog($force = false)
 
 		// In the case of a dlattach action, session_var may not be set.
 		if (!isset($context['session_var']))
-			$context['session_var'] = $_SESSION['session_var'];
+		{
+			$container = Container::instance();
+			$session = $container->get('session');
+			$context['session_var'] = $session->get('session_var');
+		}
 
 		unset($encoded_get['sesc'], $encoded_get[$context['session_var']]);
 		$encoded_get = json_encode($encoded_get);
@@ -148,7 +153,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (!empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])))
+	if (!empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml'])))
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
@@ -181,7 +186,7 @@ function writeLog($force = false)
 function displayDebug()
 {
 	global $context, $scripturl, $boarddir, $sourcedir, $cachedir, $settings, $modSettings;
-	global $db_cache, $db_count, $cache_misses, $cache_count_misses, $db_show_debug, $cache_count, $cache_hits, $smcFunc, $txt;
+	global $db_cache, $db_count, $cache_misses, $cache_count_misses, $db_show_debug, $cache_count, $cache_hits, $txt;
 
 	// Add to Settings.php if you want to show the debugging information.
 	if (!isset($db_show_debug) || $db_show_debug !== true || (isset($_GET['action']) && $_GET['action'] == 'viewquery'))

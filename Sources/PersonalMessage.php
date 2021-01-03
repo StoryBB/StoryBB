@@ -6,7 +6,7 @@
  * messages. For compatibility reasons, they are often called "instant messages".
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -1032,7 +1032,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
  */
 function MessageSearch()
 {
-	global $context, $txt, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl;
 
 	if (isset($_REQUEST['params']))
 	{

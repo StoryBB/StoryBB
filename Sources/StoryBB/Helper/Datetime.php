@@ -4,7 +4,7 @@
  * Support functions for timezones.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -26,7 +26,7 @@ class Datetime
 	 */
 	public static function list_timezones($when = 'now')
 	{
-		global $smcFunc, $modSettings;
+		global $modSettings;
 		static $timezones = null, $lastwhen = null;
 
 		// No point doing this over if we already did it once

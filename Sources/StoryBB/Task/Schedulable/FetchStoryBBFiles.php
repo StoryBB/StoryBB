@@ -3,7 +3,7 @@
  * Fetch the latest version info/news from storybb.org.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -45,7 +45,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $sourcedir, $txt, $language, $modSettings, $smcFunc, $context;
+		global $txt, $language, $modSettings, $smcFunc;
 
 		// What files do we want to get
 		$request = $smcFunc['db']->query('', '

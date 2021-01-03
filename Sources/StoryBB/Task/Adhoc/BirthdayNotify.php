@@ -4,7 +4,7 @@
  * Send people a notification wishing them a happy birthday.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -23,7 +23,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 	 */
 	public function execute()
 	{
-		global $txt, $smcFunc, $txtBirthdayEmails, $language, $modSettings, $sourcedir;
+		global $txt, $smcFunc, $txtBirthdayEmails, $modSettings, $sourcedir;
 
 		$greeting = isset($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday';
 

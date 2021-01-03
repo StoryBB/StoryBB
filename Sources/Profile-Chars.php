@@ -3,7 +3,7 @@
  * This file provides handling for character-specific features within the profile area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -20,7 +20,7 @@ use StoryBB\StringLibrary;
  */
 function characters_popup($memID)
 {
-	global $context, $user_info, $sourcedir, $db_show_debug, $cur_profile, $smcFunc;
+	global $context, $db_show_debug, $cur_profile;
 
 	// We do not want to output debug information here.
 	$db_show_debug = false;
@@ -113,7 +113,7 @@ function char_switch($memID, $char = null, $return = false)
 
 	// If caching would have cached the user's record, nuke it.
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-		cache_put_data('user_settings-' . $id_member, null, 60);
+		cache_put_data('user_settings-' . $memID, null, 60);
 
 	// Whatever they had in session for theme, disregard it.
 	unset ($_SESSION['id_theme']);
@@ -230,7 +230,7 @@ function character_profile($memID)
  */
 function char_create()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
+	global $context, $smcFunc, $txt, $sourcedir;
 
 	loadLanguage('Admin');
 
@@ -346,7 +346,7 @@ function char_create()
  */
 function char_edit()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings, $scripturl;
+	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
 	global $profile_vars, $settings;
 
 	// If they don't have permission to be here, goodbye.
@@ -505,7 +505,7 @@ function char_edit()
 				{
 					$change_array = [
 						'previous' => $context['character'][$key],
-						'new' => $changes[$key],
+						'new' => $new_value,
 						'applicator' => $context['user']['id'],
 						'member_affected' => $context['id_member'],
 						'id_character' => $context['character']['id_character'],
@@ -599,7 +599,7 @@ function char_edit()
  */
 function char_delete()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
+	global $context, $smcFunc;
 
 	// If they don't have permission to be here, goodbye.
 	if (!$context['character']['editable']) {
@@ -770,7 +770,7 @@ function char_theme()
 function char_posts()
 {
 	global $txt, $user_info, $scripturl, $modSettings;
-	global $context, $user_profile, $sourcedir, $smcFunc, $board;
+	global $context, $smcFunc, $board;
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
@@ -1069,7 +1069,7 @@ function char_posts()
 
 	// Clean up after posts that cannot be deleted and quoted.
 	$quote_enabled = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
-	foreach ($context['posts'] as $counter => $dummy)
+	foreach (array_keys($context['posts']) as $counter)
 	{
 		$context['posts'][$counter]['can_delete'] &= $context['posts'][$counter]['delete_possible'];
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
@@ -1086,7 +1086,7 @@ function char_posts()
  */
 function profileLoadCharGroups()
 {
-	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
+	global $txt, $context, $smcFunc, $user_settings;
 
 	$context['member_groups'] = [
 		0 => [
@@ -1177,7 +1177,7 @@ function char_retire()
  */
 function char_stats()
 {
-	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $user_info, $modSettings, $smcFunc;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
 	$context['sub_template'] = 'profile_character_stats';
@@ -1554,7 +1554,7 @@ function char_sheet()
  */
 function char_sheet_history()
 {
-	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
+	global $context, $txt, $smcFunc;
 
 	// First, get rid of people shouldn't have a sheet at all - the OOC characters
 	if ($context['character']['is_main'])
@@ -1639,7 +1639,7 @@ function char_sheet_history()
  */
 function char_sheet_edit()
 {
-	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
+	global $context, $txt, $smcFunc, $sourcedir;
 
 	loadLanguage('Admin');
 
@@ -1994,7 +1994,7 @@ function char_sheet_approve()
  */
 function char_sheet_reject()
 {
-	global $context, $smcFunc;
+	global $context;
 
 	checkSession('get');
 
@@ -2015,7 +2015,7 @@ function char_sheet_reject()
  */
 function char_sheet_compare()
 {
-	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
+	global $context, $txt, $smcFunc;
 
 	// First, get rid of people shouldn't have a sheet at all - the OOC characters
 	if ($context['character']['is_main'])
@@ -2381,7 +2381,7 @@ function char_move_account()
  */
 function move_char_accounts($source_chr, $dest_acct)
 {
-	global $user_profile, $sourcedir, $smcFunc, $modSettings;
+	global $smcFunc, $modSettings;
 
 	// First, establish that both exist.
 	$loaded = loadMemberData([$dest_acct]);
@@ -2533,7 +2533,7 @@ function move_char_accounts($source_chr, $dest_acct)
 function CharacterList()
 {
 	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings;
-	global $image_proxy_enabled, $image_proxy_secret;
+	global $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
 	$_GET['char'] = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 	if ($_GET['char'])
@@ -2698,7 +2698,7 @@ function CharacterList()
  */
 function CharacterSheetList()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $smcFunc;
 
 	loadLanguage('Profile');
 
@@ -2753,7 +2753,7 @@ function CharacterSheetList()
  */
 function ReattributePost()
 {
-	global $topic, $smcFunc, $modSettings, $user_info, $board_info;
+	global $topic, $smcFunc, $user_info, $board_info;
 
 	// 1. Session check, quick and easy to get out the way before we forget.
 	checkSession('get');

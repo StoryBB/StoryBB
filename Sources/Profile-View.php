@@ -4,7 +4,7 @@
  * This file handles most of the read-only views within the user profile area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -467,7 +467,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
  */
 function showAlerts($memID)
 {
-	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
+	global $context, $txt, $sourcedir, $scripturl;
 
 	require_once($sourcedir . '/Profile-Modify.php');
 

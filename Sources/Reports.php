@@ -12,7 +12,7 @@
  * Never access the context directly, but use the data handling functions to do so.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -34,7 +34,7 @@ use StoryBB\App;
  */
 function ReportsMain()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// Only admins, only EVER admins!
 	isAllowedTo('admin_forum');
@@ -79,13 +79,6 @@ function ReportsMain()
 	}
 	$context['report_type'] = $_REQUEST['sa'];
 
-	// What are valid templates for showing reports?
-	$reportTemplates = [
-		'main' => [
-			'layers' => null,
-		],
-	];
-
 	$context['sub_template'] = 'report';
 
 	// Make the page title more descriptive.
@@ -111,7 +104,7 @@ function ReportsMain()
  */
 function BoardReport()
 {
-	global $context, $txt, $sourcedir, $smcFunc, $modSettings;
+	global $context, $txt, $sourcedir, $smcFunc;
 
 	// Load the permission profiles.
 	require_once($sourcedir . '/ManagePermissions.php');
@@ -263,7 +256,7 @@ function BoardReport()
  */
 function BoardPermissionsReport()
 {
-	global $txt, $modSettings, $smcFunc;
+	global $txt, $smcFunc;
 
 	// Get as much memory as possible as this can be big.
 	App::setMemoryLimit('256M');
@@ -410,7 +403,7 @@ function BoardPermissionsReport()
 			$curData = ['col' => $perm_info['title']];
 
 			// Now cycle each membergroup in this set of permissions.
-			foreach ($member_groups as $id_group => $name)
+			foreach (array_keys($member_groups) as $id_group)
 			{
 				// Don't overwrite the key column!
 				if ($id_group === 'col')
@@ -464,7 +457,7 @@ function BoardPermissionsReport()
  */
 function MemberGroupsReport()
 {
-	global $txt, $settings, $modSettings, $smcFunc;
+	global $txt, $settings, $smcFunc;
 
 	// Fetch all the board names.
 	$request = $smcFunc['db']->query('', '
@@ -916,7 +909,7 @@ function addData($inc_data, $custom_table = null)
 	if (!empty($context['keys']))
 	{
 		// Basically, check every key exists!
-		foreach ($context['keys'] as $key => $dummy)
+		foreach (array_keys($context['keys']) as $key)
 		{
 			$data[$key] = [
 				'v' => empty($inc_data[$key]) ? $context['tables'][$table]['default_value'] : $inc_data[$key],

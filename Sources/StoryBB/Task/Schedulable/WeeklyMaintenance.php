@@ -3,7 +3,7 @@
  * Weekly maintenance tasks.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -246,9 +246,17 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 		// Some OS's don't seem to clean out their sessions.
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}sessions
-			WHERE last_update < {int:last_update}',
+			WHERE lifetime < {int:expires}',
 			[
-				'last_update' => time() - 86400,
+				'expires' => time(),
+			]
+		);
+
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}sessions_persist
+			WHERE timeexpires < {int:expires}',
+			[
+				'expires' => time(),
 			]
 		);
 	}

@@ -4,7 +4,7 @@
  * This file contains functions regarding manipulation of and information about membergroups.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -26,7 +26,7 @@ use StoryBB\Hook\Observable;
  */
 function deleteMembergroups($groups)
 {
-	global $smcFunc, $modSettings, $txt;
+	global $smcFunc, $txt;
 
 	// Make sure it's an array.
 	if (!is_array($groups))

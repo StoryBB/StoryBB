@@ -4,7 +4,7 @@
  * This file provides functionality for managing plugins.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -93,7 +93,7 @@ class Plugin
 					break;
 				}
 
-				if (empty($hook_detail->priority))
+				if (empty($hook_details->priority))
 				{
 					$this->manifest->hooks->$hook_class->priority = 50;
 				}
@@ -135,25 +135,21 @@ class Plugin
 
 	public function name(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->name);
 	}
 
 	public function author(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->author);
 	}
 
 	public function description(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->description);
 	}
 
 	public function version(): string
 	{
-		global $smcFunc;
 		return StringLibrary::escape($this->manifest->version);
 	}
 

@@ -4,7 +4,7 @@
  * This file contains liking posts and displaying the list of who liked a post.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -468,7 +468,7 @@ class Likes
 	 */
 	public function view()
 	{
-		global $smcFunc, $txt, $context, $memberContext;
+		global $smcFunc, $context, $memberContext;
 
 		// Firstly, load what we need. We already know we can see this, so that's something.
 		$context['likers'] = [];

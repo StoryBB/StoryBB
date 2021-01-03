@@ -6,7 +6,7 @@
  * and the post box.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -227,8 +227,6 @@ function preparsecode(&$message, $previewing = false)
  */
 function un_preparsecode($message)
 {
-	global $smcFunc;
-
 	$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 	// We're going to unparse only the stuff outside [code]...
@@ -246,7 +244,7 @@ function un_preparsecode($message)
 
 	$message = implode('', $parts);
 
-	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m) use ($smcFunc)
+	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m)
 	{
 		return "[html]" . strtr(StringLibrary::escape("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
 	}, $message);

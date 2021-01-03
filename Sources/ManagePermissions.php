@@ -4,7 +4,7 @@
  * ManagePermissions handles all possible permission stuff.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -73,7 +73,7 @@ function ModifyPermissions()
  */
 function PermissionIndex()
 {
-	global $txt, $scripturl, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $settings, $smcFunc;
 
 	$context['page_title'] = $txt['permissions_title'];
 
@@ -715,7 +715,7 @@ function SetQuickGroups()
  */
 function ModifyMembergroup()
 {
-	global $context, $txt, $smcFunc, $modSettings;
+	global $context, $txt, $smcFunc;
 
 	if (!isset($_GET['group']))
 		fatal_lang_error('no_access', false);
@@ -1009,8 +1009,10 @@ function ModifyMembergroup2()
 	);
 	if (!empty($givePerms['board']))
 	{
-		foreach ($givePerms['board'] as $k => $v)
+		foreach (array_keys($givePerms['board']) as $k)
+		{
 			$givePerms['board'][$k][] = $profileid;
+		}
 		$smcFunc['db']->insert('replace',
 			'{db_prefix}board_permissions',
 			['id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int', 'id_profile' => 'int'],
@@ -1026,18 +1028,6 @@ function ModifyMembergroup2()
 	updateSettings(['settings_updated' => time()]);
 
 	redirectexit('action=admin;area=permissions;pid=' . $_GET['pid']);
-}
-
-/**
- * A screen to set some general settings for permissions.
- *
- * @param bool $return_config Whether to return the $config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the config_vars array if $return_config is true
- */
-function GeneralPermissionSettings($return_config = false)
-{
-	global $context, $modSettings, $sourcedir, $txt, $scripturl, $smcFunc;
-
 }
 
 /**
@@ -1624,7 +1614,7 @@ function loadAllPermissions()
  */
 function init_inline_permissions($permissions, $excluded_groups = [])
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	loadLanguage('ManagePermissions');
 	$context['can_change_permissions'] = allowedTo('manage_permissions');

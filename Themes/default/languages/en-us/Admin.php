@@ -4,7 +4,7 @@
  * This file contains language strings for the admin area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -25,11 +25,9 @@ $txt['admin_censored_desc'] = 'Due to the public nature of forums there may be s
 $txt['admin_reserved_names'] = 'Reserved Names';
 $txt['admin_template_edit'] = 'Edit your forum template';
 $txt['admin_server_settings'] = 'Server Settings';
-$txt['admin_reserved_set'] = 'Set reserved names';
-$txt['admin_reserved_line'] = 'One reserved word per line.';
+
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
-$txt['cookie_name'] = 'Cookie name';
 $txt['admin_webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
@@ -47,13 +45,8 @@ $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
 $txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank" rel="noopener">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="main_icons help" title="%3$s"></span> symbols for more information on the related functions.';
-$txt['administrators'] = 'Forum Administrators';
-$txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
 $txt['admin_activation_email'] = 'Send activation email to new members upon registration';
-$txt['admin_match_whole'] = 'Match whole name only. If unchecked, search within names.';
-$txt['admin_match_case'] = 'Match case. If unchecked, search will be case insensitive.';
-$txt['admin_check_user'] = 'Check username.';
-$txt['admin_check_display'] = 'Check display name.';
+
 $txt['additional_options_collapsable'] = 'Enable collapsible additional post options';
 $txt['zero_for_no_limit'] = '(0 for no limit)';
 $txt['zero_to_disable'] = '(Set to 0 to disable.)';
@@ -98,8 +91,6 @@ $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
 $txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
-
-$txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
 
@@ -509,7 +500,6 @@ $txt['removeNestedQuotes'] = 'Remove nested quotes when quoting';
 $txt['disable_wysiwyg'] = 'Disable WYSIWYG editor';
 $txt['max_messageLength'] = 'Maximum allowed post size';
 $txt['max_messageLength_zero'] = '0 for no max.';
-$txt['convert_to_mediumtext'] = 'Your database is not setup to accept messages longer than 65535 characters. Please use the <a href="%1$s">database maintenance</a> page to convert the database and then come back to increase the maximum allowed post size.';
 $txt['topicSummaryPosts'] = 'Posts to show on topic summary';
 $txt['spamWaitTime'] = 'Time required between posts from the same IP';
 $txt['edit_wait_time'] = 'Courtesy edit wait time';
@@ -543,7 +533,6 @@ $txt['not_done_reason'] = 'To avoid overloading your server, the process has bee
 $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
-$txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
 $txt['phpinfo_settings'] = 'PHP Info';

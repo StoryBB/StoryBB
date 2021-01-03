@@ -5,7 +5,7 @@
  * new topics, quotes, and modifications to existing posts.  It also handles
  * quoting posts by way of javascript.
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -1499,7 +1499,7 @@ function Post2()
 
 		// Can they approve it?
 		$can_approve = allowedTo('approve_posts');
-		$approve_checked = (!empty($REQUEST['approve']) ? 1 : 0);
+		$approve_checked = (!empty($_REQUEST['approve']) ? 1 : 0);
 		$becomesApproved = $can_approve && !$row['approved'] ? $approve_checked : $row['approved'];
 		$approve_has_changed = $row['approved'] != $becomesApproved;
 

@@ -6,12 +6,13 @@
  * 	and such things
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Autocomplete;
@@ -442,7 +443,7 @@ function loadProfileFields($force_reload = false)
 
 				if (trim($value) == '')
 					return 'no_name';
-				elseif (StringLibrary::strpos($value) > 60)
+				elseif (StringLibrary::strlen($value) > 60)
 					return 'name_too_long';
 				elseif ($cur_profile['real_name'] != $value)
 				{
@@ -501,19 +502,6 @@ function loadProfileFields($force_reload = false)
 				$context['allow_no_censored'] = false;
 				if ($user_info['is_admin'] || $context['user']['is_owner'])
 					$context['allow_no_censored'] = !empty($modSettings['allow_no_censored']);
-
-				return true;
-			},
-		],
-		'tfa' => [
-			'type' => 'callback',
-			'callback_func' => 'tfa',
-			'permission' => 'profile_password',
-			'enabled' => !empty($modSettings['tfa_mode']),
-			'preload' => function() use (&$context, $cur_profile, $modSettings, $scripturl)
-			{
-				$context['tfa_enabled'] = !empty($cur_profile['tfa_secret']);
-				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=profile;area=tfasetup';
 
 				return true;
 			},
@@ -592,7 +580,7 @@ function loadProfileFields($force_reload = false)
  */
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $txt, $modSetting, $scripturl;
+	global $profile_fields, $context, $cur_profile, $txt, $scripturl;
 
 	// Some default bits.
 	$context['profile_prehtml'] = '';
@@ -941,111 +929,85 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
  */
 function makeThemeChanges($memID, $id_theme)
 {
-	global $modSettings, $smcFunc, $context, $user_info;
+	global $context;
 
-	$reservedVars = [
-		'actual_theme_url',
-		'actual_images_url',
-		'base_theme_dir',
-		'base_theme_url',
-		'default_images_url',
-		'default_theme_dir',
-		'default_theme_url',
-		'default_template',
-		'images_url',
-		'theme_dir',
-		'theme_id',
-		'theme_url',
-	];
-
-	// Can't change reserved vars.
-	if ((isset($_POST['options']) && count(array_intersect(array_keys($_POST['options']), $reservedVars)) != 0) || (isset($_POST['default_options']) && count(array_intersect(array_keys($_POST['default_options']), $reservedVars)) != 0))
-		fatal_lang_error('no_access', false);
-
-	// Don't allow any overriding of custom fields with default or non-default options.
-	$request = $smcFunc['db']->query('', '
-		SELECT col_name
-		FROM {db_prefix}custom_fields
-		WHERE active = {int:is_active}',
-		[
-			'is_active' => 1,
-		]
-	);
-	$custom_fields = [];
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$custom_fields[] = $row['col_name'];
-	$smcFunc['db']->free_result($request);
-
-	// These are the theme changes...
-	$themeSetArray = [];
-	if (isset($_POST['options']) && is_array($_POST['options']))
+	if (!empty($context['password_auth_failed']))
 	{
-		foreach ($_POST['options'] as $opt => $val)
-		{
-			if (in_array($opt, $custom_fields))
-				continue;
-
-			// These need to be controlled.
-			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
-				$val = max(0, min($val, 50));
-			// We don't set this per theme anymore.
-			elseif ($opt == 'allow_no_censored')
-				continue;
-
-			$themeSetArray[] = [$memID, $id_theme, $opt, is_array($val) ? implode(',', $val) : $val];
-		}
+		return;
 	}
 
-	$erase_options = [];
-	if (isset($_POST['default_options']) && is_array($_POST['default_options']))
-		foreach ($_POST['default_options'] as $opt => $val)
-		{
-			if (in_array($opt, $custom_fields))
-				continue;
-
-			// These need to be controlled.
-			if ($opt == 'topics_per_page' || $opt == 'messages_per_page')
-				$val = max(0, min($val, 50));
-			// Only let admins and owners change the censor.
-			elseif ($opt == 'allow_no_censored' && !$user_info['is_admin'] && !$context['user']['is_owner'])
-					continue;
-
-			$themeSetArray[] = [$memID, 1, $opt, is_array($val) ? implode(',', $val) : $val];
-			$erase_options[] = $opt;
-		}
-
-	// If themeSetArray isn't still empty, send it to the database.
-	if (empty($context['password_auth_failed']))
+	if (isset($_POST['options']) && is_array($_POST['options']))
 	{
-		if (!empty($themeSetArray))
+		// Load up the system theme options to validate what we're checking against.
+		$container = Container::instance();
+		$site_settings = $container->get('sitesettings');
+		$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+		$defaults = $prefs_manager->get_default_preferences();
+
+		$newprefs = [];
+
+		foreach ($defaults as $setting)
 		{
-			$smcFunc['db']->insert('replace',
-				'{db_prefix}themes',
-				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
-				$themeSetArray,
-				['id_member', 'id_theme', 'variable']
-			);
+			// If it's not an array, it's not a setting, move along.
+			if (!is_array($setting))
+			{
+				continue;
+			}
+
+			// If the setting is disabled in configuration, skip it.
+			if (isset($setting['disableOn']) && $site_settings->{$setting['disableOn']})
+			{
+				continue;
+			}
+
+			if (!isset($_POST['options'][$setting['id']]))
+			{
+				continue;
+			}
+
+			if (!isset($setting['type']) || $setting['type'] == 'bool')
+				$type = 'checkbox';
+			elseif ($setting['type'] == 'int' || $setting['type'] == 'integer')
+				$type = 'number';
+			elseif ($setting['type'] == 'string')
+				$type = 'text';
+
+			if (isset($setting['options']))
+				$type = 'list';
+
+			switch ($type)
+			{
+				case 'checkbox':
+					$newprefs[$setting['id']] = $_POST['options'][$setting['id']] ? 1 : 0;
+					break;
+
+				case 'number':
+					$newprefs[$setting['id']] = (int) $_POST['options'][$setting['id']];
+					if (isset($setting['max']) && $newprefs[$setting['id']] > $setting['max'])
+					{
+						$newprefs[$setting['id']] = $setting['max'];
+					}
+					if (isset($setting['min']) && $newprefs[$setting['id']] < $setting['min'])
+					{
+						$newprefs[$setting['id']] = $setting['min'];
+					}
+					break;
+
+				case 'text':
+					$newprefs[$setting['id']] = StringLibrary::escape($_POST['options'][$setting['id']]);
+					break;
+
+				case 'list':
+					$newprefs[$setting['id']] = $_POST['options'][$setting['id']];
+					if (!isset($setting['options'][$newprefs[$setting['id']]]))
+					{
+						$newprefs[$setting['id']] = array_keys($setting['options'])[0];
+					}
+					break;
+			}
 		}
 
-		if (!empty($erase_options))
-		{
-			$smcFunc['db']->query('', '
-				DELETE FROM {db_prefix}themes
-				WHERE id_theme != {int:id_theme}
-					AND variable IN ({array_string:erase_variables})
-					AND id_member = {int:id_member}',
-				[
-					'id_theme' => 1,
-					'id_member' => $memID,
-					'erase_variables' => $erase_options
-				]
-			);
-		}
-
-		// Admins can choose any theme, even if it's not enabled...
-		$themes = allowedTo('admin_forum') ? explode(',', $modSettings['knownThemes']) : explode(',', $modSettings['enableThemes']);
-		foreach ($themes as $t)
-			cache_put_data('theme_settings-' . $t . ':' . $memID, null, 60);
+		$prefs_manager->save_preferences($memID, $newprefs);
 	}
 }
 
@@ -1651,7 +1613,6 @@ function account($memID)
 			'id_group', 'hr',
 			'email_address', 'show_online', 'hr',
 			'immersive_mode', 'hr',
-			'tfa', 'hr',
 			'passwrd1', 'passwrd2', 'hr',
 			'secret_question', 'secret_answer',
 		]
@@ -1679,7 +1640,6 @@ function forumProfile($memID)
 		[
 			'avatar_choice', 'hr',
 			'birthday_date', 'birthday_visibility', 'hr',
-			'signature', 'hr',
 			'website_title', 'website_url',
 		]
 	);
@@ -1694,11 +1654,11 @@ function theme($memID)
 {
 	global $txt, $context, $modSettings;
 
-	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$context['theme_options'] = $prefs_manager->get_default_preferences();
 
 	loadThemeOptions($memID);
-	if (allowedTo(['profile_extra_own', 'profile_extra_any']))
-		loadCustomFields($memID, 'theme');
 
 	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['theme_info'];
@@ -1707,7 +1667,13 @@ function theme($memID)
 	foreach ($context['theme_options'] as $id => $setting)
 	{
 		if (!is_array($setting))
+		{
+			$context['theme_options'][$id] = $txt[$setting];
 			continue;
+		}
+
+		$context['theme_options'][$id]['label'] = $txt[$setting['label']];
+
 		// If it's going to be disabled through a modSettings entry, do that first.
 		if (!empty($setting['disableOn']) && !empty($modSettings[$setting['disableOn']])) {
 			unset ($context['theme_options'][$id]);
@@ -1723,7 +1689,16 @@ function theme($memID)
 			$context['theme_options'][$id]['type'] = 'text';
 
 		if (isset($setting['options']))
+		{
 			$context['theme_options'][$id]['type'] = 'list';
+			foreach ($setting['options'] as $opt_key => $opt_val)
+			{
+				if (is_string($opt_val))
+				{
+					$context['theme_options'][$id]['options'][$opt_key] = isset($txt[$opt_val]) ? $txt[$opt_val] : $opt_val;
+				}
+			}
+		}
 
 		// Make the value more readily available to the template.
 		$context['theme_options'][$id]['user_value'] = '';
@@ -1777,7 +1752,7 @@ function notification($memID)
  */
 function alert_configuration($memID)
 {
-	global $txt, $user_profile, $context, $modSettings, $smcFunc, $sourcedir;
+	global $txt, $context, $modSettings, $smcFunc, $sourcedir;
 
 	if (!isset($context['token_check']))
 		$context['token_check'] = 'profile-nt' . $memID;
@@ -1960,7 +1935,7 @@ function alert_configuration($memID)
 		$update_prefs = [];
 
 		// Now the group level options
-		foreach ($context['alert_group_options'] as $opt_group => $group)
+		foreach ($context['alert_group_options'] as $group)
 		{
 			foreach ($group as $this_option)
 			{
@@ -1985,7 +1960,7 @@ function alert_configuration($memID)
 		}
 
 		// Now the individual options
-		foreach ($context['alert_types'] as $alert_group => $items)
+		foreach ($context['alert_types'] as $items)
 		{
 			foreach ($items as $item_key => $this_options)
 			{
@@ -2338,7 +2313,7 @@ function alert_notifications_boards($memID)
 	$context['sub_template'] = 'profile_alerts_watchedboards';
 
 	// Because of the way this stuff works, we want to do this ourselves.
-	if (isset($_POST['edit_notify_boards']) || isset($_POSt['remove_notify_boards']))
+	if (isset($_POST['edit_notify_boards']) || isset($_POST['remove_notify_boards']))
 	{
 		checkSession();
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
@@ -2454,7 +2429,7 @@ function alert_notifications_boards($memID)
  */
 function list_getTopicNotificationCount($memID)
 {
-	global $smcFunc, $user_info, $modSettings;
+	global $smcFunc;
 
 	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
@@ -2486,7 +2461,7 @@ function list_getTopicNotificationCount($memID)
  */
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $scripturl, $user_info, $modSettings, $sourcedir;
+	global $smcFunc, $scripturl, $user_info, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($memID);
@@ -2615,37 +2590,9 @@ function loadThemeOptions($memID)
 	}
 	else
 	{
-		$request = $smcFunc['db']->query('', '
-			SELECT id_member, variable, value
-			FROM {db_prefix}themes
-			WHERE id_theme IN (1, {int:member_theme})
-				AND id_member IN (-1, {int:selected_member})',
-			[
-				'member_theme' => (int) $cur_profile['id_theme'],
-				'selected_member' => $memID,
-			]
-		);
-		$temp = [];
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-		{
-			if ($row['id_member'] == -1)
-			{
-				$temp[$row['variable']] = $row['value'];
-				continue;
-			}
-
-			if (isset($_POST['options'][$row['variable']]))
-				$row['value'] = $_POST['options'][$row['variable']];
-			$context['member']['options'][$row['variable']] = $row['value'];
-		}
-		$smcFunc['db']->free_result($request);
-
-		// Load up the default theme options for any missing.
-		foreach ($temp as $k => $v)
-		{
-			if (!isset($context['member']['options'][$k]))
-				$context['member']['options'][$k] = $v;
-		}
+		$container = Container::instance();
+		$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+		$context['member']['options'] = $prefs_manager->get_preferences_for_user($memID);
 	}
 }
 
@@ -3310,7 +3257,7 @@ function profileSaveAvatarData(&$value)
  */
 function profileValidateSignature(&$value)
 {
-	global $sourcedir, $modSettings, $smcFunc, $txt;
+	global $sourcedir, $modSettings, $txt;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -3384,7 +3331,7 @@ function profileValidateSignature(&$value)
 			// And stick the HTML in the BBC.
 			if (!empty($matches2))
 			{
-				foreach ($matches2[0] as $ind => $dummy)
+				foreach (array_keys($matches2[0]) as $ind)
 				{
 					$matches[0][] = $matches2[0][$ind];
 					$matches[1][] = '';
@@ -3530,10 +3477,13 @@ function profileValidateEmail($email, $memID = 0)
  */
 function profileReloadUser()
 {
-	global $modSettings, $context, $cur_profile;
+	global $context, $cur_profile;
 
-	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
-		setLoginCookie(0, $context['id_member'], hash_salt($_POST['passwrd1'], $cur_profile['password_salt']));
+	$container = Container::instance();
+	$session = $container->get('session');
+	$session->migrate(true, 3600);
+	$session->set('userid', $context['id_member']);
+	// @todo invalidate persistence tokens as well?
 
 	loadUserSettings();
 	writeLog();
@@ -3895,7 +3845,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	}
 
 	// Finally, we can make the changes!
-	foreach ($addGroups as $id => $dummy)
+	foreach (array_keys($addGroups) as $id)
 		if (empty($id))
 			unset($addGroups[$id]);
 	$addGroups = implode(',', array_flip($addGroups));
@@ -3909,94 +3859,4 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	updateMemberData($memID, ['id_group' => $newPrimary, 'additional_groups' => $addGroups]);
 
 	return $changeType;
-}
-
-/**
- * Provides interface to setup Two Factor Auth in StoryBB
- *
- * @param int $memID The ID of the member
- */
-function tfasetup($memID)
-{
-	global $user_info, $context, $user_settings, $sourcedir, $modSettings;
-
-	$context['sub_template'] = 'profile_tfasetup';
-
-	require_once($sourcedir . '/Class-TOTP.php');
-	require_once($sourcedir . '/Subs-Auth.php');
-
-	// If TFA has not been setup, allow them to set it up
-	if (empty($user_settings['tfa_secret']) && $context['user']['is_owner'])
-	{
-		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
-			fatal_lang_error('login_ssl_required');
-
-		// In some cases (forced 2FA or backup code) they would be forced to be redirected here,
-		// we do not want too much AJAX to confuse them.
-		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && !isset($_REQUEST['backup']) && !isset($_REQUEST['forced']))
-		{
-			$context['from_ajax'] = true;
-			StoryBB\Template::set_layout('raw');
-			StoryBB\Template::remove_all_layers();
-		}
-
-		// When the code is being sent, verify to make sure the user got it right
-		if (!empty($_REQUEST['save']) && !empty($_SESSION['tfa_secret']))
-		{
-			$code = $_POST['tfa_code'];
-			$totp = new \TOTP\Auth($_SESSION['tfa_secret']);
-			$totp->setRange(1);
-			$valid_password = hash_verify_password($user_settings['member_name'], trim($_POST['passwd']), $user_settings['passwd']);
-			$valid_code = strlen($code) == $totp->getCodeLength() && $totp->validateCode($code);
-
-			if ($valid_password && $valid_code)
-			{
-				$backup = substr(sha1(mt_rand()), 0, 16);
-				$backup_encrypted = hash_password($user_settings['member_name'], $backup);
-
-				updateMemberData($memID, [
-					'tfa_secret' => $_SESSION['tfa_secret'],
-					'tfa_backup' => $backup_encrypted,
-				]);
-
-				setTFACookie(3153600, $memID, hash_salt($backup_encrypted, $user_settings['password_salt']));
-
-				unset($_SESSION['tfa_secret']);
-
-				$context['tfa_backup'] = $backup;
-				$context['sub_template'] = 'profile_tfasetup_backup';
-
-				return;
-			}
-			else
-			{
-				$context['tfa_secret'] = $_SESSION['tfa_secret'];
-				$context['tfa_error'] = !$valid_code;
-				$context['tfa_pass_error'] = !$valid_password;
-				$context['tfa_pass_value'] = $_POST['passwd'];
-				$context['tfa_value'] = $_POST['tfa_code'];
-			}
-		}
-		else
-		{
-			$totp = new \TOTP\Auth();
-			$secret = $totp->generateCode();
-			$_SESSION['tfa_secret'] = $secret;
-			$context['tfa_secret'] = $secret;
-			$context['tfa_backup'] = isset($_REQUEST['backup']);
-		}
-
-		$context['tfa_qr_url'] = $totp->getQrCodeUrl($context['forum_name'] . ':' . $user_info['name'], $context['tfa_secret']);
-	}
-	elseif (isset($_REQUEST['disable']))
-	{
-		updateMemberData($memID, [
-			'tfa_secret' => '',
-			'tfa_backup' => '',
-		]);
-		redirectexit('action=profile;area=account;u=' . $memID);
-	}
-	else
-		redirectexit('action=profile;area=account;u=' . $memID);
 }

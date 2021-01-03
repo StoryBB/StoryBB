@@ -3,7 +3,7 @@
  * Check for un-posted attachments and remove them.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -44,7 +44,7 @@ class RemoveTempAttachments implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $modSettings, $context, $txt;
+		global $modSettings, $txt;
 
 		// We need to know where this thing is going.
 		if (!empty($modSettings['currentAttachmentUploadDir']))

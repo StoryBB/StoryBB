@@ -4,7 +4,7 @@
  * The default native image CAPTCHA.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -25,7 +25,7 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 
 	public function __construct(string $id)
 	{
-		global $scripturl, $smcFunc;
+		global $scripturl;
 		parent::__construct($id);
 
 		$this->use_graphic_library = in_array('gd', get_loaded_extensions());
@@ -81,7 +81,7 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 
 	public function render()
 	{
-		global $context, $txt;
+		global $txt;
 
 		loadJavaScriptFile('captcha.js', [], 'sbb_captcha');
 		addInlineJavaScript('
@@ -100,7 +100,7 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 
 	public function get_settings(): array
 	{
-		global $txt, $context, $modSettings;
+		global $txt, $modSettings;
 
 		$choices = [
 			$txt['setting_image_verification_off'],
@@ -114,7 +114,6 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 		$_SESSION['visual_verification_code'] = $this->generate_code();
 
 		// Some javascript for CAPTCHA.
-		$context['settings_post_javascript'] = '';
 		if ($this->use_graphic_library)
 		{
 			addInlineJavaScript('

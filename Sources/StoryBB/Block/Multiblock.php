@@ -4,7 +4,7 @@
  * A multiple-block block.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,6 +13,7 @@
 namespace StoryBB\Block;
 
 use StoryBB\Template;
+use StoryBB\Block\Manager;
 
 /**
  * A multiple-block block.
@@ -41,8 +42,6 @@ class Multiblock extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $context, $txt, $sourcedir;
-
 		if ($this->content !== null)
 		{
 			return $this->content;
@@ -78,7 +77,7 @@ class Multiblock extends AbstractBlock implements Block
 				'instance' => 'multiblock' . static::$instancecount++,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
-				'blocktype' => strtolower(basename(get_class($instance))),
+				'blocktype' => Manager::get_blocktype($instance),
 				'icon' => !empty($block_config['icon']) ? $block_config['icon'] : '',
 				'collapsible' => false,
 				'collapsed' => false,

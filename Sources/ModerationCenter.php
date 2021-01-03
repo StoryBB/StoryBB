@@ -4,7 +4,7 @@
  * Moderation Center.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -54,12 +54,6 @@ function ModerationMain($dont_call = false)
 					'label' => $txt['moderation_center'],
 					'function' => 'ModerationHome',
 					'icon' => 'administration',
-				],
-				'modlogoff' => [
-					'label' => $txt['mc_logoff'],
-					'function' => 'ModEndSession',
-					'enabled' => empty($modSettings['securityDisable_moderate']),
-					'icon' => 'exit',
 				],
 				'notice' => [
 					'file' => 'ModerationCenter.php',
@@ -175,9 +169,6 @@ function ModerationMain($dont_call = false)
 		]
 	];
 
-	// Make sure the administrator has a valid session...
-	validateSession('moderate');
-
 	// I don't know where we're going - I don't know where we've been...
 	$menuOptions = [
 		'action' => 'moderate',
@@ -269,7 +260,7 @@ function ModerationHome()
 	call_integration_hook('integrate_mod_centre_blocks', [&$valid_blocks]);
 
 	$context['mod_blocks'] = [];
-	foreach ($valid_blocks as $k => $block)
+	foreach ($valid_blocks as $block)
 	{
 		$block = 'ModBlock' . $block;
 		if (function_exists($block))
@@ -525,7 +516,7 @@ function ModBlockReportedPosts()
 	}
 
 	$context['reported_posts'] = [];
-	foreach ($reported_posts as $i => $row)
+	foreach ($reported_posts as $row)
 	{
 		$context['reported_posts'][] = [
 			'id' => $row['id_report'],
@@ -638,7 +629,7 @@ function ModBlockReportedMembers()
 	}
 
 	$context['reported_users'] = [];
-	foreach ($reported_users as $i => $row)
+	foreach ($reported_users as $row)
 	{
 		$context['reported_users'][] = [
 			'id' => $row['id_report'],
@@ -1400,7 +1391,7 @@ function ViewWarnings()
  */
 function ViewWarningLog()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $sourcedir;
+	global $modSettings, $context, $txt, $scripturl, $sourcedir;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
@@ -1997,20 +1988,4 @@ function ModifyWarningTemplate()
 	}
 
 	createToken('mod-wt');
-}
-
-/**
- * This ends a moderator session, requiring authentication to access the MCP again.
- */
-function ModEndSession()
-{
-	// This is so easy!
-	unset($_SESSION['moderate_time']);
-
-	// Clean any moderator tokens as well.
-	foreach ($_SESSION['token'] as $key => $token)
-		if (strpos($key, '-mod') !== false)
-			unset($_SESSION['token'][$key]);
-
-	redirectexit();
 }

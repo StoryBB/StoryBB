@@ -4,7 +4,7 @@
  * This file is mainly concerned with the Who's Online list.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -257,7 +257,7 @@ function Who()
  */
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $smcFunc, $scripturl;
+	global $txt, $user_info, $smcFunc, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return [];

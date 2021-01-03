@@ -4,7 +4,7 @@
  * This file contains handling attachments.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -89,7 +89,7 @@ class Attachments
 	 */
 	public function call()
 	{
-		global $smcFunc, $sourcedir;
+		global $sourcedir;
 
 		require_once($sourcedir . '/Subs-Attachments.php');
 
@@ -358,9 +358,9 @@ class Attachments
 		global $txt, $user_info, $modSettings;
 
 		// Create an empty session var to keep track of all the files we attached.
-		$SESSION['already_attached'] = [];
+		$_SESSION['already_attached'] = [];
 
-		foreach ($_SESSION['temp_attachments'] as  $attachID => $attachment)
+		foreach ($_SESSION['temp_attachments'] as $attachment)
 		{
 			$attachmentOptions = [
 				'post' => $this->_msg,
@@ -474,8 +474,6 @@ class Attachments
 	 */
 	protected function sendResponse()
 	{
-		global $modSettings, $context;
-
 		ob_end_clean();
 
 		ob_start();

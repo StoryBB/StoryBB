@@ -4,7 +4,7 @@
  * Maintains all XML-based interaction (mainly XMLhttp)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -175,7 +175,7 @@ function sig_preview()
  */
 function warning_preview()
 {
-	global $context, $sourcedir, $smcFunc, $txt, $user_info, $scripturl;
+	global $context, $sourcedir, $txt, $user_info, $scripturl;
 
 	require_once($sourcedir . '/Subs-Post.php');
 	loadLanguage('Errors');

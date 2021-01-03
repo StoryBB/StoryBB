@@ -600,8 +600,6 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('lastActive', '15'),
   ('unapprovedMembers', '0'),
   ('databaseSession_enable', '{$databaseSession_enable}'),
-  ('databaseSession_loose', '1'),
-  ('databaseSession_lifetime', '2880'),
   ('search_cache_size', '50'),
   ('search_results_per_page', '30'),
   ('search_weight_frequency', '30'),
@@ -650,8 +648,6 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('enable_ajax_alerts', '1'),
   ('defaultMaxListItems', '15'),
   ('loginHistoryDays', '30'),
-  ('httponlyCookies', '1'),
-  ('tfa_mode', '1'),
   ('allow_expire_redirect', '1'),
   ('displayFields', '[{"col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","mlist":"0"}]'),
   ('minimize_files', '1'),
@@ -699,15 +695,11 @@ VALUES (1, 'name', '{$default_theme_name}'),
   (1, 'theme_url', '{$boardurl}/Themes/default'),
   (1, 'images_url', '{$boardurl}/Themes/default/images'),
   (1, 'theme_dir', '{$boarddir}/Themes/default'),
+  (1, 'meta_theme_color', '#557EA0'),
   (1, 'show_latest_member', '1'),
-  (1, 'enable_news', '1'),
   (1, 'drafts_show_saved_enabled', '1'),
   (1, 'sub_boards_columns', '2');
 
-INSERT INTO {$db_prefix}themes
-  (id_member, id_theme, variable, value)
-VALUES (-1, 1, 'posts_apply_ignore_list', '1'),
-  (-1, 1, 'return_to_post', '1');
 # --------------------------------------------------------
 
 #

@@ -21,12 +21,12 @@
 					<dd>
 
 		{{#if (eq type 'checkbox')}}
-						<input type="hidden" name="default_options[{{id}}]" value="0">
-						<input type="checkbox" name="default_options[{{id}}]" id="{{id}}"{{#if (eq_coerce user_value 1)}} checked{{/if}} value="1">
+						<input type="hidden" name="options[{{id}}]" value="0">
+						<input type="checkbox" name="options[{{id}}]" id="{{id}}"{{#if (eq_coerce user_value 1)}} checked{{/if}} value="1">
 		{{/if}}
 
 		{{#if (eq type 'list')}}
-						&nbsp;<select class="floatleft" name="default_options[{{id}}]" id="{{id}}">
+						&nbsp;<select class="floatleft" name="options[{{id}}]" id="{{id}}">
 			{{#each options}}
 							<option value="{{@key}}"{{#if (eq_coerce @key ../user_value)}} selected{{/if}}>{{{.}}}</option>
 			{{/each}}
@@ -34,11 +34,11 @@
 		{{/if}}
 
 		{{#if (eq type 'number')}}
-						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}"{{#if max}} max="{{max}}"{{/if}}{{#if step}} step="{{step}}"{{/if}} name="default_options[{{id}}]" id="{{id}}" value="{{{user_value}}}" size="5">
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}"{{#if max}} max="{{max}}"{{/if}}{{#if step}} step="{{step}}"{{/if}} name="options[{{id}}]" id="{{id}}" value="{{{user_value}}}" size="5">
 		{{/if}}
 
 		{{#if (or (eq type 'url') (eq type 'text'))}}
-						<input type="{{type}}" name="default_options[{{id}}]" id="{{id}}" name="default_options[{{id}}]" value="{{{user_value}}}">
+						<input type="{{type}}" name="options[{{id}}]" id="{{id}}" value="{{{user_value}}}">
 		{{/if}}
 					</dd>
 	{{/if}}

@@ -4,7 +4,7 @@
  * Tables relating to direct messages in the StoryBB schema.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -72,18 +72,6 @@ class Uncategorised
 					Index::key(['attachment_type']),
 				]
 			),
-			Table::make('background_tasks',
-				[
-					'id_task' => Column::int()->auto_increment(),
-					'task_file' => Column::varchar(255),
-					'task_class' => Column::varchar(255),
-					'task_data' => Column::mediumtext(),
-					'claimed_time' => Column::int(),
-				],
-				[
-					Index::primary(['id_task']),
-				]
-			),
 			Table::make('ban_groups',
 				[
 					'id_ban_group' => Column::mediumint()->auto_increment(),
@@ -130,60 +118,6 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_instance']),
-				],
-				[],
-				[
-					'on_create' => function($safe_mode = false)
-					{
-						global $smcFunc, $incontext;
-
-						$visibility = [
-							'action' => ['forum'],
-						];
-						$configuration = [
-							'title' => 'txt.info_center',
-							'template' => 'block__roundframe_titlebg',
-							'subblock_template' => 'block__subbg',
-							'collapsible' => true,
-							'blocks' => [
-								[
-									'class' => 'StoryBB\\Block\\RecentPosts',
-									'config' => [
-										'number_recent_posts' => 10,
-										'icon' => 'history',
-									],
-								],
-								[
-									'class' => 'StoryBB\\Block\\MiniStats',
-									'config' => [
-										'show_latest_member' => true,
-										'icon' => 'stats',
-									],
-								],
-								[
-									'class' => 'StoryBB\\Block\\WhosOnline',
-									'config' => [
-										'show_group_key' => true,
-										'icon' => 'people',
-									],
-								]
-							]
-						];
-
-						$smcFunc['db']->insert('insert',
-							'{db_prefix}block_instances',
-							['class' => 'string', 'visibility' => 'string', 'configuration' => 'string', 'region' => 'string', 'position' => 'int', 'active' => 'int'],
-							['StoryBB\\Block\\Multiblock', json_encode($visibility), json_encode($configuration), 'after-content', 1, 1],
-							['id_instance'],
-							0,
-							(bool) $safe_mode
-						);
-						// And fix the stats for the installer.
-						if (isset($incontext['sql_results']['inserts']))
-						{
-							$incontext['sql_results']['inserts']++;
-						}
-					}
 				]
 			),
 			Table::make('board_permissions',
@@ -647,17 +581,6 @@ class Uncategorised
 					Index::key(['id_member']),
 				]
 			),
-			Table::make('log_scheduled_tasks',
-				[
-					'id_log' => Column::mediumint()->auto_increment(),
-					'id_task' => Column::smallint(),
-					'time_run' => Column::int(),
-					'time_taken' => Column::float(),
-				],
-				[
-					Index::primary(['id_log']),
-				]
-			),
 			Table::make('log_search_messages',
 				[
 					'id_search' => Column::tinyint(),
@@ -763,7 +686,6 @@ class Uncategorised
 					'group_type' => Column::tinyint(),
 					'hidden' => Column::tinyint(),
 					'id_parent' => Column::smallint()->signed()->default(-2),
-					'tfa_required' => Column::tinyint(),
 					'is_character' => Column::tinyint(),
 					'badge_order' => Column::smallint(),
 				],
@@ -790,7 +712,8 @@ class Uncategorised
 					'buddy_list' => Column::text(),
 					'pm_ignore_list' => Column::varchar(255),
 					'pm_prefs' => Column::mediumint(),
-					'passwd' => Column::varchar(64),
+					'passwd' => Column::varchar(255),
+					'auth' => Column::varchar(255),
 					'email_address' => Column::varchar(255),
 					'birthdate' => Column::date()->default('1004-01-01'),
 					'birthday_visibility' => Column::tinyint(),
@@ -817,8 +740,6 @@ class Uncategorised
 					'passwd_flood' => Column::varchar(12),
 					'pm_receive_from' => Column::tinyint()->default(1),
 					'timezone' => Column::varchar(80)->default('UTC'),
-					'tfa_secret' => Column::varchar(24),
-					'tfa_backup' => Column::varchar(64),
 					'policy_acceptance' => Column::tinyint(),
 				],
 				[
@@ -885,7 +806,7 @@ class Uncategorised
 					'modified_time' => Column::int(),
 					'modified_name' => Column::varchar(255),
 					'modified_reason' => Column::varchar(255),
-					'body' => Column::text(),
+					'body' => Column::mediumtext(),
 					'approved' => Column::tinyint()->default(1),
 					'likes' => Column::smallint(),
 				],
@@ -1102,39 +1023,38 @@ class Uncategorised
 					Index::key(['lngfile' => 30]),
 				]
 			),
-			Table::make('scheduled_tasks',
-				[
-					'id_task' => Column::smallint()->auto_increment(),
-					'next_time' => Column::int(),
-					'time_offset' => Column::int(),
-					'time_regularity' => Column::smallint(),
-					'time_unit' => Column::varchar(1)->default('h'),
-					'disabled' => Column::tinyint(),
-					'class' => Column::varchar(255),
-				],
-				[
-					Index::primary(['id_task']),
-					Index::key(['next_time']),
-					Index::key(['disabled']),
-				]
-			),
 			Table::make('settings',
 				[
-					'variable' => Column::varchar(255),
+					'variable' => Column::varchar(64),
 					'value' => Column::text(),
 				],
 				[
-					Index::primary(['variable' => 30]),
+					Index::primary(['variable']),
 				]
 			),
 			Table::make('sessions',
 				[
-					'session_id' => Column::varchar(128),
-					'last_update' => Column::int(),
-					'data' => Column::text(),
+					'session_id' => Column::varbinary(128),
+					'data' => Column::mediumblob(),
+					'session_time' => Column::int(),
+					'lifetime' => Column::int(),
 				],
 				[
 					Index::primary(['session_id']),
+				]
+			),
+			Table::make('sessions_persist',
+				[
+					'id_persist' => Column::int()->auto_increment(),
+					'id_member' => Column::mediumint(),
+					'persist_key' => Column::varbinary(32),
+					'timecreated' => Column::int(),
+					'timeexpires' => Column::int(),
+				],
+				[
+					Index::primary(['id_persist']),
+					Index::unique(['id_member', 'persist_key']),
+					Index::key(['timeexpires']),
 				]
 			),
 			Table::make('smileys',
@@ -1175,11 +1095,11 @@ class Uncategorised
 				[
 					'id_member' => Column::mediumint()->signed(),
 					'id_theme' => Column::tinyint()->default(1),
-					'variable' => Column::varchar(255),
+					'variable' => Column::varchar(64),
 					'value' => Column::text(),
 				],
 				[
-					Index::primary(['id_theme', 'id_member', 'variable' => 30]),
+					Index::primary(['id_theme', 'id_member', 'variable']),
 					Index::key(['id_member']),
 				]
 			),
@@ -1297,6 +1217,21 @@ class Uncategorised
 					Index::primary(['content_id', 'content_type', 'id_member']),
 					Index::key(['content_id', 'content_type']),
 					Index::key(['id_member']),
+				]
+			),
+			Table::make('user_preferences',
+				[
+					'id_preference' => Column::int()->auto_increment(),
+					'id_member' => Column::mediumint(),
+					'preference' => Column::varchar(255),
+					'value' => Column::text(),
+				],
+				[
+					Index::primary(['id_preference']),
+					Index::key(['id_member', 'preference']),
+				],
+				[
+					Constraint::from('user_preferences.id_member')->to('members.id_member'),
 				]
 			),
 		];

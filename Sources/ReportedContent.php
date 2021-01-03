@@ -4,7 +4,7 @@
  * Handles reported members and posts, as well as moderation comments.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -23,7 +23,7 @@ use StoryBB\StringLibrary;
  */
 function ReportedContent()
 {
-	global $txt, $context, $user_info, $smcFunc;
+	global $txt, $context, $user_info;
 	global $sourcedir;
 
 	// First order of business - what are these reports about?
@@ -141,7 +141,7 @@ function ShowReports()
  */
 function ShowClosedReports()
 {
-	global $context, $txt, $scripturl;
+	global $context, $scripturl;
 
 	// Showing closed ones.
 	$context['view_closed'] = 1;
@@ -397,7 +397,7 @@ function ReportDetails()
  */
 function HandleComment()
 {
-	global $smcFunc, $scripturl, $user_info, $context, $txt;
+	global $scripturl, $user_info, $context, $txt;
 
 	// The report ID is a must.
 	if (empty($_REQUEST['rid']))
@@ -463,7 +463,7 @@ function HandleComment()
  */
 function EditComment()
 {
-	global $smcFunc, $context, $txt, $scripturl, $user_info;
+	global $context, $txt, $scripturl, $user_info;
 
 	checkSession(isset($_REQUEST['save']) ? 'post' : 'get');
 

@@ -4,7 +4,7 @@
  * StoryBB Installer
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -14,6 +14,11 @@ use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Schema\Schema;
 use StoryBB\Database\AdapterFactory;
+use StoryBB\Database\Exception\InvalidAdapterException;
+use StoryBB\Helper\Cookie;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 $GLOBALS['current_sbb_version'] = '1.0 Alpha 1';
 $GLOBALS['db_script_version'] = '1-0';
@@ -261,8 +266,6 @@ function load_lang_file()
 	// Override the language file?
 	if (isset($_GET['lang_file']))
 		$_SESSION['installer_temp_lang'] = $_GET['lang_file'];
-	elseif (isset($GLOBALS['HTTP_GET_VARS']['lang_file']))
-		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
 	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
@@ -300,8 +303,6 @@ function load_database()
 	// Connect the database.
 	if (empty($smcFunc['db']))
 	{
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
 		$db_options = ['persist' => $db_persist];
 		$port = '';
 
@@ -767,23 +768,22 @@ function DatabaseSettings()
 		if (empty($sourcedir))
 			$sourcedir = dirname(__FILE__) . '/Sources';
 
-		// Better find the database file!
-		if (!file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
-		{
-			$incontext['error'] = sprintf($txt['error_db_file'], 'Subs-Db-' . $db_type . '.php');
-			return false;
-		}
-
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))
 			$smcFunc = [];
 
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
 
-		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		try
+		{
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		}
+		catch (InvalidAdapterException $e)
+		{
+			$incontext['error'] = $txt['error_db_file'];
+			return false;
+		}
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
 		$smcFunc['db']->connect(['non_fatal' => true, 'dont_select_db' => !$needsDB]);
@@ -1039,8 +1039,8 @@ function DatabasePopulation()
 	$schema = Schema::get_tables();
 	foreach ($schema as $count => $table)
 	{
-		if (!$table->exists()) {
-			$result = $table->create();
+		if (!$table->exists($smcFunc['db'])) {
+			$result = $table->create($smcFunc['db']);
 			if ($result)
 			{
 				$incontext['sql_results']['tables']++;
@@ -1120,10 +1120,17 @@ function DatabasePopulation()
 	$installer = $container->instantiate('StoryBB\\Helper\\Installer');
 
 	// 1. Favicon.
-	$installer->upload_favicon();
+	$incontext['sql_results']['inserts'] += $installer->upload_favicon();
 
 	// 2. Smileys.
-	$installer->upload_smileys();
+	$incontext['sql_results']['inserts'] += $installer->upload_smileys();
+
+	// 3. Blocks.
+	$incontext['sql_results']['inserts'] += $installer->add_standard_blocks();
+	$incontext['sql_results']['inserts'] += $installer->add_admin_blocks();
+
+	// 4. User preferences
+	$incontext['sql_results']['inserts'] += $installer->add_default_user_preferences();
 
 	// Sort out the context for the SQL.
 	foreach ($incontext['sql_results'] as $key => $number)
@@ -1467,55 +1474,43 @@ function DeleteInstall()
 		['date']
 	);
 
-	// We're going to want our lovely $modSettings now.
-	$request = $smcFunc['db']->query('', '
-		SELECT variable, value
-		FROM {db_prefix}settings',
-		[
-			'db_error_skip' => true,
-		]
-	);
-	// Only proceed if we can load the data.
-	if ($request)
-	{
-		while ($row = $smcFunc['db']->fetch_row($request))
-			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db']->free_result($request);
-	}
-
 	// Automatically log them in ;)
-	if (isset($incontext['member_id']) && isset($incontext['member_salt']))
-		setLoginCookie(3153600 * 60, $incontext['member_id'], hash_salt($_POST['password1'], $incontext['member_salt']));
-
-	$result = $smcFunc['db']->query('', '
-		SELECT value
-		FROM {db_prefix}settings
-		WHERE variable = {string:db_sessions}',
-		[
-			'db_sessions' => 'databaseSession_enable',
-			'db_error_skip' => true,
-		]
-	);
-	if ($smcFunc['db']->num_rows($result) != 0)
-		list ($db_sessions) = $smcFunc['db']->fetch_row($result);
-	$smcFunc['db']->free_result($result);
-
-	if (empty($db_sessions))
-		$_SESSION['admin_time'] = time();
-	else
+	if (isset($incontext['member_id']))
 	{
-		$_SERVER['HTTP_USER_AGENT'] = substr($_SERVER['HTTP_USER_AGENT'], 0, 211);
+		$container = \StoryBB\Container::instance();
+		$container->inject('database', $smcFunc['db']);
+		$container->inject('sitesettings', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
+		});
 
-		$smcFunc['db']->insert('replace',
-			'{db_prefix}sessions',
-			[
-				'session_id' => 'string', 'last_update' => 'int', 'data' => 'string',
-			],
-			[
-				session_id(), time(), 'USER_AGENT|s:' . strlen($_SERVER['HTTP_USER_AGENT']) . ':"' . $_SERVER['HTTP_USER_AGENT'] . '";admin_time|i:' . time() . ';',
-			],
-			['session_id']
-		);
+		$modSettings = $container->get('sitesettings')->get_all();
+
+		@session_write_close();
+
+		$site_settings = $container->get('sitesettings');
+
+		$cookie_url = Cookie::url_parts(!empty($site_settings->localCookies), !empty($site_settings->globalCookies));
+		$cookie_settings = [
+			'cookie_httponly' => true,
+			'cookie_domain' => $cookie_url[0],
+			'cookie_path' => $cookie_url[1],
+		];
+
+		if ($site_settings->databaseSession_enable)
+		{
+			$session_storage = new NativeSessionStorage($cookie_settings, $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
+			$session = new Session($session_storage, new NamespacedAttributeBag);
+		}
+		else
+		{
+			$session = new Session($cookie_settings, new NamespacedAttributeBag);
+		}
+
+		$session->setName($cookiename);
+		$session->start();
+
+		$session->set('userid', (int) $incontext['member_id']);
+		$session->set('admin_time', time());
 	}
 
 	updateStats('member');

@@ -4,7 +4,7 @@
  * The Q&A handler for CAPTCHA.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -113,8 +113,6 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 	protected function get_questions($question_ids, $incorrectQuestions = [])
 	{
-		global $smcFunc;
-
 		$this->load_questions();
 		foreach ($question_ids as $q)
 		{
@@ -131,7 +129,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 	public function verify()
 	{
-		global $txt, $smcFunc;
+		global $txt;
 
 		$incorrectQuestions = [];
 		foreach ($_SESSION[$this->id . '_vv']['q'] as $q)
@@ -187,7 +185,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 	public function get_settings(): array
 	{
-		global $txt, $context, $language, $smcFunc;
+		global $txt, $context, $language, $smcFunc, $modSettings;
 
 		// Firstly, figure out what languages we're dealing with, and do a little processing for the form's benefit.
 		getLanguages();
@@ -262,7 +260,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 	public function put_settings(&$save_vars)
 	{
-		global $context, $txt, $smcFunc;
+		global $context, $smcFunc;
 
 		// Handle verification questions.
 		$changes = [

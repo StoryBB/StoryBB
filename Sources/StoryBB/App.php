@@ -4,7 +4,7 @@
  * This file does a lot of important stuff. It bootstraps the application.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -14,11 +14,21 @@ namespace StoryBB;
 
 use ReflectionMethod;
 use StoryBB\Container;
+use StoryBB\Controller\MaintenanceAccessible;
+use StoryBB\Controller\Unloggable;
+use StoryBB\Database\AdapterFactory;
+use StoryBB\Helper\Cookie;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
+use Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper;
+use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
+use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
@@ -28,6 +38,7 @@ class App
 	const SOFTWARE_YEAR = 2020;
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
+	protected static $global_config = [];
 	protected static $storybb_root = '';
 	protected static $storybb_sources = '';
 
@@ -35,6 +46,34 @@ class App
 	{
 		static::$storybb_root = $path;
 		static::$storybb_sources = $path . '/Sources';
+
+		require($path . '/Settings.php');
+
+		static::$global_config = [
+			'maintenance' => $maintenance ?? 0,
+			'maintenance_title' => $mtitle ?? '',
+			'maintenance_message' => $mmessage ?? '',
+			'language' => $language ?? 'en-us',
+			'boardurl' => $boardurl ?? 'http://localhost/',
+			'webmaster_email' => $webmaster_email ?? 'root@localhost',
+			'cookiename' => $cookiename ?? 'SBBCookie123',
+			'db_type' => $db_type ?? 'mysql',
+			'db_server' => $db_server ?? 'localhost',
+			'db_port' => $db_port ?? false,
+			'db_name' => $db_name ?? 'storybb',
+			'db_user' => $db_user ?? 'root',
+			'db_passwd' => $db_passwd ?? '',
+			'db_prefix' => $db_prefix ?? 'sbb_',
+			'db_persist' => $db_persist ?? 0,
+			'db_show_debug' => isset($db_show_debug) && $db_show_debug === true,
+			'cache_accelerator' => $cache_accelerator ?? '',
+			'cache_enable' => $cache_enable ?? 0,
+			'cache_memcached' => $cache_memcached ?? '',
+			'cache_redis' => $cache_redis ?? '',
+			'image_proxy_enabled' => $image_proxy_enabled ?? 0,
+			'image_proxy_secret' => $image_proxy_secret ?? 'invalidhash',
+			'image_proxy_maxsize' => $image_proxy_maxsize ?? 5120,
+		];
 
 		static::set_base_environment();
 	}
@@ -49,6 +88,26 @@ class App
 		return static::$storybb_sources;
 	}
 
+	public static function get_global_config_item(string $key)
+	{
+		return static::$global_config[$key] ?? null;
+	}
+
+	public static function get_global_config()
+	{
+		return static::$global_config;
+	}
+
+	public static function in_maintenance()
+	{
+		return static::$global_config['maintenance'] > 0;
+	}
+
+	public static function in_hard_maintenance()
+	{
+		return stataic::$global_config['maintenance'] == 2;
+	}
+
 	public static function set_base_environment()
 	{
 		ignore_user_abort(true);
@@ -56,43 +115,230 @@ class App
 		static::setMemoryLimit('128M');
 	}
 
-	public static function load_router()
-	{
-		global $routes; // @todo This is what DI is for, plz use.
-
-		if (empty($routes))
-		{
-			$routes = new RouteCollection;
-
-			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
-			{
-				$controllable::register_own_routes($routes);
-			}
-		}
-
-		return $routes;
-	}
-
-	public static function dispatch_request(RequestContext $context)
+	public static function build_container()
 	{
 		global $smcFunc;
 
-		$routes = static::load_router();
-
 		$container = Container::instance();
-		$container->inject('database', $smcFunc['db']);
-		$container->inject('urlgenerator', new UrlGenerator($routes, $context));
+		$container->inject('cachedir', App::get_root_path() . '/cache');
+
+		$global_config = static::get_global_config();
+		$container->inject('database', function() use ($container, $global_config) {
+			// Add in the port if needed
+			$db_options = [];
+			if (!empty($global_config['db_port']))
+			{
+				$db_options['port'] = $global_config['db_port'];
+			}
+
+			$options = array_merge($db_options, ['persist' => $global_config['db_persist']]);
+
+			$db = AdapterFactory::get_adapter($global_config['db_type']);
+			$db->set_prefix($global_config['db_prefix']);
+			$db->set_server($global_config['db_server'], $global_config['db_name'], $global_config['db_user'], $global_config['db_passwd']);
+			$db->connect($options);
+
+			return $db;
+		});
+		$smcFunc = [
+			'db' => $container->get('database'),
+		];
+
+		$container->inject('sitesettings', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
+		});
+
 		$container->inject('filesystem', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Filesystem');
+		});
+		$container->inject('session', function() use ($container) {
+			global $cookiename, $sc;
+
+			$site_settings = $container->get('sitesettings');
+			$cookie_url = Cookie::url_parts(!empty($site_settings->localCookies), !empty($site_settings->globalCookies));
+			$cookie_settings = [
+				'cookie_httponly' => true,
+				'cookie_domain' => $cookie_url[0],
+				'cookie_path' => $cookie_url[1],
+			];
+			if ($site_settings->databaseSession_enable)
+			{
+				$session_storage = new NativeSessionStorage($cookie_settings, $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
+				$session = new Session($session_storage, new NamespacedAttributeBag);
+			}
+			else
+			{
+				$session = new Session($cookie_settings, new NamespacedAttributeBag);
+			}
+
+			$session->setName($cookiename);
+			$session->start();
+
+			if (!$session->has('userid'))
+			{
+				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
+				$request = $container->get('requestvars');
+				if ($request->cookies->has($persist_cookie))
+				{
+					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
+					$userid = $persistence->validate_persist_token($request->cookies->get($persist_cookie));
+					if ($userid)
+					{
+						$session->set('userid', $userid);
+						// @todo we should extend the persist_cookie but we don't have a global response headers bag to put that into yet...
+					}
+					else
+					{
+						$session->set('userid', 0);
+						// @todo we should remove the persist_cookie as it didn't match, but we don't have a global response headers bag to put that into yet...
+					}
+				}
+				else
+				{
+					$session->set('userid', 0);
+				}
+			}
+
+			// Change it so the cache settings are a little looser than default.
+			header('Cache-Control: private');
+
+			if (!$session->has('session_var'))
+			{
+				$session->set('session_value', md5($session->getId() . mt_rand()));
+				$session->set('session_var', substr(preg_replace('~^\d+~', '', sha1(mt_rand() . $session->getId() . mt_rand())), 0, mt_rand(7, 12)));
+
+				$sc = $session->get('session_value');
+			}
+
+			return $session;
+		});
+		$container->inject('currentuser', function() use ($container) {
+			return $container->instantiate('StoryBB\User\CurrentUser');
 		});
 		$container->inject('smileys', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
 		});
+		$container->inject('router_public', function() use ($container) {
+			$routes = new RouteCollection;
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
+			{
+				$controllable::register_own_routes($routes);
+			}
+
+			return $routes;
+		});
+		$container->inject('compiled_matcher', function() use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_matcher.php';
+			if (file_exists($compiled_routes))
+			{
+				try
+				{
+					$routes = include($compiled_routes);
+					if ($array = unserialize($routes))
+					{
+						return $array;
+					}
+				}
+				catch (\Throwable $e)
+				{
+					@unlink($compiled_routes);
+				}
+			}
+
+			$routes = $container->get('router_public');
+			$compilation = (new CompiledUrlMatcherDumper($routes))->getCompiledRoutes();
+
+			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
+
+			return $compilation;
+		});
+		$container->inject('compiled_generator', function() use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_generator.php';
+			if (file_exists($compiled_routes))
+			{
+				try
+				{
+					$routes = include($compiled_routes);
+					if ($array = unserialize($routes))
+					{
+						return $array;
+					}
+				}
+				catch (\Throwable $e)
+				{
+					@unlink($compiled_routes);
+				}
+			}
+
+			$routes = $container->get('router_public');
+			$compilation = (new CompiledUrlGeneratorDumper($routes))->getCompiledRoutes();
+
+			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
+
+			return $compilation;
+		});
+		$container->inject('urlgenerator', function() use ($container) {
+			return new CompiledUrlGenerator($container->get('compiled_generator'), $container->get('requestcontext'));
+		});
+		$container->inject('urlmatcher', function() use ($container) {
+			return new CompiledUrlMatcher($container->get('compiled_matcher'), $container->get('requestcontext'));
+		});
+		$container->inject('templater', function() use ($container) {
+			$latte = new \Latte\Engine;
+			$latte->setTempDirectory($container->get('cachedir') . '/template');
+
+			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/default/templates');
+			$latte->setLoader($loader);
+
+			$latte->addFilter('translate', function ($string, $langfile = '') {
+				return $string . ($langfile ? ' (' . $langfile . ')' : '');
+			});
+			$latte->addFilter('slugify', function ($string) {
+				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+				$string = strtolower($string);
+				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
+				return trim($string, '-');
+			});
+			$latte->addFunction('link', function($url, $params = []) use ($container) {
+				try
+				{
+					$urlgenerator = $container->get('urlgenerator');
+					return $urlgenerator->generate($url, $params);
+				}
+				catch (\Exception $e)
+				{
+					return $e->getMessage();
+				}
+			});
+			return $latte;
+		});
+
+		$container->inject('page', function() use ($container) {
+			$page = $container->instantiate('StoryBB\\Page');
+			$urlgenerator = $container->get('urlgenerator');
+			$page->addMetaProperty('og:site_name', $container->get('sitesettings')->forum_name);
+
+			$page->addLink('help', $urlgenerator->generate('help'));
+			return $page;
+		});
+
+		return $container;
+	}
+
+	public static function dispatch_request(Request $request)
+	{
+		$container = Container::instance();
+		static::build_container();
+		$container->inject('requestvars', $request);
+		$request_context = (new RequestContext('/'))->fromRequest($request);
+		$container->inject('requestcontext', function() use ($container) {
+			return (new RequestContext('/'))->fromRequest($container->get('requestvars'));
+		});
 
 		try
 		{
-			$matcher = new UrlMatcher($routes, $context);
-			$parameters = $matcher->match($context->getPathInfo());
+			$matcher = $container->get('urlmatcher');
+			$parameters = $matcher->match($container->get('requestcontext')->getPathInfo());
 
 			if (empty($parameters['_controller']))
 			{
@@ -134,7 +380,24 @@ class App
 			}
 
 			$instance = $container->instantiate($class);
-			return $instance->$method(...$args);
+
+			if (static::in_maintenance() && !$instance instanceof MaintenanceAccessible) {
+				// @todo remove this dirty hack when there is a real controller to replace InMaintenance
+				// @todo allow those with admin_forum to proceed
+				return false;
+			}
+
+			$result = $instance->$method(...$args);
+			// There's a bit of logging we're going to be doing here, potentially.
+			if (!$instance instanceof Unloggable)
+			{
+				// @todo log the hit
+
+				$log = $parameters;
+				unset ($log['_controller']);
+				$container->get('session')->set('last_url', ['route' => $log]);
+			}
+			return $result;
 		}
 		catch (ResourceNotFoundException $e)
 		{
@@ -201,20 +464,5 @@ class App
 				$num *= 1024;
 		}
 		return $num;
-	}
-
-	/**
-	 * Instantiate and run the application style we plan to run this invocation.
-	 *
-	 * @param string $class The class to instantiate and run.
-	 */
-	public static function run(string $class): App
-	{
-		if (!is_subclass_of($class, self::class))
-		{
-			throw new RuntimeException($class . ' is not an instance of StoryBB\\App');
-		}
-
-		$app = new $class(new Container);
 	}
 }

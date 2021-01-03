@@ -4,7 +4,7 @@
  * A library for handling FTP connections.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -145,10 +145,9 @@ class FTP
 	 * Changes a files atrributes (chmod)
 	 *
 	 * @param string $ftp_file The file to CHMOD
-	 * @param int|string $chmod The value for the CHMOD operation
 	 * @return boolean Whether or not the operation was successful
 	 */
-	public function chmod($ftp_file, $chmod)
+	public function chmod($ftp_file)
 	{
 		if (!is_resource($this->connection))
 			return false;

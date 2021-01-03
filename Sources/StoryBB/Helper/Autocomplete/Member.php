@@ -4,7 +4,7 @@
  * Provide an autocomplete handler to match member accounts (not characters)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -62,7 +62,7 @@ class Member extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc, $modSettings, $settings;
+		global $smcFunc;
 
 		if (empty($this->term))
 			return [];

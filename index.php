@@ -11,7 +11,7 @@
  * with the URL index.php?action=action-in-url.  Relatively simple, no?
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -43,7 +43,7 @@ $time_start = microtime(true);
 ob_start();
 
 // Load the settings...
-require_once(dirname(__FILE__) . '/Settings.php');
+require(dirname(__FILE__) . '/Settings.php');
 
 // Without those we can't go anywhere
 require_once($sourcedir . '/QueryString.php');
@@ -56,21 +56,20 @@ require_once($sourcedir . '/Load.php');
 if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();
 
-// Create a variable to store some StoryBB specific functions in.
-$smcFunc = [];
+$result = App::dispatch_request(Request::createFromGlobals());
 
-// Initiate the database connection and define some database functions to use.
-loadDatabase();
+if ($result && $result instanceof Response)
+{
+	ob_end_clean();
+	$result->send();
+	exit;
+}
 
 // Load the settings from the settings table, and perform operations like optimizing.
 $context = [];
 reloadSettings();
 // Clean the request variables, add slashes, etc.
 cleanRequest();
-
-// Seed the random generator.
-if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	sbb_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -80,25 +79,12 @@ if (isset($_GET['scheduled']))
 }
 
 // And important includes.
-require_once($sourcedir . '/Session.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Logging.php');
 require_once($sourcedir . '/Security.php');
 
 // Register an error handler.
 set_error_handler('sbb_error_handler');
-
-// Start the session. (assuming it hasn't already been.)
-loadSession();
-
-$result = App::dispatch_request((new RequestContext('/'))->fromRequest(Request::createFromGlobals()));
-
-if ($result && $result instanceof Response)
-{
-	ob_end_clean();
-	$result->send();
-	exit;
-}
 
 // What function shall we execute? (done like this for memory's sake.)
 call_user_func(sbb_main());
@@ -159,18 +145,11 @@ function sbb_main()
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
-		// You can only login.... otherwise, you're getting the "maintenance mode" display.
-		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], ['login2', 'logintfa', 'logout'])))
-		{
-			require_once($sourcedir . '/LogInOut.php');
-			return ($_REQUEST['action'] == 'login2' ? 'Login2' : ($_REQUEST['action'] == 'logintfa' ? 'LoginTFA' : 'Logout'));
-		}
-		// Don't even try it, sonny.
-		else
-			return 'InMaintenance';
+		// You're getting maintenance mode; neither login nor logout run through here.
+		return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
 		return 'KickGuest';
 
 	// Apply policy settings if appropriate.
@@ -241,10 +220,6 @@ function sbb_main()
 		'likes' => ['Likes.php', 'Likes::call#'],
 		'lock' => ['Topic.php', 'LockTopic'],
 		'lockvoting' => ['Poll.php', 'LockVoting'],
-		'login' => ['LogInOut.php', 'Login'],
-		'login2' => ['LogInOut.php', 'Login2'],
-		'logintfa' => ['LogInOut.php', 'LoginTFA'],
-		'logout' => ['LogInOut.php', 'Logout'],
 		'markasread' => ['Subs-Boards.php', 'MarkRead'],
 		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
 		'mlist' => ['Memberlist.php', 'Memberlist'],
@@ -282,7 +257,7 @@ function sbb_main()
 		'topic' => ['Display.php', 'Display'],
 		'trackip' => ['Profile-View.php', 'trackIP'],
 		'unread' => ['Recent.php', 'UnreadTopics'],
-		'unreadreplies' => ['Recent.php', 'UnreadTopics'],
+		'unreadreplies' => ['Recent.php', 'UnreadReplies'],
 		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'viewprofile' => ['Profile.php', 'ModifyProfile'],
@@ -293,30 +268,10 @@ function sbb_main()
 		'xmlhttp' => ['Xml.php', 'XMLhttpMain'],
 	];
 
-	// Allow modifying $actionArray easily.
-	(new Mutatable\Routing\ActionList($actionArray))->execute();
-
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($actionArray[$_REQUEST['action']]))
 	{
-		if (!empty($modSettings['integrate_fallback_action']))
-		{
-			$fallbackAction = explode(',', $modSettings['integrate_fallback_action']);
-
-			// Sorry, only one fallback action is needed.
-			$fallbackAction = $fallbackAction[0];
-
-			$call = call_helper($fallbackAction, true);
-
-			if (!empty($call))
-				return $call;
-		}
-
-		// No fallback action, huh?
-		else
-		{
-			fatal_lang_error('not_found', false, [], 404);
-		}
+		fatal_lang_error('not_found', false, [], 404);
 	}
 
 	// Otherwise, it was set - so let's go to that action.

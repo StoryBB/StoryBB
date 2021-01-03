@@ -3,7 +3,7 @@
  * This file contains background notification code for any create post action.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -410,7 +410,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 	{
 		global $scripturl, $language, $modSettings;
 
-		foreach ($members as $id_chr => $member)
+		foreach ($members as $member)
 		{
 			$id = $member['id_member'];
 			if ($member['retired_chr'])

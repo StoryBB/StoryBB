@@ -4,7 +4,7 @@
  * This file contains language strings for the help popups.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -13,100 +13,6 @@
 global $helptxt;
 
 $txt['close_window'] = 'Close window';
-
-$helptxt['manage_boards'] = '
-	<strong>Edit Boards</strong><br>
-	On this page you can create/reorder/remove boards, and the categories
-	above them. For example, if you had a wide-ranging
-	site that offered information on &quot;Sports&quot; and &quot;Cars&quot; and &quot;Music&quot;, these
-	would be the top-level Categories you\'d create. Under each of these
-	categories you\'d likely want to create &quot;Boards&quot; for topics within each. It\'s a simple hierarchy, with this structure: <br>
-	<ul class="normallist">
-		<li>
-			<strong>Sports</strong>
-			&nbsp;- A &quot;category&quot;
-			<ul class="normallist">
-				<li>
-					<strong>Baseball</strong>
-					&nbsp;- A board under the category of &quot;Sports&quot;
-					<ul class="normallist">
-						<li>
-							<strong>Stats</strong>
-							&nbsp;- A sub-board under the board of &quot;Baseball&quot;
-						</li>
-					</ul>
-				</li>
-				<li><strong>Football</strong>
-				&nbsp;- A board under the category of &quot;Sports&quot;</li>
-			</ul>
-		</li>
-	</ul>
-	Categories allow you to break down the boards into broad topics (&quot;Cars,
-	Sports&quot;), and the &quot;Boards&quot; under them allow users to post actual topics.
-	A user interested in Pintos	would post a message under &quot;Cars->Pinto&quot;.
-	Administrative functions for this page are to create new boards
-	under each category, to reorder them (put &quot;Pinto&quot; below &quot;Chevy&quot;), or
-	to delete the board entirely.';
-
-$helptxt['view_members'] = '
-	<ul class="normallist">
-		<li>
-			<strong>View all Members</strong><br>
-			View all members in the board. You are presented with a hyperlinked list of member names. You may click
-			on any of the names to find details of the members (homepage, age, etc.), and as Administrator
-			you are able to modify these parameters. You have complete control over members, including the
-			ability to delete them from the forum.<br><br>
-		</li>
-		<li>
-			<strong>Awaiting Approval</strong><br>
-			This page is only shown if you have enabled admin approval of all new registrations. Anyone who registers to join your
-			forum will only become a full member once they have been approved by an admin. The page lists all those members who
-			are still awaiting approval, along with their email and IP address. You can choose to either accept or reject (delete)
-			any member on the list by checking the box next to the member and choosing the action from the drop-down box at the bottom
-			of the page. When rejecting a member you can choose to delete the member either with or without notifying them of your decision.<br><br>
-		</li>
-		<li>
-			<strong>Awaiting Activation</strong><br>
-			This page will only be visible if you have email activation of new member accounts enabled on the forum. This page will list all
-			members who have still not activated their new accounts. From this page you can choose to either accept, reject or remind
-			members with outstanding registrations. As above you can also choose to email the member to inform them of the
-			action you have taken.<br><br>
-		</li>
-	</ul>';
-
-$helptxt['ban_members'] = '<strong>Ban Members</strong><br>
-	StoryBB provides the ability to &quot;ban&quot; users, which can be a useful course of action against users that have
-	violated the trust of the forum	by spamming or trolling, etc. This allows you to exclude users that are detrimental
-	to your forum. As an admin, when you view posts made on your forum, you can see the IP address that the user had at the time of posting.
-	In the ban list, you simply type that IP address in, save, and they can no longer post from that location.<br>You can also
-	ban people through their email address.';
-
-$helptxt['registrations'] = '<strong>Registration Management</strong><br>
-	This page contains all the functions that could be necessary to manage new registrations on the forum. It contains up to four
-	pages which are visible depending on your forum settings. These are:<br><br>
-	<ul class="normallist">
-		<li>
-			<strong>Register new member</strong><br>
-			From this page you can choose to register accounts for new members on their behalf. This can be useful in forums where registration is closed
-			to new members, or in cases where the admin wishes to create a test account. If the setting to require activation of the account
-			is selected the member will be emailed an activation link which must be clicked before they can use the account. Similarly you can
-			select to email the user\'s new password to the stated email address.<br><br>
-		</li>
-		<li>
-			<strong>Edit Registration Agreement</strong><br>
-			This page allows you to set the text for the registration agreement displayed when members sign up for your forum.
-			You can add or remove anything from the default registration agreement, which is included in StoryBB.<br><br>
-		</li>
-		<li>
-			<strong>Set Reserved Names</strong><br>
-			Using this page you can specify words or names which may not be used by your users.<br><br>
-		</li>
-		<li>
-			<strong>Settings</strong><br>
-			This page will only be visible if you have permission to administrate the forum. From this page you can decide on the registration method
-			to use on your forum, as well as other registration related settings.
-		</li>
-	</ul>';
 
 $helptxt['modlog'] = '<strong>Moderation Log</strong><br>
 	This page allows members of the moderation team to track all the moderation actions that the forum moderators have performed. Note that
@@ -135,29 +41,6 @@ $helptxt['theme_settings'] = '<strong>Theme Settings</strong><br>
 	The settings page allows you to change settings specific to a theme. These settings include options such as the themes directory and URL information but
 	also options that affect the layout of a theme on your forum. Most themes will have a variety of user configurable settings, allowing you to adapt a theme
 	to suit your individual forum needs.';
-$helptxt['smileys'] = '<strong>Smiley Center</strong><br>
-	Here you can add and remove smileys';
-
-$helptxt['serversettings'] = '<strong>Server Settings</strong><br>
-	Here you can perform some core configuration for your forum. This page includes the database and url settings, as well as other
-	important configuration items such as mail settings and caching. Think carefully whenever editing these settings as an error may
-	render the forum inaccessible';
-$helptxt['manage_files'] = '
-	<ul class="normallist">
-		<li>
-			<strong>Browse Files</strong><br>
-			Browse through all the attachments, avatars and thumbnails stored by StoryBB.<br><br>
-		</li><li>
-			<strong>Attachment Settings</strong><br>
-			Configure where attachments are stored and set restrictions on the types of attachments.<br><br>
-		</li><li>
-			<strong>Avatar Settings</strong><br>
-			Configure where avatars are stored and manage the resizing of avatars.<br><br>
-		</li><li>
-			<strong>File Maintenance</strong><br>
-			Check and repair any error in the attachment directory and delete selected attachments.<br><br>
-		</li>
-	</ul>';
 
 $helptxt['topicSummaryPosts'] = 'This allows you to set the number of previous posts shown in the topic summary on the reply page.';
 $helptxt['enableAllMessages'] = 'Set this to the <em>maximum</em> number of posts a topic can have to show the <em>all</em> link. Setting this lower than &quot;Maximum messages to display in a topic page&quot; will simply mean it never gets shown, and setting it too high could slow down your forum.';
@@ -183,11 +66,6 @@ $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls 
 		&quot;Show Existing Polls as Topics&quot;.<br><br>To choose who can post polls, view polls, and similar, you
 		can allow and disallow those permissions. Remember this if polls are not working.';
 $helptxt['debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
-$helptxt['httponlyCookies'] = 'Cookies won\'t be accessible by scripting languages, such as JavaScript. This setting can help to reduce identity theft through XSS attacks. This can cause issues with third party scripts but should be on wherever possible.';
-$helptxt['databaseSession_enable'] = 'This setting makes use of the database for session storage - it is best for load balanced servers, but helps with all timeout issues and can make the forum faster.';
-$helptxt['databaseSession_loose'] = 'Turning this on will decrease the bandwidth your forum uses, and make it so clicking back will not reload the page - the downside is that the (new) icons won\'t update, among other things. (unless you click to that page instead of going back to it).';
-$helptxt['databaseSession_lifetime'] = 'This is the number of seconds for sessions to last after they haven\'t been accessed. If a session is not accessed for too long, it is said to have &quot;timed out&quot;. Anything higher than 2400 is recommended.';
-$helptxt['tfa_mode'] = 'You can add a second level of security to your forum by enabling <a href="https://en.wikipedia.org/wiki/Two_factor_authentication">Two Factor Authentication</a>. 2FA forces your users to add a enter a machine-generated code after the regular login. You need to configure 2FA to yourself before you are able to force it to other users!';
 $helptxt['cache_enable'] = 'StoryBB performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent retrieving cached information. If caching is available on your machine it is recommended that you try caching at level 1 first.';
 $helptxt['cache_memcached'] = 'If you are using memcached you need to provide the server details. This should be entered as a comma separated list as shown in the example below:<br><br>	&quot;server1,server2,server3:port,server4&quot;<br><br>Note that if no port is specified StoryBB will use port 11211 unless the host contains a slash, then it is assumed to be an alternative transport and the port will be set to 0. StoryBB will attempt to perform rough/random load balancing across the specified servers.';
 $helptxt['cache_cachedir'] = 'This setting is only for the StoryBB file-based cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
@@ -200,7 +78,6 @@ $helptxt['enable_ajax_alerts'] = 'This option allows your members to receive AJA
 $helptxt['removeNestedQuotes'] = 'This will strip nested quotes from a post when citing the post in question via a quote link.';
 $helptxt['max_image_width'] = 'This allows you to set a maximum size for posted pictures. Pictures smaller than the maximum will not be affected. This also determines how attached images are displayed when a thumbnail is clicked on.';
 $helptxt['mail_type'] = 'This setting allows you to choose either PHP\'s default settings, or to override those settings with SMTP. PHP doesn\'t support using authentication with SMTP (which many hosts now require), so if you want that you should select SMTP. Please note that SMTP can be slower, and some servers will not accept usernames and passwords.<br><br>You don\'t need to fill in the SMTP settings if this is set to PHP\'s default.';
-$helptxt['attachment_manager_settings'] = 'Attachments are files that members can upload and attach to a post. Different sites may use these in different ways, which you can configure here.';
 $helptxt['attachmentCheckExtensions'] = 'For some communities, you may wish to limit the types of files that users can upload by checking the extension: e.g. myphoto.jpg has an extension of jpg.';
 $helptxt['attachmentExtensions'] = 'If "check attachment\'s extension" above is ticked, these are the extensions that will be permitted for new attachments.';
 $helptxt['attachmentUploadDir'] = 'The path to your attachment folder on the server<br>(example: /home/sites/yoursite/www/forum/attachments)';
@@ -237,12 +114,6 @@ $helptxt['use_subdirectories_for_attachments'] = 'Create new directories.';
 $helptxt['max_image_height'] = 'As with the maximum width, this setting indicates the maximum height a posted image can be.';
 $helptxt['avatar_paranoid'] = 'Selecting this setting will enable very strict security checks on avatars. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with avatar re-encoding, in order to have StoryBB try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
 $helptxt['avatar_reencode'] = 'Selecting this setting will enable trying to re-encode the uploaded avatars. Image re-encoding offers better security. Note, however, that image re-encoding also renders all animated images static. <br> This feature is only possible if the GD module is installed on your server.';
-$helptxt['localCookies'] = 'StoryBB uses cookies to store login information on the client computer.
-	Cookies can be stored globally (myserver.com) or locally (myserver.com/path/to/forum).<br><br>
-	Try this setting if you\'re experiencing problems with users getting logged out automatically.<hr>
-	Globally stored cookies are less secure when used on a shared webserver (like Tripod).<hr>
-	Local cookies don\'t work outside the forum directory so, if your forum is stored at www.myserver.com/forum, pages like www.myserver.com/index.php cannot access the account information.<br><br>
-	Global cookies are generally recommended for most sites on their own domain.';
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
 $helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank" rel="noopener">PHP Site</a>.';
@@ -258,8 +129,6 @@ $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tag
 		<li>&lt;pre&gt;, &lt;blockquote&gt;</li>
 	</ul>';
 
-$helptxt['themes'] = 'Here you can select whether the default theme can be chosen, what theme guests will use,
-	as well as other settings. Click on a theme to the right to change the settings for it.';
 $helptxt['theme_install'] = 'This allows you to install new themes. You can do this from an existing directory, by uploading an archive for the theme, or by copying the default theme.<br><br>Note that the archive or directory must have a <pre>theme.json</pre> definition file.';
 $helptxt['xmlnews_enable'] = 'Allows people to link to <a href="%1$s?action=.xml;sa=news" target="_blank" rel="noopener">Recent news</a>
 	and similar data. It is also recommended that you limit the size of recent posts/news because some clients expect the RSS data to be truncated for display.';
@@ -268,17 +137,8 @@ $helptxt['xmlnews_attachments'] = 'Allows links to attachments to be enclosed wi
 	The "view attachments" permission affects this setting. Members and guests will only see a post\'s attachments in the feed if they can also see the attachments on the post\'s web page. Keep in mind that most feed readers will access your feeds as a guest.
 	<br><br>
 	Some feed formats only allow one enclosed attachment per post. If a post has multiple attachments, StoryBB will enclose the largest one in these feeds.';
-$helptxt['globalCookies'] = 'Makes log in cookies available across subdomains. For example, if...<br>
-	your site is https://www.example.com/,<br>
-	and your forum is https://forum.example.com/,<br>
-	using this setting will allow you to access the forum\'s cookie on your site. Do not enable this if there are other subdomains (like hacker.example.com) not controlled by you.<br><br>
-	This setting does not function when local cookies are enabled.';
-$helptxt['globalCookiesDomain'] = 'When using subdomain independent cookies (global cookies), you can specify which domain should be used for them. This should, of course, be set to your main domain - for example, if you are using <em>forum.example.com</em> and <em>www.example.com</em>, the domain is <em>example.com</em> in this case. You should not put the <em>http://</em> or <em>https://</em> part in front of it.';
-$helptxt['secureCookies'] = 'Enabling this setting will force the cookies created for users on your forum to be marked as secure. Only enable this setting if you are using HTTPS throughout your site, otherwise it will mean no-one will be able to log in properly!';
 $helptxt['securityDisable'] = 'This <em>disables</em> the additional password check for the administration page. This is not recommended!';
 $helptxt['securityDisable_why'] = 'This is your current password. (the same one you use to login.)<br><br>The requirement to enter this helps ensure that you want to do whatever administration you are doing, and that it is <strong>you</strong> doing it.';
-$helptxt['securityDisable_moderate'] = 'This <em>disables</em> the additional password check for the moderation page. This is not recommended!';
-$helptxt['securityDisable_moderate_why'] = 'This is your current password. (the same one you use to login).<br><br>The requirement to enter this helps ensure that you want to do whatever moderation you are doing, and that it is <strong>you</strong> doing it.';
 $helptxt['frame_security'] = 'Modern browsers now understand a security header presented by servers called X-Frame-Options. By setting this option you specify how you want to allow your site to be framed inside a frameset or a iframe. Disable will not send any header and is the most unsecure, however allows the most freedom. Deny will prevent all frames completely and is the most restrictive and secure. Allowing the Same Origin will only allow your domain to issue any frames and provides a middle ground for the previous two options.';
 $helptxt['proxy_ip_header'] = 'This is the server header that will be trusted by StoryBB for containing the actual users IP address. Changing this setting can cause unexpected IP results on members. Please check with your server administrator, CDN provider or proxy administrator prior to changing these settings. Most providers will understand and use HTTP_X_FORWARDED_FOR. You should fill out the list of Servers sending the reverse proxy headers for security to ensure these headers only come from valid sources.';
 
@@ -379,29 +239,11 @@ $helptxt['avatar_download_png'] = 'PNGs are larger, but offer better quality com
 
 $helptxt['disableHostnameLookup'] = 'This disables host name lookups, which on some servers are very slow. Note that this will make banning less effective.';
 
-$helptxt['search'] = 'Adjust all settings for the search function here.';
 $helptxt['search_why_use_index'] = 'A search index can greatly improve the performance of searches on your forum. Especially when the number of messages on a forum grows bigger, searching without an index can take a long time and increase the pressure on your database. If your forum is bigger than 50.000 messages, you might want to consider creating a search index to assure peak performance of your forum.<br><br>Note that a search index can take up quite some space. A fulltext index is a built-in index of MySQL. It\'s relatively compact (approximately the same size as the message table), but a lot of words aren\'t indexed and it can, in some search queries, turn out to be very slow. The custom index is often bigger (depending on your configuration it can be up to 3 times the size of the messages table) but it\'s performance is better than fulltext and relatively stable.';
 
 $helptxt['whytwoip'] = 'StoryBB uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case StoryBB logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
 
 $helptxt['ban_cannot_post'] = 'The \'cannot post\' restriction turns the forum into read-only mode for the banned user. The user cannot create new topics, or reply to existing ones, send personal messages or vote in polls. The banned user can however still read personal messages and topics.<br><br>A warning message is shown to the users that are banned this way.';
-
-$helptxt['posts_and_topics'] = '
-	<ul class="normallist">
-		<li>
-			<strong>Post Settings</strong><br>
-			Modify the settings related to the posting of messages and the way messages are shown.
-		</li><li>
-			<strong>Bulletin Board Code</strong><br>
-			Enable the code that shows forum messages in the right layout. Also adjust which codes are allowed and which aren\'t.
-		</li><li>
-			<strong>Censored Words</strong>
-			In order to keep the language on your forum under control, you can censor certain words. This function allows you to convert forbidden words into innocent versions.
-		</li><li>
-			<strong>Topic Settings</strong>
-			Modify the settings related to topics. The number of topics per page, whether the print-page view is enabled, etc.
-		</li>
-	</ul>';
 
 $helptxt['birthday_email'] = 'Choose the index of the birthday email message to use. A preview will be shown in the Email Subject and Email Body fields.<br><strong>Note:</strong> Selecting this setting does not automatically enable birthday emails. To enable birthday emails use the <a href="%1$s?action=admin;area=scheduledtasks;%3$s=%2$s" target="_blank" rel="noopener">Scheduled Tasks</a> page and enable the birthday email task.';
 $helptxt['pm_bcc'] = 'When sending a personal message you can choose to add a recipient as BCC (Blind Carbon Copy). BCC recipients do not have their identities revealed to the other recipients of the message.';

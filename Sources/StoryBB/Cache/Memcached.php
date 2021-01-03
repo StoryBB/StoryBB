@@ -4,7 +4,7 @@
  * This class provides connections to memcached (newer connector for memcache) for short-term caching
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -176,11 +176,21 @@ class Memcached extends API
 	}
 
 	/**
+	 * Return the version of the Memcached client.
+	 *
+	 * @return string Version number
+	 */
+	public function getClientVersion(): string
+	{
+		return phpversion('memcached');
+	}
+
+	/**
 	 * Return the version of the Memcache server.
 	 *
 	 * @return string Version number
 	 */
-	public function getVersion(): string
+	public function getServerVersion(): string
 	{
 		return $this->memcached->getVersion();
 	}

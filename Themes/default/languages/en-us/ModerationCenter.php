@@ -4,7 +4,7 @@
  * This file contains language strings for the moderation center.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -165,8 +165,6 @@ $txt['mc_warning_template_personal'] = 'Personal Template';
 $txt['mc_warning_template_personal_desc'] = 'If you select this option only you will be able to see, edit and use this template. If not selected all moderators will be able to use this template.';
 $txt['mc_warning_template_error_no_title'] = 'You must set title.';
 $txt['mc_warning_template_error_no_body'] = 'You must set a notification body.';
-
-$txt['mc_logoff'] = 'End Moderator Session';
 
 // Use entities in the below string.
 $txt['mc_click_add_note'] = 'Add a new note';

@@ -115,7 +115,7 @@
 				</h4>
 				<ul class="user_info">
 
-		{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+		{{#if (and ../modSettings.show_user_images ../options.show_no_avatars member.avatar.image)}}
 					<li class="avatar">
 						<a href="{{../scripturl}}?action=profile;u={{member.id}}">{{{member.avatar.image}}}</a>
 					</li>
@@ -269,7 +269,7 @@
 					</div>
 		{{/if}}
 
-		{{#if (and member.signature (not ../options.show_no_signatures) context.signatures_enabled)}}
+		{{#if (and member.signature ../options.show_signatures context.signatures_enabled)}}
 					<div class="signature">{{{member.signature}}}</div>
 		{{/if}}
 

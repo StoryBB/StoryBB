@@ -5,7 +5,7 @@
  * as well as the auto management of the attachment directories.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -874,7 +874,7 @@ function assignAttachments($attachIDs = [], $msgID = 0)
  */
 function parseAttachBBC($attachID = 0)
 {
-	global $board, $modSettings, $context, $scripturl, $smcFunc;
+	global $board, $modSettings, $context, $scripturl;
 
 	$externalParse = false;
 
@@ -1273,7 +1273,9 @@ function loadAttachmentContext($id_msg, $attachments)
 
 	// Do we need to instigate a sort?
 	if ($have_unapproved)
-		usort($attachmentData, 'approved_attach_sort');
+		usort($attachmentData, function ($a, $b) {
+			return $a['is_approved'] <=> $b['is_approved'];
+		});
 
 	return $attachmentData;
 }

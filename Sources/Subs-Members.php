@@ -4,13 +4,14 @@
  * This file contains some useful functions for members and membergroups.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\App;
+use StoryBB\Helper\Random;
 use StoryBB\Model\Policy;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
@@ -472,7 +473,7 @@ function deleteMembers($users, $check_not_admin = false)
  */
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $modSettings, $context, $sourcedir, $language;
+	global $scripturl, $txt, $modSettings, $sourcedir, $language;
 	global $user_info, $smcFunc;
 
 	loadLanguage('Login');
@@ -1374,7 +1375,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
  */
 function BuddyListToggle()
 {
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	checkSession('get');
 
@@ -1627,16 +1628,5 @@ function populateDuplicateMembers(&$members)
  */
 function generateValidationCode()
 {
-	global $smcFunc, $modSettings;
-
-	$request = $smcFunc['db']->query('get_random_number', '
-		SELECT RAND()',
-		[
-		]
-	);
-
-	list ($dbRand) = $smcFunc['db']->fetch_row($request);
-	$smcFunc['db']->free_result($request);
-
-	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);
+	return bin2hex(Random::get_random_bytes(10));
 }

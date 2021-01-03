@@ -4,7 +4,7 @@
  * This class encapsulates all of the behaviours required by StoryBB's template system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -99,7 +99,7 @@ class Template
 	 */
 	protected static function refresh_paths()
 	{
-		global $settings, $context;
+		global $settings;
 
 		if (static::$paths !== null)
 		{
@@ -167,8 +167,6 @@ class Template
 	 */
 	public static function load($template)
 	{
-		global $settings;
-
 		static::refresh_paths();
 
 		foreach (static::$paths['template'] as $source => $path) {
@@ -190,8 +188,6 @@ class Template
 	 */
 	public static function load_partial($partial, $fatal_on_fail = true): string
 	{
-		global $settings;
-
 		static::refresh_paths();
 
 		foreach (static::$paths['partial'] as $source => $path) {
@@ -217,7 +213,7 @@ class Template
 	 */
 	public static function compile(string $template, array $options = [], string $cache_id = '')
 	{
-		global $context, $cachedir, $modSettings;
+		global $modSettings;
 
 		$phpStr = Cache::fetch($cache_id);
 		if (!empty($phpStr))
@@ -236,7 +232,7 @@ class Template
 			if (!isset($options['flags'])) {
 				$options['flags'] = LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL;
 			}
-			$options['flags'] |= LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG;
+			$options['flags'] |= LightnCandy::FLAG_ERROR_EXCEPTION;
 		}
 
 		$phpStr = LightnCandy::compile($template, [
@@ -372,7 +368,7 @@ class Template
 			'modSettings' => $modSettings,
 			'options' => $options,
 			'user_info' => $user_info,
-			'copyright' => theme_copyright(),
+			'copyright' => sprintf('<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>', App::SOFTWARE_VERSION, App::SOFTWARE_YEAR),
 		]);
 	}
 

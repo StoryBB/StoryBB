@@ -4,13 +4,14 @@
  * The admin screen to change the search settings.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\ClassManager;
+use StoryBB\Container;
 
 /**
  * Main entry point for the admin search settings screen.
@@ -48,7 +49,7 @@ function ManageSearch()
 	// Create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['manage_search'],
-		'help' => 'search',
+		'help' => '',
 		'description' => $txt['search_settings_desc'],
 		'tabs' => [
 			'method' => [
@@ -77,7 +78,7 @@ function ManageSearch()
  */
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $sourcedir, $modSettings, $smcFunc;
+	global $txt, $context, $scripturl, $sourcedir, $modSettings;
 
 	// What are we editing anyway?
 	$config_vars = [
@@ -385,8 +386,10 @@ function CreateMessageIndex()
 		$context['step'] = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 0;
 
 		// admin timeouts are painful when building these long indexes - but only if we actually have such things enabled
-		if (empty($modSettings['securityDisable']) && $_SESSION['admin_time'] + 3300 < time() && $context['step'] >= 1)
-			$_SESSION['admin_time'] = time();
+		$container = Container::instance();
+		$session = $container->get('session');
+		if (empty($modSettings['securityDisable']) && $session->get('admin_time') + 3300 < time() && $context['step'] >= 1)
+			$session->set('admin_time', time());
 	}
 
 	if ($context['step'] !== 0)

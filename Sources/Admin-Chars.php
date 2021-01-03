@@ -3,7 +3,7 @@
  * Provides functions for managing several character-focused features in the administration area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -160,7 +160,7 @@ function char_template_edit()
  */
 function char_template_save()
 {
-	global $context, $smcFunc, $sourcedir;
+	global $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -375,7 +375,7 @@ function CharacterSheets()
  */
 function CharacterImmersion($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;
+	global $txt, $scripturl, $context, $sourcedir;
 
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');

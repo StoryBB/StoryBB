@@ -4,7 +4,7 @@
  * This class provides logic helpers for StoryBB's templates.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -140,7 +140,7 @@ class Logic
 	 */
 	public static function op_and(...$args)
 	{
-		$context = array_pop($args);
+		array_pop($args);
 		
 		foreach ($args as $arg) 
 		{
@@ -162,7 +162,7 @@ class Logic
 	 */
 	public static function op_or(...$args) 
 	{
-		$context = array_pop($args);
+		array_pop($args);
 		
 		foreach ($args as $arg) 
 		{

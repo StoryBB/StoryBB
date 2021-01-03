@@ -4,7 +4,7 @@
  * This class handles the mail processing.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -67,7 +67,7 @@ class Mail
 		if ($hotmail_fix === null)
 		{
 			$hotmail_to = [];
-			foreach ($to_array as $i => $to_address)
+			foreach ($to_array as $to_address)
 			{
 				if (preg_match('~@(att|comcast|bellsouth)\.[a-zA-Z\.]{2,6}$~i', $to_address) === 1)
 				{
@@ -225,8 +225,6 @@ class Mail
 	 */
 	public static function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $line_break = "\r\n", $custom_charset = null)
 	{
-		global $context;
-
 		$charset = $custom_charset !== null ? $custom_charset : 'UTF-8';
 
 		// This is the fun part....

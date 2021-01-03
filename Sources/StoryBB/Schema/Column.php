@@ -4,7 +4,7 @@
  * This class handles columnss.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -193,6 +193,30 @@ class Column
 	}
 
 	/**
+	 * Factory function to create a new Column of blob type.
+	 *
+	 * @return Column instance
+	 */
+	public static function blob()
+	{
+		return new Column([
+			'type' => 'blob',
+		]);
+	}
+
+	/**
+	 * Factory function to create a new Column of mediumblob type.
+	 *
+	 * @return Column instance
+	 */
+	public static function mediumblob()
+	{
+		return new Column([
+			'type' => 'mediumblob',
+		]);
+	}
+
+	/**
 	 * Factory function to create a new Column of date type.
 	 *
 	 * @return Column instance
@@ -260,7 +284,7 @@ class Column
 	 */
 	public function default($value)
 	{
-		if (in_array($this->column['type'], ['text', 'mediumtext']))
+		if (in_array($this->column['type'], ['text', 'mediumtext', 'blob', 'mediumblob']))
 		{
 			throw new InvalidColumnTypeException($this->column['type'] . ' cannot have a default value');
 		}
@@ -293,10 +317,28 @@ class Column
 	}
 
 	/**
-	 * Returns an array suitable for db_create_table to create the table.
+	 * Returns if this column is (fully or portially) the primary key or not.
+	 *
+	 * @return bool True if column is part of the primary key.
+	 */
+	public function is_primary(): bool
+	{
+		return !empty($this->column['auto']);
+	}
+
+	/**
+	 * @todo document and make it more useful
+	 */
+	public function get_simple_type(): string
+	{
+		return $this->column['type'];
+	}
+
+	/**
+	 * Returns an array suitable for DatabaseAdapter::create_table to create the table.
 	 *
 	 * @param string $column_name The name of the final column itself.
-	 * @return array Data for db_create_table
+	 * @return array Data for DatabaseAdapter::create_table
 	 */
 	public function create_data(string $column_name): array
 	{

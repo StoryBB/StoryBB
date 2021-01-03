@@ -9,7 +9,7 @@
  * TrueType fonts supplied by www.LarabieFonts.com
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -858,7 +858,7 @@ function showCodeImage($code)
 	}
 
 	// Load all fonts and determine the maximum font height.
-	foreach ($loaded_fonts as $font_index => $dummy)
+	foreach (array_keys($loaded_fonts) as $font_index)
 		$loaded_fonts[$font_index] = imageloadfont($settings['default_theme_dir'] . '/fonts/' . $font_list[$font_index]);
 
 	// Determine the dimensions of each character.

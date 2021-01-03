@@ -4,7 +4,7 @@
  * This file contains a standard way of displaying side/drop down menus for StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -18,7 +18,7 @@
  */
 function createMenu($menuData, $menuOptions = [])
 {
-	global $context, $settings, $txt, $scripturl, $user_info;
+	global $context, $settings, $txt, $scripturl;
 
 	/* Note menuData is array of form:
 

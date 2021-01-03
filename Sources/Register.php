@@ -6,12 +6,13 @@
  * Similarly, it handles account activation as well.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
 use StoryBB\Helper\Verification;
@@ -25,8 +26,8 @@ use StoryBB\StringLibrary;
  */
 function Register($reg_errors = [])
 {
-	global $txt, $boarddir, $context, $modSettings, $user_info;
-	global $language, $scripturl, $smcFunc, $sourcedir, $cur_profile;
+	global $txt, $context, $modSettings, $user_info;
+	global $language, $scripturl, $sourcedir, $cur_profile;
 
 	// Is this an incoming AJAX check?
 	if (isset($_GET['sa']) && $_GET['sa'] == 'usernamecheck')
@@ -504,11 +505,14 @@ function Register2()
 	}
 	else
 	{
-		(new Observable\Account\Activated($ergOptions['username'], $memberID))->execute();
+		(new Observable\Account\Activated($regOptions['username'], $memberID))->execute();
 
-		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
+		$container = Container::instance();
+		$session = $container->get('session');
+		$session->migrate(true, 3600);
+		$session->set('userid', $memberID);
 
-		redirectexit('action=login2;sa=check;member=' . $memberID, $context['server']['needs_login_fix']);
+		redirectexit();
 	}
 }
 

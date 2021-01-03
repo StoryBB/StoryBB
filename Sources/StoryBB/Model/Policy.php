@@ -4,7 +4,7 @@
  * This class handles policies in the system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -316,7 +316,7 @@ class Policy
 		// Having fetched all possible policies for this user, let's figure out whether they have agreed to anything.
 		foreach ($policies as $policy_type => $languages)
 		{
-			foreach ($languages as $language_name => $language_version_details)
+			foreach ($languages as $language_version_details)
 			{
 				if ($language_version_details['last_acceptance'] >= $language_version_details['last_revision'])
 				{
@@ -375,7 +375,7 @@ class Policy
 	 */
 	public static function agree_to_policy(array $agreed, string $user_language, int $user_id)
 	{
-		global $smcFunc, $user_info;
+		global $smcFunc;
 
 		if (empty($agreed))
 		{

@@ -4,7 +4,7 @@
  * This provides file-based short-term cache functionality.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -83,6 +83,7 @@ class File extends API
 				@apc_delete_file($cachedir . '/data_' . $key . '.php');
 
 			// php will cache file_exists et all, we can't 100% depend on its results so proceed with caution
+			$expired = true;
 			@include($cachedir . '/data_' . $key . '.php');
 			if (!empty($expired) && isset($value))
 			{

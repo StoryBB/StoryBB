@@ -19,14 +19,14 @@ namespace Symfony\Component\Routing;
  */
 class RouteCompiler implements RouteCompilerInterface
 {
-    const REGEX_DELIMITER = '#';
+    public const REGEX_DELIMITER = '#';
 
     /**
      * This string defines the characters that are automatically considered separators in front of
      * optional placeholders (with default and no static text following). Such a single separator
      * can be left out together with the optional placeholder from matching and generating URLs.
      */
-    const SEPARATORS = '/,;.:-_~+*=@|';
+    public const SEPARATORS = '/,;.:-_~+*=@|';
 
     /**
      * The maximum supported length of a PCRE subpattern name
@@ -34,7 +34,7 @@ class RouteCompiler implements RouteCompilerInterface
      *
      * @internal
      */
-    const VARIABLE_MAXIMUM_LENGTH = 32;
+    public const VARIABLE_MAXIMUM_LENGTH = 32;
 
     /**
      * {@inheritdoc}
@@ -119,7 +119,7 @@ class RouteCompiler implements RouteCompilerInterface
 
         // Match all variables enclosed in "{}" and iterate over them. But we only want to match the innermost variable
         // in case of nested "{}", e.g. {foo{bar}}. This in ensured because \w does not match "{" or "}" itself.
-        preg_match_all('#\{(!)?(\w+)\}#', $pattern, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+        preg_match_all('#\{(!)?(\w+)\}#', $pattern, $matches, \PREG_OFFSET_CAPTURE | \PREG_SET_ORDER);
         foreach ($matches as $match) {
             $important = $match[1][1] >= 0;
             $varName = $match[2][0];
@@ -207,7 +207,7 @@ class RouteCompiler implements RouteCompilerInterface
         }
 
         // find the first optional token
-        $firstOptional = PHP_INT_MAX;
+        $firstOptional = \PHP_INT_MAX;
         if (!$isHost) {
             for ($i = \count($tokens) - 1; $i >= 0; --$i) {
                 $token = $tokens[$i];

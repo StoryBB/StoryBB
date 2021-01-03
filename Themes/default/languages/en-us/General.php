@@ -4,7 +4,7 @@
  * This file contains language strings for the general site.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -482,8 +482,6 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go up';
 $txt['go_down'] = 'Go down';
 
-$txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>';
-
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';
 $txt['calendar_day'] = 'Day';
@@ -612,8 +610,7 @@ $txt['you_likes_n'] = [
 $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';
 
-$txt['unread_topics_visit'] = 'Recent Unread Topics';
-$txt['unread_topics_visit_none'] = 'No unread topics found since your last visit. <a href="{scripturl}?action=unread;all">Click here to try all unread topics</a>.';
+$txt['unread_topics'] = 'Unread Topics';
 $txt['unread_topics_all'] = 'All Unread Topics';
 $txt['unread_replies'] = 'Updated Topics';
 

@@ -4,13 +4,14 @@
  * This file, unpredictable as this might be, handles basic administration.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -219,7 +220,6 @@ function AdminMain()
 					'subsections' => [
 						'settings' => [$txt['settings'], 'admin_forum'],
 						'register' => [$txt['admin_browse_register_new'], 'moderate_forum'],
-						'reservednames' => [$txt['admin_reserved_set'], 'admin_forum'],
 						'policies' => [$txt['admin_policies'], 'admin_forum'],
 					],
 				],
@@ -311,7 +311,6 @@ function AdminMain()
 					'icon' => 'server',
 					'subsections' => [
 						'general' => [$txt['general_settings']],
-						'cookie' => [$txt['cookies_sessions_settings']],
 						'security' => [$txt['security_settings']],
 						'cache' => [$txt['caching_settings']],
 						'phpinfo' => [$txt['phpinfo_settings']],
@@ -470,37 +469,13 @@ function AdminMain()
 */
 function AdminHome()
 {
-	global $sourcedir, $txt, $scripturl, $context, $user_info;
+	global $txt, $context, $user_info;
 
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
 
-	// Find all of this forum's administrators...
-	require_once($sourcedir . '/Subs-Membergroups.php');
-	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
-	{
-		// Add a 'more'-link if there are more than 32.
-		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
-	}
-
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
-	$context['forum_version'] = App::SOFTWARE_VERSION;
-
-	// Get a list of current server versions.
-	require_once($sourcedir . '/Subs-Admin.php');
-	$checkFor = [
-		'gd',
-		'imagemagick',
-		'db_server',
-		'phpa',
-		'apcu',
-		'memcache',
-		'redis',
-		'php',
-		'server',
-	];
-	$context['current_versions'] = getServerVersions($checkFor);
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
@@ -514,21 +489,6 @@ function AdminHome()
 		'description' => '<strong>' . $txt['hello_guest'] . ' ' . $context['user']['name'] . '!</strong>
 					' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 	];
-
-	$context['admin_news'] = getAdminFile('updates.json');
-	if (empty($context['admin_news']))
-	{
-		$context['admin_news'] = [
-			'current_version' => '??',
-			'sbbAnnouncements' => [],
-			'needs_update' => false,
-		];
-	}
-
-	if (!empty($context['admin_news']['current_version']))
-	{
-		$context['admin_news']['needs_update'] = version_compare($context['forum_version'], $context['admin_news']['current_version'], '<');
-	}
 }
 
 /**
@@ -536,7 +496,7 @@ function AdminHome()
  */
 function AdminSearch()
 {
-	global $txt, $context, $smcFunc, $sourcedir;
+	global $txt, $context, $sourcedir;
 
 	isAllowedTo('admin_forum');
 
@@ -606,7 +566,6 @@ function AdminSearchInternal()
 		['ModifyDraftSettings', 'area=postsettings;sa=drafts'],
 		['EditSearchSettings', 'area=managesearch;sa=settings'],
 		['ModifyGeneralSettings', 'area=serversettings;sa=general'],
-		['ModifyCookieSettings', 'area=serversettings;sa=cookie'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
 		['ModifyCacheSettings', 'area=serversettings;sa=cache'],
 		['ModifyRegistrationSettings', 'area=regcenter;sa=settings'],
@@ -781,11 +740,11 @@ function AdminLogs()
  */
 function AdminEndSession()
 {
-	// This is so easy!
-	unset($_SESSION['admin_time']);
+	$container = Container::instance();
+	$container->get('session')->remove('admin_time');
 
 	// Clean any admin tokens as well.
-	foreach ($_SESSION['token'] as $key => $token)
+	foreach (array_keys($_SESSION['token']) as $key)
 		if (strpos($key, '-admin') !== false)
 			unset($_SESSION['token'][$key]);
 

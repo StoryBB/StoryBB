@@ -5,7 +5,7 @@
  * @todo refactor as controller-model
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -48,7 +48,7 @@ function Ban()
 	// Tabs for browsing the different ban functions.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['ban_title'],
-		'help' => 'ban_members',
+		'help' => '',
 		'description' => $txt['ban_description'],
 		'tabs' => [
 			'list' => [
@@ -804,7 +804,7 @@ function banLoadAdditionalIPsError($member_id)
  */
 function banEdit2()
 {
-	global $smcFunc, $context;
+	global $context;
 
 	checkSession();
 	validateToken('admin-bet');
@@ -1689,7 +1689,7 @@ function BanEditTrigger()
  */
 function BanBrowseTriggers()
 {
-	global $modSettings, $context, $scripturl, $smcFunc, $txt;
+	global $modSettings, $context, $scripturl, $txt;
 	global $sourcedir, $settings;
 
 	if (!empty($_POST['remove_triggers']) && !empty($_POST['remove']) && is_array($_POST['remove']))

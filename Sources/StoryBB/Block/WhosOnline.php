@@ -4,7 +4,7 @@
  * A recent posts block.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -40,7 +40,7 @@ class WhosOnline extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $user_info, $txt, $scripturl, $modSettings;
+		global $txt, $scripturl, $modSettings;
 
 		if ($this->content !== null)
 		{
@@ -95,7 +95,7 @@ class WhosOnline extends AbstractBlock implements Block
 	 */
 	public function get_online_numbers($membersOnlineOptions)
 	{
-		global $smcFunc, $scripturl, $user_info, $modSettings, $txt;
+		global $smcFunc, $scripturl, $user_info, $txt;
 
 		// The list can be sorted in several ways.
 		$allowed_sort_options = [

@@ -3,7 +3,7 @@
  * This file contains language strings for errors.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -195,7 +195,6 @@ $txt['register_WaitTime_broken'] = 'You already registered just %1$d seconds ago
 $txt['login_WaitTime_broken'] = 'You will have to wait about %1$d seconds to login again, sorry.';
 $txt['pm_WaitTime_broken'] = 'The last personal message from your IP was less than %1$d seconds ago. Please try again later.';
 $txt['reporttm_WaitTime_broken'] = 'The last topic report from your IP was less than %1$d seconds ago. Please try again later.';
-$txt['sendmail_WaitTime_broken'] = 'The last email sent from your IP was less than %1$d seconds ago. Please try again later.';
 $txt['search_WaitTime_broken'] = 'Your last search was less than %1$d seconds ago. Please try again later.';
 $txt['remind_WaitTime_broken'] = 'Your last reminder was less than %1$d seconds ago. Please try again later.';
 
@@ -331,7 +330,6 @@ $txt['error_while_editing_poll'] = 'The following error or errors occurred while
 
 $txt['loadavg_search_disabled'] = 'Due to high stress on the server, the search function has been automatically and temporarily disabled. Please try again in a short while.';
 $txt['loadavg_generic_disabled'] = 'Sorry, because of high stress on the server, this feature is currently unavailable.';
-$txt['loadavg_allunread_disabled'] = 'The server\'s resources are temporarily under too high a demand to find all the topics you have not read.';
 $txt['loadavg_unreadreplies_disabled'] = 'The server is currently under high stress. Please try again shortly.';
 $txt['loadavg_show_posts_disabled'] = 'Please try again later. This member\'s posts are not currently available due to high load on the server.';
 $txt['loadavg_unread_disabled'] = 'The server\'s resources are temporarily under too high a demand to list out the topics you have not read.';

@@ -4,7 +4,7 @@
  * This file contains functions that are specifically done by administrators.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -48,101 +48,6 @@ function getAdminFile(string $filename, string $path = '')
 	$smcFunc['db']->free_result($request);
 
 	return $data;
-}
-
-/**
- * Get a list of versions that are currently installed on the server.
- * @param array $checkFor An array of what to check versions for - can contain one or more of 'gd', 'imagemagick', 'db_server', 'phpa', 'memcache', 'apc', 'php' or 'server'
- * @return array An array of versions (keys are same as what was in $checkFor, values are the versions)
- */
-function getServerVersions($checkFor)
-{
-	global $txt, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
-
-	loadLanguage('Admin');
-
-	$versions = [];
-
-	if (in_array('php', $checkFor))
-		$versions['php'] = ['title' => $txt['support_versions_php'], 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo'];
-
-	if (in_array('server', $checkFor))
-		$versions['server'] = ['title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']];
-
-	// Now lets check for the Database.
-	if (in_array('db_server', $checkFor))
-	{
-		if (!$smcFunc['db']->connection_active())
-			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
-		else
-		{
-			$versions['db_server'] = ['title' => $txt['support_versions_db'], 'version' => $smcFunc['db']->get_server() . ' ' . $smcFunc['db']->get_version()];
-		}
-	}
-
-	// Is GD available?  If it is, we should show version information for it too.
-	if (in_array('gd', $checkFor) && function_exists('gd_info'))
-	{
-		$temp = gd_info();
-		$versions['gd'] = ['title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']];
-	}
-
-	// Why not have a look at ImageMagick? If it's installed, we should show version information for it too.
-	if (in_array('imagemagick', $checkFor) && (class_exists('Imagick') || function_exists('MagickGetVersionString')))
-	{
-		if (class_exists('Imagick'))
-		{
-			$temp = New Imagick;
-			$temp2 = $temp->getVersion();
-			$im_version = $temp2['versionString'];
-			$extension_version = 'Imagick ' . phpversion('Imagick');
-		}
-		else
-		{
-			$im_version = MagickGetVersionString();
-			$extension_version = 'MagickWand ' . phpversion('MagickWand');
-		}
-
-		// We already know it's ImageMagick and the website isn't needed...
-		$im_version = str_replace(['ImageMagick ', ' https://www.imagemagick.org'], '', $im_version);
-		$versions['imagemagick'] = ['title' => $txt['support_versions_imagemagick'], 'version' => $im_version . ' (' . $extension_version . ')'];
-	}
-
-	// Check to see if we have any accelerators installed...
-	if (in_array('phpa', $checkFor) && isset($_PHPA))
-	{
-		$versions['phpa'] = ['title' => 'ionCube PHP-Accelerator', 'version' => $_PHPA['VERSION']];
-	}
-	if (in_array('apcu', $checkFor) && extension_loaded('apcu'))
-	{
-		$versions['apcu'] = ['title' => 'Alternative PHP Cache', 'version' => phpversion('apcu')];
-	}
-	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
-	{
-		// If we're using memcache we need the server info.
-		$memcache_version = '';
-		if (!empty($cache_accelerator) && ($cache_accelerator == 'memcached' || $cache_accelerator == 'memcache') && !empty($cache_memcached) && !empty($cacheAPI))
-		{
-			$memcache_version = $cacheAPI->getVersion();
-		}
-		$versions['memcache'] = ['title' => 'Memcached', 'version' => $memcache_version ? $memcache_version : '???'];
-	}
-	if (in_array('redis', $checkFor) && class_exists('Redis'))
-	{
-		$versions['redis'] = ['title' => 'Redis', 'version' => phpversion('redis') . ' (client)'];
-
-		$redis = new \StoryBB\Cache\Redis;
-		if ($redis->isSupported())
-		{
-			$redisversion = $redis->getVersion();
-			if (!empty($redisversion))
-			{
-				$versions['redis']['version'] .= ' ' . $redisversion . ' (server)';
-			}
-		}
-	}
-
-	return $versions;
 }
 
 /**

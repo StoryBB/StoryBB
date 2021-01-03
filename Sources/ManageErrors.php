@@ -5,7 +5,7 @@
  * logged on the forum, and allow filtering and deleting them.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -375,7 +375,7 @@ function deleteErrors()
  */
 function ViewFile()
 {
-	global $context, $boarddir, $sourcedir, $cachedir, $smcFunc;
+	global $context, $boarddir, $sourcedir, $cachedir;
 
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');

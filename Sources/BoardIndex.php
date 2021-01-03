@@ -5,7 +5,7 @@
  * board index.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -19,7 +19,7 @@
  */
 function BoardIndex()
 {
-	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
+	global $txt, $sourcedir, $modSettings, $context, $scripturl;
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;

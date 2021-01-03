@@ -4,7 +4,7 @@
  * This file contains language strings for the generic settings pages.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -33,9 +33,6 @@ $txt['lastActive'] = 'User online time threshold';
 $txt['trackStats'] = 'Track daily statistics';
 $txt['hitStats'] = 'Track daily page views (must have stats enabled)';
 $txt['debug_templates'] = 'Enable template debug mode';
-$txt['databaseSession_enable'] = 'Use database driven sessions';
-$txt['databaseSession_loose'] = 'Allow browsers to go back to cached pages';
-$txt['databaseSession_lifetime'] = 'Seconds before an unused session timeout';
 $txt['error_log_desc'] = 'The error log, if enabled, will log every error encountered by users using your forum. This can be an invaluable aid to identifying forum problems.';
 $txt['enableErrorLogging'] = 'Enable error logging';
 $txt['enableErrorQueryLogging'] = 'Include database query in the error log';
@@ -48,14 +45,7 @@ $txt['pruneScheduledTaskLog'] = 'Remove scheduled task log entries older than';
 $txt['retention_policy_standard'] = 'Remove privacy-related items in logs after';
 $txt['retention_policy_sensitive'] = 'Remove more sensitive items in logs after';
 $txt['zero_means_zero'] = 'Setting this to 0 means purging these items after only a matter of hours.';
-$txt['localCookies'] = 'Enable local storage of cookies';
-$txt['globalCookies'] = 'Use subdomain independent cookies';
-$txt['globalCookiesDomain'] = 'Main domain used for subdomain independent cookies';
-$txt['invalid_cookie_domain'] = 'The domain introduced seems to be invalid, please check it and save again.';
-$txt['secureCookies'] = 'Force cookies to be secure';
-$txt['httponlyCookies'] = 'Force cookies to be made accessible only through the HTTP protocol';
 $txt['securityDisable'] = 'Disable administration security';
-$txt['securityDisable_moderate'] = 'Disable moderation security';
 $txt['send_validation_onChange'] = 'Require reactivation after email change';
 $txt['timeBetweenPosts'] = 'Display "x days later" banner between posts after how many days';
 $txt['timeBetweenPostsBoards'] = 'When displaying "x days later" banner, which boards should this apply to?';
@@ -366,11 +356,3 @@ $txt['select_boards_from_list'] = 'Select boards which apply';
 $txt['topic_move_any'] = 'Allow moving of topics to read-only boards';
 
 $txt['defaultMaxListItems'] = 'Maximum number of items per page in lists';
-
-$txt['tfa_mode'] = 'Two-Factor Authentication';
-$txt['tfa_mode_forced'] = 'Force on selected membergroups';
-$txt['tfa_mode_forcedall'] = 'Force for ALL users';
-$txt['tfa_mode_forced_help'] = 'Please enable 2FA in your account in order to be able to force 2FA on other users!';
-$txt['tfa_mode_enabled'] = 'Enabled';
-$txt['tfa_mode_disabled'] = 'Disabled';
-$txt['tfa_mode_subtext'] = 'Allows users to have a second layer of security while logging in, users would need an app like Google Authenticator paired with their account';

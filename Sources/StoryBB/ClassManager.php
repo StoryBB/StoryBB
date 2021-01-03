@@ -4,7 +4,7 @@
  * A library for handling class discovery.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -100,8 +100,6 @@ class ClassManager
 	 */ 
 	protected static function get_oo_from_basepath(string $path): array
 	{
-		$ooables = [];
-
 		$pathiterator = new \RecursiveDirectoryIterator($path);
 		$fileiterator = new \RecursiveIteratorIterator($pathiterator);
 		$filteriterator = new \RegexIterator($fileiterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);

@@ -50,7 +50,7 @@
  *  	array('text', 'invalidlabel', 3, 'label' => 'Actual Label')
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -78,7 +78,7 @@ function ModifySettings()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['admin_server_settings'],
-		'help' => 'serversettings',
+		'help' => '',
 		'description' => $txt['admin_basic_settings'],
 	];
 
@@ -91,7 +91,6 @@ function ModifySettings()
 
 	$subActions = [
 		'general' => 'ModifyGeneralSettings',
-		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
 		'phpinfo' => 'ShowPHPinfoSettings',
@@ -229,7 +228,7 @@ $(function()
  */
 function AlignURLsWithSSLSetting($new_force_ssl = 0)
 {
-	global $boardurl, $modSettings, $sourcedir, $db_prefix, $smcFunc;
+	global $boardurl, $modSettings, $sourcedir, $smcFunc;
 	require_once($sourcedir . '/Subs-Admin.php');
 
 	// Check $boardurl
@@ -325,130 +324,6 @@ function BoardurlMatch($url = '')
 }
 
 /**
- * This function handles cookies settings modifications.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyCookieSettings($return_config = false)
-{
-	global $context, $scripturl, $txt, $sourcedir, $modSettings, $cookiename, $user_settings, $boardurl, $smcFunc;
-
-	// Define the variables we want to edit.
-	$config_vars = [
-		// Cookies...
-		['cookiename', $txt['cookie_name'], 'file', 'text', 20],
-		['localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'],
-		['globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'],
-		['globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'],
-		['secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()],
-		['httponlyCookies', $txt['httponlyCookies'], 'db', 'check', false, 'httponlyCookies'],
-		'',
-		// Sessions
-		['databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'],
-		['databaseSession_loose', $txt['databaseSession_loose'], 'db', 'check', false, 'databaseSession_loose'],
-		['databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime', 'postinput' => $txt['seconds']],
-		'',
-		// 2FA
-		['tfa_mode', $txt['tfa_mode'], 'db', 'select', [
-			0 => $txt['tfa_mode_disabled'],
-			1 => $txt['tfa_mode_enabled'],
-		] + (empty($user_settings['tfa_secret']) ? [] : [
-			2 => $txt['tfa_mode_forced'],
-		]) + (empty($user_settings['tfa_secret']) ? [] : [
-			3 => $txt['tfa_mode_forcedall'],
-		]), 'subtext' => $txt['tfa_mode_subtext'] . (empty($user_settings['tfa_secret']) ? '<br /><strong>' . $txt['tfa_mode_forced_help'] . '</strong>' : ''), 'tfa_mode'],
-	];
-
-	addInlineJavaScript('
-	function hideGlobalCookies()
-	{
-		var usingLocal = $("#localCookies").prop("checked");
-		$("#setting_globalCookies").closest("dt").toggle(!usingLocal);
-		$("#globalCookies").closest("dd").toggle(!usingLocal);
-
-		var usingGlobal = !usingLocal && $("#globalCookies").prop("checked");
-		$("#setting_globalCookiesDomain").closest("dt").toggle(usingGlobal);
-		$("#globalCookiesDomain").closest("dd").toggle(usingGlobal);
-	};
-	hideGlobalCookies();
-
-	$("#localCookies, #globalCookies").click(function() {
-		hideGlobalCookies();
-	});', true);
-
-	if (empty($user_settings['tfa_secret']))
-		addInlineJavaScript('');
-
-	settings_integration_hook('integrate_cookie_settings', [&$config_vars]);
-
-	if ($return_config)
-		return [$txt['cookies_sessions_settings'], $config_vars];
-
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cookie;save';
-	$context['settings_title'] = $txt['cookies_sessions_settings'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		settings_integration_hook('integrate_save_cookie_settings');
-
-		// Local and global do not play nicely together.
-		if (!empty($_POST['localCookies']) && empty($_POST['globalCookies']))
-			unset ($_POST['globalCookies']);
-
-		if (empty($modSettings['localCookies']) != empty($_POST['localCookies']) || empty($modSettings['globalCookies']) != empty($_POST['globalCookies']))
-			$scope_changed = true;
-
-		if (!empty($_POST['globalCookiesDomain']) && strpos($boardurl, $_POST['globalCookiesDomain']) === false)
-			fatal_lang_error('invalid_cookie_domain', false);
-
-		saveSettings($config_vars);
-
-		// If the cookie name or scope were changed, reset the cookie.
-		if ($cookiename != $_POST['cookiename'] || !empty($scope_changed))
-		{
-			$original_session_id = $context['session_id'];
-			include_once($sourcedir . '/Subs-Auth.php');
-
-			// Remove the old cookie.
-			setLoginCookie(-3600, 0);
-
-			// Set the new one.
-			$cookiename = !empty($_POST['cookiename']) ? $_POST['cookiename'] : $cookiename;
-			setLoginCookie(0, $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
-
-			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id, $context['server']['needs_login_fix']);
-		}
-
-		//If we disabled 2FA, reset all members and membergroups settings.
-		if (isset($_POST['tfa_mode']) && empty($_POST['tfa_mode']))
-		{
-			$smcFunc['db']->query('', '
-				UPDATE {db_prefix}membergroups
-				SET tfa_required = {int:zero}',
-				[
-					'zero' => 0,
-				]
-			);
-			$smcFunc['db']->query('', '
-				UPDATE {db_prefix}members
-				SET tfa_secret = {string:empty}, tfa_backup = {string:empty}',
-				[
-					'empty' => '',
-				]
-			);
-		}
-
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
-}
-
-/**
  * Settings really associated with general security aspects.
  *
  * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
@@ -463,7 +338,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			['int', 'loginHistoryDays', 'subtext' => $txt['zero_to_disable']],
 		'',
 			['check', 'securityDisable'],
-			['check', 'securityDisable_moderate'],
 		'',
 			// Reactive on email, and approve on delete
 			['check', 'send_validation_onChange'],
@@ -508,7 +382,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
  */
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $cacheAPI;
+	global $context, $scripturl, $txt;
 
 	// Detect all available optimizers
 	$detected = StoryBB\Cache::list_available();
@@ -616,7 +490,7 @@ function ModifyCacheSettings($return_config = false)
  */
 function prepareServerSettingsContext(&$config_vars)
 {
-	global $context, $modSettings, $smcFunc;
+	global $context, $modSettings;
 
 	$context['config_vars'] = [];
 	foreach ($config_vars as $identifier => $config_var)
@@ -626,7 +500,7 @@ function prepareServerSettingsContext(&$config_vars)
 		else
 		{
 			$varname = $config_var[0];
-			global $$varname;
+			global $$varname; // @todo Remove.
 
 			// Set the subtext in case it's part of the label.
 			// @todo Temporary. Preventing divs inside label tags.
@@ -700,7 +574,7 @@ function prepareServerSettingsContext(&$config_vars)
  */
 function prepareDBSettingContext(&$config_vars)
 {
-	global $txt, $helptxt, $context, $modSettings, $sourcedir, $smcFunc;
+	global $txt, $helptxt, $context, $modSettings, $sourcedir;
 
 	loadLanguage('Help');
 
@@ -939,7 +813,7 @@ function prepareDBSettingContext(&$config_vars)
  */
 function saveSettings(&$config_vars)
 {
-	global $sourcedir, $context;
+	global $sourcedir;
 
 	validateToken('admin-ssc');
 

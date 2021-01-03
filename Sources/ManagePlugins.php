@@ -4,7 +4,7 @@
  * This file has all the main functions in it that relate to, well, everything.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -42,7 +42,7 @@ function PluginsHome()
 
 function PluginsList()
 {
-	global $txt, $context, $boarddir, $smcFunc, $scripturl;
+	global $txt, $context, $scripturl;
 
 	// 1. Some initial setup, and getting the list of enabled plugins.
 	$context['sub_template'] = 'admin_plugins_list';
@@ -58,7 +58,7 @@ function PluginsList()
 		'install_errors' => 0,
 	];
 	$context['current_filter'] = isset($_GET['filter']) && isset($context['filter_plugins'][$_GET['filter']]) ? $_GET['filter'] : 'all';
-	foreach ($available_plugins as $id => $plugin)
+	foreach ($available_plugins as $plugin)
 	{
 		$type = 'disabled';
 		if ($plugin->enabled())
@@ -93,8 +93,6 @@ function PluginsList()
 
 function PluginAction()
 {
-	global $txt, $context;
-
 	$available_plugins = Manager::get_available_plugins();
 
 	checkSession();

@@ -1,0 +1,13 @@
+<nav aria-label="breadcrumb">
+	<ol>
+	{foreach $page->getLinktree() as $breadcrumb}
+		<li>
+		{if $breadcrumb['url']}
+			<a href="{$breadcrumb['url']}">{$breadcrumb['name']}</a>
+		{else}
+			{$breadcrumb['name']}
+		{/if}
+		</li>
+	{/foreach}
+	</ol>
+</nav>

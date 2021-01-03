@@ -4,7 +4,7 @@
  * This class handles behaviours for Behat tests within StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -33,6 +33,6 @@ class Helper
 		if (empty(self::$escaper)) {
 			self::$escaper = new \Behat\Mink\Selector\Xpath\Escaper();
 		}
-		return self::$escaper->escapeLiteral($label);
+		return self::$escaper->escapeLiteral($text);
 	}
 }

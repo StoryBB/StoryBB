@@ -4,7 +4,7 @@
  * This class handles installing or updating the DB schema for StoryBB
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,8 @@
 
 namespace StoryBB\Schema;
 
+use StoryBB\Container;
+use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Schema\Schema;
 
 /**
@@ -25,30 +27,20 @@ class Database
 	 * @param bool $safe_mode If true, do not run the queries but instead return them.
 	 * @return If safe mode is enabled, return an array of queries.
 	 */
-	public static function update_schema(bool $safe_mode = true)
+	public static function update_schema(DatabaseAdapter $db, bool $safe_mode = true)
 	{
-		global $smcFunc;
-		if (!isset($smcFunc['db_table_structure']))
-		{
-			db_extend('packages');
-		}
-
 		$queries = [];
 		$schema = Schema::get_tables();
 		foreach ($schema as $table)
 		{
-			if (STORYBB == 'BACKGROUND')
+			if ($table->exists($db))
 			{
-				echo 'Examining table `' . $table->get_table_name() . '`...', FROM_CLI ? "\n" : '<br>';
-			}
-			if ($table->exists())
-			{
-				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
-				$queries[] = $existing_table->update_to($table, $safe_mode);
+				$existing_table = $db->get_table_structure('{db_prefix}' . $table->get_table_name());
+				$queries[] = $existing_table->update_to($db, $table, $safe_mode);
 			}
 			else
 			{
-				$queries[] = $table->create($safe_mode);
+				$queries[] = $table->create($db, $safe_mode);
 			}
 		}
 
@@ -65,22 +57,24 @@ class Database
 	 */
 	public static function get_engines(): array
 	{
-		global $smcFunc;
 		static $engines = null;
 
 		if ($engines === null)
 		{
+			$container = Container::instance();
+			$db = $container->get('database');
+
 			// Figure out which engines we have
 			$engines = [];
-			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
+			$get_engines = $db->query('', 'SHOW ENGINES', []);
 
-			while ($row = $smcFunc['db']->fetch_assoc($get_engines))
+			while ($row = $db->fetch_assoc($get_engines))
 			{
 				if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
 					$engines[] = $row['Engine'];
 			}
 
-			$smcFunc['db']->free_result($get_engines);
+			$db->free_result($get_engines);
 		}
 
 		return $engines;

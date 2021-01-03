@@ -4,7 +4,7 @@
  * This class handles behaviours for Behat tests within StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -80,7 +80,7 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table The users to be added
 	 * @throws ExpectationException if the list of users cannot be added
 	 */
-	private function create_users(TableNode $table)
+	protected function create_users(TableNode $table)
 	{
 		global $user_info, $sourcedir, $smcFunc, $context, $mtitle;
 		// We need to fudge the details to be able to call registerMember - but this won't affect running state.
@@ -160,7 +160,7 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table The characters to be added
 	 * @throws ExpectationException if the list of characters cannot be added
 	 */
-	private function create_characters(TableNode $table)
+	protected function create_characters(TableNode $table)
 	{
 		global $smcFunc;
 
@@ -226,7 +226,7 @@ class General extends RawMinkContext implements Context
 	 * @param array $usernames Array of strings listing usernames to be found
 	 * @return array Returns a key/value array of names to user ids
 	 */
-	private function get_user_ids(array $usernames): array
+	protected function get_user_ids(array $usernames): array
 	{
 		global $smcFunc;
 
@@ -262,7 +262,7 @@ class General extends RawMinkContext implements Context
 	 * @param array $charnames Array of strings listing characters names to be found
 	 * @return array Returns a key/value array of names to character ids
 	 */
-	private function get_character_ids(array $charnames): array
+	protected function get_character_ids(array $charnames): array
 	{
 		global $smcFunc;
 
@@ -298,7 +298,7 @@ class General extends RawMinkContext implements Context
 	 * @param array $groupnames Array of strings listing group names to be found
 	 * @return array Returns a key/value array of names to group ids
 	 */
-	private function get_group_ids(array $groupnames): array
+	protected function get_group_ids(array $groupnames): array
 	{
 		global $smcFunc;
 
@@ -334,9 +334,9 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table The boards to be added
 	 * @throws ExpectationException if the list of boards cannot be added
 	 */
-	private function create_boards(TableNode $table)
+	protected function create_boards(TableNode $table)
 	{
-		global $smcFunc, $sourcedir, $boards, $cat_tree;
+		global $smcFunc, $sourcedir;
 		require_once($sourcedir . '/Subs-Boards.php');
 		/*
 				And the following "boards" exist:
@@ -458,7 +458,7 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table The groups to be added
 	 * @throws ExpectationException if the list of groups cannot be added
 	 */
-	private function create_groups(TableNode $table)
+	protected function create_groups(TableNode $table)
 	{
 		global $smcFunc;
 
@@ -594,7 +594,7 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table A table listing characters and groups to be added
 	 * @throws ExpectationException if the list cannot be added
 	 */
-	private function add_characters_to_group(TableNode $table)
+	protected function add_characters_to_group(TableNode $table)
 	{
 		global $sourcedir;
 
@@ -647,7 +647,7 @@ class General extends RawMinkContext implements Context
 	 * @param TableNode $table A table listing users and groups to be added
 	 * @throws ExpectationException if the list cannot be added
 	 */
-	private function add_users_to_group(TableNode $table)
+	protected function add_users_to_group(TableNode $table)
 	{
 		global $sourcedir;
 

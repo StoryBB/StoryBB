@@ -1,0 +1,17 @@
+	<div class="login">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{_'General:login'}
+			</h3>
+		</div>
+		<div class="roundframe noup">
+			{if $login_errors}
+				<ul>
+					{foreach $login_errors as $error}
+					<li>{$error|noescape}</li>
+					{/foreach}
+				</ul>
+			{/if}
+			{$form|noescape}
+		</div>
+	</div>

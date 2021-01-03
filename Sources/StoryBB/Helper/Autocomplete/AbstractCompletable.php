@@ -4,7 +4,7 @@
  * Any autocomplete handlers probably should extend this class.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -43,7 +43,6 @@ abstract class AbstractCompletable
 	 */
 	protected function escape_term(string $term): string
 	{
-		global $smcFunc;
 		$term = trim(StringLibrary::toLower($term)) . '*';
 		return strtr($term, [
 			'%' => '\%',
@@ -97,10 +96,7 @@ abstract class AbstractCompletable
 	 * @param int $maximum The expected maximum of allowed entries; 0 for no limit.
 	 * @return string The JavaScript to initialise this widget.
 	 */
-	public function get_js(string $target, int $maximum = 1): string
-	{
-		return '';
-	}
+	abstract public function get_js(string $target, int $maximum = 1): string;
 
 	/**
 	 * Returns the name of the searchtype that would be used by the autocomplete route from the client.

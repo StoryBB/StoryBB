@@ -4,7 +4,7 @@
  * General class for handling the short-term cache available to StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -78,7 +78,7 @@ class Cache
 	 */
 	public static function get($key, $ttl = 120)
 	{
-		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
+		global $cache_enable;
 		global $cache_hits, $cache_count, $cache_misses, $cache_count_misses, $db_show_debug;
 
 		if (empty($cache_enable) || empty(self::$cacheAPI))
@@ -122,7 +122,7 @@ class Cache
 	 */
 	public static function put(string $key, $value, int $ttl = 120)
 	{
-		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
+		global $cache_enable;
 		global $cache_hits, $cache_count, $db_show_debug;
 
 		if (empty($cache_enable) || empty(self::$cacheAPI))

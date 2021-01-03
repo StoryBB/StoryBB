@@ -4,7 +4,7 @@
  * This file has all the main functions in it that relate to, well, everything.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,7 @@
 
 use LightnCandy\LightnCandy;
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -301,7 +302,7 @@ function updateMemberData($members, $data)
 			if (is_array($members))
 			{
 				$val = 'CASE ';
-				foreach ($members as $k => $v)
+				foreach ($members as $v)
 					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, [], false)) . ' ';
 				$val = $val . ' END';
 				$type = 'raw';
@@ -540,7 +541,7 @@ function updateSettings($changeArray, $update = false)
  */
 function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $modSettings, $context, $smcFunc, $settings, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -724,9 +725,8 @@ function numeric_context(string $string, $number, bool $commaise = true): string
  */
 function timeformat($log_time, $show_today = true, $offset_type = false, $process_safe = false)
 {
-	global $context, $user_info, $txt, $modSettings;
+	global $user_info, $txt, $modSettings;
 	static $non_twelve_hour, $locale_cache;
-	static $unsupportedFormats, $finalizedFormats;
 
 	// Offset the time.
 	if (!$offset_type)
@@ -866,7 +866,6 @@ function dateformat(int $year, int $month, int $day, string $format = ''): strin
  */
 function un_htmlspecialchars($string)
 {
-	global $context;
 	static $translation = [];
 
 	if (empty($translation))
@@ -889,8 +888,6 @@ function un_htmlspecialchars($string)
  */
 function shorten_subject($subject, $len)
 {
-	global $smcFunc;
-
 	// It was already short enough!
 	if (StringLibrary::strlen($subject) <= $len)
 		return $subject;
@@ -925,12 +922,11 @@ function forum_time($use_user_offset = true, $timestamp = null)
  * Should be used whenever anything is posted.
  *
  * @param string $setLocation The URL to redirect them to
- * @param bool $refresh Whether to use a meta refresh instead
  * @param bool $permanent Whether to send a 301 Moved Permanently instead of a 302 Moved Temporarily
  */
-function redirectexit($setLocation = '', $refresh = false, $permanent = false)
+function redirectexit($setLocation = '', $permanent = false)
 {
-	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache;
+	global $scripturl, $context, $db_show_debug, $db_cache;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
@@ -943,7 +939,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Maybe integrations want to change where we are heading?
-	call_integration_hook('integrate_redirect', [&$setLocation, &$refresh, &$permanent]);
+	call_integration_hook('integrate_redirect', [&$setLocation, &$permanent]);
 
 	// Set the header.
 	header('Location: ' . str_replace(' ', '%20', $setLocation), true, $permanent ? 301 : 302);
@@ -964,7 +960,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt, $options, $scripturl, $smcFunc, $user_info;
+	global $context, $settings, $modSettings, $txt, $options, $scripturl, $user_info;
 	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -1063,10 +1059,11 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
  */
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
+	$container = \StoryBB\Container::instance();
 	return new \LightnCandy\SafeString(sprintf($string,
 		$guest_title, 
 		$forum_name, 
-		$scripturl . '?action=login', 
+		$container->get('urlgenerator')->generate('login'), 
 		'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
 		$scripturl . '?action=signup'
 	));
@@ -1080,13 +1077,16 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
  */
 function session_flash(string $status, string $message)
 {
+	$container = Container::instance();
 	if (!in_array($status, ['success', 'warning', 'error']))
 	{
 		fatal_error('Invalid session flash');
 	}
-	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
+	$flashbag = $container->get('session')->getFlashBag();
+	$current_messages = $flashbag->peekAll();
+	if (!isset($current_messages[$status]) || !in_array($message, $current_messages[$status]))
 	{
-		$_SESSION['flash'][$status][] = $message;
+		$flashbag->add($status, $message);
 	}
 }
 
@@ -1097,12 +1097,14 @@ function session_flash(string $status, string $message)
  */
 function session_flash_retrieve()
 {
+	$container = Container::instance();
+	$session = $container->get('session');
+
 	$messages = [];
 	foreach (['error', 'warning', 'success'] as $status)
 	{
-		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
+		$messages[$status] = $session->getFlashBag()->get($status);
 	}
-	unset ($_SESSION['flash']);
 	return $messages;
 }
 
@@ -1117,8 +1119,6 @@ function session_flash_retrieve()
  */
 function url_image_size($url)
 {
-	global $sourcedir;
-
 	// Make sure it is a proper URL.
 	$url = str_replace(' ', '%20', $url);
 
@@ -1237,8 +1237,7 @@ function get_image_size_from_string($data)
  */
 function setupThemeContext($forceload = false)
 {
-	global $modSettings, $user_info, $scripturl, $context, $settings, $options, $txt, $maintenance;
-	global $smcFunc;
+	global $modSettings, $user_info, $scripturl, $context, $settings, $txt, $maintenance;
 	static $loaded = false;
 
 	// Under some cases this function can be called more then once.  That can cause some problems.
@@ -1298,17 +1297,10 @@ function setupThemeContext($forceload = false)
 		{
 			$txt['welcome_guest_register'] .= str_replace('{scripturl}', $scripturl, $txt['welcome_guest_activate']);
 		}
-
-		// If we've upgraded recently, go easy on the passwords.
-		if (!empty($modSettings['disableHashTime']) && ($modSettings['disableHashTime'] == 1 || time() < $modSettings['disableHashTime']))
-			$context['disable_login_hashing'] = true;
 	}
 
 	// Setup the main menu items.
 	setupMenuContext();
-
-	// This is here because old index templates might still use it.
-	$context['show_news'] = !empty($settings['enable_news']);
 
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
@@ -1443,17 +1435,6 @@ function template_header()
 		}
 		session_flash('warning', $ban_message);
 	}
-}
-
-/**
- * Show the copyright.
- */
-function theme_copyright()
-{
-	global $txt;
-
-	// Put in the version...
-	return sprintf($txt['copyright'], App::SOFTWARE_VERSION, App::SOFTWARE_YEAR);
 }
 
 /**
@@ -1664,7 +1645,7 @@ function template_css()
  */
 function custMinify($data, $type, $do_deferred = false)
 {
-	global $sourcedir, $settings, $txt;
+	global $settings, $txt;
 
 	$types = ['css', 'js'];
 	$type = !empty($type) && in_array($type, $types) ? $type : false;
@@ -1751,8 +1732,6 @@ function custMinify($data, $type, $do_deferred = false)
  */
 function text2words($text, $max_chars = 20, $encrypt = false)
 {
-	global $smcFunc, $context;
-
 	// Step 1: Remove entities/things we don't consider words:
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, ['<br>' => ' ']));
 
@@ -1798,12 +1777,11 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  * @param string $name The name of the button (should be a main_icons class or the name of an image)
  * @param string $alt The alt text
  * @param string $label The $txt string to use as the label
- * @param string $custom Custom text/html to add to the img tag (only when using an actual image)
  * @return string The HTML to display the button
  */
-function create_button($name, $alt, $label = '', $custom = '')
+function create_button($name, $alt, $label = '')
 {
-	global $settings, $txt;
+	global $txt;
 
 	return '<span class="main_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
@@ -1817,6 +1795,9 @@ function create_button($name, $alt, $label = '', $custom = '')
 function setupMenuContext()
 {
 	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings, $smcFunc;
+
+	$container = \StoryBB\Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
@@ -1975,7 +1956,7 @@ function setupMenuContext()
 			],
 			'logout' => [
 				'title' => $txt['logout'],
-				'href' => $scripturl . '?action=logout;%1$s=%2$s',
+				'href' => $urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]),
 				'show' => !$user_info['is_guest'],
 				'sub_buttons' => [
 				],
@@ -2051,10 +2032,6 @@ function setupMenuContext()
 
 	$context['menu_buttons'] = $menu_buttons;
 
-	// Logging out requires the session id in the url.
-	if (isset($context['menu_buttons']['logout']))
-		$context['menu_buttons']['logout']['href'] = sprintf($context['menu_buttons']['logout']['href'], $context['session_var'], $context['session_id']);
-
 	// Figure out which action we are doing so we can set the active tab.
 	// Default to home.
 	$current_action = 'home';
@@ -2065,10 +2042,8 @@ function setupMenuContext()
 		$current_action = 'search';
 	elseif ($context['current_action'] == 'theme')
 		$current_action = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? 'profile' : 'admin';
-	elseif ($context['current_action'] == 'register2')
-		$current_action = 'register';
-	elseif ($context['current_action'] == 'login2' || ($user_info['is_guest'] && $context['current_action'] == 'reminder'))
-		$current_action = 'login';
+	elseif ($context['current_action'] == 'signup2')
+		$current_action = 'signup';
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'moderate';
 
@@ -2151,14 +2126,6 @@ function setupMenuContext()
 		$context['menu_buttons'][$current_action]['active_button'] = true;
 
 	$context['footer_links'] = Policy::get_footer_policies();
-}
-
-/**
- * Generate a random seed and ensure it's stored in settings.
- */
-function sbb_seed_generator()
-{
-	updateSettings(['rand_seed' => (float) microtime() * 1000000]);
 }
 
 /**
@@ -2258,7 +2225,7 @@ function call_integration_hook($hook, $parameters = [])
  */
 function call_helper($string, $return = false)
 {
-	global $context, $smcFunc, $txt, $db_show_debug;
+	global $context, $txt, $db_show_debug;
 
 	// Really?
 	if (empty($string))
@@ -2345,49 +2312,6 @@ function call_helper($string, $return = false)
 				$func();
 		}
 	}
-}
-
-/**
- * Prepares an array of "likes" info for the topic specified by $topic
- * @param integer $topic The topic ID to fetch the info from.
- * @return array An array of IDs of messages in the specified topic that the current user likes
- */
-function prepareLikesContext($topic)
-{
-	global $user_info, $smcFunc;
-
-	// Make sure we have something to work with.
-	if (empty($topic))
-		return [];
-
-
-	// We already know the number of likes per message, we just want to know whether the current user liked it or not.
-	$user = $user_info['id'];
-	$cache_key = 'likes_topic_' . $topic . '_' . $user;
-	$ttl = 180;
-
-	if (($temp = cache_get_data($cache_key, $ttl)) === null)
-	{
-		$temp = [];
-		$request = $smcFunc['db']->query('', '
-			SELECT content_id
-			FROM {db_prefix}user_likes AS l
-				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
-			WHERE l.id_member = {int:current_user}
-				AND l.content_type = {literal:msg}
-				AND m.id_topic = {int:topic}',
-			[
-				'current_user' => $user,
-				'topic' => $topic,
-			]
-		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-			$temp[] = (int) $row['content_id'];
-
-		cache_put_data($cache_key, $temp, $ttl);
-	}
-
-	return $temp;
 }
 
 /**
@@ -2515,10 +2439,9 @@ function inet_dtop($bin)
  * Tries different modes to make file/dirs writable. Wrapper function for chmod()
 
  * @param string $file The file/dir full path.
- * @param int $value Not needed, added for legacy reasons.
  * @return boolean  true if the file/dir is already writable or the function was able to make it writable, false if the function couldn't make the file/dir writable.
  */
-function sbb_chmod($file, $value = 0)
+function sbb_chmod($file)
 {
 	// No file? no checks!
 	if (empty($file))
@@ -2625,7 +2548,7 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
  */
 function sbb_serverResponse($data = '', $type = 'Content-Type: application/json')
 {
-	global $db_show_debug, $modSettings;
+	global $db_show_debug;
 
 	// Defensive programming anyone?
 	if (empty($data))
@@ -2855,7 +2778,7 @@ function get_main_menu_groups()
  */
 function get_user_possible_characters($id_member, $board_id = 0)
 {
-	global $context, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
+	global $settings, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
 	static $boards_ic = [];
 
 	// First, some healthy defaults.
@@ -2942,10 +2865,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
  */
 function httpsOn()
 {
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') 
-		return true;
-	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') 
-		return true;
-
-	return false;
+	$container = Container::instance();
+	$request = $container->get('requestvars');
+	return $request->isSecure();
 }

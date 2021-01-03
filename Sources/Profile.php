@@ -6,7 +6,7 @@
  * and such things.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -24,7 +24,7 @@ function ModifyProfile($post_errors = [])
 {
 	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
 	global $modSettings, $memberContext, $profile_vars, $post_errors, $user_settings;
-	global $db_show_debug, $smcFunc, $settings;
+	global $smcFunc, $settings;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
@@ -295,16 +295,6 @@ function ModifyProfile($post_errors = [])
 					'permission' => [
 						'own' => ['profile_identity_any', 'profile_identity_own', 'profile_password_any', 'profile_password_own', 'manage_membergroups'],
 						'any' => ['profile_identity_any', 'profile_password_any', 'manage_membergroups'],
-					],
-				],
-				'tfasetup' => [
-					'file' => 'Profile-Modify.php',
-					'function' => 'tfasetup',
-					'token' => 'profile-tfa%u',
-					'enabled' => !empty($modSettings['tfa_mode']),
-					'permission' => [
-						'own' => ['profile_password_own'],
-						'any' => ['profile_password_any'],
 					],
 				],
 				'forumprofile' => [

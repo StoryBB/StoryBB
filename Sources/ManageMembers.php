@@ -4,7 +4,7 @@
  * Show a list of members or a selection of members.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -80,7 +80,7 @@ function ViewMembers()
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['admin_members'],
-		'help' => 'view_members',
+		'help' => '',
 		'description' => $txt['admin_members_list'],
 		'tabs' => [],
 	];

@@ -4,7 +4,7 @@
  * This file contains language strings for the themes management area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -79,7 +79,6 @@ $txt['theme_variants_user_disable'] = 'Disable user variant selection';
 $txt['site_slogan'] = 'Site slogan';
 $txt['site_slogan_desc'] = 'Add your own text for a slogan here. It will replace the StoryBB logo.';
 
-$txt['enable_random_news'] = 'Enable random news line in the forum header';
 $txt['allow_no_censored'] = 'Allow users to turn off word censoring';
 $txt['who_display_viewing'] = 'Show who is viewing the board index and posts';
 $txt['who_display_viewing_off'] = 'Don\'t show';

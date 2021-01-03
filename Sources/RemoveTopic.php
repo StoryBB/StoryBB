@@ -5,7 +5,7 @@
  * paraphernalia.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -565,8 +565,6 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 
 /**
  * Remove a specific message (including permission checks).
- * - normally, local and global should be the localCookies and globalCookies settings, respectively.
- * - uses boardurl to determine these two things.
  *
  * @param int $message The message id
  * @param bool $decreasePostCount Whether to decrease users' post counts

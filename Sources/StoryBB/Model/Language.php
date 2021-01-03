@@ -4,7 +4,7 @@
  * This class handles languages.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -112,7 +112,7 @@ class Language
 	 */
 	public static function cache_language(int $theme_id, string $lang_id, string $lang_file)
 	{
-		global $settings, $cachedir;
+		global $cachedir;
 
 		$overall_language_entries = [];
 
@@ -218,7 +218,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$result = $smcFunc['db']->query('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
 				AND id_lang = {string:lang_id}

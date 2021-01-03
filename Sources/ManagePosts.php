@@ -4,7 +4,7 @@
  * This file contains all the administration settings for topics and posts.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -45,7 +45,7 @@ function ManagePostSettings()
 	// Tabs for browsing the different post functions.
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['manageposts_title'],
-		'help' => 'posts_and_topics',
+		'help' => '',
 		'description' => $txt['manageposts_description'],
 		'tabs' => [
 			'posts' => [
@@ -151,7 +151,7 @@ function ModifyBBCSettings($return_config = false)
  */
 function SetCensor()
 {
-	global $txt, $modSettings, $context, $smcFunc, $sourcedir;
+	global $txt, $modSettings, $context, $sourcedir;
 
 	if (!empty($_POST['save_censor']))
 	{
@@ -252,7 +252,7 @@ function SetCensor()
  */
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc, $db_type;
+	global $context, $txt, $modSettings, $scripturl, $sourcedir, $db_type;
 
 	// All the settings...
 	$config_vars = [
@@ -293,20 +293,6 @@ function ModifyPostSettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		checkSession();
-
-		// If we're changing the message length (and we are using MySQL) let's check the column is big enough.
-		if (isset($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'] && ($db_type == 'mysql'))
-		{
-			db_extend('packages');
-
-			$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
-			foreach ($colData as $column)
-				if ($column['name'] == 'body')
-					$body_type = $column['type'];
-
-			if (isset($body_type) && ($_POST['max_messageLength'] > 65535 || $_POST['max_messageLength'] == 0) && $body_type == 'text')
-				fatal_lang_error('convert_to_mediumtext', false, [$scripturl . '?action=admin;area=maintain;sa=database']);
-		}
 
 		// If we're changing the post preview length let's check its valid
 		if (!empty($_POST['preview_characters']))
@@ -407,7 +393,7 @@ function ModifyTopicSettings($return_config = false)
  */
 function ModifyDraftSettings($return_config = false)
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
+	global $context, $txt, $sourcedir, $scripturl;
 
 	// Here are all the draft settings, a bit lite for now, but we can add more :P
 	$config_vars = [

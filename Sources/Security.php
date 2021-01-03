@@ -5,13 +5,16 @@
  * This task includes banning and permissions, namely.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
+use StoryBB\Helper\Cookie;
 use StoryBB\Helper\IP;
+use StoryBB\Helper\Random;
 
 /**
  * Check if the user is who he/she says he is
@@ -24,15 +27,15 @@ use StoryBB\Helper\IP;
  */
 function validateSession($type = 'admin')
 {
-	global $modSettings, $sourcedir, $user_info, $user_settings;
+	global $modSettings, $sourcedir, $user_info, $maintenance;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();
 
 	// Validate what type of session check this is.
-	$types = [];
+	$types = ['admin'];
 	call_integration_hook('integrate_validateSession', [&$types]);
-	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
+	$type = in_array($type, $types) ? $type : 'admin';
 
 	// If we're using XML give an additional ten minutes grace as an admin can't log on in XML mode.
 	$refreshTime = isset($_GET['xml']) ? 4200 : 3600;
@@ -42,8 +45,12 @@ function validateSession($type = 'admin')
 		return;
 
 	// Or are they already logged in?, Moderator or admin session is need for this area
-	if ((!empty($_SESSION[$type . '_time']) && $_SESSION[$type . '_time'] + $refreshTime >= time()) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
+	$container = Container::instance();
+	$session = $container->get('session');
+	if ($session->get($type . '_time', 0) + $refreshTime >= time())
+	{
 		return;
+	}
 
 	require_once($sourcedir . '/Subs-Auth.php');
 
@@ -61,7 +68,7 @@ function validateSession($type = 'admin')
 		// Password correct?
 		if ($good_password || hash_verify_password($user_info['username'], $_POST[$type . '_pass'], $user_info['passwd']))
 		{
-			$_SESSION[$type . '_time'] = time();
+			$session->set($type . '_time', time());
 			unset($_SESSION['request_referer']);
 			return;
 		}
@@ -121,7 +128,8 @@ function is_not_guest($message = '', bool $redirect = false)
 	if ($redirect)
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
-		redirectexit('action=login');
+		$container = Container::instance();
+		redirectexit($container->get('urlgenerator')->generate('login'));
 	}
 	else
 	{
@@ -284,9 +292,8 @@ function is_not_banned($forceCheck = false)
 		// My mistake. Next time better.
 		if (!isset($_SESSION['ban']['cannot_access']))
 		{
-			require_once($sourcedir . '/Subs-Auth.php');
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-			sbb_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
+			$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
 		}
 	}
 
@@ -324,10 +331,9 @@ function is_not_banned($forceCheck = false)
 		];
 
 		// A goodbye present.
-		require_once($sourcedir . '/Subs-Auth.php');
 		require_once($sourcedir . '/LogInOut.php');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		sbb_setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
+		$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
 
 		// Don't scare anyone, now.
 		$_GET['action'] = '';
@@ -596,30 +602,35 @@ function isBannedEmail($email, $restriction, $error)
  */
 function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
-	global $sc, $modSettings, $boardurl;
+	global $modSettings, $boardurl;
+
+	$container = Container::instance();
+	$session = $container->get('session');
+	$session_var = $session->get('session_var');
+	$session_value = $session->get('session_value');
 
 	// Is it in as $_POST['sc']?
 	if ($type == 'post')
 	{
-		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
-		if ($check !== $sc)
+		$check = isset($_POST[$session_var]) ? $_POST[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
+		if ($check !== $session_value)
 			$error = 'session_timeout';
 	}
 
 	// How about $_GET['sesc']?
 	elseif ($type == 'get')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
-		if ($check !== $sc)
+		$check = isset($_GET[$session_var]) ? $_GET[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
+		if ($check !== $session_value)
 			$error = 'session_verify_fail';
 	}
 
 	// Or can it be in either?
 	elseif ($type == 'request')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
+		$check = isset($_GET[$session_var]) ? $_GET[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$session_var]) ? $_POST[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
 
-		if ($check !== $sc)
+		if ($check !== $session_value)
 			$error = 'session_verify_fail';
 	}
 
@@ -677,9 +688,6 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		$log_error = true;
 	}
 
-	if (strtolower($_SERVER['HTTP_USER_AGENT']) == 'hacker')
-		fatal_error('Sound the alarm!  It\'s a hacker!  Close the castle gates!!', false);
-
 	// Everything is ok, return an empty string.
 	if (!isset($error))
 		return '';
@@ -704,28 +712,6 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 }
 
 /**
- * Check if a specific confirm parameter was given.
- *
- * @param string $action The action we want to check against
- * @return bool|string True if the check passed or a token
- */
-function checkConfirm($action)
-{
-	global $modSettings;
-
-	if (isset($_GET['confirm']) && isset($_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['confirm_' . $action])
-		return true;
-
-	else
-	{
-		$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed']);
-		$_SESSION['confirm_' . $action] = md5($token . $_SERVER['HTTP_USER_AGENT']);
-
-		return $token;
-	}
-}
-
-/**
  * Lets give you a token of our appreciation.
  *
  * @param string $action The action to create the token for
@@ -736,10 +722,13 @@ function createToken($action, $type = 'post')
 {
 	global $modSettings, $context;
 
-	$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed'] . $type);
+	$container = Container::instance();
+	$session = $container->get('session');
+
+	$token = bin2hex(Random::get_random_bytes(32));
 	$token_var = substr(preg_replace('~^\d+~', '', md5(mt_rand() . (string) microtime() . mt_rand())), 0, mt_rand(7, 12));
 
-	$_SESSION['token'][$type . '-' . $action] = [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token];
+	$session->set('token/' . $type . '-' . $action, [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token]);
 
 	$context[$action . '_token'] = $token;
 	$context[$action . '_token_var'] = $token_var;
@@ -759,18 +748,11 @@ function validateToken($action, $type = 'post', $reset = true)
 {
 	$type = $type == 'get' || $type == 'request' ? $type : 'post';
 
-	// Logins are special: the token is used to has the password with javascript before POST it
-	if ($action == 'login')
-	{
-		if (isset($_SESSION['token'][$type . '-' . $action]))
-		{
-			$return = $_SESSION['token'][$type . '-' . $action][3];
-			unset($_SESSION['token'][$type . '-' . $action]);
-			return $return;
-		}
-		else
-			return '';
-	}
+	$container = Container::instance();
+	$session = $container->get('session');
+
+	$tokenstring = 'token/' . $type . '-' . $action;
+	$token = $session->get($tokenstring, false);
 
 	// This nasty piece of code validates a token.
 	/*
@@ -780,12 +762,15 @@ function validateToken($action, $type = 'post', $reset = true)
 		4. Match that result against what is in the session.
 		5. If it matches, success, otherwise we fallout.
 	*/
-	if (isset($_SESSION['token'][$type . '-' . $action], $GLOBALS['_' . strtoupper($type)][$_SESSION['token'][$type . '-' . $action][0]]) && md5($GLOBALS['_' . strtoupper($type)][$_SESSION['token'][$type . '-' . $action][0]] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['token'][$type . '-' . $action][1])
+	if ($token)
 	{
-		// Invalidate this token now.
-		unset($_SESSION['token'][$type . '-' . $action]);
+		if (isset($GLOBALS['_' . strtoupper($type)][$token[0]]) && md5($GLOBALS['_' . strtoupper($type)][$token[0]] . $_SERVER['HTTP_USER_AGENT']) === $token[1])
+		{
+			// Invalidate this token now.
+			$session->remove($tokenstring);
 
-		return true;
+			return true;
+		}
 	}
 
 	// Patrons with invalid tokens get the boot.
@@ -801,7 +786,9 @@ function validateToken($action, $type = 'post', $reset = true)
 	}
 	// Remove this token as its useless
 	else
-		unset($_SESSION['token'][$type . '-' . $action]);
+	{
+		$session->remove($tokenstring);
+	}
 
 	// Randomly check if we should remove some older tokens.
 	if (mt_rand(0, 138) == 23)
@@ -819,14 +806,23 @@ function validateToken($action, $type = 'post', $reset = true)
  */
 function cleanTokens($complete = false)
 {
+	$container = Container::instance();
+	$session = $container->get('session');
+
 	// We appreciate cleaning up after yourselves.
-	if (!isset($_SESSION['token']))
+	if (!$session->has('token'))
+	{
 		return;
+	}
 
 	// Clean up tokens, trying to give enough time still.
-	foreach ($_SESSION['token'] as $key => $data)
-		if ($data[2] + 10800 < time() || $complete)
-			unset($_SESSION['token'][$key]);
+	foreach ($session->get('token') as $key => $data)
+	{
+		if (time() > $data[2] + 10800 || $complete)
+		{
+			$session->remove('token/' . $key);
+		}
+	}
 }
 
 /**
@@ -1132,7 +1128,6 @@ function spamProtection($error_type, $only_return_result = false)
 		'login' => 2,
 		'register' => 2,
 		'remind' => 30,
-		'sendmail' => $modSettings['spamWaitTime'] * 5,
 		'reporttm' => $modSettings['spamWaitTime'] * 4,
 		'search' => !empty($modSettings['search_floodcontrol_time']) ? $modSettings['search_floodcontrol_time'] : 1,
 	];

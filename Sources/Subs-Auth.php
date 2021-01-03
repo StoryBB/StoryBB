@@ -4,7 +4,7 @@
  * This file has functions in it to do with authentication, user handling, and the like.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -14,181 +14,6 @@ use StoryBB\Helper\IP;
 use StoryBB\Hook\Observable;
 use StoryBB\Hook\Mutatable;
 use StoryBB\StringLibrary;
-
-/**
- * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
- * - password should be already encrypted with the cookie salt.
- * - logs the user out if id_member is zero.
- * - sets the cookie and session to last the number of seconds specified by cookie_length, or
- *   ends them if cookie_length is less than 0.
- * - when logging out, if the globalCookies setting is enabled, attempts to clear the subdomain's
- *   cookie too.
- *
- * @param int $cookie_length How many seconds the cookie should last. If negative, forces logout.
-
- * @param int $id The ID of the member to set the cookie for
- * @param string $password The hashed password
- */
-function setLoginCookie($cookie_length, $id, $password = '')
-{
-	global $cookiename, $boardurl, $modSettings, $sourcedir;
-
-	$id = (int) $id;
-
-	$expiry_time = ($cookie_length >= 1 ? time() + $cookie_length : 0);
-
-	// If changing state force them to re-address some permission caching.
-	$_SESSION['mc']['time'] = 0;
-
-	// Extract our cookie domain and path from $boardurl
-	$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-
-	// The cookie may already exist, and have been set with different options.
-	if (isset($_COOKIE[$cookiename]))
-	{
-		if (preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+,"3":"[^"]+","4":"[^"]+"~', $_COOKIE[$cookiename]) === 1)
-			list(,,, $old_domain, $old_path) = sbb_json_decode($_COOKIE[$cookiename], true);
-
-		// Out with the old, in with the new!
-		if (isset($old_domain) && $old_domain != $cookie_url[0] || isset($old_path) && $old_path != $cookie_url[1])
-			sbb_setcookie($cookiename, json_encode([0, '', 0, $old_domain, $old_path], JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
-	}
-
-	// Get the data and path to set it on.
-	$data = empty($id) ? [0, '', 0, $cookie_url[0], $cookie_url[1]] : [$id, $password, $expiry_time, $cookie_url[0], $cookie_url[1]];
-
-	// Allow mods to add custom info to the cookie
-	$custom_data = [];
-	call_integration_hook('integrate_cookie_data', [$data, &$custom_data]);
-
-	$data = json_encode(array_merge($data, $custom_data), JSON_FORCE_OBJECT);
-
-	// Set the cookie, $_COOKIE, and session variable.
-	sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], $cookie_url[0]);
-
-	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
-	if (empty($id) && !empty($modSettings['globalCookies']))
-		sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
-
-	// Any alias URLs?  This is mainly for use with frames, etc.
-	if (!empty($modSettings['forum_alias_urls']))
-	{
-		$aliases = explode(',', $modSettings['forum_alias_urls']);
-
-		$temp = $boardurl;
-		foreach ($aliases as $alias)
-		{
-			// Fake the $boardurl so we can set a different cookie.
-			$alias = strtr(trim($alias), ['http://' => '', 'https://' => '']);
-			$boardurl = 'http://' . $alias;
-
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-
-			if ($cookie_url[0] == '')
-				$cookie_url[0] = strtok($alias, '/');
-
-			$alias_data = sbb_json_decode($data);
-			$alias_data[3] = $cookie_url[0];
-			$alias_data[4] = $cookie_url[1];
-			$alias_data = json_encode($alias_data, JSON_FORCE_OBJECT);
-
-			sbb_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
-		}
-
-		$boardurl = $temp;
-	}
-
-	$_COOKIE[$cookiename] = $data;
-
-	// Make sure the user logs in with a new session ID.
-	if (!isset($_SESSION['login_' . $cookiename]) || $_SESSION['login_' . $cookiename] !== $data)
-	{
-		// We need to meddle with the session.
-		require_once($sourcedir . '/Session.php');
-
-		// Backup and remove the old session.
-		$oldSessionData = $_SESSION;
-		$_SESSION = [];
-		session_destroy();
-
-		// Recreate and restore the new session.
-		loadSession();
-		// @todo should we use session_regenerate_id(true); now that we are 5.1+
-		session_regenerate_id();
-		$_SESSION = $oldSessionData;
-
-		$_SESSION['login_' . $cookiename] = $data;
-	}
-}
-
-/**
- * Sets Two Factor Auth cookie
- *
- * @param int $cookie_length How long the cookie should last, in minutes
- * @param int $id The ID of the member
- * @param string $secret Should be a salted secret using hash_salt
- * @param bool $preserve Whether to preserve the cookie for 30 days
- */
-function setTFACookie($cookie_length, $id, $secret, $preserve = false)
-{
-	global $modSettings, $cookiename, $boardurl;
-
-	$identifier = $cookiename . '_tfa';
-	$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-
-	if ($preserve)
-		$cookie_length = 81600 * 30;
-
-	// Get the data and path to set it on.
-	$data = json_encode(empty($id) ? [0, '', 0, $cookie_url[0], $cookie_url[1], false] : [$id, $secret, time() + $cookie_length, $cookie_url[0], $cookie_url[1], $preserve], JSON_FORCE_OBJECT);
-
-	// Set the cookie, $_COOKIE, and session variable.
-	sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0]);
-
-	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
-	if (empty($id) && !empty($modSettings['globalCookies']))
-		sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], '');
-
-	$_COOKIE[$identifier] = $data;
-}
-
-/**
- * Get the domain and path for the cookie
- * - normally, local and global should be the localCookies and globalCookies settings, respectively.
- * - uses boardurl to determine these two things.
- *
- * @param bool $local Whether we want local cookies
- * @param bool $global Whether we want global cookies
- * @return array An array to set the cookie on with domain and path in it, in that order
- */
-function url_parts($local, $global)
-{
-	global $boardurl, $modSettings;
-
-	// Parse the URL with PHP to make life easier.
-	$parsed_url = parse_url($boardurl);
-
-	// Is local cookies off?
-	if (empty($parsed_url['path']) || !$local)
-		$parsed_url['path'] = '';
-
-	if (!empty($modSettings['globalCookiesDomain']) && strpos($boardurl, $modSettings['globalCookiesDomain']) !== false)
-		$parsed_url['host'] = $modSettings['globalCookiesDomain'];
-
-	// Globalize cookies across domains (filter out IP-addresses)?
-	elseif ($global && !IP::is_valid_ipv4($parsed_url['host']) && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
-		$parsed_url['host'] = '.' . $parts[1];
-
-	// We shouldn't use a host at all if both options are off.
-	elseif (!$local && !$global)
-		$parsed_url['host'] = '';
-
-	// The host also shouldn't be set if there aren't any dots in it.
-	elseif (!isset($parsed_url['host']) || strpos($parsed_url['host'], '.') === false)
-		$parsed_url['host'] = '';
-
-	return [$parsed_url['host'], $parsed_url['path'] . '/'];
-}
 
 /**
  * Throws guests out to the login screen when guest access is off.
@@ -217,7 +42,7 @@ function KickGuest()
  */
 function InMaintenance()
 {
-	global $txt, $mtitle, $mmessage, $context, $smcFunc;
+	global $txt, $mtitle, $mmessage, $context;
 
 	loadLanguage('Login');
 	createToken('login');
@@ -238,18 +63,18 @@ function InMaintenance()
  * - sends data to template so the admin is sent on to the page they
  *   wanted if their password is correct, otherwise they can try again.
  *
- * @param string $type What login type is this - can be 'admin' or 'moderate'
+ * @param string $type What login type is this - can be 'admin'
  */
 function adminLogin($type = 'admin')
 {
-	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
+	global $context, $txt, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
 
 	// Validate what type of session check this is.
-	$types = [];
+	$types = ['admin'];
 	call_integration_hook('integrate_validateSession', [&$types]);
-	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
+	$type = in_array($type, $types) ? $type : 'admin';
 
 	// They used a wrong password, log it and unset that.
 	if (isset($_POST[$type . '_hash_pass']) || isset($_POST[$type . '_pass']))
@@ -303,8 +128,6 @@ function adminLogin($type = 'admin')
  */
 function adminLogin_outputPostVars($k, $v)
 {
-	global $smcFunc;
-
 	if (!is_array($v))
 		return '
 <input type="hidden" name="' . StringLibrary::escape($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
@@ -523,7 +346,7 @@ function resetPassword($memID, $username = null)
  */
 function validateUsername($memID, $username, $return_error = false, $check_reserved_name = true)
 {
-	global $sourcedir, $txt, $smcFunc, $user_info;
+	global $sourcedir, $txt, $user_info;
 
 	$errors = [];
 
@@ -575,7 +398,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
  */
 function validatePassword($password, $username, $restrict_in = [])
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Perform basic requirements first.
 	if (StringLibrary::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
@@ -702,35 +525,6 @@ function rebuildModCache()
 }
 
 /**
- * A consistent cookie function that can be configured and integrated in
- * the wider environment, e.g. user configuration, plugins.
- *
- * @param string $name
- * @param string $value = ''
- * @param int $expire = 0
- * @param string $path = ''
- * @param string $domain = ''
- * @param bool $secure = false
- * @param bool $httponly = true
- */
-function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = '', $secure = null, $httponly = true)
-{
-	global $modSettings;
-
-	// In case a customization wants to override the default settings
-	if ($httponly === null)
-		$httponly = !empty($modSettings['httponlyCookies']);
-	if ($secure === null)
-		$secure = !empty($modSettings['secureCookies']);
-
-	// Intercept cookie?
-	call_integration_hook('integrate_cookie', [$name, $value, $expire, $path, $domain, $secure, $httponly]);
-
-	// This function is pointless if we have PHP >= 5.2.
-	return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
-}
-
-/**
  * Hashes username with password
  *
  * @param string $username The username
@@ -740,7 +534,7 @@ function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = ''
  */
 function hash_password($username, $password, $cost = null)
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
@@ -771,8 +565,6 @@ function hash_salt($password, $salt)
  */
 function hash_verify_password($username, $password, $hash)
 {
-	global $smcFunc;
-
 	return password_verify(StringLibrary::toLower($username) . $password, $hash);
 }
 

@@ -4,7 +4,7 @@
  * Support functions for handling smileys.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -50,7 +50,7 @@ class Smiley
 				ORDER BY s.id_smiley');
 			while ($row = $db->fetch_assoc($request))
 			{
-				$row['url'] = $urlgenerator->generate('smiley_with_timestamp', [
+				$row['url'] = $urlgenerator->generate('smiley', [
 					'id' => $row['id_smiley'],
 					'timestamp' => $row['timemodified'],
 				]);

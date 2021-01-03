@@ -5,7 +5,7 @@
  * the query string, request variables, and session management.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -26,7 +26,7 @@ class StringLibrary
 	 * @param array $matches An array of matches (relevant info should be the 3rd item in the array)
 	 * @return string The fixed string
 	 */
-	public static function fix_entities($string)
+	public static function fix_entities($matches)
 	{
 		if (!isset($matches[2]))
 		{

@@ -4,7 +4,7 @@
  * This file contains language strings for the scheduled tasks system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -25,8 +25,6 @@ $txt['scheduled_tasks_ran_errors'] = 'Task "%1$s" encountered errors: %2$s';
 $txt['scheduled_tasks_na'] = 'N/A';
 $txt['scheduled_task_approval_notification'] = 'Approval Notifications';
 $txt['scheduled_task_desc_approval_notification'] = 'Send out emails to all moderators summarizing posts awaiting approval.';
-$txt['scheduled_task_auto_optimize'] = 'Optimize Database';
-$txt['scheduled_task_desc_auto_optimize'] = 'Optimize the database to resolve fragmentation issues.';
 $txt['scheduled_task_daily_maintenance'] = 'Daily Maintenance';
 $txt['scheduled_task_desc_daily_maintenance'] = 'Runs essential daily maintenance on the forum - should not be disabled.';
 $txt['scheduled_task_daily_digest'] = 'Daily Notification Summary';

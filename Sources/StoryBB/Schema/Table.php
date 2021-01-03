@@ -4,7 +4,7 @@
  * This class handles tables.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -12,6 +12,7 @@
 
 namespace StoryBB\Schema;
 
+use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Schema\Database;
 use StoryBB\Schema\InvalidIndexException;
 
@@ -129,7 +130,7 @@ class Table
 			}
 		}
 
-		throw new InvalidIndexException('Table ' . $table . ' defines an autoincrement on ' . $auto_increment . ' but does not define the primary key as this column');
+		throw new InvalidIndexException('Table ' . $this->table_name . ' defines an autoincrement on ' . $auto_increment . ' but does not define the primary key as this column');
 	}
 
 	/**
@@ -176,19 +177,29 @@ class Table
 	}
 
 	/**
+	 * Returns the constraints in this table.
+	 *
+	 * @return array An array of Constraint objects that this table cares about.
+	 */
+	public function get_constraints(): array
+	{
+		return $this->constraints;
+	}
+
+	/**
 	 * Identify whether a given table exists (silently taking account of the prefix)
 	 *
 	 * @return True if the database table this object describes already exists in the database.
 	 */
-	public function exists(): bool
+	public function exists(DatabaseAdapter $db): bool
 	{
 		global $smcFunc, $db_prefix;
 		if (self::$table_cache === null)
 		{
-			self::$table_cache = $smcFunc['db']->list_tables();
+			self::$table_cache = $db->list_tables();
 		}
 
-		return in_array($db_prefix . $this->table_name, self::$table_cache);
+		return in_array($db->get_prefix() . $this->table_name, self::$table_cache);
 	}
 
 	/**
@@ -197,10 +208,8 @@ class Table
 	 * @param bool $safe_mode If true, return the query to be run rather than the result
 	 * @return mixed False on creation, otherwise raw database result object (or query in safe mode)
 	 */
-	public function create(bool $safe_mode = false)
+	public function create(DatabaseAdapter $db, bool $safe_mode = false)
 	{
-		global $smcFunc, $db_prefix;
-
 		$columns = [];
 		foreach ($this->columns as $column_name => $column)
 		{
@@ -222,30 +231,17 @@ class Table
 			$parameters['engine'] = $this->get_engine([]);
 		}
 
-		if (!isset($smcFunc['db_create_table']))
-		{
-			db_extend('Packages');
-		}
 		if ($safe_mode)
 		{
 			$parameters['safe_mode'] = true;
-			if (isset($this->opts['on_create']) && is_callable($this->opts['on_create']))
-			{
-				$parameters['on_create_table'] = $this->opts['on_create'](true);
-			}
-			return $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+			return $db->create_table('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 		}
 		else
 		{
-			$result = $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+			$result = $db->create_table('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 			if ($result)
 			{
-				self::$table_cache[] = $db_prefix . $this->table_name;
-
-				if (isset($this->opts['on_create']) && is_callable($this->opts['on_create']))
-				{
-					$this->opts['on_create'](false);
-				}
+				self::$table_cache[] = $db->get_prefix() . $this->table_name;
 			}
 			return $result;
 		}
@@ -281,10 +277,8 @@ class Table
 	 * @param bool $safe_mode If true, return the query to be executed rather than execute it
 	 * @return mixed If safe mode is active, return a string containing the query to run
 	 */
-	public function update_to(Table $dest, bool $safe_mode = false)
+	public function update_to(DatabaseAdapter $db, Table $dest, bool $safe_mode = false)
 	{
-		global $smcFunc;
-
 		$dest_columns = $dest->get_columns();
 		$dest_indexes = $dest->get_indexes();
 
@@ -298,7 +292,7 @@ class Table
 			}
 			else
 			{
-				$change_column = $smcFunc['db_compare_column']($this->columns[$column_name], $column, $column_name);
+				$change_column = $db->compare_column($this->columns[$column_name], $column, $column_name);
 				if ($change_column)
 				{
 					$changes['change_columns'][$column_name] = $change_column;
@@ -306,7 +300,7 @@ class Table
 			}
 		}
 
-		$extra_indexes = $smcFunc['db_compare_indexes']($this->indexes, $dest_indexes);
+		$extra_indexes = $db->compare_indexes($this->indexes, $dest_indexes);
 		if (!empty($extra_indexes))
 		{
 			$changes['add_indexes'] = $extra_indexes;
@@ -315,7 +309,7 @@ class Table
 		$result = '';
 		if (!empty($changes))
 		{
-			$result = $smcFunc['db_change_table']('{db_prefix}' . $this->get_table_name(), $changes, $safe_mode);
+			$result = $db->change_table('{db_prefix}' . $this->get_table_name(), $changes, $safe_mode);
 		}
 
 		if ($safe_mode)

@@ -4,7 +4,7 @@
  * This task handles notifying users when a message gets reported.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -176,7 +176,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 				$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 
 				// And do the actual sending...
-				foreach ($recipients as $id_member => $email_address)
+				foreach ($recipients as $email_address)
 					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'report' . $this->_details['report_id'], $emaildata['is_html'], 2);
 			}
 		}

@@ -4,7 +4,7 @@
  * This file contains language strings for the manage-members area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -70,8 +70,6 @@ $txt['membergroup_no_images'] = 'There are no images in the Themes/default/image
 
 $txt['membergroups_max_messages'] = 'Max personal messages';
 $txt['membergroups_max_messages_note'] = '0 = unlimited';
-$txt['membergroups_tfa_force'] = 'Force Two-Factor-Authentication (2FA) for this membergroup';
-$txt['membergroups_tfa_force_note'] = 'Be sure to warn your users before you activate this!';
 $txt['membergroups_edit_save'] = 'Save';
 $txt['membergroups_delete'] = 'Delete';
 $txt['membergroups_confirm_delete'] = 'Are you sure you want to delete this group?';

@@ -4,7 +4,7 @@
  * This file is automatically called and handles all manner of scheduled things.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -18,15 +18,13 @@ use StoryBB\Task\Scheduler;
  */
 function AutoTask()
 {
-	global $time_start, $smcFunc, $modSettings;
+	global $smcFunc;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
 		ReduceMailQueue();
 	else
 	{
-		$task_string = '';
-
 		// Select the next task to do.
 		$request = $smcFunc['db']->query('', '
 			SELECT id_task, next_time, time_offset, time_regularity, time_unit, class

@@ -4,7 +4,7 @@
  * This class provides the backbone that all short-term cache APIs need to implement.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -198,11 +198,21 @@ abstract class API implements API_Interface
 	}
 
 	/**
+	 * Specify the version of the cache backend client (whatever connector talks to the backend)
+	 *
+	 * @return string Version number
+	 */
+	public function getClientVersion(): string
+	{
+		return '';
+	}
+
+	/**
 	 * Specify the version of the cache backend (notionally of whatever service is serving cache)
 	 *
 	 * @return string Version number
 	 */
-	public function getVersion(): string
+	public function getServerVersion(): string
 	{
 		return '';
 	}

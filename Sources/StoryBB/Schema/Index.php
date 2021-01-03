@@ -4,7 +4,7 @@
  * This class handles indexes.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -113,9 +113,9 @@ class Index
 	}
 
 	/**
-	 * Returns an array suitable for db_create_table to create the indexes on that table.
+	 * Returns an array suitable for DatabaseAdapter::create_table to create the indexes on that table.
 	 *
-	 * @return array Data for db_create_table
+	 * @return array Data for DatabaseAdapter::create_table
 	 */
 	public function create_data()
 	{

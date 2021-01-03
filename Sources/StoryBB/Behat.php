@@ -4,7 +4,7 @@
  * Manage and maintain the boards and categories of the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -73,13 +73,12 @@ class Behat extends RawMinkContext implements Context
 			}
 		}
 
-		global $txt, $databases, $incontext, $smcFunc, $sourcedir, $boarddir, $boardurl;
+		global $txt, $incontext, $smcFunc, $sourcedir, $boarddir, $boardurl;
 		global $db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_type;
 		require_once(__DIR__ . '/../../Settings.php');
 		$smcFunc = [];
 		define('STORYBB', 1);
 
-		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 		require_once($boarddir . '/Themes/default/languages/en-us/Install.php');
 		$txt['english_name'] = 'English';
 		$txt['native_name'] = 'English';
@@ -89,13 +88,12 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-		$smcFunc['db']->connect($options);
+		$smcFunc['db']->connect();
 
 		if (!$smcFunc['db']->connection_active())
 		{
 			die('Database could not be connected - error given: ' . $smcFunc['db']->error_message());
 		}
-		db_extend('packages');
 
 		// Make a database.
 		$smcFunc['db']->query('', "
@@ -220,10 +218,6 @@ class Behat extends RawMinkContext implements Context
 
 			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true]) === false)
 			{
-				// Use the appropriate function based on the DB type
-				if ($db_type == 'mysql' || $db_type == 'mysqli')
-					$db_errorno = 'mysqli_errno';
-
 				// Error 1050: Table already exists!
 				// @todo Needs to be made better!
 				if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db']->error_code() == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
@@ -307,8 +301,7 @@ class Behat extends RawMinkContext implements Context
 	 */
 	public function init_tables()
 	{
-		global $smcFunc, $db_prefix, $reservedTables;
-		$reservedTables = [];
+		global $smcFunc, $db_prefix;
 
 		$tables = $smcFunc['db']->list_tables();
 		$non_prefixed_tables = preg_grep('/^(?!behat_).*/i', $tables);

@@ -3,7 +3,7 @@
  * Send out a daily email of all subscribed topics.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -52,7 +52,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $txt, $scripturl, $sourcedir, $smcFunc, $modSettings, $context;
+		global $txt, $scripturl, $sourcedir, $smcFunc, $context;
 
 		// We'll want this...
 		require_once($sourcedir . '/Subs-Post.php');

@@ -4,7 +4,7 @@
  * Handles processing for a theme.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -75,16 +75,6 @@ class Theme
 	}
 
 	/**
-	 * Returns the user preferences from a theme
-	 *
-	 * @return array The user-preferences from the theme
-	 */
-	public static function get_user_options(): array
-	{
-		return self::parse_section('user_options');
-	}
-
-	/**
 	 * Returns a specific section of configuration, having fetched language strings etc.
 	 *
 	 * @param string $section The key from the configuration to be parsed
@@ -92,7 +82,7 @@ class Theme
 	 */
 	private static function parse_section(string $section): array
 	{
-		global $txt, $context;
+		global $txt;
 
 		$theme_json = self::get_theme_json();
 
@@ -153,7 +143,7 @@ class Theme
 	 */
 	public static function get_theme_list(): array
 	{
-		global $smcFunc, $settings;
+		global $smcFunc;
 		static $cache = null;
 
 		if ($cache !== null)

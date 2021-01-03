@@ -4,7 +4,7 @@
  * Parse content according to its bbc and smiley content.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -40,7 +40,7 @@ class Parser
 	 */
 	public static function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
 	{
-		global $smcFunc, $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
+		global $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
 		static $bbc_codes = [], $itemcodes = [], $no_autolink_tags = [];
 		static $disabled;
 
@@ -737,7 +737,7 @@ class Parser
 			];
 			if (!isset($disabled['li']) && !isset($disabled['list']))
 			{
-				foreach ($itemcodes as $c => $dummy)
+				foreach (array_keys($itemcodes) as $c)
 					$bbc_codes[$c] = [];
 			}
 
@@ -1657,7 +1657,6 @@ class Parser
 	 */
 	public static function parse_smileys(string &$message)
 	{
-		global $modSettings, $txt, $user_info, $context, $smcFunc;
 		static $smileyPregSearch = null, $smileyPregReplacements = [];
 
 		// No smiley set at all?!
@@ -1746,8 +1745,6 @@ class Parser
 	 */
 	public static function sanitizeMSCutPaste(string $string): string
 	{
-		global $context;
-
 		if (empty($string))
 			return $string;
 

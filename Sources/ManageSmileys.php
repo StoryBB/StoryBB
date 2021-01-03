@@ -4,7 +4,7 @@
  * This file takes care of all administration of smileys.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -18,7 +18,7 @@ use StoryBB\StringLibrary;
  */
 function ManageSmileys()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt;
 
 	isAllowedTo('manage_smileys');
 
@@ -41,8 +41,7 @@ function ManageSmileys()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['smileys_manage'],
-		'help' => 'smileys',
-		'description' => $txt['smiley_settings_explain'],
+		'help' => '',
 		'tabs' => [
 			'addsmiley' => [
 				'description' => $txt['smiley_addsmiley_explain'],
@@ -67,11 +66,10 @@ function ManageSmileys()
  */
 function AddSmiley()
 {
-	global $modSettings, $context, $txt, $boarddir, $smcFunc;
+	global $context;
 
 	$container = Container::instance();
 	$smiley_helper = $container->get('smileys');
-	$filesystem = $container->get('filesystem');
 
 	$context['sub_template'] = 'admin_smiley_add';
 
@@ -148,7 +146,7 @@ function AddSmiley()
  */
 function EditSmileys()
 {
-	global $modSettings, $context, $txt, $boarddir;
+	global $context, $txt;
 	global $smcFunc, $scripturl, $sourcedir;
 
 	$container = Container::instance();
@@ -499,7 +497,7 @@ function EditSmileyOrder()
 	$context['sub_template'] = 'admin_smiley_reorder';
 
 	$container = Container::instance();
-	$smileys_helper = $container->get('smileys');
+	$smiley_helper = $container->get('smileys');
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))

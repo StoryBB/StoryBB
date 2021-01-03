@@ -4,7 +4,7 @@
  * This file has the important job of taking care of help messages and the help center.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -25,14 +25,16 @@ function ShowHelp()
 
 	loadLanguage('Manual');
 
+	$container = \StoryBB\Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
 	$subActions = [
 		'index' => 'HelpIndex',
-		'smileys' => 'HelpSmileys',
 	];
 
 	$context['manual_sections'] = [
 		'smileys' => [
-			'link' => $scripturl . '?action=help;sa=smileys',
+			'link' => $urlgenerator->generate('help_smileys'),
 			'title' => $txt['manual_smileys'],
 			'desc' => $txt['manual_smileys_desc'],
 		],
@@ -146,40 +148,6 @@ function HelpPolicy()
 }
 
 /**
- * The smileys list in the Help section
- */
-function HelpSmileys()
-{
-	global $smcFunc, $scripturl, $context, $txt, $modSettings;
-
-	$container = Container::instance();
-	$smiley_helper = $container->get('smileys');
-
-	// Build the link tree.
-	$context['linktree'][] = [
-		'url' => $scripturl . '?action=help',
-		'name' => $txt['help'],
-	];
-	$context['linktree'][] = [
-		'url' => $scripturl . '?action=help;sa=smileys',
-		'name' => $txt['manual_smileys'],
-	];
-
-	$context['smileys'] = [];
-	foreach ($smiley_helper->get_smileys() as $smiley)
-	{
-		$context['smileys'][] = [
-			'text' => $smiley['description'],
-			'code' => explode("\n", $smiley['code']),
-			'image' => $smiley['url'],
-		];
-	}
-
-	$context['page_title'] = $txt['manual_smileys'];
-	$context['sub_template'] = 'help_smileys';
-}
-
-/**
  * Show some of the more detailed help to give the admin an idea...
  * It shows a popup for administrative or user help.
  * It uses the help parameter to decide what string to display and where to get
@@ -226,6 +194,6 @@ function ShowAdminHelp()
 		$context['help_text'] = $_GET['help'];
 
 	// Does this text contain a link that we should fill in?
-	if (preg_match('~%([0-9]+\$)?s\?~', $context['help_text'], $match))
+	if (preg_match('~%([0-9]+\$)?s\?~', $context['help_text']))
 		$context['help_text'] = sprintf($context['help_text'], $scripturl, $context['session_id'], $context['session_var']);
 }

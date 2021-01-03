@@ -4,7 +4,7 @@
  * This class handles the TLD regex processing for linking to URLs.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -36,7 +36,7 @@ class TLD
 	 */
 	public static function set_tld_regex($update = false)
 	{
-		global $sourcedir, $smcFunc, $modSettings;
+		global $modSettings;
 		static $done = false;
 
 		// If we don't need to do anything, don't
@@ -247,14 +247,12 @@ class TLD
 	 */
 	public static function build_regex($strings, $delim = null, $returnArray = false)
 	{
-		global $smcFunc;
-
-			if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
-			{
+		if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
+		{
 			// Save the current encoding just in case.
-				$current_encoding = mb_internal_encoding();
-				mb_internal_encoding($string_encoding);
-			}
+			$current_encoding = mb_internal_encoding();
+			mb_internal_encoding($string_encoding);
+		}
 
 		// This recursive function creates the index array from the strings
 		$add_string_to_index = function ($string, $index) use (&$add_string_to_index)

@@ -3,7 +3,7 @@
  * This file contains core of the code for Mentions
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -197,8 +197,6 @@ class Mentions
 	 */
 	protected static function getPossibleMentions($body)
 	{
-		global $smcFunc;
-
 		// preparse code does a few things which might mess with our parsing
 		$body = htmlspecialchars_decode(preg_replace('~<br\s*/?\>~', "\n", str_replace('&nbsp;', ' ', $body)), ENT_QUOTES);
 

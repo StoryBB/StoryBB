@@ -4,7 +4,7 @@
  * This file handles autocomplete cases for the Select2 widget.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -15,8 +15,6 @@
  */
 function Autocomplete()
 {
-	global $context;
-
 	// These are all registered types.
 	$searchTypes = StoryBB\Helper\Autocomplete::get_registered_types();
 

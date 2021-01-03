@@ -21,13 +21,14 @@
  * - please include any special license in a license.txt file.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\App;
+use StoryBB\Container;
 use StoryBB\StringLibrary;
 
 /**
@@ -73,7 +74,7 @@ function ThemesMain()
 	{
 		$context[$context['admin_menu_name']]['tab_data'] = [
 			'title' => $txt['themeadmin_title'],
-			'help' => 'themes',
+			'help' => '',
 			'description' => $txt['themeadmin_description'],
 			'tabs' => [
 				'admin' => [
@@ -546,7 +547,9 @@ function SetThemeOptions()
 	loadLanguage('PersonalMessage');
 
 	// Let the theme take care of the settings.
-	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
+	$container = Container::instance();
+	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
+	$context['theme_options'] = $prefs_manager->get_default_preferences();
 
 	$context['sub_template'] = 'admin_themes_options';
 	$context['page_title'] = $txt['theme_settings'];
@@ -622,7 +625,7 @@ function SetThemeOptions()
  */
 function SetThemeSettings()
 {
-	global $txt, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $context, $settings, $smcFunc;
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 		return ThemeAdmin();
@@ -734,7 +737,7 @@ function SetThemeSettings()
 	$context['sub_template'] = 'admin_themes_settings';
 	$context['page_title'] = $txt['theme_settings'];
 
-	foreach ($settings as $setting => $dummy)
+	foreach (array_keys($settings) as $setting)
 	{
 		if (!in_array($setting, ['theme_url', 'theme_dir', 'images_url', 'template_dirs']))
 			$settings[$setting] = htmlspecialchars__recursive($settings[$setting]);
@@ -798,7 +801,7 @@ function SetThemeSettings()
  */
 function RemoveTheme()
 {
-	global $context;
+	global $context, $txt;
 
 	checkSession('get');
 
@@ -892,7 +895,7 @@ function PickTheme()
 	if (isset($_POST['save']))
 	{
 		// Which theme?
-		foreach ($_POST['save'] as $k => $v)
+		foreach (array_keys($_POST['save']) as $k)
 			$_GET['th'] = (int) $k;
 
 		if (isset($_POST['vrt'][$k]))
@@ -1215,7 +1218,7 @@ function PickTheme()
 function ThemeInstall()
 {
 	global $sourcedir, $txt, $context, $boarddir, $boardurl;
-	global $themedir, $themeurl, $smcFunc;
+	global $themedir, $themeurl;
 
 	checkSession('request');
 	isAllowedTo('admin_forum');
@@ -1272,7 +1275,7 @@ function ThemeInstall()
  */
 function InstallCopy()
 {
-	global $themedir, $themeurl, $settings, $smcFunc, $context;
+	global $themedir, $themeurl, $settings, $context;
 
 	// There's gotta be something to work with.
 	if (!isset($_REQUEST['copy']) || empty($_REQUEST['copy']))

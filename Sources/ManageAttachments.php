@@ -5,7 +5,7 @@
  * @todo refactor as controller-model
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -51,7 +51,7 @@ function ManageAttachments()
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['attachments_avatars'],
-		'help' => 'manage_files',
+		'help' => '',
 		'description' => $txt['attachments_desc'],
 	];
 
@@ -244,7 +244,6 @@ function ManageAttachmentSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
 	$context['settings_title'] = $txt['attachment_manager_settings'];
-	$context['settings_title_help'] = 'attachment_manager_settings';
 	prepareDBSettingContext($config_vars);
 }
 
@@ -344,7 +343,7 @@ function ManageAvatarSettings($return_config = false)
 function BrowseFiles()
 {
 	global $context, $txt, $scripturl, $modSettings;
-	global $smcFunc, $sourcedir, $settings;
+	global $sourcedir, $settings;
 
 	// What type of thing are we doing?
 	$titles = [
@@ -402,7 +401,7 @@ function BrowseFiles()
 					'value' => $txt['attachment_name'],
 				],
 				'data' => [
-					'function' => function($rowData) use ($modSettings, $context, $scripturl, $smcFunc)
+					'function' => function($rowData) use ($modSettings, $context, $scripturl)
 					{
 						$link = '<a href="';
 
@@ -462,7 +461,7 @@ function BrowseFiles()
 					'value' => ($context['browse_type'] == 'avatars' || $context['browse_type'] == 'exports') ? $txt['attachment_manager_member'] : $txt['posted_by'],
 				],
 				'data' => [
-					'function' => function($rowData) use ($scripturl, $context, $smcFunc)
+					'function' => function($rowData) use ($scripturl, $context)
 					{
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData['id_member']))

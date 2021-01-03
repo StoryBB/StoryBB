@@ -11,8 +11,10 @@
 
 	<title>{{context.page_title_html_safe}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- Theme color; feel free to override -->
-	<meta name="theme-color" content="#557EA0">
+
+{{#if settings.meta_theme_color}}
+	<meta name="theme-color" content="{{settings.meta_theme_color}}">
+{{/if}}
 
 {{#each context.meta_tags}}
 	<meta {{#if name}}name="{{name}}"{{else}}property="{{property}}"{{/if}}  content="{{content}}">
@@ -22,7 +24,7 @@
 	{{#if context.canonical_url}}<link rel="canonical" href="{{context.canonical_url}}">{{/if}}
 	{{#if context.allow_search}}<link rel="search" href="{{scripturl}}?action=search">{{/if}}
 
-	<link rel="help" href="{{scripturl}}?action=help">
+	<link rel="help" href="{{buildlink 'help'}}">
 	<link rel="contents" href="{{scripturl}}">
 	<link rel="alternate" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
 	<link rel="alternate" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">

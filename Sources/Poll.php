@@ -5,13 +5,14 @@
  * editing polls. Note that that posting polls is done in Post.php.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Helper\Cookie;
 
 /**
  * Allow the user to vote.
@@ -205,9 +206,8 @@ function Vote()
 			]
 		);
 
-		require_once($sourcedir . '/Subs-Auth.php');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		sbb_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
+		$cookie_url = Cookie::url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
 	}
 
 	// Maybe let a social networking mod log this, or something?

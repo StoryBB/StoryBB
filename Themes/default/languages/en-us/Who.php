@@ -4,7 +4,7 @@
  * This file contains language strings for the who's online area.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -40,7 +40,6 @@ $txt['whoall_help'] = 'Viewing the <a href="{scripturl}?action=help">help page</
 $txt['whoall_helpadmin'] = 'Viewing a help popup.';
 $txt['whoall_pm'] = 'Viewing their messages.';
 $txt['whoall_login'] = 'Logging into the forum.';
-$txt['whoall_login2'] = 'Logging into the forum.';
 $txt['whoall_logout'] = 'Logging out of the forum.';
 $txt['whoall_markasread'] = 'Marking topics read or unread.';
 $txt['whoall_news'] = 'Viewing the news.';

@@ -5,7 +5,7 @@
  * settings and options.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2020 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
@@ -95,7 +95,7 @@ function ModifyFeatureSettings()
  */
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context;
 
 	$config_vars = [
 			// Basic stuff, titles, permissions...
@@ -322,7 +322,7 @@ function ModifyWarningSettings($return_config = false)
  */
 function ModifyAntispamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;
+	global $txt, $scripturl, $context, $modSettings, $sourcedir;
 
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');
@@ -1309,7 +1309,7 @@ function EditCustomProfiles()
 		$show_display = isset($_POST['display']) ? 1 : 0;
 		$show_mlist = isset($_POST['mlist']) ? 1 : 0;
 		$bbc = isset($_POST['bbc']) ? 1 : 0;
-		$show_profile = $_POST['profile_area'];
+		$show_profile = in_array($_POST['profile_area'], ['forumprofile', 'account']) ? $_POST['profile_area'] : 'forumprofile';
 		$active = isset($_POST['active']) ? 1 : 0;
 		$private = isset($_POST['private']) ? (int) $_POST['private'] : 0;
 		$can_search = isset($_POST['can_search']) ? 1 : 0;
@@ -1748,7 +1748,7 @@ function ModifyLogSettings($return_config = false)
  */
 function ModifyAlertsSettings()
 {
-	global $context, $modSettings, $sourcedir, $txt;
+	global $context, $sourcedir, $txt;
 
 	// Dummy settings for the template...
 	$context['user']['is_owner'] = false;
