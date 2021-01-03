@@ -275,8 +275,8 @@ function loadUserSettings()
 		// 1. RSS feeds and XMLHTTP requests don't count either.
 		// 2. If it was set within this session, no need to set it again.
 		// 3. New session, yet updated < five hours ago? Maybe cache can help.
-		// 4. We're still logging in or authenticating
-		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		// 4. We're still logging in or authenticating @todo reinstate?
+		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.

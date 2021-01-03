@@ -113,11 +113,13 @@ class Login implements Routable, MaintenanceAccessible
 
 		// @todo validate with integrations
 
+		// @todo spamProtection('login');
+
 		// Load the user.
 		// @todo Replace with User entity when we have a User entity.
 		$db = $this->db();
 		$request = $db->query('', '
-			SELECT passwd, id_member, id_group, is_activated, additional_groups, password_salt, passwd_flood, auth
+			SELECT passwd, id_member, id_group, is_activated, additional_groups, password_salt, passwd_flood, auth, member_name
 			FROM {db_prefix}members
 			WHERE ' . ($db->is_case_sensitive() ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
 			LIMIT 1',
@@ -158,6 +160,8 @@ class Login implements Routable, MaintenanceAccessible
 
 			return $redirect;
 		}
+
+		// @todo validatePasswordFlood
 
 		$this->login_errors[] = 'incorrect_password';
 		return $this->return_login_form($form);

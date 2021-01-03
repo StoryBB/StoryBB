@@ -145,18 +145,11 @@ function sbb_main()
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
-		// You can only login.... otherwise, you're getting the "maintenance mode" display.
-		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], ['login2', 'logout'])))
-		{
-			require_once($sourcedir . '/LogInOut.php');
-			return ($_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout');
-		}
-		// Don't even try it, sonny.
-		else
-			return 'InMaintenance';
+		// You're getting maintenance mode; neither login nor logout run through here.
+		return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login', 'login2', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
 		return 'KickGuest';
 
 	// Apply policy settings if appropriate.
@@ -227,7 +220,6 @@ function sbb_main()
 		'likes' => ['Likes.php', 'Likes::call#'],
 		'lock' => ['Topic.php', 'LockTopic'],
 		'lockvoting' => ['Poll.php', 'LockVoting'],
-		'login2' => ['LogInOut.php', 'Login2'],
 		'markasread' => ['Subs-Boards.php', 'MarkRead'],
 		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
 		'mlist' => ['Memberlist.php', 'Memberlist'],

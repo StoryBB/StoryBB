@@ -153,7 +153,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (!empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2'])))
+	if (!empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml'])))
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)

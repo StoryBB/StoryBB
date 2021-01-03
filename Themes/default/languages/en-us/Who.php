@@ -40,7 +40,6 @@ $txt['whoall_help'] = 'Viewing the <a href="{scripturl}?action=help">help page</
 $txt['whoall_helpadmin'] = 'Viewing a help popup.';
 $txt['whoall_pm'] = 'Viewing their messages.';
 $txt['whoall_login'] = 'Logging into the forum.';
-$txt['whoall_login2'] = 'Logging into the forum.';
 $txt['whoall_logout'] = 'Logging out of the forum.';
 $txt['whoall_markasread'] = 'Marking topics read or unread.';
 $txt['whoall_news'] = 'Viewing the news.';
