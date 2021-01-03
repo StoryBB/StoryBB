@@ -278,8 +278,10 @@ function validatePasswordFlood($id_member, $member_name, $password_flood_value =
 	// As this is only brute protection, we allow 5 attempts every 10 seconds.
 
 	// Destroy any session or cookie data about this member, as they validated wrong.
-	require_once($sourcedir . '/Subs-Auth.php');
-	setLoginCookie(-3600, 0);
+	$container = Container::instance();
+	$session = $container->get('session');
+	$session->invalidate(3600);
+	$session->clear('userid');
 
 	if (isset($_SESSION['login_' . $cookiename]))
 		unset($_SESSION['login_' . $cookiename]);
