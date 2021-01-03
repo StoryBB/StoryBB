@@ -50,7 +50,7 @@ class Smiley
 				ORDER BY s.id_smiley');
 			while ($row = $db->fetch_assoc($request))
 			{
-				$row['url'] = $urlgenerator->generate('smiley_with_timestamp', [
+				$row['url'] = $urlgenerator->generate('smiley', [
 					'id' => $row['id_smiley'],
 					'timestamp' => $row['timemodified'],
 				]);
