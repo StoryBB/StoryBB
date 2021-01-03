@@ -30,53 +30,8 @@ function Login2()
 	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
 	global $cookiename, $modSettings, $context, $sourcedir, $maintenance;
 
-	// Check to ensure we're forcing SSL for authentication
-	if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
-		fatal_lang_error('login_ssl_required');
-
-	// Load cookie authentication stuff.
-	require_once($sourcedir . '/Subs-Auth.php');
-
-	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
-	{
-		$context['from_ajax'] = true;
-		StoryBB\Template::remove_all_layers();
-	}
-
-	// Double check the cookie...
-	if (isset($_GET['sa']) && $_GET['sa'] == 'check')
-	{
-		// Strike!  You're outta there!
-		if ($_GET['member'] != $user_info['id'])
-			fatal_lang_error('login_cookie_error', false);
-
-		$user_info['can_mod'] = allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || (!empty($user_info['mod_cache']['ap']))));
-
-		// Some whitelisting for login_url...
-		if (empty($_SESSION['login_url']))
-			redirectexit(empty($user_settings['tfa_secret']) ? '' : 'action=logintfa');
-		elseif (!empty($_SESSION['login_url']) && (strpos($_SESSION['login_url'], 'http://') === false && strpos($_SESSION['login_url'], 'https://') === false))
-		{
-			unset ($_SESSION['login_url']);
-			redirectexit(empty($user_settings['tfa_secret']) ? '' : 'action=logintfa');
-		}
-		else
-		{
-			// Best not to clutter the session data too much...
-			$temp = $_SESSION['login_url'];
-			unset($_SESSION['login_url']);
-
-			redirectexit($temp);
-		}
-	}
-
-	// Beyond this point you are assumed to be a guest trying to login.
-	if (!$user_info['is_guest'])
-		redirectexit();
 
 	// Are you guessing with a script?
-	checkSession();
-	validateToken('login');
 	spamProtection('login');
 
 	// Set the login_url if it's not already set (but careful not to send us to an attachment).
@@ -87,17 +42,7 @@ function Login2()
 	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)
 		fatal_lang_error('login_threshold_fail', 'login');
 
-	// Set up for cookie expiry.
-	if (isset($_POST['cookieneverexp']))
-	{
-		$context['cookie_time'] = 189216000; // 6 years from now. 
-		$context['never_expire'] = true;
-	}
-	else
-	{
-		$context['cookie_time'] = 0; // Log out at end of session.
-		$context['never_expire'] = false;
-	}
+
 
 	loadLanguage('Login');
 	$context['sub_template'] = 'login_main';
@@ -114,33 +59,6 @@ function Login2()
 		'name' => $txt['login'],
 	];
 
-	// You forgot to type your username, dummy!
-	if (!isset($_POST['user']) || $_POST['user'] == '')
-	{
-		$context['login_errors'] = [$txt['need_username']];
-		return;
-	}
-
-	// Hmm... maybe 'admin' will login with no password. Uhh... NO!
-	if (!isset($_POST['passwrd']) || $_POST['passwrd'] == '')
-	{
-		$context['login_errors'] = [$txt['no_password']];
-		return;
-	}
-
-	// No funky symbols either.
-	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~(&#(\\d{1,7}|x[0-9a-fA-F]{1,6});)~', '', $_POST['user'])) != 0)
-	{
-		$context['login_errors'] = [$txt['error_invalid_characters_username']];
-		return;
-	}
-
-	// And if it's too long, trim it back.
-	if (StringLibrary::strlen($_POST['user']) > 80)
-	{
-		$_POST['user'] = StringLibrary::substr($_POST['user'], 0, 79);
-		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($_POST['user']));
-	}
 
 
 	// Are we using any sort of integration to validate the login?
@@ -153,7 +71,7 @@ function Login2()
 	// Load the data up!
 	$request = $smcFunc['db']->query('', '
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
-			passwd_flood, tfa_secret
+			passwd_flood
 		FROM {db_prefix}members
 		WHERE ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
 		LIMIT 1',
@@ -168,7 +86,7 @@ function Login2()
 
 		$request = $smcFunc['db']->query('', '
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
-			passwd_flood, tfa_secret
+			passwd_flood
 			FROM {db_prefix}members
 			WHERE email_address = {string:user_name}
 			LIMIT 1',
@@ -178,12 +96,6 @@ function Login2()
 		);
 	}
 
-	// Let them try again, it didn't match anything...
-	if ($smcFunc['db']->num_rows($request) == 0)
-	{
-		$context['login_errors'] = [$txt['username_no_exist']];
-		return;
-	}
 
 	$user_settings = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
@@ -293,7 +205,7 @@ function DoLogin()
 	$user_info['id'] = $user_settings['id_member'];
 
 	// Bam!  Cookie set.  A session too, just in case.
-	setLoginCookie($context['cookie_time'], $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
+
 
 	// Reset the login threshold.
 	if (isset($_SESSION['failed_login']))

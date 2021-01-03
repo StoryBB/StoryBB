@@ -922,7 +922,6 @@ function forum_time($use_user_offset = true, $timestamp = null)
  * Should be used whenever anything is posted.
  *
  * @param string $setLocation The URL to redirect them to
- * @param bool $refresh Whether to use a meta refresh instead
  * @param bool $permanent Whether to send a 301 Moved Permanently instead of a 302 Moved Temporarily
  */
 function redirectexit($setLocation = '', $permanent = false)
@@ -940,7 +939,7 @@ function redirectexit($setLocation = '', $permanent = false)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Maybe integrations want to change where we are heading?
-	call_integration_hook('integrate_redirect', [&$setLocation, &$refresh, &$permanent]);
+	call_integration_hook('integrate_redirect', [&$setLocation, &$permanent]);
 
 	// Set the header.
 	header('Location: ' . str_replace(' ', '%20', $setLocation), true, $permanent ? 301 : 302);
