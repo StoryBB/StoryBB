@@ -51,14 +51,14 @@ class Logout implements Routable
 				$response = new RedirectResponse('/');
 
 				$container = Container::instance();
- 				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
- 				if ($request->cookies->has($persist_cookie))
- 				{
- 					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
- 					$persistence->invalidate_persist_token($request->cookies->get($persist_cookie));
+				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
+				if ($request->cookies->has($persist_cookie))
+				{
+					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
+					$persistence->invalidate_persist_token($request->cookies->get($persist_cookie));
 
- 					$response->headers->clearCookie($persist_cookie);
- 				};
+					$response->headers->clearCookie($persist_cookie);
+				};
 
 				return $response;
 			}
