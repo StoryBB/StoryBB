@@ -33,7 +33,6 @@ $txt['lastActive'] = 'User online time threshold';
 $txt['trackStats'] = 'Track daily statistics';
 $txt['hitStats'] = 'Track daily page views (must have stats enabled)';
 $txt['debug_templates'] = 'Enable template debug mode';
-$txt['databaseSession_enable'] = 'Use database driven sessions';
 $txt['error_log_desc'] = 'The error log, if enabled, will log every error encountered by users using your forum. This can be an invaluable aid to identifying forum problems.';
 $txt['enableErrorLogging'] = 'Enable error logging';
 $txt['enableErrorQueryLogging'] = 'Include database query in the error log';

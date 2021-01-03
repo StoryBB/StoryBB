@@ -343,9 +343,6 @@ function ModifyCookieSettings($return_config = false)
 		['globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'],
 		['secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()],
 		['httponlyCookies', $txt['httponlyCookies'], 'db', 'check', false, 'httponlyCookies'],
-		'',
-		// Sessions
-		['databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'],
 	];
 
 	addInlineJavaScript('
