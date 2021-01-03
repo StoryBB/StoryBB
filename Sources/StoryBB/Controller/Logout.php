@@ -14,6 +14,7 @@ namespace StoryBB\Controller;
 
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
 use StoryBB\Routing\ErrorResponse;
@@ -22,7 +23,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class Logout implements Routable
+class Logout implements Routable, MaintenanceAccessible
 {
 	use RequestVars;
 	use Session;

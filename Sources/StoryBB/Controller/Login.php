@@ -15,6 +15,7 @@ namespace StoryBB\Controller;
 use Exception;
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class Login implements Routable
+class Login implements Routable, MaintenanceAccessible
 {
 	use Database;
 	use RequestVars;

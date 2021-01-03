@@ -14,6 +14,7 @@ namespace StoryBB;
 
 use ReflectionMethod;
 use StoryBB\Container;
+use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Controller\Unloggable;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Helper\Cookie;
@@ -100,6 +101,11 @@ class App
 	public static function in_maintenance()
 	{
 		return static::$global_config['maintenance'] > 0;
+	}
+
+	public static function in_hard_maintenance()
+	{
+		return stataic::$global_config['maintenance'] == 2;
 	}
 
 	public static function set_base_environment()
@@ -374,6 +380,12 @@ class App
 			}
 
 			$instance = $container->instantiate($class);
+
+			if (static::in_maintenance() && !$instance instanceof MaintenanceAccessible) {
+				// @todo remove this dirty hack when there is a real controller to replace InMaintenance
+				// @todo allow those with admin_forum to proceed
+				return false;
+			}
 
 			$result = $instance->$method(...$args);
 			// There's a bit of logging we're going to be doing here, potentially.
