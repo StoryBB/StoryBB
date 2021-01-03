@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
 use StoryBB\Helper\Verification;
@@ -506,9 +507,12 @@ function Register2()
 	{
 		(new Observable\Account\Activated($regOptions['username'], $memberID))->execute();
 
-		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
+		$container = Container::instance();
+		$session = $container->get('session');
+		$session->migrate(true, 3600);
+		$session->set('userid', $memberID);
 
-		redirectexit('action=login2;sa=check;member=' . $memberID);
+		redirectexit();
 	}
 }
 
