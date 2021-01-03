@@ -2042,10 +2042,8 @@ function setupMenuContext()
 		$current_action = 'search';
 	elseif ($context['current_action'] == 'theme')
 		$current_action = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? 'profile' : 'admin';
-	elseif ($context['current_action'] == 'register2')
-		$current_action = 'register';
-	elseif ($context['current_action'] == 'login2' || ($user_info['is_guest'] && $context['current_action'] == 'reminder'))
-		$current_action = 'login';
+	elseif ($context['current_action'] == 'signup2')
+		$current_action = 'signup';
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'moderate';
 
