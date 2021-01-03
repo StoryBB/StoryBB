@@ -32,10 +32,10 @@ class Smiley implements Servable, Unloggable
 
 	public static function register_route(RouteCollection $routes): void
 	{
-		$routes->add('smiley', new Route('/file/smiley/{id<\d+>}/{timestamp<\d+>?0}', ['_controller' => [static::class, 'smiley']]));
+		$routes->add('smiley', new Route('/file/smiley/{id<\d+>}/{timestamp<\d+>?0}', ['_controller' => [static::class, 'action_smiley']]));
 	}
 
-	public function smiley(int $id, int $timestamp): Response
+	public function action_smiley(int $id, int $timestamp): Response
 	{
 		try
 		{
