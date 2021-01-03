@@ -1488,7 +1488,7 @@ function DeleteInstall()
 
 		if ($container->get('sitesettings')->databaseSession_enable)
 		{
-			$session_storage = new NativeSessionStorage([], $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
+			$session_storage = new NativeSessionStorage(['cookie_httponly' => true], $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
 			$session = new Session($session_storage, new NamespacedAttributeBag);
 		}
 		else

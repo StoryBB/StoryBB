@@ -50,7 +50,6 @@ $txt['globalCookies'] = 'Use subdomain independent cookies';
 $txt['globalCookiesDomain'] = 'Main domain used for subdomain independent cookies';
 $txt['invalid_cookie_domain'] = 'The domain introduced seems to be invalid, please check it and save again.';
 $txt['secureCookies'] = 'Force cookies to be secure';
-$txt['httponlyCookies'] = 'Force cookies to be made accessible only through the HTTP protocol';
 $txt['securityDisable'] = 'Disable administration security';
 $txt['send_validation_onChange'] = 'Require reactivation after email change';
 $txt['timeBetweenPosts'] = 'Display "x days later" banner between posts after how many days';
