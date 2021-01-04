@@ -1847,13 +1847,6 @@ function setupMenuContext()
 				],
 				'is_last' => $context['right_to_left'],
 			],
-			'search' => [
-				'title' => $txt['search'],
-				'href' => $scripturl . '?action=search',
-				'show' => $context['allow_search'],
-				'sub_buttons' => [
-				],
-			],
 			'admin' => [
 				'badge' => 0,
 				'title' => $txt['admin'],
