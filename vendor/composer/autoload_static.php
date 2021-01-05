@@ -36,6 +36,7 @@ class ComposerStaticInit48715da6a47b890670bc489e3cbac325
             'Symfony\\Component\\HttpFoundation\\' => 33,
             'Symfony\\Component\\Console\\' => 26,
             'StoryBB\\' => 8,
+            'ScssPhp\\ScssPhp\\' => 16,
         ),
         'P' => 
         array (
@@ -111,6 +112,10 @@ class ComposerStaticInit48715da6a47b890670bc489e3cbac325
         'StoryBB\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Sources/StoryBB',
+        ),
+        'ScssPhp\\ScssPhp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/scssphp/scssphp/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
