@@ -93,8 +93,6 @@ $txt['character_name_title'] = 'Character Name';
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';
 
-$txt['position'] = 'Position';
-
 $txt['profile_of'] = 'View the profile of';
 $txt['total'] = 'Total';
 $txt['website'] = 'Website';
@@ -200,7 +198,6 @@ $txt['all'] = 'All';
 $txt['search_entireforum'] = 'Entire Forum';
 $txt['search_thisbrd'] = 'This board';
 $txt['search_thistopic'] = 'This topic';
-$txt['search_members'] = 'Members';
 
 $txt['back'] = 'Back';
 $txt['continue'] = 'Continue';
@@ -274,9 +271,6 @@ $txt['new'] = 'New';
 $txt['view_all_members'] = 'View All Members';
 $txt['view'] = 'View';
 
-$txt['viewing_members'] = 'Viewing Members %1$s to %2$s';
-$txt['of_total_members'] = 'of %1$s total members';
-
 $txt['forgot_your_password'] = 'Forgot your password?';
 
 $txt['date'] = 'Date';
@@ -286,7 +280,6 @@ $txt['check_new_messages'] = 'Check for new messages';
 $txt['to'] = 'To';
 
 $txt['board_topics'] = 'Topics';
-$txt['members_title'] = 'Members';
 $txt['members_list'] = 'Members List';
 $txt['new_posts'] = 'New Posts';
 $txt['old_posts'] = 'No New Posts';
@@ -477,7 +470,6 @@ $txt['offline'] = 'Offline';
 $txt['member_is_offline'] = '%1$s is offline';
 $txt['pm_online'] = 'Personal Message (Online)';
 $txt['pm_offline'] = 'Personal Message (Offline)';
-$txt['status'] = 'Status';
 
 $txt['go_up'] = 'Go up';
 $txt['go_down'] = 'Go down';
@@ -524,16 +516,6 @@ $txt['smtp_error'] = 'Ran into problems sending Mail. Error: ';
 $txt['mail_send_unable'] = 'Unable to send mail to the email address \'%1$s\'';
 
 $txt['mlist_search'] = 'Search For Members';
-$txt['mlist_search_again'] = 'Search again';
-$txt['mlist_search_filter'] = 'Search Options';
-$txt['mlist_search_email'] = 'Search by email address';
-$txt['mlist_search_messenger'] = 'Search by messenger nickname';
-$txt['mlist_search_group'] = 'Search by position';
-$txt['mlist_search_name'] = 'Search by name';
-$txt['mlist_search_website'] = 'Search by website';
-$txt['mlist_search_results'] = 'Search results for';
-$txt['mlist_search_by'] = 'Search by %1$s';
-$txt['mlist_menu_view'] = 'View the memberlist';
 
 $txt['attach_downloaded'] = 'downloaded %1$d times';
 $txt['attach_viewed'] = 'viewed %1$d times';

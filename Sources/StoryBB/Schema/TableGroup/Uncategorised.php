@@ -295,7 +295,6 @@ class Uncategorised
 					'mask' => Column::varchar(255),
 					'show_reg' => Column::tinyint(),
 					'show_display' => Column::tinyint(),
-					'show_mlist' => Column::tinyint(),
 					'show_profile' => Column::varchar(20)->default('forumprofile'),
 					'private' => Column::tinyint(),
 					'active' => Column::tinyint()->default(1),

@@ -272,7 +272,6 @@ function determineActions($urls, $preferred_prefix = false)
 		'maintain' => ['admin_forum'],
 		'manageattachments' => ['manage_attachments'],
 		'manageboards' => ['manage_boards'],
-		'mlist' => ['view_mlist'],
 		'moderate' => ['access_mod_center', 'moderate_forum', 'manage_membergroups'],
 		'optimizetables' => ['admin_forum'],
 		'repairboards' => ['admin_forum'],

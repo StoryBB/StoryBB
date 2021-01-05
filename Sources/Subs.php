@@ -1921,24 +1921,6 @@ function setupMenuContext()
 				'show' => $context['allow_memberlist'],
 				'sub_buttons' => [],
 			],
-			'mlist' => [
-				'title' => $txt['members_title'],
-				'href' => $scripturl . '?action=mlist',
-				'show' => $context['allow_memberlist'],
-				'sub_buttons' => [
-					'mlist_view' => [
-						'title' => $txt['mlist_menu_view'],
-						'href' => $scripturl . '?action=mlist',
-						'show' => true,
-					],
-					'mlist_search' => [
-						'title' => $txt['mlist_search'],
-						'href' => $scripturl . '?action=mlist;sa=search',
-						'show' => true,
-						'is_last' => true,
-					],
-				],
-			],
 			'signup' => [
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=signup',

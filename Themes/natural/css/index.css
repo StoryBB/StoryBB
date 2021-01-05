@@ -31,7 +31,6 @@ You can Ctrl+F to each section's identifier.
 27# Likes
 28# Mentions
 29# Statistics center
-30# Memberlist
 31# Search
 32# Help section
 33# Info Center
@@ -4193,38 +4192,6 @@ dl.stats dd span {
 #stats tr.windowbg td.stats_day {
 	padding: 0 3.5em;
 	text-align: left;
-}
-
-/* 30# Memberlist
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#mlist_search {
-	margin: auto;
-	max-width: 500px;
-}
-
-#mlist .selected {
-	white-space: nowrap;
-}
-
-#mlist .is_online {
-	width: 60px;
-}
-
-#mlist .email_address {
-	width: 25px;
-}
-
-#mlist .website_url {
-	width: 70px;
-}
-
-#mlist .skype {
-	width: 30px;
-}
-
-#mlist .posts {
-	width: 115px;
 }
 
 /* 31# Search
