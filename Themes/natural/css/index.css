@@ -1880,7 +1880,7 @@ img.icon.char_avatar {
 	background-position: -213px -31px;
 }
 
-.main_icons.starters::before, .main_icons.people::before, .main_icons.membergroups::before, .main_icons.mlist::before {
+.main_icons.starters::before, .main_icons.people::before, .main_icons.membergroups::before, .main_icons.characters::before {
 	background-position: -239px -31px;
 }
 

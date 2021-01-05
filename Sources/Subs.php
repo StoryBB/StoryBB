@@ -1916,7 +1916,7 @@ function setupMenuContext()
 			],
 			'characters' => [
 				'title' => $txt['chars_menu_title'],
-				'icon' => 'mlist',
+				'icon' => 'characters',
 				'href' => $scripturl . '?action=characters',
 				'show' => $context['allow_memberlist'],
 				'sub_buttons' => [],
