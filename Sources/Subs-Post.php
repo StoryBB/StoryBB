@@ -122,10 +122,6 @@ function preparsecode(&$message, $previewing = false)
 		}
 	}
 
-	// Change the color specific tags to [color=the color].
-	$message = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $message); // First do the opening tags.
-	$message = preg_replace('~\[/(black|blue|green|red|white)\]~', '[/color]', $message); // And now do the closing tags
-
 	// Make sure all tags are lowercase.
 	$message = preg_replace_callback('~\[([/]?)(list|li|table|tr|td)((\s[^\]]+)*)\]~i', function($m)
 	{
