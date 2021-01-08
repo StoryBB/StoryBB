@@ -96,12 +96,7 @@ h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 
 /* Styles for the standard dropdown menus.
 ------------------------------------------------------- */
-#main_menu {
-	float: right;
-}
-#menu_nav {
-	padding: 0;
-}
+
 .dropmenu {
 	float: right;
 	padding: 0;

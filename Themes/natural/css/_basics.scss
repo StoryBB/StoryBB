@@ -1,9 +1,9 @@
 /** Basics. */
 
 body, html {
-	background: $background-color;
+	background: $default-background;
 	font: $default-font;
-	color: #4d4d4d;
+	color: $default-color;
 	min-height: 100vh;
 }
 
@@ -31,7 +31,7 @@ body, #wrapper {
 }
 
 a {
-	color: #346;
+	color: $link-color;
 	text-decoration: none;
 }
 

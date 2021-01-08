@@ -5,10 +5,24 @@
 @import "natural/_common_utils.scss";
 @import "natural/_forms.scss";
 
+/* Common theme elements */
+@import "natural/_sidebar_nav.scss";
+@import "natural/_icons.scss";
+@import "natural/_print.scss";
+
+@import "natural/_bbcode.scss";
+
+/* Components */
 @import "natural/_autocomplete.scss";
+@import "natural/_progressbar.scss";
+@import "natural/_footer.scss";
+@import "natural/_blocks.scss";
+
+/* Specific functions and pages */
 @import "natural/_contactform.scss";
 @import "natural/_search.scss";
 @import "natural/_help.scss";
+@import "natural/_whosonline.scss";
 
 @import "natural/original.scss";
 @import "natural/adaptive.css";

@@ -226,18 +226,10 @@ $txt['female'] = 'Female';
 
 $txt['error_invalid_characters_username'] = 'Invalid character used in Username.';
 
-$txt['welcome_guest'] = 'Welcome, <strong>%1$s</strong>. Please <a href="%3$s" onclick="%4$s">login</a>.';
-
-$txt['welcome_guest_register'] = 'Welcome to <strong>%2$s</strong>. Please <a href="%3$s" onclick="%4$s">login</a> or <a href="%5$s">sign up</a>.';
-
-$txt['welcome_guest_activate'] = '<br>Did you miss your <a href="{scripturl}?action=activate">activation email</a>?';
 // @todo the following to sprintf
 $txt['hello_member'] = 'Hey,';
 // Use numeric entities in the below string.
 $txt['hello_guest'] = 'Welcome,';
-$txt['welmsg_hey'] = 'Hey,';
-$txt['welmsg_welcome'] = 'Welcome,';
-$txt['welmsg_please'] = 'Please';
 $txt['select_destination'] = 'Please select a destination';
 
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
@@ -817,7 +809,6 @@ $txt['notify_board_3_desc'] = 'You will receive both alerts and e-mails for this
 // Mobile Actions
 $txt['mobile_action'] = 'User actions';
 $txt['mobile_moderation'] = 'Moderation';
-$txt['mobile_user_menu'] = 'Menu';
 
 $txt['characters_none'] = 'No characters found.';
 $txt['char_no_group'] = 'Just starting out...';

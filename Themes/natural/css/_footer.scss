@@ -1,0 +1,49 @@
+/* The footer with copyright links etc. */
+footer {
+	margin-top: auto;
+	padding: 10px calc(5% + 10px);
+	background: #3e5a78;
+	border-top: 3px solid #b2b6bd;
+	font-size: 0.9em;
+	color: #fff;
+	text-align: right;
+}
+
+footer a {
+	color: inherit;
+}
+
+footer ul {
+	padding: 0 5px;
+}
+
+footer li {
+	display: inline-block;
+}
+
+footer li + li:not(.copyright)::before {
+	content: " \2022 ";
+	margin: 0 2px;
+}
+
+footer .copyright {
+	float: left;
+}
+
+/* Cookie policy */
+#cookie_footer {
+	position: fixed;
+	bottom: 0;
+	background: #e2e9f3;
+	width: 100%;
+	text-align: center;
+	box-shadow: 0px 5px 12px 3px rgba(0, 0, 0, 0.75);
+}
+
+#cookie_footer .cookie_content {
+	padding: 10px 8%;
+}
+
+#cookie_footer .cookie_buttons a {
+	margin: 10px;
+}

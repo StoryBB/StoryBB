@@ -85,23 +85,6 @@
 				</li>
 				{{/if}}
 			</ul>
-<!--
-	{{#if maintenance}}
-			<ul class="floatleft welcome">
-				<li>{{login_helper txt.welcome_guest txt.guest_title context.forum_name_html_safe scripturl txt.login}}</li>
-			</ul>
-	{{else}}
-			<ul class="floatleft welcome">
-				<li>
-		{{#if context.can_register}}
-					{{login_helper txt.welcome_guest_register txt.guest_title context.forum_name_html_safe scripturl txt.login}}
-		{{else}}
-					{{login_helper txt.welcome_guest txt.guest_title context.forum_name_html_safe scripturl txt.login}}
-		{{/if}}
-				</li>
-			</ul>
-	{{/if}}
--->
 {{/if}}
 		
 {{#if modSettings.userLanguage}}
@@ -164,9 +147,6 @@
 		<div id="content_wrapper">
 			<div id="upper_section">
 				<div id="inner_section">
-					<div id="main_menu">
-						{{>menu}}
-					</div>
 					{{> linktree}}
 				</div>
 			</div>

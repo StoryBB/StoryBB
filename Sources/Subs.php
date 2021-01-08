@@ -1291,11 +1291,6 @@ function setupThemeContext($forceload = false)
 		$context['user']['unread_messages'] = 0;
 		$context['user']['avatar'] = [];
 		$context['user']['total_time_logged_in'] = ['days' => 0, 'hours' => 0, 'minutes' => 0];
-
-		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
-		{
-			$txt['welcome_guest_register'] .= str_replace('{scripturl}', $scripturl, $txt['welcome_guest_activate']);
-		}
 	}
 
 	// Setup the main menu items.
@@ -1872,6 +1867,10 @@ function setupMenuContext()
 				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
 				'icon' => 'fas fa-bookmark fa-fw',
 			],
+			'characters' => [
+				'url' => $scripturl . '?action=characters',
+				'icon' => 'fas fa-user-circle fa-fw',
+			],
 			'manage' => [
 				'url' => $scripturl,
 				'icon' => 'fas fa-tools fa-fw',
@@ -1950,6 +1949,14 @@ function setupMenuContext()
 				'icon' => 'fas fa-sign-out-alt fa-fw',
 			],
 		];
+
+		foreach (get_main_menu_groups() as $id => $group_name)
+		{
+			$context['sidebar']['characters']['subitems']['group' . $id] = [
+				'title' => $group_name,
+				'url' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
+			];
+		}
 	}
 	else
 	{
@@ -2016,35 +2023,6 @@ function setupMenuContext()
 			'sub_buttons' => [],
 		],
 	];
-
-	foreach (get_main_menu_groups() as $id => $group_name)
-	{
-		$buttons['characters']['sub_buttons']['group' . $id] = [
-			'title' => $group_name,
-			'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
-			'show' => true,
-		];
-	}
-
-	// Now we put the buttons in the context so the theme can use them.
-	$menu_buttons = [];
-	foreach ($buttons as $act => $button)
-		if (!empty($button['show']))
-		{
-			$button['active_button'] = false;
-
-			// Go through the sub buttons if there are any.
-			if (!empty($button['sub_buttons']))
-				foreach ($button['sub_buttons'] as $key => $subbutton)
-				{
-					if (empty($subbutton['show']))
-						unset($button['sub_buttons'][$key]);
-				}
-
-			$menu_buttons[$act] = $button;
-		}
-
-	$context['menu_buttons'] = $menu_buttons;
 
 	$context['footer_links'] = Policy::get_footer_policies();
 }
