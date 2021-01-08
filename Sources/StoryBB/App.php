@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Route;
 
 class App
 {
-	const SOFTWARE_YEAR = 2020;
+	const SOFTWARE_YEAR = 2021;
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
 	protected static $global_config = [];
