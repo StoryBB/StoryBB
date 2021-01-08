@@ -1881,7 +1881,6 @@ function setupMenuContext()
 						'title' => $txt['admin'],
 						'url' => $scripturl . '?action=admin',
 						'visible' => $context['allow_admin'],
-						'amt' => 1,
 					],
 					'errorlog' => [
 						'title' => $txt['errlog'],
@@ -1916,7 +1915,6 @@ function setupMenuContext()
 						'title' => $txt['moderate'],
 						'url' => $scripturl . '?action=moderate',
 						'visible' => $context['allow_moderation_center'],
-						'amt' => 2,
 					],
 					'modlog' => [
 						'title' => $txt['modlog_view'],
