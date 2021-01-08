@@ -230,22 +230,6 @@ function loadUserSettings()
 	$user->load_user($id_member);
 	if ($id_member != 0)
 	{
-		$request = $db->query('', '
-			SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
-				chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
-			FROM {db_prefix}members AS mem
-				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
-				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-			WHERE mem.id_member = {int:id_member}
-			LIMIT 1',
-			[
-				'id_member' => $id_member,
-			]
-		);
-		$user_settings = $db->fetch_assoc($request);
-		$db->free_result($request);
-
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
