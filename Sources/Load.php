@@ -1934,6 +1934,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// And of course, let's load the default CSS file.
 	loadCSSFile('index.css', ['minimize' => true], 'sbb_index');
+	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['minimize' => false, 'validate' => false], 'font-awesome');
 
 	if (!empty($settings['additional_files']['css']))
 	{
