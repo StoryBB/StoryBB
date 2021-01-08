@@ -1,0 +1,64 @@
+/* The adaptive css. This deals with any media queries for different screen and window sizes */
+
+/* Wide screens
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@media screen and (min-width: 1800px) {
+	
+}
+
+/* Mobile devices, windowed browsers and the like
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@media screen and (max-width: 1200px) {
+	
+	#content_wrapper {
+		width: 95%;
+	}
+
+	header {
+		margin: 0 2.5%;
+	}
+
+	footer, #top_section {
+		padding-left: calc(2.5% + 10px);
+		padding-right: calc(2.5% + 10px);
+	}
+}
+
+@media screen and (max-width: 1000px) {
+
+	h1.forumtitle {
+		font-size: 2.5em;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	
+}
+
+@media screen and (max-width: 700px) {
+}
+@media screen and (max-width: 600px) {
+	#content_wrapper {
+		width: 100%;
+		border-radius: 0;
+	}
+
+	header {
+		margin: 0;
+	}
+
+	footer, #top_section {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	
+}
+
+@media screen and (max-width: 400px) {
+	
+}

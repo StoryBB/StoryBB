@@ -1250,7 +1250,6 @@ function setupThemeContext($forceload = false)
 	$context['page_blocks'] = \StoryBB\Block\Manager::load_blocks();
 
 	$context['in_maintenance'] = !empty($maintenance);
-	$context['current_time'] = timeformat(time(), false);
 	$context['current_action'] = isset($_GET['action']) ? StringLibrary::escape($_GET['action']) : '';
 
 	if (!$user_info['is_guest'])
@@ -1817,6 +1816,11 @@ function setupMenuContext()
 	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup");
 	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'");
 	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup");', true);
+		if ($context['allow_search'])
+		{
+			addInlineJavaScript('
+	user_menus.add("search", "", true);', true);
+		}
 		if ($context['allow_pm'])
 			addInlineJavaScript('
 	user_menus.add("pm", "' . $scripturl . '?action=pm;sa=popup");', true);
@@ -1833,297 +1837,216 @@ function setupMenuContext()
 	var alert_timeout = ' . $timeout . ';');
 			loadJavaScriptFile('alerts.js', [], 'sbb_alerts');
 		}
+
+		if ($context['allow_admin'] || $context['allow_moderation_center'])
+		{
+			addInlineJavaScript('
+	user_menus.add("manage", "", true);', true);
+		}
 	}
 
-	// All the buttons we can possible want and then some, try pulling the final list of buttons from cache first.
-	if (($menu_buttons = cache_get_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
+	$context['sidebar'] = [
+		'home' => [
+			'url' => $scripturl,
+			'icon' => 'fas fa-home fa-fw',
+		],
+	];
+
+	if ($context['user']['is_logged'])
 	{
-		$buttons = [
-			'home' => [
-				'title' => $txt['home'],
-				'href' => $scripturl,
-				'show' => true,
-				'sub_buttons' => [
-				],
-				'is_last' => $context['right_to_left'],
+		$context['sidebar'] += [
+			'alerts' => [
+				'url' => $scripturl . '?action=profile;area=showalerts;u=' . $context['user']['id'],
+				'icon' => 'far fa-bell fa-fw',
+				'popupmenu' => true,
+				'amt' => $context['user']['alerts'],
 			],
-			'search' => [
-				'title' => $txt['search'],
-				'href' => $scripturl . '?action=search',
-				'show' => $context['allow_search'],
-				'sub_buttons' => [
-				],
+			'pm' => [
+				'url' => $scripturl . '?action=pm',
+				'icon' => 'far fa-comments fa-fw',
+				'popupmenu' => true,
+				'amt' => $context['user']['unread_messages'],
+				'visible' => $context['allow_pm'],
 			],
-			'admin' => [
-				'badge' => 0,
-				'title' => $txt['admin'],
-				'href' => $scripturl . '?action=admin',
-				'show' => $context['allow_admin'],
-				'sub_buttons' => [
-					'featuresettings' => [
-						'title' => $txt['modSettings_title'],
-						'href' => $scripturl . '?action=admin;area=featuresettings',
-						'show' => allowedTo('admin_forum'),
+			'bookmark' => [
+				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
+				'icon' => 'fas fa-bookmark fa-fw',
+			],
+			'manage' => [
+				'url' => $scripturl,
+				'icon' => 'fas fa-tools fa-fw',
+				'visible' => $context['allow_admin'] || $context['can_mod'],
+				'subitems' => [
+					'admin' => [
+						'title' => $txt['admin'],
+						'url' => $scripturl . '?action=admin',
+						'visible' => $context['allow_admin'],
+						'amt' => 1,
 					],
 					'errorlog' => [
 						'title' => $txt['errlog'],
-						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
-						'show' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
-					],
-					'permissions' => [
-						'title' => $txt['edit_permissions'],
-						'href' => $scripturl . '?action=admin;area=permissions',
-						'show' => allowedTo('manage_permissions'),
+						'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
+						'visible' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
+						'amt_callback' => function() use ($smcFunc) {
+							return $smcFunc['db']->count('id_error', '{db_prefix}log_errors');
+						}
 					],
 					'memberapprove' => [
 						'title' => $txt['approve_members_waiting'],
-						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
-						'show' => !empty($context['unapproved_members']),
+						'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
+						'visible' => !empty($context['unapproved_members']),
+						'amt' => $context['unapproved_members'],
 					],
 					'contactform' => [
 						'title' => $txt['contact_us'],
-						'href' => $scripturl . '?action=admin;area=contactform',
-						'show' => allowedTo('admin_forum'),
-						'is_last' => true,
+						'url' => $scripturl . '?action=admin;area=contactform',
+						'visible' => allowedTo('admin_forum'),
+						'amt_callback' => function() use ($smcFunc) {
+							$query = $smcFunc['db']->query('', '
+								SELECT COUNT(id_message)
+								FROM {db_prefix}contact_form
+								WHERE status = 0');
+							list($contactform) = $smcFunc['db']->fetch_row($query);
+							$smcFunc['db']->free_result($query);
+
+							return $contactform;
+						}
 					],
-				],
-			],
-			'moderate' => [
-				'title' => $txt['moderate'],
-				'href' => $scripturl . '?action=moderate',
-				'show' => $context['allow_moderation_center'],
-				'sub_buttons' => [
+					'moderate' => [
+						'title' => $txt['moderate'],
+						'url' => $scripturl . '?action=moderate',
+						'visible' => $context['allow_moderation_center'],
+						'amt' => 2,
+					],
 					'modlog' => [
 						'title' => $txt['modlog_view'],
-						'href' => $scripturl . '?action=moderate;area=modlog',
-						'show' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'url' => $scripturl . '?action=moderate;area=modlog',
+						'visible' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
 					],
 					'poststopics' => [
 						'title' => $txt['mc_unapproved_poststopics'],
-						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
-						'show' => !empty($user_info['mod_cache']['ap']),
+						'url' => $scripturl . '?action=moderate;area=postmod;sa=posts',
+						'visible' => !empty($user_info['mod_cache']['ap']),
 					],
 					'attachments' => [
 						'title' => $txt['mc_unapproved_attachments'],
-						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
-						'show' => !empty($user_info['mod_cache']['ap']),
+						'url' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
+						'visible' => !empty($user_info['mod_cache']['ap']),
 					],
 					'reports' => [
 						'title' => $txt['mc_reported_posts'],
-						'href' => $scripturl . '?action=moderate;area=reportedposts',
-						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'url' => $scripturl . '?action=moderate;area=reportedposts',
+						'visible' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'amt' => $context['open_mod_reports'],
 					],
 					'reported_members' => [
 						'title' => $txt['mc_reported_members'],
-						'href' => $scripturl . '?action=moderate;area=reportedmembers',
-						'show' => allowedTo('moderate_forum'),
-						'is_last' => true,
+						'url' => $scripturl . '?action=moderate;area=reportedmembers',
+						'visible' => allowedTo('moderate_forum'),
+						'amt' => $context['open_member_reports'],
 					]
 				],
 			],
-			'characters' => [
-				'title' => $txt['chars_menu_title'],
-				'icon' => 'mlist',
-				'href' => $scripturl . '?action=characters',
-				'show' => $context['allow_memberlist'],
-				'sub_buttons' => [],
-			],
-			'mlist' => [
-				'title' => $txt['members_title'],
-				'href' => $scripturl . '?action=mlist',
-				'show' => $context['allow_memberlist'],
-				'sub_buttons' => [
-					'mlist_view' => [
-						'title' => $txt['mlist_menu_view'],
-						'href' => $scripturl . '?action=mlist',
-						'show' => true,
-					],
-					'mlist_search' => [
-						'title' => $txt['mlist_search'],
-						'href' => $scripturl . '?action=mlist;sa=search',
-						'show' => true,
-						'is_last' => true,
-					],
-				],
-			],
-			'signup' => [
-				'title' => $txt['register'],
-				'href' => $scripturl . '?action=signup',
-				'show' => $user_info['is_guest'] && $context['can_register'],
-				'sub_buttons' => [
-				],
-				'is_last' => !$context['right_to_left'],
-			],
 			'logout' => [
-				'title' => $txt['logout'],
-				'href' => $urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]),
-				'show' => !$user_info['is_guest'],
-				'sub_buttons' => [
-				],
-				'is_last' => !$context['right_to_left'],
+				'url' => $urlgenerator->generate('logout', ['t' => $context['session_id']]),
+				'icon' => 'fas fa-sign-out-alt fa-fw',
 			],
 		];
+	}
+	else
+	{
+		$context['sidebar'] += [
+			'login' => [
+				'url' => $urlgenerator->generate('login'),
+				'icon' => 'fas fa-sign-in-alt fa-fw',
+				'popup' => $txt['login'],
+			],
+			'register' => [
+				'url' => $scripturl . '?action=signup',
+				'icon' => 'fas fa-user-plus fa-fw',
+				'visible' => $context['can_register'],
+			],
+		];
+	}
 
-		foreach (get_main_menu_groups() as $id => $group_name)
+	foreach ($context['sidebar'] as $key => $item)
+	{
+		// Remove the top level items that aren't visible.
+		if (isset($item['visible']) && !$item['visible'])
 		{
-			$buttons['characters']['sub_buttons']['group' . $id] = [
-				'title' => $group_name,
-				'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
-				'show' => true,
-			];
+			unset ($context['sidebar'][$key]);
+			continue;
 		}
 
-		// Allow editing menu buttons easily.
-		call_integration_hook('integrate_menu_buttons', [&$buttons]);
-
-		// Now we put the buttons in the context so the theme can use them.
-		$menu_buttons = [];
-		foreach ($buttons as $act => $button)
-			if (!empty($button['show']))
+		// If it has sub items, iterate over them.
+		if (isset($item['subitems']))
+		{
+			foreach ($item['subitems'] as $subkey => $subitem)
 			{
-				$button['active_button'] = false;
-
-				// This button needs some action.
-				if (isset($button['action_hook']))
-					$needs_action_hook = true;
-
-				// Make sure the last button truly is the last button.
-				if (!empty($button['is_last']))
+				// Remove subitems that aren't visible.
+				if (isset($subitem['visible']) && !$subitem['visible'])
 				{
-					if (isset($last_button))
-						unset($menu_buttons[$last_button]['is_last']);
-					$last_button = $act;
+					unset ($context['sidebar'][$key]['subitems'][$subkey]);
+					continue;
 				}
 
-				// Go through the sub buttons if there are any.
-				if (!empty($button['sub_buttons']))
-					foreach ($button['sub_buttons'] as $key => $subbutton)
-					{
-						if (empty($subbutton['show']))
-							unset($button['sub_buttons'][$key]);
+				// If this has an amount that isn't trivially calculable, go calculate it.
+				if (!empty($subitem['amt_callback']))
+				{
+					$subitem['amt'] = $subitem['amt_callback']();
+				}
 
-						// 2nd level sub buttons next...
-						if (!empty($subbutton['sub_buttons']))
-						{
-							foreach ($subbutton['sub_buttons'] as $key2 => $sub_button2)
-							{
-								if (empty($sub_button2['show']))
-									unset($button['sub_buttons'][$key]['sub_buttons'][$key2]);
-							}
-						}
+				// Take the counts of subitems and total them up for the parent.
+				if (!empty($subitem['amt']) && is_numeric($subitem['amt']))
+				{
+					if (!isset($context['sidebar'][$key]['amt']))
+					{
+						$context['sidebar'][$key]['amt'] = 0;
 					}
 
-				// Does this button have its own icon?
-				if (isset($button['icon']) && file_exists($settings['theme_dir'] . '/images/' . $button['icon']))
-					$button['icon'] = '<img src="' . $settings['images_url'] . '/' . $button['icon'] . '" alt="">';
-				elseif (isset($button['icon']) && file_exists($settings['default_theme_dir'] . '/images/' . $button['icon']))
-					$button['icon'] = '<img src="' . $settings['default_images_url'] . '/' . $button['icon'] . '" alt="">';
-				elseif (isset($button['icon']))
-					$button['icon'] = '<span class="main_icons ' . $button['icon'] . '"></span>';
-				else
-					$button['icon'] = '<span class="main_icons ' . $act . '"></span>';
-
-				$menu_buttons[$act] = $button;
+					$context['sidebar'][$key]['amt'] += $subitem['amt'];
+				}
 			}
-
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-			cache_put_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_buttons, $cacheTime);
+		}
 	}
+
+	$buttons = [
+		'characters' => [
+			'title' => $txt['chars_menu_title'],
+			'href' => $scripturl . '?action=characters',
+			'show' => $context['allow_memberlist'],
+			'sub_buttons' => [],
+		],
+	];
+
+	foreach (get_main_menu_groups() as $id => $group_name)
+	{
+		$buttons['characters']['sub_buttons']['group' . $id] = [
+			'title' => $group_name,
+			'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
+			'show' => true,
+		];
+	}
+
+	// Now we put the buttons in the context so the theme can use them.
+	$menu_buttons = [];
+	foreach ($buttons as $act => $button)
+		if (!empty($button['show']))
+		{
+			$button['active_button'] = false;
+
+			// Go through the sub buttons if there are any.
+			if (!empty($button['sub_buttons']))
+				foreach ($button['sub_buttons'] as $key => $subbutton)
+				{
+					if (empty($subbutton['show']))
+						unset($button['sub_buttons'][$key]);
+				}
+
+			$menu_buttons[$act] = $button;
+		}
 
 	$context['menu_buttons'] = $menu_buttons;
-
-	// Figure out which action we are doing so we can set the active tab.
-	// Default to home.
-	$current_action = 'home';
-
-	if (isset($context['menu_buttons'][$context['current_action']]))
-		$current_action = $context['current_action'];
-	elseif ($context['current_action'] == 'search2')
-		$current_action = 'search';
-	elseif ($context['current_action'] == 'theme')
-		$current_action = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? 'profile' : 'admin';
-	elseif ($context['current_action'] == 'signup2')
-		$current_action = 'signup';
-	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
-		$current_action = 'moderate';
-
-	// There are certain exceptions to the above where we don't want anything on the menu highlighted.
-	if ($context['current_action'] == 'profile' && !empty($context['user']['is_owner']))
-	{
-		$current_action = !empty($_GET['area']) && $_GET['area'] == 'showalerts' ? 'self_alerts' : 'self_profile';
-		$context[$current_action] = true;
-	}
-	elseif ($context['current_action'] == 'pm')
-	{
-		$current_action = 'self_pm';
-		$context['self_pm'] = true;
-	}
-
-	$total_mod_reports = 0;
-
-	if (!empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1' && !empty($context['open_mod_reports']))
-	{
-		$total_mod_reports = $context['open_mod_reports'];
-		$context['menu_buttons']['moderate']['sub_buttons']['reports']['badge'] = $context['open_mod_reports'];
-	}
-
-	// Show how many errors there are
-	if (allowedTo('admin_forum'))
-	{
-		$query = $smcFunc['db']->query('', '
-			SELECT COUNT(id_error)
-			FROM {db_prefix}log_errors',
-			[]
-		);
-
-		list($errors) = $smcFunc['db']->fetch_row($query);
-		$smcFunc['db']->free_result($query);
-
-		if ($errors)
-		{
-			$context['menu_buttons']['admin']['badge'] += $errors;
-			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
-		}
-
-		$query = $smcFunc['db']->query('', '
-			SELECT COUNT(id_message)
-			FROM {db_prefix}contact_form
-			WHERE status = 0');
-		list($contactform) = $smcFunc['db']->fetch_row($query);
-		$smcFunc['db']->free_result($query);
-
-		if ($contactform)
-		{
-			$context['menu_buttons']['admin']['badge'] += $contactform;
-			$context['menu_buttons']['admin']['sub_buttons']['contactform']['badge'] = $contactform;
-		}
-	}
-
-	// Show number of reported members
-	if (!empty($context['open_member_reports']) && allowedTo('moderate_forum'))
-	{
-		$total_mod_reports += $context['open_member_reports'];
-		$context['menu_buttons']['moderate']['sub_buttons']['reported_members']['badge'] = $context['open_member_reports'];
-	}
-
-	if (!empty($context['unapproved_members']))
-	{
-		$context['menu_buttons']['admin']['sub_buttons']['memberapprove']['badge'] = $context['unapproved_members'];
-		$context['menu_buttons']['admin']['badge'] += $context['unapproved_members'];
-	}
-
-	// Do we have any open reports?
-	if ($total_mod_reports > 0)
-	{
-		$context['menu_buttons']['moderate']['badge'] = $total_mod_reports;
-	}
-
-	// Not all actions are simple.
-	if (!empty($needs_action_hook))
-		call_integration_hook('integrate_current_action', [&$current_action]);
-
-	if (isset($context['menu_buttons'][$current_action]))
-		$context['menu_buttons'][$current_action]['active_button'] = true;
 
 	$context['footer_links'] = Policy::get_footer_policies();
 }

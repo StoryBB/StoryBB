@@ -79,7 +79,7 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc = [];
 		define('STORYBB', 1);
 
-		require_once($boarddir . '/Themes/default/languages/en-us/Install.php');
+		require_once($boarddir . '/Themes/natural/languages/en-us/Install.php');
 		$txt['english_name'] = 'English';
 		$txt['native_name'] = 'English';
 		$txt['lang_locale'] = 'en-US';

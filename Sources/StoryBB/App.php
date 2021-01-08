@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Route;
 
 class App
 {
-	const SOFTWARE_YEAR = 2020;
+	const SOFTWARE_YEAR = 2021;
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
 	protected static $global_config = [];
@@ -161,6 +161,11 @@ class App
 				'cookie_domain' => $cookie_url[0],
 				'cookie_path' => $cookie_url[1],
 			];
+
+			if (!empty($site_settings->databaseSession_loose))
+			{
+				session_cache_limiter('private_no_expires');
+			}
 			if ($site_settings->databaseSession_enable)
 			{
 				$session_storage = new NativeSessionStorage($cookie_settings, $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
@@ -287,7 +292,7 @@ class App
 			$latte = new \Latte\Engine;
 			$latte->setTempDirectory($container->get('cachedir') . '/template');
 
-			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/default/templates');
+			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/natural/templates');
 			$latte->setLoader($loader);
 
 			$latte->addFilter('translate', function ($string, $langfile = '') {

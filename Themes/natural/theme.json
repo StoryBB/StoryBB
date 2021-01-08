@@ -1,0 +1,53 @@
+{
+    "id": "StoryBB:Natural",
+    "name": "Natural - StoryBB base theme",
+    "author": {
+        "name": "StoryBB team",
+        "website": "https:\/\/storybb.org\/"
+    },
+    "theme_version": "1.0",
+    "storybb_version": "1.0",
+    "require_theme_strings": false,
+    "disable_files": [],
+    "meta_theme_color": "#557EA0",
+    "theme_settings": [
+        {
+            "id": "header_logo_url",
+            "label": "header_logo_url",
+            "description": "header_logo_url_desc",
+            "type": "text"
+        },
+        "",
+        {
+            "id": "sub_boards_columns",
+            "label": "sub_boards_columns",
+            "options": {
+                "2": 2,
+                "3": 3,
+                "4": 4
+            }
+
+        },
+        {
+            "id": "show_latest_member",
+            "label": "latest_members"
+        },
+        {
+            "id": "display_who_viewing",
+            "label": "who_display_viewing",
+            "options": {
+                "0": "who_display_viewing_off",
+                "1": "who_display_viewing_numbers",
+                "2": "who_display_viewing_names"
+            },
+            "type": "number"
+        },
+        "",
+        {
+            "id": "og_image",
+            "label": "og_image",
+            "description": "og_image_desc",
+            "type": "url"
+        }
+    ]
+}

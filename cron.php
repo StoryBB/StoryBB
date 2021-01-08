@@ -58,6 +58,7 @@ $smcFunc = [
 
 $sourcedir = App::get_sources_path();
 $cachedir = $container->get('cachedir');
+$language = App::get_global_config_item('language');
 
 // Have we already turned this off? If so, exist gracefully.
 if (file_exists($cachedir . '/cron.lock'))

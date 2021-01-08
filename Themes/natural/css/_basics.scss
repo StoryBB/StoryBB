@@ -1,0 +1,79 @@
+/** Basics. */
+
+body, html {
+	background: $background-color;
+	font: $default-font;
+	color: #4d4d4d;
+	min-height: 100vh;
+}
+
+body, #wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+#wrapper {
+	width: 100%;
+	flex-grow: 5;
+	padding-left:70px;
+}
+
+#content_wrapper {
+	margin: 0 auto;
+	width: 90%;
+	padding: 10px;
+	margin-bottom: 3em;
+	background: #fff;
+	border: 1px solid #b8b8b8;
+	border-radius: 8px;
+	box-shadow: 0 2px3px rgba(0, 0, 0, 0.14);
+}
+
+a {
+	color: #346;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+/* Define strong as bold, and em as italics
+/* Note: in some particular places, strong has been redefined as font-weight: 600; 
+/* This gives a better effect for those areas, and will default to bold for fonts which do not support numerical font-weight. */
+strong, .strong {
+	font-weight: bold;
+	color: #444;
+}
+
+em {
+	font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: 1em;
+	color: #444;
+}
+
+hr {
+	border: none;
+	margin: 12px 0;
+	height: 2px;
+	background: #fff;
+	box-shadow: 0 1px 0 #bbb inset;
+}
+
+ul.normallist {
+	list-style-type: disc;
+	padding: 0 0 0 15px;
+}
+
+table {
+	empty-cells: show;
+}
+
+dl {
+	overflow: auto;
+}

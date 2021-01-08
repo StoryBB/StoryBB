@@ -223,7 +223,6 @@ function sbb_main()
 		'lockvoting' => ['Poll.php', 'LockVoting'],
 		'markasread' => ['Subs-Boards.php', 'MarkRead'],
 		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
-		'mlist' => ['Memberlist.php', 'Memberlist'],
 		'moderate' => ['ModerationCenter.php', 'ModerationMain'],
 		'movetopic' => ['MoveTopic.php', 'MoveTopic'],
 		'movetopic2' => ['MoveTopic.php', 'MoveTopic2'],

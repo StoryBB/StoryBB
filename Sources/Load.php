@@ -230,22 +230,6 @@ function loadUserSettings()
 	$user->load_user($id_member);
 	if ($id_member != 0)
 	{
-		$request = $db->query('', '
-			SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
-				chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
-			FROM {db_prefix}members AS mem
-				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
-				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-			WHERE mem.id_member = {int:id_member}
-			LIMIT 1',
-			[
-				'id_member' => $id_member,
-			]
-		);
-		$user_settings = $db->fetch_assoc($request);
-		$db->free_result($request);
-
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
@@ -1933,7 +1917,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// And of course, let's load the default CSS file.
-	loadCSSFile('index.css', ['minimize' => true], 'sbb_index');
+	if (!empty($modSettings['minimize_files']) || empty($settings['compile_time']))
+	{
+		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => time()]), ['external' => true], 'sbb_index');
+	}
+	else
+	{
+		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => $settings['compile_time']]), ['external' => true], 'sbb_index');
+	}
+
+	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['minimize' => false, 'validate' => false], 'font-awesome');
 
 	if (!empty($settings['additional_files']['css']))
 	{
@@ -1951,9 +1944,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			}
 		}
 	}
-
-	// Load the adaptive css
-	loadCSSFile('adaptive.css', ['force_current' => false, 'validate' => true, 'minimize' => true], 'sbb_adaptive');
 
 	if ($context['right_to_left'])
 		loadCSSFile('rtl.css', [], 'sbb_rtl');

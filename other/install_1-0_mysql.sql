@@ -349,9 +349,9 @@ VALUES (1, 0, '{$default_category_name}', '', 1);
 #
 
 INSERT INTO {$db_prefix}custom_fields
-  (`col_name`, `field_name`, `field_desc`, `field_type`, `field_length`, `field_options`, `field_order`, `mask`, `show_reg`, `show_display`, `show_mlist`, `show_profile`, `private`, `active`, `bbc`, `can_search`, `default_value`, `enclose`, `placement`)
-VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1),
-  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 2, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '', 0);
+  (`col_name`, `field_name`, `field_desc`, `field_type`, `field_length`, `field_options`, `field_order`, `mask`, `show_reg`, `show_display`, `show_profile`, `private`, `active`, `bbc`, `can_search`, `default_value`, `enclose`, `placement`)
+VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1),
+  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 2, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '', 0);
 
 # --------------------------------------------------------
 
@@ -692,9 +692,9 @@ VALUES (':)', 'smiley.png', '{$default_smiley_smiley}', 0, 0),
 INSERT INTO {$db_prefix}themes
   (id_theme, variable, value)
 VALUES (1, 'name', '{$default_theme_name}'),
-  (1, 'theme_url', '{$boardurl}/Themes/default'),
-  (1, 'images_url', '{$boardurl}/Themes/default/images'),
-  (1, 'theme_dir', '{$boarddir}/Themes/default'),
+  (1, 'theme_url', '{$boardurl}/Themes/natural'),
+  (1, 'images_url', '{$boardurl}/Themes/natural/images'),
+  (1, 'theme_dir', '{$boarddir}/Themes/natural'),
   (1, 'meta_theme_color', '#557EA0'),
   (1, 'show_latest_member', '1'),
   (1, 'drafts_show_saved_enabled', '1'),

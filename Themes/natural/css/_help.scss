@@ -1,0 +1,33 @@
+/** The help pages. */
+#help_container {
+	margin: 0;
+	padding: 0 0 8px 0;
+	overflow: auto;
+}
+
+#helpmain {
+	margin: 12px 0 0 0;
+	padding: 8px 20px 12px 20px;
+	border: 1px solid #dcdcdc;
+	border-radius: 7px;
+	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
+	overflow: auto;
+}
+
+#helpmain p {
+	margin: 10px 0;
+	line-height: 1.5em;
+}
+
+#helpmain ul {
+	line-height: 2em;
+	margin: 0 0 0 25px;
+}
+
+#helpmain ul li {
+	list-style-type: disc;
+}
+
+#helpmain ul li a {
+	font-weight: bold;
+}
