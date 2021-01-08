@@ -1,0 +1,444 @@
+/** Icons. */
+
+/* Generally, those [?] icons. This makes your cursor a help icon. */
+#content_wrapper .help {
+	cursor: help !important;
+	opacity: 0.8;
+}
+
+#content_wrapper .help:hover {
+	opacity: 1;
+}
+
+img.icon.char_avatar {
+	max-width: 25px;
+	max-height: 25px;
+}
+
+/* The main icon sprite. */
+.main_icons::before {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background: url("#{$images_url}/icons/main_icons_sprite.png") no-repeat -5px -5px;
+	vertical-align: middle;
+	content: "";
+}
+
+.main_icons.char_avatar::before {
+	background: none;
+}
+
+.main_icons:not(:empty)::before {
+	margin-right: 4px;
+}
+
+.main_icons.moved_topic::before {
+	background: url("#{$images_url}/moved.png") center;
+}
+
+/* This is a small fix for dropmenu icons */
+.dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
+	vertical-align: middle;
+}
+
+/* Top row */
+.main_icons.help::before {
+	background-position: -5px -5px;
+}
+
+.main_icons.search::before, .main_icons.engines::before {
+	background-position: -31px -5px;
+}
+
+.main_icons.quick_edit_button::before, .main_icons.modify_button::before {
+	background-position: -57px -5px;
+}
+
+.main_icons.check::before {
+	background-position: -83px -5px;
+}
+
+.main_icons.invalid::before {
+	background-position: -109px -5px;
+}
+
+.main_icons.watch::before {
+	background-position: -239px -5px;
+}
+
+.main_icons.bookmark::before {
+	background-position: -265px -5px;
+}
+
+/* 2nd row */
+.main_icons.move::before, .main_icons.next_page::before {
+	background-position: -5px -31px;
+}
+
+.general.main_icons::before, .boards.main_icons::before, .topics_views.main_icons::before, .user_stats.main_icons::before {
+	background-position: -31px -31px;
+}
+
+.main_icons.features::before {
+	background-position: -83px -31px;
+}
+
+.main_icons.posters::before {
+	background-position: -109px -31px;
+}
+
+.main_icons.replies::before, .main_icons.topics_replies::before {
+	background-position: -135px -31px;
+}
+
+.main_icons.history::before, .main_icons.time_online::before, .main_icons.scheduled::before {
+	background-position: -161px -31px;
+}
+
+.main_icons.views::before {
+	background-position: -187px -31px;
+}
+
+.main_icons.last_post::before {
+	background-position: -213px -31px;
+}
+
+.main_icons.starters::before, .main_icons.people::before, .main_icons.membergroups::before, .main_icons.characters::before {
+	background-position: -239px -31px;
+}
+
+/* 3rd Street Saints */
+.main_icons.poll::before {
+	background-position: -5px -57px;
+}
+
+.main_icons.previous_page::before {
+	background-position: -31px -57px;
+}
+
+.main_icons.inbox::before, .main_icons.contact::before {
+	background-position: -57px -57px;
+}
+
+.main_icons.www::before {
+	background-position: -83px -57px;
+}
+
+.main_icons.exit::before, .main_icons.logout::before {
+	background-position: -109px -57px;
+}
+
+.main_icons.switch::before {
+	background-position: -135px -57px;
+}
+
+.main_icons.replied::before, .main_icons.send::before {
+	background-position: -161px -57px;
+}
+
+.main_icons.im_on::before {
+	background-position: -187px -57px;
+}
+
+.main_icons.im_off::before {
+	background-position: -213px -57px;
+}
+
+.main_icons.split_desel::before {
+	background-position: -239px -57px;
+}
+
+/* 4th Row */
+.main_icons.split_sel::before {
+	background-position: -5px -83px;
+}
+
+.main_icons.mail::before {
+	background-position: -31px -83px;
+}
+
+.main_icons.warning_mute::before {
+	background-position: -57px -83px;
+}
+
+.main_icons.alerts::before, .main_icons.warn_button::before,
+.main_icons.warning_moderate::before {
+	background-position: -83px -83px;
+}
+
+.main_icons.mail_new::before {
+	background-position: -109px -83px;
+}
+
+.main_icons.drafts::before,
+.main_icons.reply_button::before,
+.main_icons.reply_all_button::before {
+	background-position: -135px -83px;
+}
+
+.main_icons.warning_watch::before {
+	background-position: -161px -83px;
+}
+
+.main_icons.calendar_export::before {
+	background-position: -187px -83px;
+}
+
+.main_icons.calendar::before {
+	background-position: -213px -83px;
+}
+
+.main_icons.calendar_modify::before {
+	background-position: -239px -83px;
+}
+
+/* 5th Row */
+.main_icons.plus::before {
+	background-position: -5px -109px;
+}
+
+.main_icons.warning::before, .main_icons.moderate::before {
+	background-position: -31px -109px;
+}
+
+.main_icons.themes::before {
+	background-position: -57px -109px;
+}
+
+.main_icons.support::before {
+	background-position: -83px -109px;
+}
+
+.main_icons.liked_users::before, .main_icons.liked_messages::before, .main_icons.like::before {
+	background-position: -109px -109px;
+}
+
+.main_icons.unlike::before {
+	background-position: -135px -109px;
+}
+
+.main_icons.current_theme::before {
+	background-position: -161px -109px;
+}
+
+.main_icons.stats::before {
+	background-position: -187px -109px;
+}
+
+.main_icons.right_arrow::before {
+	background-position: -213px -109px;
+}
+
+.main_icons.left_arrow::before {
+	background-position: -239px -109px;
+}
+
+/* 6th Row */
+.main_icons.smiley::before {
+	background-position: -5px -135px;
+}
+
+.main_icons.server::before {
+	background-position: -31px -135px;
+}
+
+.main_icons.ban::before, .main_icons.ignore::before {
+	background-position: -57px -135px;
+}
+
+.main_icons.boards::before {
+	background-position: -83px -135px;
+}
+
+.main_icons.regcenter::before {
+	background-position: -109px -135px;
+}
+
+.main_icons.posts::before {
+	background-position: -135px -135px;
+}
+
+.main_icons.sort_down::before {
+	background-position: -161px -135px;
+}
+
+.main_icons.change_menu2::before, .main_icons.sent::before {
+	background-position: -187px -135px;
+}
+
+.main_icons.post_moderation_moderate::before {
+	background-position: -213px -135px;
+}
+
+.main_icons.sort_up::before {
+	background-position: -239px -135px;
+}
+
+/* 7th Row */
+.main_icons.post_moderation_deny::before {
+	background-position: -5px -161px;
+}
+
+.main_icons.post_moderation_attach::before {
+	background-position: -31px -161px;
+}
+
+.main_icons.post_moderation_allow::before {
+	background-position: -57px -161px;
+}
+
+.main_icons.personal_message::before {
+	background-position: -83px -161px;
+}
+
+.permissions.main_icons::before, .signup.main_icons::before, .login.main_icons::before {
+	background-position: -109px -161px;
+}
+
+.main_icons.paid::before {
+	background-position: -135px -161px;
+}
+
+.packages.main_icons::before, .attachment.main_icons::before {
+	background-position: -161px -161px;
+}
+
+.main_icons.filter::before {
+	background-position: -187px -161px;
+	margin: 0 5px 0 0;
+}
+
+.main_icons.change_menu::before {
+	background-position: -213px -161px;
+}
+
+.main_icons.package_ops::before {
+	background-position: -239px -161px;
+}
+
+/* 8th Row */
+.main_icons.reports::before {
+	background-position: -5px -187px;
+}
+
+.main_icons.news::before {
+	background-position: -31px -187px;
+}
+
+.main_icons.delete::before, .main_icons.hide_popup::before, .main_icons.prune::before, .main_icons.remove_button::before {
+	background-position: -57px -187px;
+}
+
+.main_icons.modifications::before {
+	background-position: -83px -187px;
+}
+
+.main_icons.maintain::before, .main_icons.admin::before {
+	background-position: -109px -187px;
+}
+
+.main_icons.administration::before, .main_icons.home::before {
+	background-position: -135px -187px;
+}
+
+.frenemy.main_icons::before, .settings.main_icons::before {
+	background-position: -161px -187px;
+}
+
+.main_icons.attachment::before {
+	background-position: -187px -187px;
+}
+
+.main_icons.lock::before, .main_icons.security::before {
+	background-position: -213px -187px;
+}
+
+.main_icons.error::before, .main_icons.disable::before {
+	background-position: -239px -187px;
+}
+
+/* 9th Row */
+.main_icons.languages::before {
+	background-position: -5px -213px;
+}
+
+.main_icons.members_request::before {
+	background-position: -31px -213px;
+}
+
+.main_icons.members_delete::before {
+	background-position: -57px -213px;
+}
+
+.main_icons.members::before {
+	background-position: -83px -213px;
+}
+
+.main_icons.members_watched::before {
+	background-position: -109px -213px;
+}
+
+.main_icons.sticky::before {
+	background-position: -135px -213px;
+}
+
+.main_icons.corefeatures::before, .main_icons.settings::before, .main_icons.manrules::before, .main_icons.manlabels::before {
+	background-position: -161px -213px;
+}
+
+.main_icons.calendar::before {
+	background-position: -187px -213px;
+}
+
+.main_icons.logs::before {
+	background-position: -213px -213px;
+}
+
+.main_icons.valid::before {
+	background-position: -239px -213px;
+}
+
+/* 10th Row */
+.main_icons.approve, .main_icons.enable::before,
+.main_icons.approve_button::before,
+.main_icons.read_button::before {
+	background-position: -5px -239px;
+}
+
+.main_icons.close::before {
+	background-position: -31px -239px;
+}
+
+.main_icons.details::before {
+	background-position: -57px -239px;
+}
+
+.main_icons.merge::before {
+	background-position: -83px -239px;
+}
+
+.main_icons.folder::before {
+	background-position: -109px -239px;
+}
+
+.main_icons.restore_button::before {
+	background-position: -135px -239px;
+}
+
+.main_icons.split_button::before {
+	background-position: -161px -239px;
+}
+
+.main_icons.unapprove_button::before,
+.main_icons.unread_button::before {
+	background-position: -187px -239px;
+}
+
+.main_icons.quote::before, .main_icons.quote_selected::before {
+	background-position: -213px -239px;
+}
+
+.main_icons.notify_button::before {
+	background-position: -239px -239px;
+}

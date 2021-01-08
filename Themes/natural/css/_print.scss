@@ -1,0 +1,10 @@
+/** Print related styles */
+@media print {
+	#headerarea {
+		display: none;
+	}
+
+	.tborder {
+		border: none;
+	}
+}

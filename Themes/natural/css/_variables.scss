@@ -1,7 +1,11 @@
 /** Variable magic. */
-$background-color: #e9eef2;
+$default-background: #e9eef2;
+$default-color: #4d4d4d;
 $default-font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 
 $error-color: red;
 
 $warning-color: yellow;
+
+$link-color: #346;
+$sidebar-link-color: $link-color;

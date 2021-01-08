@@ -1,0 +1,78 @@
+/** The main sidebar / navigation. */
+#sidebar {
+	width: 70px;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.1);
+	top: 0;
+	bottom: 0;
+	z-index: 100;
+}
+#sidebar > div > a, #btn-search > a {
+	font-size: 30px;
+	line-height: 70px;
+}
+#sidebar > div {
+	text-align: center;
+	position: relative;
+}
+#sidebar > div.open, #btn-search.open {
+	background: rgba(0, 0, 0, 0.15);
+}
+#sidebar > div:hover, #btn-search:hover {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+#btn-search {
+	width: 70px;
+	text-align: center;
+}
+
+#search_menu {
+	left: auto;
+	right: 0px;
+}
+
+#alerts_menu, #pm_menu {
+	top: 0px;
+	left: 70px;
+}
+
+#sidebar > div .amt {
+	background: #800000;
+	font-size: 13px;
+	line-height: 1em;
+	padding: 3px 5px;
+}
+
+#sidebar > div > a > .amt {
+	position: absolute;
+	top: 45px;
+	right: 5px;
+}
+
+#sidebar .top_menu .amt {
+	float: right;
+	margin-right: -2.8em;
+	margin-top: 2px;
+}
+
+#sidebar > div > .top_menu {
+	top: 0px;
+	left: 70px;
+}
+
+.top_menu.subitems {
+	width: auto;
+}
+
+#sidebar > div .btn-subitems li {
+	text-align: left;
+	line-height: 25px;
+	padding-left: 10px;
+}
+
+#sidebar > div .btn-subitems li a {
+	display: block;
+	white-space: nowrap;
+	margin-right: 3em;
+}
