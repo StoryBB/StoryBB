@@ -6,6 +6,7 @@
 
     <!-- Don't include anything that comes from Composer; they don't have to follow our rules -->
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>./Themes/natural/css/fontawesome-free-5.15.1-web/*</exclude-pattern>
     <exclude-pattern>Themes/natural/scripts/select2/*</exclude-pattern>
 
     <!-- The cache folder is a hot mess, and not relevant. -->
