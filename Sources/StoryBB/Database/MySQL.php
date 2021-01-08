@@ -1053,6 +1053,21 @@ class MySQL implements DatabaseAdapter
 		}
 	}
 
+	/**
+	 * @todo sanitise table names?
+	 */
+	public function count(string $column, string $table): int
+	{
+		$query = $this->query('', '
+			SELECT COUNT(' . $column . ')
+			FROM ' . $table);
+
+		list($count) = $this->fetch_row($query);
+		$this->free_result($query);
+
+		return (int) $count;
+	}
+
 	public function fetch_assoc(mysqli_result $result)
 	{
 		return mysqli_fetch_assoc($result);

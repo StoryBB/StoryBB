@@ -35,6 +35,23 @@
 	{{{context.html_headers}}}
 </head>
 <body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
+	<div id="sidebar">
+		{{#each context.sidebar}}
+			<div id="btn-{{@key}}">
+				<a href="{{{url}}}"{{#if popup}} onclick="return reqOverlayDiv(this.href, {{{jsEscape popup}}});"{{/if}}{{#if (or popupmenu subitems)}} id="{{@key}}_menu_top"{{/if}}><i class="{{icon}}"></i>{{#if amt}}<span class="amt">{{amt}}</span>{{/if}}</a>
+				{{#if popupmenu}}<div id="{{@key}}_menu" class="top_menu scrollable"></div>{{/if}}
+				{{#if subitems}}
+					<div id="{{@key}}_menu" class="top_menu scrollable subitems">
+						<ul class="btn-subitems">
+						{{#each subitems}}
+							<li><a href="{{url}}">{{{title}}}{{#if (gt amt 0)}}<span class="amt">{{amt}}</span>{{/if}}</a>
+						{{/each}}
+						</ul>
+					</div>
+				{{/if}}
+			</div>
+		{{/each}}
+	</div>
 	<div id="wrapper">
 		<a href="" id="top"></a>
 		<div id="top_section">
@@ -55,21 +72,20 @@
 					{{textTemplate txt.posting_as user_info.character_name}} &#9660;</a>
 					<div id="characters_menu" class="top_menu"></div>
 				</li>
-					
-	{{#if context.allow_pm}}
-					<li>
-						<a href="{{scripturl}}?action=pm" {{#if context.self_pm}}class="active"{{/if}} id="pm_menu_top">{{txt.pm_short}} {{#if context.user.unread_messages}} <span class="amt">{{context.user.unread_messages}}</span>{{/if}}</a>
-						<div id="pm_menu" class="top_menu scrollable"></div>
-					</li>
-	{{/if}}
-
-				<li>
-					<a href="{{scripturl}}?action=profile;area=showalerts;u={{context.user.id}}"{{#if context.self_alerts}}class="active"{{/if}} id="alerts_menu_top">{{txt.alerts}}{{#if context.user.alerts}}<span class="amt">{{context.user.alerts}}</span>{{/if}}</a>
-					<div id="alerts_menu" class="top_menu scrollable"></div>
-				</li>
 			</ul>
 
 {{else}}
+			<ul class="floatleft" id="top_info">
+				<li>
+					<a href="{{buildlink 'login'}}">{{txt.login}}</a>
+				</li>
+				{{#if context.can_register}}
+				<li>
+					<a href="{{scripturl}}?action=signup">{{txt.register}}</a>
+				</li>
+				{{/if}}
+			</ul>
+<!--
 	{{#if maintenance}}
 			<ul class="floatleft welcome">
 				<li>{{login_helper txt.welcome_guest txt.guest_title context.forum_name_html_safe scripturl txt.login}}</li>
@@ -85,6 +101,7 @@
 				</li>
 			</ul>
 	{{/if}}
+-->
 {{/if}}
 		
 {{#if modSettings.userLanguage}}
@@ -103,29 +120,32 @@
 {{/if}}
 		
 {{#if context.allow_search}}
-			<form id="search_form" class="floatright" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
+	<div id="btn-search" class="floatright">
+		<a href="{{scripturl}}?action=search" id="search_menu_top"><i class="fas fa-search fa-fq"></i></a>
+		<div id="search_menu" class="top_menu scrollable subitems">
+			<form id="search_form" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
 				<input type="search" name="search" value="">
 				<select name="search_selection">
 					<option value="all">{{txt.search_entireforum}}</option>
-	{{#if context.current_topic}}
+		{{#if context.current_topic}}
 					<option value="topic" selected="selected">{{txt.search_thistopic}}</option>
-	{{/if}}
-	{{#if context.current_board}}
+		{{/if}}
+		{{#if context.current_board}}
 					<option value="board" selected="selected">{{txt.search_thisbrd}}</option>
-	{{/if}}
-	{{#if context.allow_memberlist}}
-					<option value="members">{{txt.search_members}}</option>
-	{{/if}}
+		{{/if}}
 				</select>
-	{{#if context.current_topic}}
+		{{#if context.current_topic}}
 				<input type="hidden" name="sd_topic" value="{{context.current_topic}}">
-	{{/if}}
-	{{#if context.current_board}}
+		{{/if}}
+		{{#if context.current_board}}
 				<input type="hidden" name="sd_brd" value="{{context.current_board}}">
-	{{/if}}
+		{{/if}}
 				<input type="submit" name="search2" value="{{txt.search}}">
 				<input type="hidden" name="advanced" value="0">
 			</form>
+		</div>
+	</div>
+
 {{/if}}
 		</div><!-- #top_section -->
 	
@@ -140,21 +160,10 @@
 {{/if}}
 				</a>
 			</h1>
-
-{{#if settings.site_slogan}}
-			<div id="siteslogan" class="floatright">{{settings.site_slogan}}</div>
-{{else}}
-			<img id="sbblogo" src="{{settings.images_url}}/StoryBB.svg" alt="StoryBB" title="StoryBB">
-{{/if}}
 		</header>
 		<div id="content_wrapper">
 			<div id="upper_section">
 				<div id="inner_section">
-					<div id="inner_wrap">
-						<div class="time">
-							{{context.current_time}}
-						</div>
-					</div>
 					<div id="main_menu">
 						{{>menu}}
 					</div>

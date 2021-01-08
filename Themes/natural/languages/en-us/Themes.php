@@ -76,9 +76,6 @@ $txt['current_theme_style'] = 'This theme\'s style: ';
 $txt['theme_variants_default'] = 'Default theme variant';
 $txt['theme_variants_user_disable'] = 'Disable user variant selection';
 
-$txt['site_slogan'] = 'Site slogan';
-$txt['site_slogan_desc'] = 'Add your own text for a slogan here. It will replace the StoryBB logo.';
-
 $txt['allow_no_censored'] = 'Allow users to turn off word censoring';
 $txt['who_display_viewing'] = 'Show who is viewing the board index and posts';
 $txt['who_display_viewing_off'] = 'Don\'t show';

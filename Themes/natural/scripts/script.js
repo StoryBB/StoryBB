@@ -234,13 +234,13 @@ function smc_PopupMenu(oOptions)
 	this.opt.menus = {};
 }
 
-smc_PopupMenu.prototype.add = function (sItem, sUrl)
+smc_PopupMenu.prototype.add = function (sItem, sUrl, loaded)
 {
 	var $menu = $('#' + sItem + '_menu'), $item = $('#' + sItem + '_menu_top');
 	if ($item.length == 0)
 		return;
 
-	this.opt.menus[sItem] = {open: false, loaded: false, sUrl: sUrl, itemObj: $item, menuObj: $menu };
+	this.opt.menus[sItem] = {open: false, loaded: !!loaded, sUrl: sUrl, itemObj: $item, menuObj: $menu };
 
 	$item.click({obj: this}, function (e) {
 		e.preventDefault();
@@ -277,6 +277,7 @@ smc_PopupMenu.prototype.open = function (sItem)
 
 	this.opt.menus[sItem].menuObj.addClass('visible');
 	this.opt.menus[sItem].itemObj.addClass('open');
+	this.opt.menus[sItem].itemObj.closest('div').addClass('open');
 	this.opt.menus[sItem].open = true;
 
 	// Now set up closing the menu if we click off.
@@ -292,6 +293,7 @@ smc_PopupMenu.prototype.close = function (sItem)
 {
 	this.opt.menus[sItem].menuObj.removeClass('visible');
 	this.opt.menus[sItem].itemObj.removeClass('open');
+	this.opt.menus[sItem].itemObj.closest('div').removeClass('open');
 	this.opt.menus[sItem].open = false;
 	$(document).off('click.menu');
 }

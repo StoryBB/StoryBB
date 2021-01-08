@@ -17,12 +17,6 @@
             "description": "header_logo_url_desc",
             "type": "text"
         },
-        {
-            "id": "site_slogan",
-            "label": "site_slogan",
-            "description": "site_slogan_desc",
-            "type": "text"
-        },
         "",
         {
             "id": "sub_boards_columns",
