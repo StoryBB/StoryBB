@@ -19,6 +19,12 @@ Themes/natural/css/minified.css
 Themes/natural/scripts/minified.js
 Themes/natural/scripts/minified_deferred.js
 
+# Local copies of CI/build tools. #
+#############################
+composer.phar
+phpcs.phar
+phpmd.phar
+
 # Compiled source #
 ###################
 *.com
