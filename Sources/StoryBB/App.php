@@ -161,6 +161,11 @@ class App
 				'cookie_domain' => $cookie_url[0],
 				'cookie_path' => $cookie_url[1],
 			];
+
+			if (!empty($site_settings->databaseSession_loose))
+			{
+				session_cache_limiter('private_no_expires');
+			}
 			if ($site_settings->databaseSession_enable)
 			{
 				$session_storage = new NativeSessionStorage($cookie_settings, $container->instantiate('StoryBB\\Session\\DatabaseHandler'));
