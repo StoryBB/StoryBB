@@ -335,9 +335,11 @@ class App
 		$container = Container::instance();
 		static::build_container();
 		$container->inject('requestvars', $request);
-		$request_context = (new RequestContext('/'))->fromRequest($request);
 		$container->inject('requestcontext', function() use ($container) {
-			return (new RequestContext('/'))->fromRequest($container->get('requestvars'));
+			$boardurl = App::get_global_config_item('boardurl');
+			$sitesettings = $container->get('sitesettings');
+			$baseurl = $sitesettings->drop_index_php ? $boardurl : $boardurl . '/index.php';
+			return (new RequestContext('/'))->fromRequest($container->get('requestvars'))->setBaseUrl($baseurl);
 		});
 
 		try

@@ -14,7 +14,6 @@ namespace StoryBB\Dependency;
 
 use RuntimeException;
 use Symfony\Component\Routing\Generator\UrlGenerator as SymfonyUrlGenerator;
-use StoryBB\Database\DatabaseAdapter;
 
 trait UrlGenerator
 {
