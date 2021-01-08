@@ -1,0 +1,77 @@
+/** Common utilities. */
+
+.floatright {
+	float: right;
+}
+
+.floatleft {
+	float: left;
+}
+
+.floatnone {
+	float: none;
+}
+
+.flow_auto {
+	overflow: auto;
+}
+
+.flow_hidden {
+	overflow: hidden;
+}
+
+.clear {
+	clear: both;
+}
+
+.clear_left {
+	clear: left;
+}
+
+.clear_right {
+	clear: right;
+}
+
+.centertext, .centercol {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.righttext {
+	margin-left: auto;
+	margin-right: 0;
+	text-align: right;
+}
+
+.lefttext {
+	margin-left: 0;
+	margin-right: auto;
+	text-align: left;
+}
+
+.half_content {
+	width: 50%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.half_content:nth-of-type(even) {
+	margin-right: -0.25em;
+	padding-right: 0.3%;
+}
+
+.half_content:nth-of-type(odd) {
+	margin-left: -0.2em;
+	padding-left: 0.3%;
+}
+
+.block {
+	display: block;
+	margin: 0 0 5px 0;
+}
+
+.centerbox {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}

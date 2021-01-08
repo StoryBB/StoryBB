@@ -1,0 +1,14 @@
+/* The base theme loading. */
+@import "natural/_variables.scss";
+@import "natural/_resets.scss";
+@import "natural/_basics.scss";
+@import "natural/_common_utils.scss";
+@import "natural/_forms.scss";
+
+@import "natural/_autocomplete.scss";
+@import "natural/_contactform.scss";
+@import "natural/_search.scss";
+@import "natural/_help.scss";
+
+@import "natural/original.scss";
+@import "natural/adaptive.css";

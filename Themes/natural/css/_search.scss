@@ -1,0 +1,67 @@
+/** Search related stuff. */
+#searchform fieldset {
+	text-align: left;
+	padding: 0;
+	border: none;
+}
+
+#searchform .roundframe {
+	border-radius: 0;
+	margin: 0;
+	padding: 32px;
+	overflow: auto;
+}
+
+#searchform .alt {
+	border-top: 0;
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+}
+
+#searchform p.clear {
+	clear: both;
+}
+
+#advanced_search {
+	text-align: center !important;
+	margin: 0;
+}
+
+#advanced_search dl#search_options {
+	margin: 0 auto;
+	width: 600px;
+	padding-top: 12px;
+	overflow: hidden;
+}
+
+#advanced_search dt {
+	clear: both;
+	float: left;
+	padding: 2px;
+	text-align: right;
+	width: 20%;
+}
+
+#advanced_search dd {
+	width: 75%;
+	float: left;
+	padding: 2px;
+	margin: 0 0 0 6px;
+	text-align: left;
+}
+
+/* Quick search in header */
+#search_form {
+	text-align: right;
+}
+#search_form input, #search_form select {
+	margin-left: 4px;
+}
+
+#search_form input[type="submit"] {
+	color: #333;
+}
+
+#search_form input[type="submit"]:hover {
+	color: #a85400;
+}

@@ -1,0 +1,150 @@
+/** Things for the various autocomplete widgets. */
+
+.select2-container {
+	min-width: 200px;
+}
+
+.autocomplete-avatar {
+	width: 25px;
+	height: 25px;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+.autocomplete-avatar-lg {
+	width: 50px;
+	height: 50px;
+	background-position: 50%;
+	background-size: contain;
+	float: left;
+}
+
+.autocomplete-member {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.autocomplete-container {
+	margin-left: 55px;
+	height: 50px;
+}
+
+.autocomplete-character-account {
+	padding-top: 3px;
+	font-size: 0.9em;
+}
+
+.autocomplete-container-group {
+	max-height: 50px;
+}
+
+.autocomplete-group {
+	display: inline-block;
+	margin-bottom: 8px;
+	margin-right: 20px;
+	white-space: nowrap;
+}
+
+.autocomplete-group-icons {
+	float: right;
+	max-height: 50px;
+}
+
+.autocomplete-group-icons img {
+	white-space: nowrap;
+}
+
+/* Styles used by the legacy auto suggest control. */
+.auto_suggest_div {
+	position: absolute;
+	visibility: hidden;
+	border-radius: 3px;
+	outline: none !important;
+	border: 1px solid #bbb;
+	z-index: 100;
+}
+
+.auto_suggest_item {
+	background: #dcdcdc;
+	padding: 1px 4px;
+}
+
+.auto_suggest_item_hover {
+	background: #888;
+	cursor: pointer;
+	color: #eee;
+	padding: 1px 4px;
+}
+
+/* Autocomplete for the mentions. */
+
+.atwho-view {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: none;
+	margin-top: 18px;
+	background: white;
+	border: 1px solid #dcdcdc;
+	border-radius: 3px;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	min-width: 120px;
+	z-index: 11110 !important;
+}
+
+.atwho-view .cur {
+	background: #3366FF;
+	color: white;
+}
+
+.atwho-view .cur small {
+	color: white;
+}
+
+.atwho-view strong {
+	color: #3366FF;
+}
+
+.atwho-view .cur strong {
+	color: white;
+	font-weight: bold;
+}
+
+.atwho-view ul {
+	list-style: none;
+	padding: 0;
+	margin: auto;
+}
+
+.atwho-view ul li {
+	display: block;
+	padding: 5px;
+	border-bottom: 1px solid #dcdcdc;
+	cursor: pointer;
+}
+
+.atwho-view small {
+	font-size: smaller;
+	color: #777;
+	font-weight: normal;
+}
+
+.atwho-view li span {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.atwho-view li span.avatar {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+}
+
+.atwho-view li span img {
+	max-width: 24px;
+	max-height: 24px;
+}

@@ -1,0 +1,18 @@
+/** General resets */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+img, input, select, textarea {
+	max-width: 100%;
+}
+
+ul, ol {
+	list-style: none;
+}
+
+a img {
+	border: 0;
+}
