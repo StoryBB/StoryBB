@@ -159,7 +159,7 @@ h1.forumtitle {
 	float: right;
 }
 /* float these items to the left */
-#siteslogan, img#sbblogo {
+img#sbblogo {
 	float: left;
 }
 /* Tweak the StoryBB logo */

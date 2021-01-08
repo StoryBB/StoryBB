@@ -1933,7 +1933,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// And of course, let's load the default CSS file.
-	loadCSSFile('index.css', ['minimize' => true], 'sbb_index');
+	if (!empty($modSettings['minimize_files']) || empty($settings['compile_time']))
+	{
+		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => time()]), ['external' => true], 'sbb_index');
+	}
+	else
+	{
+		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => $settings['compile_time']]), ['external' => true], 'sbb_index');
+	}
+
 	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['minimize' => false, 'validate' => false], 'font-awesome');
 
 	if (!empty($settings['additional_files']['css']))
@@ -1952,9 +1960,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			}
 		}
 	}
-
-	// Load the adaptive css
-	loadCSSFile('adaptive.css', ['force_current' => false, 'validate' => true, 'minimize' => true], 'sbb_adaptive');
 
 	if ($context['right_to_left'])
 		loadCSSFile('rtl.css', [], 'sbb_rtl');
