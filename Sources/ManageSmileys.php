@@ -222,7 +222,6 @@ function EditSmileys()
 					return !empty($code);
 				});
 				$_POST['smiley_code'] = implode("\n", $_POST['smiley_code']);
-				var_dump($_POST['smiley_code']);
 
 				// Make sure some code was entered.
 				if (empty($_POST['smiley_code']))
