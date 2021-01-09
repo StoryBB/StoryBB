@@ -141,9 +141,9 @@ class Css implements Routable, MaintenanceAccessible
 		$valid_theme_dirs = [];
 		foreach ($themes as $enabled_id => $theme_settings)
 		{
-			if (!empty($theme_settings['theme_dir']))
+			if (!empty($theme_settings['theme_dir']) && !empty($theme_settings['shortname']))
 			{
-				$valid_theme_dirs[basename($theme_settings['theme_dir'])] = $theme_settings['theme_dir'];
+				$valid_theme_dirs[$theme_settings['shortname']] = $theme_settings['theme_dir'];
 			}
 		}
 
@@ -153,6 +153,15 @@ class Css implements Routable, MaintenanceAccessible
 		if (isset($themes[$theme]['images_url']))
 		{
 			$injections['images_url'] = '"' . $themes[$theme]['images_url'] . '"';
+		}
+
+		// Add in all the theme's image URLs in case we want to cross the streams (e.g. refer to default iamges)
+		foreach ($themes as $theme_id => $theme_settings)
+		{
+			if (isset($theme_settings['shortname']) && isset($theme_settings['images_url']))
+			{
+				$injections[$theme_settings['shortname'] . '__images_url'] = '"' . $theme_settings['images_url'] . '"';
+			}
 		}
 
 		if (!empty($injections))
