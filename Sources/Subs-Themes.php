@@ -182,7 +182,7 @@ function get_theme_info($path)
 	$theme_info = @json_decode(file_get_contents($path . '/theme.json'), true);
 
 	// Error message, there isn't any valid info.
-	if (empty($theme_info) || empty($theme_info['id']) || empty($theme_info['name']))
+	if (empty($theme_info) || empty($theme_info['id']) || empty($theme_info['name']) || empty($theme_info['shortname']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_packageinfo_corrupt', false);
@@ -203,6 +203,7 @@ function get_theme_info($path)
 
 	// Remove things that definitely shouldn't be exported up here.
 	unset($theme_info['theme_settings'], $theme_info['theme_options'], $theme_info['additional_files']);
+	unset($theme_info['storybb_version'], $theme_info['id']);
 	unset($theme_info['page_index'], $theme_info['disable_files'], $theme_info['author']);
 
 	return $theme_info;

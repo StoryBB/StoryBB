@@ -1368,7 +1368,7 @@ function InstallDir()
 	$context['to_install'] = [
 		'theme_dir' => $_REQUEST['theme_dir'],
 		'theme_url' => $themeurl . '/' . $name,
-		'name' => $name,
+		'shortname' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 	];
 
