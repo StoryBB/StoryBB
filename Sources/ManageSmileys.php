@@ -471,6 +471,8 @@ function list_getSmileys($start, $items_per_page, $sort)
 	{
 		$smileys = array_reverse($smileys, true);
 	}
+
+	$smileys = array_slice($smileys, $start, $items_per_page, true);
 	return $smileys;
 }
 
