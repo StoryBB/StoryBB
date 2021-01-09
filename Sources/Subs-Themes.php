@@ -166,18 +166,6 @@ function get_theme_info($path)
 
 	$explicit_images = false;
 
-	// Perhaps they are trying to install a mod, lets tell them nicely this is the wrong function.
-	if (file_exists($path . '/package-info.xml'))
-	{
-		loadLanguage('Errors');
-
-		// We need to delete the dir otherwise the next time you try to install a theme you will get the same error.
-		remove_dir($path);
-
-		$txt['package_get_error_is_mod'] = str_replace('{MANAGEMODURL}', $scripturl . '?action=admin;area=packages;' . $context['session_var'] . '=' . $context['session_id'], $txt['package_get_error_is_mod']);
-		fatal_lang_error('package_theme_upload_error_broken', false, $txt['package_get_error_is_mod']);
-	}
-
 	// Parse theme.json into something we can work with.
 	$theme_info = @json_decode(file_get_contents($path . '/theme.json'), true);
 
