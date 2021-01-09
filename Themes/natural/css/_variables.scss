@@ -7,5 +7,5 @@ $error-color: red;
 
 $warning-color: yellow;
 
-$link-color: #346;
-$sidebar-link-color: $link-color;
+$link-color: #346 !default;
+$sidebar-link-color: $link-color !default;
