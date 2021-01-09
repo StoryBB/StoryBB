@@ -83,6 +83,12 @@ function AddSmiley()
 		$disabledFiles = ['con', 'com1', 'com2', 'com3', 'com4', 'prn', 'aux', 'lpt1', '.htaccess', 'index.php'];
 
 		$_POST['smiley_code'] = htmltrim__recursive($_POST['smiley_code']);
+		$_POST['smiley_code'] = explode("\n", $_POST['smiley_code']);
+		$_POST['smiley_code'] = array_map('trim', $_POST['smiley_code']);
+		$_POST['smiley_code'] = array_filter($_POST['smiley_code'], function($code) {
+			return !empty($code);
+		});
+		$_POST['smiley_code'] = implode("\n", $_POST['smiley_code']);
 		$_POST['smiley_location'] = empty($_POST['smiley_location']) || $_POST['smiley_location'] > 2 || $_POST['smiley_location'] < 0 ? 0 : (int) $_POST['smiley_location'];
 
 		// Make sure some code was entered.
@@ -90,9 +96,12 @@ function AddSmiley()
 			fatal_lang_error('smiley_has_no_code');
 
 		// Check whether the new code has duplicates. It should be unique.
-		if (!$smiley_helper->is_unique_code($_POST['smiley_code']))
+		foreach (explode("\n", $_POST['smiley_code']) as $individual_code)
 		{
-			fatal_lang_error('smiley_not_unique');
+			if (!$smiley_helper->is_unique_code($individual_code))
+			{
+				fatal_lang_error('smiley_not_unique', false);
+			}
 		}
 
 		// If we are uploading - check the smiley folder is writable!
@@ -228,9 +237,12 @@ function EditSmileys()
 					fatal_lang_error('smiley_has_no_code');
 
 				// Check whether the new code has duplicates. It should be unique.
-				if (!$smiley_helper->is_unique_code($_POST['smiley_code']))
+				foreach (explode("\n", $_POST['smiley_code']) as $individual_code)
 				{
-					fatal_lang_error('smiley_not_unique');
+					if (!$smiley_helper->is_unique_code($individual_code, $_POST['smiley']))
+					{
+						fatal_lang_error('smiley_not_unique', false);
+					}
 				}
 
 				$smcFunc['db']->query('', '

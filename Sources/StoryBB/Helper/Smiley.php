@@ -135,14 +135,14 @@ class Smiley
 		$this->filesystem()->delete_file('smiley', $id);
 	}
 
-	public function is_unique_code(string $uniquecode): bool
+	public function is_unique_code(string $uniquecode, int $ignore = 0): bool
 	{
 		foreach ($this->get_smileys() as $smiley)
 		{
 			$codes = explode("\n", $smiley['code']);
 			foreach ($codes as $code)
 			{
-				if (trim($code) === $uniquecode)
+				if (trim($code) === $uniquecode && (!$ignore || $smiley['id_smiley'] != $ignore))
 				{
 					return false;
 				}
