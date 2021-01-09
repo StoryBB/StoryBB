@@ -1998,7 +1998,7 @@ function setupMenuContext()
 				// If this has an amount that isn't trivially calculable, go calculate it.
 				if (!empty($subitem['amt_callback']))
 				{
-					$subitem['amt'] = $subitem['amt_callback']();
+					$context['sidebar'][$key]['subitems'][$subkey]['amt'] = $subitem['amt'] = $subitem['amt_callback']();
 				}
 
 				// Take the counts of subitems and total them up for the parent.
