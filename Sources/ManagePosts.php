@@ -93,6 +93,8 @@ function ModifyBBCSettings($return_config = false)
 			['check', 'autoLinkUrls'],
 		'',
 			['bbc', 'disabledBBC'],
+		'',
+			['large_text', 'bbcode_colors', 'rows' => 8, 'subtext' => $txt['one_color_per_line']],
 	];
 
 	$context['settings_post_javascript'] = '
@@ -126,6 +128,22 @@ function ModifyBBCSettings($return_config = false)
 			$_POST['disabledBBC_enabledTags'] = [$_POST['disabledBBC_enabledTags']];
 		// Work out what is actually disabled!
 		$_POST['disabledBBC'] = implode(',', array_diff($bbcTags, $_POST['disabledBBC_enabledTags']));
+
+		$colors = $_POST['bbcode_colors'] ?? '';
+		$colors = array_map('trim', explode("\n", $colors));
+		$colors = array_filter($colors, function($x) {
+			if (preg_match('/^#[0-9a-f]{3}([0-9a-f]{3})?$/i', $x))
+			{
+				return true;
+			}
+			if (preg_match('/^AliceBlue|AntiqueWhite|Aqua|Aquamarine|Azure|Beige|Bisque|Black|BlanchedAlmond|Blue|BlueViolet|Brown|BurlyWood|CadetBlue|Chartreuse|Chocolate|Coral|CornflowerBlue|Cornsilk|Crimson|Cyan|DarkBlue|DarkCyan|DarkGoldenRod|DarkGray|DarkGrey|DarkGreen|DarkKhaki|DarkMagenta|DarkOliveGreen|DarkOrange|DarkOrchid|DarkRed|DarkSalmon|DarkSeaGreen|DarkSlateBlue|DarkSlateGray|DarkSlateGrey|DarkTurquoise|DarkViolet|DeepPink|DeepSkyBlue|DimGray|DimGrey|DodgerBlue|FireBrick|FloralWhite|ForestGreen|Fuchsia|Gainsboro|GhostWhite|Gold|GoldenRod|Gray|Grey|Green|GreenYellow|HoneyDew|HotPink|IndianRed|Indigo|Ivory|Khaki|Lavender|LavenderBlush|LawnGreen|LemonChiffon|LightBlue|LightCoral|LightCyan|LightGoldenRodYellow|LightGray|LightGrey|LightGreen|LightPink|LightSalmon|LightSeaGreen|LightSkyBlue|LightSlateGray|LightSlateGrey|LightSteelBlue|LightYellow|Lime|LimeGreen|Linen|Magenta|Maroon|MediumAquaMarine|MediumBlue|MediumOrchid|MediumPurple|MediumSeaGreen|MediumSlateBlue|MediumSpringGreen|MediumTurquoise|MediumVioletRed|MidnightBlue|MintCream|MistyRose|Moccasin|NavajoWhite|Navy|OldLace|Olive|OliveDrab|Orange|OrangeRed|Orchid|PaleGoldenRod|PaleGreen|PaleTurquoise|PaleVioletRed|PapayaWhip|PeachPuff|Peru|Pink|Plum|PowderBlue|Purple|RebeccaPurple|Red|RosyBrown|RoyalBlue|SaddleBrown|Salmon|SandyBrown|SeaGreen|SeaShell|Sienna|Silver|SkyBlue|SlateBlue|SlateGray|SlateGrey|Snow|SpringGreen|SteelBlue|Tan|Teal|Thistle|Tomato|Turquoise|Violet|Wheat|White|WhiteSmoke|Yellow|YellowGreen$/i', $x))
+			{
+				return true;
+			}
+
+			return false;
+		});
+		$_POST['bbcode_colors'] = implode("\n", $colors);
 
 		settings_integration_hook('integrate_save_bbc_settings', [$bbcTags]);
 

@@ -1384,6 +1384,17 @@ function create_control_richedit($editorOptions)
 		'required' => !empty($editorOptions['required']),
 	];
 
+	if (!empty($modSettings['bbcode_colors']))
+	{
+		$colours = explode("\n", $modSettings['bbcode_colors']);
+		$colours = array_filter(array_map('trim', $colours));
+		$context['controls']['richedit'][$editorOptions['id']]['color_options'] = implode(',', $colours);
+	}
+	else
+	{
+		$context['controls']['richedit'][$editorOptions['id']]['color_options'] = 'black,red,yellow,pink,green,orange,purple,blue,beige,brown,teal,navy,maroon,limegreen,white';
+	}
+
 	if (empty($context['bbc_tags']))
 	{
 		// The below array makes it dead easy to add images to this control. Add it to the array and everything else is done for you!
