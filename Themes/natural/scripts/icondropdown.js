@@ -8,7 +8,10 @@ function refreshIconPreview()
 {
 	if (!$('#membergroup_has_badge').prop('checked')) {
 		$('#badge_config').hide();
+		$('#icon_count_input').attr('min', 0);
 		return;
+	} else {
+		$('#icon_count_input').attr('min', 1);
 	}
 
 	$('#badge_config').show();
