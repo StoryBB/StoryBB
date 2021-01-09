@@ -43,14 +43,14 @@ class Css implements Routable, MaintenanceAccessible
 
 	public function css_emitter(int $theme, int $timestamp)
 	{
-		$enabled_themes = $this->get_enabled_themes();
+		$available_themes = $this->get_available_themes();
 
-		if (!in_array($theme, $enabled_themes))
+		if (!in_array($theme, $available_themes))
 		{
 			return new NotFoundResponse;
 		}
 
-		$themes = $this->get_theme_settings($enabled_themes);
+		$themes = $this->get_theme_settings($available_themes);
 
 		if (empty($themes[$theme]['theme_dir']) || !file_exists($themes[$theme]['theme_dir'] . '/css/index.scss'))
 		{
@@ -87,26 +87,26 @@ class Css implements Routable, MaintenanceAccessible
 		}
 	}
 
-	private function get_enabled_themes(): array
+	private function get_available_themes(): array
 	{
 		$site_settings = $this->sitesettings();
 
-		$enabled_themes = [];
-		if (!empty($site_settings->enableThemes))
+		$available_themes = [];
+		if ($site_settings->knownThemes)
 		{
-			$enabled_themes = array_map('intval', explode(',', $site_settings->enableThemes));
+			$available_themes = array_map('intval', explode(',', $site_settings->knownThemes));
 		}
 
 		// Default theme is always available if there is nothing.
-		if (empty($enabled_themes))
+		if (empty($available_themes))
 		{
-			$enabled_themes[] = 1;
+			$available_themes[] = 1;
 		}
 
-		return $enabled_themes;
+		return $available_themes;
 	}
 
-	private function get_theme_settings(array $enabled_themes): array
+	private function get_theme_settings(array $available_themes): array
 	{
 		$db = $this->db();
 
@@ -120,7 +120,7 @@ class Css implements Routable, MaintenanceAccessible
 				AND id_theme IN ({array_int:themes})',
 			[
 				'none' => 0,
-				'themes' => $enabled_themes,
+				'themes' => $available_themes,
 			]
 		);
 
@@ -141,9 +141,9 @@ class Css implements Routable, MaintenanceAccessible
 		$valid_theme_dirs = [];
 		foreach ($themes as $enabled_id => $theme_settings)
 		{
-			if (!empty($theme_settings['theme_dir']))
+			if (!empty($theme_settings['theme_dir']) && !empty($theme_settings['shortname']))
 			{
-				$valid_theme_dirs[basename($theme_settings['theme_dir'])] = $theme_settings['theme_dir'];
+				$valid_theme_dirs[$theme_settings['shortname']] = $theme_settings['theme_dir'];
 			}
 		}
 
@@ -153,6 +153,15 @@ class Css implements Routable, MaintenanceAccessible
 		if (isset($themes[$theme]['images_url']))
 		{
 			$injections['images_url'] = '"' . $themes[$theme]['images_url'] . '"';
+		}
+
+		// Add in all the theme's image URLs in case we want to cross the streams (e.g. refer to default iamges)
+		foreach ($themes as $theme_id => $theme_settings)
+		{
+			if (isset($theme_settings['shortname']) && isset($theme_settings['images_url']))
+			{
+				$injections[$theme_settings['shortname'] . '__images_url'] = '"' . $theme_settings['images_url'] . '"';
+			}
 		}
 
 		if (!empty($injections))

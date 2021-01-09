@@ -155,7 +155,7 @@ function ThemeAdmin()
 
 	// Can we create a new theme?
 	$context['can_create_new'] = is_writable($boarddir . '/Themes');
-	$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes/default'), 0, -7);
+	$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes/natural'), 0, -7);
 
 	// Look for a non existent theme directory. (ie theme87.)
 	$theme_dir = $boarddir . '/Themes/theme';
@@ -1368,7 +1368,7 @@ function InstallDir()
 	$context['to_install'] = [
 		'theme_dir' => $_REQUEST['theme_dir'],
 		'theme_url' => $themeurl . '/' . $name,
-		'name' => $name,
+		'shortname' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 	];
 

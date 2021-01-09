@@ -166,23 +166,11 @@ function get_theme_info($path)
 
 	$explicit_images = false;
 
-	// Perhaps they are trying to install a mod, lets tell them nicely this is the wrong function.
-	if (file_exists($path . '/package-info.xml'))
-	{
-		loadLanguage('Errors');
-
-		// We need to delete the dir otherwise the next time you try to install a theme you will get the same error.
-		remove_dir($path);
-
-		$txt['package_get_error_is_mod'] = str_replace('{MANAGEMODURL}', $scripturl . '?action=admin;area=packages;' . $context['session_var'] . '=' . $context['session_id'], $txt['package_get_error_is_mod']);
-		fatal_lang_error('package_theme_upload_error_broken', false, $txt['package_get_error_is_mod']);
-	}
-
 	// Parse theme.json into something we can work with.
 	$theme_info = @json_decode(file_get_contents($path . '/theme.json'), true);
 
 	// Error message, there isn't any valid info.
-	if (empty($theme_info) || empty($theme_info['id']) || empty($theme_info['name']))
+	if (empty($theme_info) || empty($theme_info['id']) || empty($theme_info['name']) || empty($theme_info['shortname']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_packageinfo_corrupt', false);
@@ -203,6 +191,7 @@ function get_theme_info($path)
 
 	// Remove things that definitely shouldn't be exported up here.
 	unset($theme_info['theme_settings'], $theme_info['theme_options'], $theme_info['additional_files']);
+	unset($theme_info['storybb_version'], $theme_info['id']);
 	unset($theme_info['page_index'], $theme_info['disable_files'], $theme_info['author']);
 
 	return $theme_info;

@@ -1926,7 +1926,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => $settings['compile_time']]), ['external' => true], 'sbb_index');
 	}
 
-	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['minimize' => false, 'validate' => false], 'font-awesome');
+	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['default_theme' => true, 'minimize' => false, 'validate' => false], 'font-awesome');
 
 	if (!empty($settings['additional_files']['css']))
 	{
