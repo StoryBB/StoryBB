@@ -1678,7 +1678,7 @@ function create_control_richedit($editorOptions)
 					}
 
 					// We might need to add a new row separator.
-					$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$code] = $smiley['url'];
+					$context['smileys'][empty($smiley['hidden']) ? 'postform' : 'popup'][$code] = $smiley['url'];
 				}
 
 				if (!empty($context['smileys']['postform']))
