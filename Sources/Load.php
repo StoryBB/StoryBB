@@ -2956,7 +2956,7 @@ function get_labels_and_badges($group_list)
 		if (empty($groups[$id_group]['parsed_icons']))
 			continue;
 
-		$badges .= '<div>' . $groups[$id_group]['parsed_icons'] . '</div>';
+		$badges .= '<div class="group_icons group_icons_' . $id_group . '">' . $groups[$id_group]['parsed_icons'] . '</div>';
 		$combined_badges[] = '<div class="char_group_title"' . (!empty($groups[$id_group]['online_color']) ? ' style="color:' . $groups[$id_group]['online_color'] . '"' : '') . '>' . $groups[$id_group]['group_name'] . '</div><div class="char_group_badges">' . $groups[$id_group]['parsed_icons'] . '</div>';
 
 		$badges_done++;

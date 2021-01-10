@@ -1,4 +1,4 @@
-	<input type="submit" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);">
+	<input type="submit" class="active" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);">
 
 {{#if editor_context.preview_type}}
 	<input type="submit" name="preview" value="{{#if editor_context.labels.preview_button}}{{editor_context.labels.preview_button}}{{else}}{{txt.preview}}{{/if}}" onclick="{{#if (eq editor_context.preview_type 2)}}return event.ctrlKey || previewPost();{{else}}return submitThisOnce(this);{{/if}}">
