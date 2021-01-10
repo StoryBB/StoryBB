@@ -4,6 +4,7 @@ Settings.php
 Settings_bak.php
 cache/class_cache.php
 cache/plugin_cache.php
+cache/css/*
 cache/compiled*.php
 cache/data*.php
 cache/template*.php
