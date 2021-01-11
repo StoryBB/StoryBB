@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 
 /**
@@ -33,6 +34,7 @@ function ManagePostSettings()
 		'posts' => 'ModifyPostSettings',
 		'topics' => 'ModifyTopicSettings',
 		'bbc' => 'ModifyBBCSettings',
+		'fonts' => 'ModifyFontSettings',
 		'censor' => 'SetCensor',
 		'drafts' => 'ModifyDraftSettings',
 	];
@@ -56,6 +58,9 @@ function ManagePostSettings()
 			],
 			'bbc' => [
 				'description' => $txt['manageposts_bbc_settings_description'],
+			],
+			'fonts' => [
+				'description' => $txt['manageposts_font_settings_description'],
 			],
 			'censor' => [
 				'description' => $txt['admin_censored_desc'],
@@ -470,5 +475,113 @@ function ModifyDraftSettings($return_config = false)
 	$context['settings_title'] = $txt['managedrafts_settings'];
 
 	// Prepare the settings...
+	prepareDBSettingContext($config_vars);
+}
+
+function ModifyFontSettings($return_config = false)
+{
+	global $context, $txt, $sourcedir, $scripturl, $modSettings;
+
+	// Most of the settings in this page make no sense to be returning in search mode.
+	if ($return_config)
+	{
+		return [$txt['manageposts_font_settings'], [
+			$txt['fonts_shown_in_editor'],
+			$txt['standard_fonts'],
+			$txt['fonts_from_themes'],
+		]];
+	}
+
+	// Get the settings template ready.
+	require_once($sourcedir . '/ManageServer.php');
+
+	$config_vars = [
+			['desc', 'fonts_shown_in_editor'],
+		$txt['standard_fonts'],
+	];
+
+	// Add in the semi-standard fonts that people have. We need to create identifiers like this for the purposes of fonts.
+	$standard_fonts = [
+		'arial' => 'Arial',
+		'arialblack' => 'Arial Black',
+		'couriernew' => 'Courier New',
+		'georgia' => 'Georgia',
+		'sansserif' => 'Sans-serif',
+		'serif' => 'Serif',
+		'timesnewroman' => 'Times New Roman',
+	];
+
+	$configured_fonts = !empty($modSettings['editor_fonts']) ? json_decode($modSettings['editor_fonts'], true) : [];
+	if (!isset($configured_fonts['standard']))
+	{
+		$configured_fonts['standard'] = [];
+	}
+	if (!isset($configured_fonts['theme']))
+	{
+		$configured_fonts['theme'] = [];
+	}
+
+	foreach ($standard_fonts as $font_id => $fontname)
+	{
+		// First, fake the label for the purposes of the form.
+		$txt['editor_fonts_standard_font_' . $font_id] = $fontname;
+		$config_vars[] = ['check', 'editor_fonts_standard_font_' . $font_id];
+		if (in_array($font_id, $configured_fonts['standard']))
+		{
+			$modSettings['editor_fonts_standard_font_' . $font_id] = 1;
+		}
+	}
+
+	// And now on to the fonts from themes.
+	$fonts_from_themes = Theme::get_font_list();
+
+	if (!empty($fonts_from_themes))
+	{
+		$config_vars[] = $txt['fonts_from_themes'];
+		foreach ($fonts_from_themes as $font_name => $themes)
+		{
+			$hash = sha1($font_name); // Just needs to be unique-ish and websafe, not crypto-secure.
+			$txt['editor_fonts_theme_font_' . $hash] = $font_name . ' (' . implode(', ', array_keys($themes)) . ')';
+			$config_vars[] = ['check', 'editor_fonts_theme_font_' . $hash];
+			if (in_array($font_name, $configured_fonts['theme']))
+			{
+				$modSettings['editor_fonts_theme_font_' . $hash] = 1;
+			}
+		}
+	}
+
+	if (isset($_REQUEST['save']))
+	{
+		checkSession();
+
+		$new_fonts = ['standard' => [], 'theme' => []];
+
+		// First save the standard fonts.
+		foreach ($standard_fonts as $font_id => $fontname) {
+			if (!empty($_POST['editor_fonts_standard_font_' . $font_id]))
+			{
+				$new_fonts['standard'][] = $font_id;
+			}
+		}
+
+		// Now the theme's fonts.
+		foreach ($fonts_from_themes as $font_name => $themes)
+		{
+			$hash = sha1($font_name);
+			if (!empty($_POST['editor_fonts_theme_font_' . $hash]))
+			{
+				$new_fonts['theme'][] = $font_name;
+			}
+		}
+
+		updateSettings(['editor_fonts' => json_encode($new_fonts)]);
+		Theme::clear_css_cache();
+		redirectexit('action=admin;area=postsettings;sa=fonts');
+	}
+
+	$context['page_title'] = $txt['manageposts_font_settings'];
+	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;sa=fonts;save';
+	$context['settings_title'] = $context['page_title'];
+
 	prepareDBSettingContext($config_vars);
 }

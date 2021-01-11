@@ -129,6 +129,7 @@ function AdminMain()
 						'posts' => [$txt['manageposts_settings']],
 						'topics' => [$txt['manageposts_topic_settings']],
 						'bbc' => [$txt['manageposts_bbc_settings']],
+						'fonts' => [$txt['manageposts_font_settings']],
 						'censor' => [$txt['admin_censored_words']],
 						'drafts' => [$txt['manage_drafts']],
 					],

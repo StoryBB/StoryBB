@@ -1395,6 +1395,32 @@ function create_control_richedit($editorOptions)
 		$context['controls']['richedit'][$editorOptions['id']]['color_options'] = 'black,red,yellow,pink,green,orange,purple,blue,beige,brown,teal,navy,maroon,limegreen,white';
 	}
 
+	$context['controls']['richedit'][$editorOptions['id']]['font_options'] = '';
+	if (!empty($modSettings['editor_fonts']))
+	{
+		$fonts = [];
+		$defined_fonts = json_decode($modSettings['editor_fonts'], true);
+		$standard_fonts = [
+			'arial' => 'Arial',
+			'arialblack' => 'Arial Black',
+			'couriernew' => 'Courier New',
+			'georgia' => 'Georgia',
+			'sansserif' => 'Sans-serif',
+			'serif' => 'Serif',
+			'timesnewroman' => 'Times New Roman',
+		];
+		foreach ($defined_fonts['standard'] as $font)
+		{
+			$fonts[] = $standard_fonts[$font];
+		}
+		foreach ($defined_fonts['theme'] as $font)
+		{
+			$fonts[] = $font;
+		}
+
+		$context['controls']['richedit'][$editorOptions['id']]['font_options'] = implode(',', $fonts);
+	}
+
 	if (empty($context['bbc_tags']))
 	{
 		// The below array makes it dead easy to add images to this control. Add it to the array and everything else is done for you!

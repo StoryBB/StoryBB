@@ -487,6 +487,13 @@ $txt['manageposts_bbc_settings_description'] = 'Bulletin board code can be used 
 $txt['manageposts_bbc_settings_title'] = 'Bulletin Board Code settings';
 $txt['manageposts_bbc_settings_submit'] = 'Save';
 
+$txt['manageposts_font_settings'] = 'Font Settings';
+$txt['manageposts_font_settings_description'] = 'This page allows you to configure fonts to be added to the site for the [font] bbcode as well as shown in the editor.';
+$txt['manageposts_font_settings_submit'] = 'Save';
+$txt['fonts_shown_in_editor'] = 'Fonts shown in the editor';
+$txt['standard_fonts'] = 'Standard fonts';
+$txt['fonts_from_themes'] = 'Fonts that come with themes you have installed';
+
 $txt['manageposts_topic_settings'] = 'Topic Settings';
 $txt['manageposts_topic_settings_description'] = 'Here you can set all settings involving topics.';
 $txt['manageposts_topic_settings_submit'] = 'Save';
