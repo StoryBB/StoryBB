@@ -19,6 +19,7 @@ use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\SiteSettings;
 use StoryBB\Dependency\UrlGenerator;
+use StoryBB\Model\Theme;
 use StoryBB\Routing\ErrorResponse;
 use StoryBB\Routing\NotFoundResponse;
 use StoryBB\Routing\RenderResponse;
@@ -150,6 +151,10 @@ class Css implements Routable, MaintenanceAccessible
 		$scss = new Compiler;
 
 		$injections = [];
+		if (isset($themes[$theme]['theme_url']))
+		{
+			$injections['theme_url'] = '"' . $themes[$theme]['theme_url'] . '"';
+		}
 		if (isset($themes[$theme]['images_url']))
 		{
 			$injections['images_url'] = '"' . $themes[$theme]['images_url'] . '"';
@@ -191,6 +196,8 @@ class Css implements Routable, MaintenanceAccessible
 			throw new Exception('Nothing parsed.');
 		}
 
+		$result .= $this->get_font_css($themes, $theme);
+
 		$compile_time = max($parsed);
 		$filename = $theme . '_' . $compile_time;
 		if (!file_exists($cachedir . '/css'))
@@ -212,5 +219,65 @@ class Css implements Routable, MaintenanceAccessible
 		}
 
 		return $result;
+	}
+
+	private function get_font_css(array $themes, int $theme): string
+	{
+		$valid_formats = [
+			'truetype' => true, // TTF fonts.
+			'opentype' => true, // OTF fonts.
+			'woff' => true, // Web Open Font Format (1).
+			'woff2' => true, // Web Open Font Format (2).
+			'embedded-opentype' => true, // EOT, mostly old IE.
+			'svg' => true,
+		];
+
+		// We need all the fonts from the current theme in any case.
+		$fonts_done = [];
+
+		$json = json_decode(file_get_contents($themes[$theme]['theme_dir'] . '/theme.json'), true);
+		if (!empty($json) && !empty($json['fonts']))
+		{
+			foreach ($json['fonts'] as $font_id => $locations)
+			{
+				if (isset($locations['local']))
+				{
+					$srcs = [];
+					foreach ($locations['local'] as $format => $url)
+					{
+						$srcs[] = 'url("' . strtr($url, ['$theme_url' => $themes[$theme]['theme_url']]) . '") format("' . $format . '")';
+						if (!isset($valid_formats[$format]))
+						{
+							continue;
+						}
+					}
+
+					if (!empty($srcs))
+					{
+						$css = '@font-face {';
+						$css .= 'font-family: ' . $font_id . ';';
+						$css .= 'src: ' . implode(', ', $srcs);
+						$css .= '}';
+					}
+
+					$fonts_done[$font_id] = $css;
+				}
+			}
+		}
+
+		// Then we need to include all the fonts from other themes that aren't covered but requested.
+		$theme_fonts = Theme::get_font_list();
+		foreach ($theme_fonts as $font_id => $font)
+		{
+			if (isset($fonts_done[$font_id]))
+			{
+				continue;
+			}
+
+			// @todo
+		}
+
+		// And finally return it all in a string. We don't need to minify this, it's already pretty-much minified.
+		return "\n" . implode("\n", $fonts_done);
 	}
 }

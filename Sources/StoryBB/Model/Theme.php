@@ -155,11 +155,9 @@ class Theme
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
-				AND variable IN ({string:name}, {string:theme_dir})',
+				AND variable IN ({literal:name}, {literal:theme_dir}, {literal:theme_url})',
 			[
 				'no_member' => 0,
-				'name' => 'name',
-				'theme_dir' => 'theme_dir',
 			]
 		);
 		$cache = [];
@@ -169,5 +167,82 @@ class Theme
 		$smcFunc['db']->free_result($request);
 
 		return $cache;
+	}
+
+	/**
+	 * Gets a list of all fonts declared by themes.
+	 *
+	 * @return array An array of all fonts, key by ident in the fonts, with the array being theme name => [format => url].
+	 */
+	public static function get_font_list(): array
+	{
+		static $cache = null;
+
+		if ($cache !== null)
+		{
+			return $cache;
+		}
+
+		$valid_formats = [
+			'truetype' => true, // TTF fonts.
+			'opentype' => true, // OTF fonts.
+			'woff' => true, // Web Open Font Format (1).
+			'woff2' => true, // Web Open Font Format (2).
+			'embedded-opentype' => true, // EOT, mostly old IE.
+			'svg' => true,
+		];
+
+		$cache = [];
+
+		$themes = static::get_theme_list();
+		foreach (array_keys($themes) as $theme_id)
+		{
+			// If a theme doesn't have a theme dir, abort.
+			if (!isset($themes[$theme_id]['theme_dir']) || !isset($themes[$theme_id]['name']) || !isset($themes[$theme_id]['theme_url']))
+			{
+				continue;
+			}
+
+			// If it doesn't exist we can't do anything with it.
+			if (!file_exists($themes[$theme_id]['theme_dir'] . '/theme.json'))
+			{
+				continue;
+			}
+
+			// Load the theme JSON, if it's missing JSON or missing a fonts section, skip.
+			$json = json_decode(file_get_contents($themes[$theme_id]['theme_dir'] . '/theme.json'), true);
+			if (!is_array($json) || empty($json['fonts']))
+			{
+				continue;
+			}
+
+			foreach (array_keys($json['fonts']) as $font_name) {
+				if (!empty($json['fonts'][$font_name]['local']))
+				{
+					$formats = array_intersect_key($json['fonts'][$font_name]['local'], $valid_formats);
+
+					foreach ($formats as $format => $url)
+					{
+						$cache[$font_name][$themes[$theme_id]['name']]['local'][$format] = strtr($url, ['$theme_url' => $themes[$theme_id]['theme_url']]);
+					}
+				}
+			}
+		}
+
+		ksort($cache);
+
+		return $cache;
+	}
+
+	/**
+	 * Force all themes' cached CSS to be rebuilt.
+	 */
+	public static function clear_css_cache(): void
+	{
+		global $smcFunc;
+
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}themes
+			WHERE variable = {literal:compile_time}');
 	}
 }

@@ -191,7 +191,7 @@ function get_theme_info($path)
 
 	// Remove things that definitely shouldn't be exported up here.
 	unset($theme_info['theme_settings'], $theme_info['theme_options'], $theme_info['additional_files']);
-	unset($theme_info['storybb_version'], $theme_info['id']);
+	unset($theme_info['storybb_version'], $theme_info['id'], $theme_info['fonts']);
 	unset($theme_info['page_index'], $theme_info['disable_files'], $theme_info['author']);
 
 	return $theme_info;
