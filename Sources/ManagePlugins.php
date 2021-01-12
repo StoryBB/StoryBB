@@ -50,6 +50,8 @@ function PluginsList()
 
 	$available_plugins = Manager::get_available_plugins();
 
+	$context['available_plugins'] = [];
+
 	// 2. Deal with any filtering. We have to do it here, rather than earlier, simply because we need to have processed everything beforehand.
 	$context['filter_plugins'] = [
 		'all' => 0,

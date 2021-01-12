@@ -36,21 +36,8 @@ function ReportToModerator()
 	elseif (isset($_REQUEST['u']))
 		isAllowedTo('report_user');
 
-	// Previewing or modifying?
-	if (isset($_POST['preview']) && !isset($_POST['save']))
-	{
-		require_once($sourcedir . '/Subs-Post.php');
-
-		// Set up the preview message.
-		$context['preview_message'] = StringLibrary::escape($_POST['comment'], ENT_QUOTES);
-		preparsecode($context['preview_message']);
-
-		// We censor for your protection...
-		censorText($context['preview_message']);
-	}
-
 	// If they're posting, it should be processed by ReportToModerator2.
-	if ((isset($_POST[$context['session_var']]) || isset($_POST['save'])) && empty($context['post_errors']) && !isset($_POST['preview']))
+	if ((isset($_POST[$context['session_var']]) || isset($_POST['save'])) && empty($context['post_errors']))
 		ReportToModerator2();
 
 	// We need a message ID or user ID to check!

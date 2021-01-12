@@ -1878,7 +1878,7 @@ function char_sheet_approval()
 	{
 		$smcFunc['db']->insert('',
 			'{db_prefix}user_alerts',
-			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 			$alert_rows,
 			[]
