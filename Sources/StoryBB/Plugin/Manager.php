@@ -76,7 +76,7 @@ class Manager
 		foreach (explode(',', $modSettings['enabled_plugins']) as $plugin)
 		{
 			// A plugin is missing, this will force a cache rebuild - and disable it in passing.
-			if (!file_exists($pluginsdir . '/' . $plugin))
+			if (!file_exists($pluginsdir . '/' . $plugin . '/plugin.json'))
 			{
 				$rebuild_cache = true;
 				continue;
@@ -91,7 +91,6 @@ class Manager
 					continue;
 				}
 			}
-
 
 			$enabled_plugins[$plugin] = $plugin_cache[$plugin];
 		}
