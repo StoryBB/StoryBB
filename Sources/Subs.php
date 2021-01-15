@@ -1874,7 +1874,7 @@ function setupMenuContext()
 			'manage' => [
 				'url' => $scripturl,
 				'icon' => 'fas fa-tools fa-fw',
-				'visible' => $context['allow_admin'] || $context['can_mod'],
+				'visible' => $context['allow_admin'] || $context['user']['can_mod'],
 				'subitems' => [
 					'admin' => [
 						'title' => $txt['admin'],
@@ -1893,7 +1893,7 @@ function setupMenuContext()
 						'title' => $txt['approve_members_waiting'],
 						'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 						'visible' => !empty($context['unapproved_members']),
-						'amt' => $context['unapproved_members'],
+						'amt' => $context['unapproved_members'] ?? 0,
 					],
 					'contactform' => [
 						'title' => $txt['contact_us'],
