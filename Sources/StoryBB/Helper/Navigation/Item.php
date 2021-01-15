@@ -98,8 +98,8 @@ class Item
 		return $this;
 	}
 
-	public function instantiate(array $params)
+	public function instantiate(Navigation $nav, array $params)
 	{
-		return new $this->controller($params);
+		return new $this->controller($nav, $params);
 	}
 }

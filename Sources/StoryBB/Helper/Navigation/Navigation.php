@@ -66,7 +66,7 @@ class Navigation
 
 		if ($result)
 		{
-			$instance = $result->instantiate($params);
+			$instance = $result->instantiate($this, $params);
 			if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST' && is_callable([$instance, 'post_action']))
 			{
 				checkSession();
