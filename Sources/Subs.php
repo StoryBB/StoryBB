@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Model\Alert;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -298,18 +299,17 @@ function updateMemberData($members, $data)
 		// Doing an increment?
 		if ($var == 'alerts' && ($val === '+' || $val === '-'))
 		{
-			include_once($sourcedir . '/Profile-View.php');
 			if (is_array($members))
 			{
 				$val = 'CASE ';
 				foreach ($members as $v)
-					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, [], false)) . ' ';
+					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(Alert::fetch_alerts($v, false, 0, [], false)) . ' ';
 				$val = $val . ' END';
 				$type = 'raw';
 			}
 			else
 			{
-				$blub = fetch_alerts($members, false, 0, [], false);
+				$blub = Alert::fetch_alerts($members, false, 0, [], false);
 				$val = count($blub);
 			}
 		}

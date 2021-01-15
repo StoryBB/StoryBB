@@ -201,4 +201,217 @@ class Alert
 
 		return $count;
 	}
+
+	/**
+	 * Fetch the alerts a user currently has.
+	 *
+	 * @param int $memID The ID of the member
+	 * @param bool $all Whether to fetch all alerts or just unread ones
+	 * @param int $counter How many alerts to display (0 if displaying all or using pagination)
+	 * @param array $pagination An array containing info for handling pagination. Should have 'start' and 'maxIndex'
+	 * @param bool $withSender With $memberContext from sender
+	 * @return array An array of information about the fetched alerts
+	 */
+	public static function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $withSender = true)
+	{
+		global $smcFunc, $txt, $scripturl, $memberContext;
+
+		$query_see_board = build_query_board($memID);
+		$query_see_board = $query_see_board['query_see_board'];
+
+		$alerts = [];
+		$request = $smcFunc['db']->query('', '
+			SELECT id_alert, alert_time, mem.id_member AS sender_id, COALESCE(mem.real_name, ua.member_name) AS sender_name,
+				chars_src, chars_dest, content_type, content_id, content_action, is_read, extra
+			FROM {db_prefix}user_alerts AS ua
+				LEFT JOIN {db_prefix}members AS mem ON (ua.id_member_started = mem.id_member)
+			WHERE ua.id_member = {int:id_member}' . (!$all ? '
+				AND is_read = 0' : '') . '
+			ORDER BY id_alert DESC' . (!empty($counter) && empty($pagination) ? '
+			LIMIT {int:counter}' : '') . (!empty($pagination) && empty($counter) ? '
+			LIMIT {int:start}, {int:maxIndex}' : ''),
+			[
+				'id_member' => $memID,
+				'counter' => $counter,
+				'start' => !empty($pagination['start']) ? $pagination['start'] : 0,
+				'maxIndex' => !empty($pagination['maxIndex']) ? $pagination['maxIndex'] : 0,
+			]
+		);
+
+		$senders = [];
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$id_alert = array_shift($row);
+			$row['time'] = timeformat($row['alert_time']);
+			$row['extra'] = !empty($row['extra']) ? sbb_json_decode($row['extra'], true) : [];
+			$alerts[$id_alert] = $row;
+
+			if (!empty($row['sender_id']))
+				$senders[] = $row['sender_id'];
+		}
+		$smcFunc['db']->free_result($request);
+
+		if($withSender)
+		{
+			$senders = loadMemberData($senders);
+			foreach ($senders as $member)
+				loadMemberContext($member);
+		}
+
+		// Now go through and actually make with the text.
+		loadLanguage('Alerts');
+
+		// Hooks might want to do something snazzy around their own content types - including enforcing permissions if appropriate.
+		call_integration_hook('integrate_fetch_alerts', [&$alerts]);
+
+		// For anything that wants us to check board or topic access, let's do that.
+		$boards = [];
+		$topics = [];
+		$msgs = [];
+		$chars = [];
+		$char_accounts = [];
+		foreach ($alerts as $id_alert => $alert)
+		{
+			if (!empty($alert['chars_src']))
+				$chars[$alert['chars_src']] = $txt['char_unknown'];
+			if (!empty($alert['chars_dest']))
+				$chars[$alert['chars_dest']] = $txt['char_unknown'];
+			if (isset($alert['extra']['board']))
+				$boards[$alert['extra']['board']] = $txt['board_na'];
+			if (isset($alert['extra']['topic']))
+				$topics[$alert['extra']['topic']] = $txt['topic_na'];
+			if ($alert['content_type'] == 'msg')
+				$msgs[$alert['content_id']] = $txt['topic_na'];
+		}
+
+		// Having figured out what boards etc. there are, let's now get the names of them if we can see them. If not, there's already a fallback set up.
+		if (!empty($boards))
+		{
+			$request = $smcFunc['db']->query('', '
+				SELECT id_board, name
+				FROM {db_prefix}boards AS b
+				WHERE ' . $query_see_board . '
+					AND id_board IN ({array_int:boards})',
+				[
+					'boards' => array_keys($boards),
+				]
+			);
+			while ($row = $smcFunc['db']->fetch_assoc($request))
+				$boards[$row['id_board']] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+		}
+		if (!empty($topics))
+		{
+			$request = $smcFunc['db']->query('', '
+				SELECT t.id_topic, m.subject
+				FROM {db_prefix}topics AS t
+					INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+					INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
+				WHERE ' . $query_see_board . '
+					AND t.id_topic IN ({array_int:topics})',
+				[
+					'topics' => array_keys($topics),
+				]
+			);
+			while ($row = $smcFunc['db']->fetch_assoc($request))
+				$topics[$row['id_topic']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>';
+		}
+		if (!empty($msgs))
+		{
+			$request = $smcFunc['db']->query('', '
+				SELECT m.id_msg, t.id_topic, m.subject
+				FROM {db_prefix}messages AS m
+					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
+					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
+				WHERE ' . $query_see_board . '
+					AND m.id_msg IN ({array_int:msgs})',
+				[
+					'msgs' => array_keys($msgs),
+				]
+			);
+			while ($row = $smcFunc['db']->fetch_assoc($request))
+				$msgs[$row['id_msg']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
+		}
+
+		// Now to handle characters
+		if (!empty($chars))
+		{
+			$request = $smcFunc['db']->query('', '
+				SELECT chars.id_character, chars.id_member, chars.character_name
+				FROM {db_prefix}characters AS chars
+				WHERE id_character IN ({array_int:chars})',
+				[
+					'chars' => array_keys($chars),
+				]
+			);
+			while ($row = $smcFunc['db']->fetch_assoc($request))
+			{
+				$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
+				$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
+			}
+			$smcFunc['db']->free_result($request);
+		}
+
+		// Now to go back through the alerts, reattach this extra information and then try to build the string out of it (if a hook didn't already)
+		foreach ($alerts as $id_alert => $alert)
+		{
+			if (!empty($alert['text']))
+				continue;
+			if (isset($alert['extra']['board']))
+				$alerts[$id_alert]['extra']['board_msg'] = $boards[$alert['extra']['board']];
+			if (isset($alert['extra']['topic']))
+				$alerts[$id_alert]['extra']['topic_msg'] = $topics[$alert['extra']['topic']];
+			if ($alert['content_type'] == 'msg')
+				$alerts[$id_alert]['extra']['msg_msg'] = $msgs[$alert['content_id']];
+			if ($alert['content_type'] == 'profile')
+				$alerts[$id_alert]['extra']['profile_msg'] = '<a href="' . $scripturl . '?action=profile;u=' . $alerts[$id_alert]['content_id'] . '">' . $alerts[$id_alert]['extra']['user_name'] . '</a>';
+
+			// Use the sender details first if we have them.
+			if (!empty($memberContext[$alert['sender_id']]))
+				$alerts[$id_alert]['sender'] = $memberContext[$alert['sender_id']];
+
+			// And additionally if we have a character, use that.
+			if (!empty($alert['chars_src']))
+			{
+				if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['chars_src']]))
+				{
+					$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['chars_src']]['avatar'];
+					$alerts[$id_alert]['sender']['avatar']['image'] = '<img class="avatar" src="' . $alerts[$id_alert]['sender']['avatar']['image'] . '" alt="">';
+				}
+			}
+
+			$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
+			if (!empty($alert['chars_dest']))
+				$string .= 'chr';
+
+			if (isset($txt[$string]))
+			{
+				$extra = $alerts[$id_alert]['extra'];
+				$search = ['{member_link}', '{scripturl}'];
+				$repl = [!empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'], $scripturl];
+				if (!empty($alert['chars_src']))
+				{
+					$search[] = '{char_link}';
+					$repl[] = $chars[$alert['chars_src']];
+					if (!empty($chars_sheets[$alert['chars_src']]))
+					{
+						$search[] = '#{char_sheet_link}';
+						$repl[] = $chars_sheets[$alert['chars_src']];
+					}
+				}
+				if (!empty($alert['chars_dest']))
+				{
+					$search[] = '{your_chr}';
+					$repl[] = $chars[$alert['chars_dest']];
+				}
+				foreach ($extra as $k => $v)
+				{
+					$search[] = '{' . $k . '}';
+					$repl[] = $v;
+				}
+				$alerts[$id_alert]['text'] = str_replace($search, $repl, $txt[$string]);
+			}
+		}
+
+		return $alerts;
+	}
 }
