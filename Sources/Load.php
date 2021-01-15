@@ -2099,6 +2099,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
+function check_load_avg(string $category): void
+{
+	global $context, $modSettings;
+
+	if (!empty($context['load_average']) && !empty($modSettings['loadavg_' . $category]) && $context['load_average'] >= $modSettings['loadavg_' . $category])
+	{
+		fatal_lang_error('loadavg_' . $category . '_disabled', false);
+	}
+}
+
 /**
  * Add a CSS file for output later
  *
