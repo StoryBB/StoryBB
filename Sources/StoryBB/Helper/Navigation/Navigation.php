@@ -42,6 +42,25 @@ class Navigation
 		return $tabs;
 	}
 
+	public function find_item_by_id($id): ?Item
+	{
+		foreach ($this->tabs as $tab)
+		{
+			foreach ($tab->sections as $section)
+			{
+				foreach ($section->items as $item)
+				{
+					if ($item->id == $id)
+					{
+						return $item;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public function dispatch($params): void
 	{
 		$result = null;
