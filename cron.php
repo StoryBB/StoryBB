@@ -56,6 +56,7 @@ $smcFunc = [
 	'db' => $container->get('database'),
 ];
 
+$boarddir = __DIR__;
 $sourcedir = App::get_sources_path();
 $cachedir = $container->get('cachedir');
 $language = App::get_global_config_item('language');
