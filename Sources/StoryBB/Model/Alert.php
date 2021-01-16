@@ -113,10 +113,12 @@ class Alert
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}user_alerts
 			SET is_read = {int:read}
-			WHERE id_alert IN({array_int:toMark})',
+			WHERE id_alert IN ({array_int:toMark})
+				AND id_member = {int:memID}',
 			[
 				'read' => $read == 1 ? time() : 0,
 				'toMark' => $toMark,
+				'memID' => $memID,
 			]
 		);
 
@@ -141,15 +143,19 @@ class Alert
 		global $smcFunc;
 
 		if (empty($toDelete))
+		{
 			return false;
+		}
 
 		$toDelete = (array) $toDelete;
 
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_alerts
-			WHERE id_alert IN({array_int:toDelete})',
+			WHERE id_alert IN({array_int:toDelete})' . (!empty($memID) ? '
+				AND id_member = {int:memID}' : ''),
 			[
 				'toDelete' => $toDelete,
+				'memID' => (int) $memID,
 			]
 		);
 
