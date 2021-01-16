@@ -22,6 +22,15 @@ class Group
 	const ADMINISTRATOR = 1;
 	const BOARD_MODERATOR = 3;
 
+	const TYPE_PRIVATE = 0;
+	const TYPE_PROTECTED = 1;
+	const TYPE_REQUESTABLE = 2;
+	const TYPE_JOINABLE = 3;
+
+	const VISIBILITY_VISIBLE = 0;
+	const VISIBILITY_VISBLE_EXCEPT_GROUP_KEY = 1;
+	const VISIBILITY_INVISIBLE = 2;
+
 	/**
 	 * Identifies whether a given group is a character-based or account based.
 	 *
