@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * This taks handles notifying someone that their request to join a group has been decided.
  */
@@ -134,7 +136,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 
 					$emaildata = loadEmailTemplate($email_template_name, $replacements, $user['language']);
 
-					StoryBB\Helper\Mail::send($user['email'], $emaildata['subject'], $emaildata['body'], null, $email_message_id_prefix . $user['rid'], $emaildata['is_html'], 2);
+					Mail::send($user['email'], $emaildata['subject'], $emaildata['body'], null, $email_message_id_prefix . $user['rid'], $emaildata['is_html'], 2);
 				}
 			}
 
