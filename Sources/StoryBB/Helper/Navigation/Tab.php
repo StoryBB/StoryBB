@@ -69,7 +69,10 @@ class Tab
 			{
 				foreach ($section->items as $item)
 				{
-					return $item->get_url($base_params);
+					if ($item->is_visible())
+					{
+						return $item->get_url($base_params);
+					}
 				}
 			}
 		}
