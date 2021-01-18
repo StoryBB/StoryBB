@@ -332,6 +332,11 @@ function updateMemberData($members, $data)
 		$parameters['p_' . $var] = $val;
 	}
 
+	if (trim($setString) == '')
+	{
+		return;
+	}
+
 	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET' . substr($setString, 0, -1) . '
