@@ -245,10 +245,6 @@ function ViewMemberlist()
 				'db_fields' => ['email_address'],
 				'type' => 'string'
 			],
-			'website' => [
-				'db_fields' => ['website_title', 'website_url'],
-				'type' => 'string'
-			],
 			'ip' => [
 				'db_fields' => ['member_ip'],
 				'type' => 'inet'

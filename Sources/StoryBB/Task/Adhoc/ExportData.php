@@ -241,7 +241,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		{
 			$request = $smcFunc['db']->query('', '
 				SELECT member_name, date_registered, immersive_mode, lngfile, last_login,
-					email_address, birthdate, website_title, website_url, signature,
+					email_address, birthdate, signature,
 					member_ip, member_ip2, secret_question, total_time_logged_in, timezone
 				FROM {db_prefix}members
 				WHERE id_member = {int:member}',
@@ -331,9 +331,6 @@ class ExportData extends \StoryBB\Task\Adhoc
 				}
 				if (!empty($character['secret_question'])) {
 					$details[] = 'Secret question: ' . $character['secret_question'];
-				}
-				if (!empty($character['website_url'])) {
-					$details[] = 'Website: ' . $character['website_title'] . ' - ' . $character['website_url'];
 				}
 				$details[] = 'Timezone: ' . $character['timezone'];
 				$total_time_logged_in = '';

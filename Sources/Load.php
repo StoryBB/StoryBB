@@ -950,7 +950,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	$select_columns = '
 			COALESCE(lo.log_time, 0) AS is_online, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.avatar, mem.id_member, mem.member_name,
-			mem.real_name, mem.email_address, mem.date_registered, mem.website_title, mem.website_url,
+			mem.real_name, mem.email_address, mem.date_registered,
 			mem.birthdate, mem.birthday_visibility, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
 			mem.is_activated, mem.warning,
@@ -1284,10 +1284,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'is_buddy' => $profile['buddy'],
 			'is_reverse_buddy' => in_array($user_info['id'], $buddy_list),
 			'buddies' => $buddy_list,
-			'website' => [
-				'title' => $profile['website_title'],
-				'url' => $profile['website_url'],
-			],
 			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : $profile['birthdate'],
 			'birthday_visibility' => $profile['birthday_visibility'],
 			'real_posts' => $profile['posts'],

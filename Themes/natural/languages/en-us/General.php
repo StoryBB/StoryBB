@@ -95,7 +95,6 @@ $txt['verify_pass'] = 'Verify password';
 
 $txt['profile_of'] = 'View the profile of';
 $txt['total'] = 'Total';
-$txt['website'] = 'Website';
 $txt['register'] = 'Sign Up';
 $txt['warning_status'] = 'Warning Status';
 $txt['user_warn_watch'] = 'User is on moderator watch list';

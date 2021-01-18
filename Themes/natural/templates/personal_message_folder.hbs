@@ -159,10 +159,6 @@
 					<li class="profile">
 						<ol class="profile_icons">
 
-			{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-							<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
-			{{/if}}
-
 			{{#if member.show_email}}
 							<li><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{txt.email}}"></a></li>
 			{{/if}}

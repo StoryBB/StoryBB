@@ -1472,7 +1472,7 @@ function prepareDisplayContext($reset = false)
 	}
 
 	$memberContext[$message['id_member']]['ip'] = inet_dtop($message['poster_ip']);
-	$memberContext[$message['id_member']]['show_profile_buttons'] = !empty($modSettings['show_profile_buttons']) && (!empty($memberContext[$message['id_member']]['can_view_profile']) || (!empty($memberContext[$message['id_member']]['website']['url']) && !isset($context['disabled_fields']['website'])) || $memberContext[$message['id_member']]['show_email'] || $context['can_send_pm']);
+	$memberContext[$message['id_member']]['show_profile_buttons'] = !empty($modSettings['show_profile_buttons']) && (!empty($memberContext[$message['id_member']]['can_view_profile']) || $memberContext[$message['id_member']]['show_email'] || $context['can_send_pm']);
 
 	// Do the censor thang.
 	censorText($message['body']);
