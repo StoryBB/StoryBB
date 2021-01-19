@@ -2548,15 +2548,15 @@ function build_query_board($userid)
 	$query_part = [];
 	$groups = [];
 	$is_admin = false;
-	$mod_cache;
-	$ignoreboards;
+	$mod_cache = [];
+	$ignoreboards = [];
 
 	if (isset($user_info['id']) && $user_info['id'] == $userid)
 	{
 		$groups = $user_info['groups'];
 		$is_admin = $user_info['is_admin'];
-		$mod_cache = !empty($user_info['mod_cache']) ? $user_info['mod_cache'] : null;
-		$ignoreboards = !empty($user_info['ignoreboards']) ? $user_info['ignoreboards'] : null;
+		$mod_cache = !empty($user_info['mod_cache']) ? $user_info['mod_cache'] : [];
+		$ignoreboards = !empty($user_info['ignoreboards']) ? $user_info['ignoreboards'] : [];
 	}
 	else
 	{
@@ -2627,7 +2627,7 @@ function build_query_board($userid)
 		$query_part['query_see_board'] = '1=1';
 	// Otherwise just the groups in $user_info['groups'].
 	else
-		$query_part['query_see_board'] = '(((FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $groups) . ', b.member_groups) != 0) AND (FIND_IN_SET(' . implode(', b.deny_member_groups) = 0 AND FIND_IN_SET(', $groups) . ', b.deny_member_groups) = 0))' . (isset($mod_cache) ? ' OR ' . $mod_cache['mq'] : '') . ')';
+		$query_part['query_see_board'] = '(((FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $groups) . ', b.member_groups) != 0) AND (FIND_IN_SET(' . implode(', b.deny_member_groups) = 0 AND FIND_IN_SET(', $groups) . ', b.deny_member_groups) = 0))' . (isset($mod_cache['mq']) ? ' OR ' . $mod_cache['mq'] : '') . ')';
 
 	// Build the list of boards they WANT to see.
 	// This will take the place of query_see_boards in certain spots, so it better include the boards they can see also
