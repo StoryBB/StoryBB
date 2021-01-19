@@ -28,7 +28,7 @@
 
 	{{! List through every board in the category, printing its name and link to modify the board. }}
 	{{#each boards}}
-					<li{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}} id="recycle_board"{{/if}} class="windowbg{{#if is_redirect}} redirect_board{{/if}}" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 child_level)}}px;">
+					<li{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}} id="recycle_board"{{/if}} class="windowbg" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 child_level)}}px;">
 						<span class="floatleft"><a href="{{../../scripturl}}?board={{id}}.0">{{{name}}}</a>
 
 		{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}}
@@ -37,7 +37,7 @@
 							</a>
 		{{else}}
 			{{#if is_redirect}}
-							<img src="{{../../settings.images_url}}/new_redirect.png" alt="{{{../../txt.redirect_board_desc}}}" title="{{{../../txt.redirect_board_desc}}}">
+							<span class="in_character_note">{{{../../txt.redirect_board}}}</span>
 			{{else}}
 							<span class="in_character_note">{{#if in_character}}{{{../../txt.in_character_board}}}{{else}}{{{../../txt.out_of_character_board}}}{{/if}}</span>
 			{{/if}}
