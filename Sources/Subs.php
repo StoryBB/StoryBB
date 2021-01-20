@@ -2024,15 +2024,6 @@ function setupMenuContext()
 		}
 	}
 
-	$buttons = [
-		'characters' => [
-			'title' => $txt['chars_menu_title'],
-			'href' => $scripturl . '?action=characters',
-			'show' => $context['allow_memberlist'],
-			'sub_buttons' => [],
-		],
-	];
-
 	$context['footer_links'] = Policy::get_footer_policies();
 }
 
