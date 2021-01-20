@@ -1870,7 +1870,7 @@ function setupMenuContext()
 				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
 				'icon' => 'fas fa-bookmark fa-fw',
 			],
-			'characters' => [
+			'characterlist' => [
 				'url' => $scripturl . '?action=characters',
 				'icon' => 'fas fa-user-circle fa-fw',
 			],
@@ -1955,10 +1955,16 @@ function setupMenuContext()
 
 		foreach (get_main_menu_groups() as $id => $group_name)
 		{
-			$context['sidebar']['characters']['subitems']['group' . $id] = [
+			$context['sidebar']['characterlist']['subitems']['group' . $id] = [
 				'title' => $group_name,
 				'url' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
 			];
+		}
+
+		if (!empty($context['sidebar']['characterlist']['subitems']))
+		{
+			addInlineJavaScript('
+	user_menus.add("characterlist", "", true);', true);
 		}
 	}
 	else
