@@ -77,10 +77,6 @@
 				<li class="profile">
 					<ol class="profile_icons">
 
-		{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-						<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
-		{{/if}}
-
 		{{#if ../context.can_send_pm}}
 						<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}" class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon"></a></li>
 		{{/if}}

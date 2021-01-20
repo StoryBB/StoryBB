@@ -416,9 +416,6 @@ button.plugin-remove {
 #manage_boards li#recycle_board {
 	background-color: #dee;
 }
-#manage_boards li.redirect_board, #manage_boards li.redirect_board:hover {
-	background-color: #eed;
-}
 .move_links {
 	padding: 0 13px 0 0;
 }

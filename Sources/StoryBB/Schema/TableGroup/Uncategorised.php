@@ -732,8 +732,6 @@ class Uncategorised
 					'email_address' => Column::varchar(255),
 					'birthdate' => Column::date()->default('1004-01-01'),
 					'birthday_visibility' => Column::tinyint(),
-					'website_title' => Column::varchar(255),
-					'website_url' => Column::varchar(255),
 					'show_online' => Column::tinyint()->default(1),
 					'time_format' => Column::varchar(80),
 					'signature' => Column::text(),

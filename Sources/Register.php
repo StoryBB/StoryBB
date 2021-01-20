@@ -138,7 +138,7 @@ function Register($reg_errors = [])
 		$context['user']['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
-		$user_info['permissions'] = array_merge($user_info['permissions'], ['profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own']);
+		$user_info['permissions'] = array_merge($user_info['permissions'], ['profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -283,10 +283,6 @@ function Register2()
 	if (!empty($modSettings['registration_fields']))
 	{
 		$reg_fields = explode(',', $modSettings['registration_fields']);
-
-		// Website is a little different
-		if (in_array('website', $reg_fields))
-			$possible_strings = array_merge($possible_strings, ['website_url', 'website_title']);
 	}
 
 	if (isset($_POST['secret_answer']) && $_POST['secret_answer'] != '')

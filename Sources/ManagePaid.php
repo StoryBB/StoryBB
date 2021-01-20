@@ -189,11 +189,11 @@ function ModifySubscriptionSettings($return_config = false)
 		if ($old != $new)
 		{
 			// So we're changing this fundamental status. Great.
-			Scheduler::set_enabled_state('StoryBB\\Task\\Schedulable\\UpdatePaidSubs', $enabled);
+			Scheduler::set_enabled_state('StoryBB\\Task\\Schedulable\\UpdatePaidSubs', $new);
 
 			// This may well affect the next trigger, whether we're enabling or not.
 			require_once($sourcedir . '/ScheduledTasks.php');
-			CalculateNextTrigger('paid_subscriptions');
+			CalculateNextTrigger('StoryBB\\Task\\Schedulable\\UpdatePaidSubs');
 		}
 
 		// Check the email addresses were actually email addresses.

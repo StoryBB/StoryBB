@@ -1278,10 +1278,6 @@ function getXmlProfile($xml_format)
 							'tag' => 'email',
 							'content' => $profile['show_email'] ? $profile['email'] : null,
 						],
-						[
-							'tag' => 'uri',
-							'content' => !empty($profile['website']['url']) ? $profile['website']['url'] : null,
-						],
 					],
 				],
 				[

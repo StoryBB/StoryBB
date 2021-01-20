@@ -12,6 +12,7 @@
 
 use StoryBB\App;
 use StoryBB\Helper\Random;
+use StoryBB\Model\Attachment;
 use StoryBB\Model\Policy;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
@@ -386,8 +387,10 @@ function deleteMembers($users, $check_not_admin = false)
 
 	// Delete avatar.
 	require_once($sourcedir . '/ManageAttachments.php');
-	//@todo get characters from users
-	//removeAttachments(array('id_member' => $users));
+	foreach ($characters as $id_character => $character_name)
+	{
+		removeAttachments(['id_character' => $id_character, 'attachment_type' => Attachment::ATTACHMENT_AVATAR]);
+	}
 
 	// It's over, no more moderation for you.
 	$smcFunc['db']->query('', '
@@ -661,8 +664,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'lngfile' => '',
 		'buddy_list' => '',
 		'pm_ignore_list' => '',
-		'website_title' => '',
-		'website_url' => '',
 		'time_format' => '',
 		'signature' => '',
 		'avatar' => '',

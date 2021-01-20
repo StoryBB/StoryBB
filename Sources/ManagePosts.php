@@ -13,6 +13,7 @@
 use StoryBB\Helper\Parser;
 use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
+use StoryBB\Task\Scheduler;
 
 /**
  * The main entrance point for the 'Posts and topics' screen.

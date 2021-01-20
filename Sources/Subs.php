@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Model\Alert;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -244,8 +245,6 @@ function updateMemberData($members, $data)
 			'email_address',
 			'id_group',
 			'birthdate',
-			'website_title',
-			'website_url',
 			'location',
 			'time_format',
 			'time_offset',
@@ -298,18 +297,17 @@ function updateMemberData($members, $data)
 		// Doing an increment?
 		if ($var == 'alerts' && ($val === '+' || $val === '-'))
 		{
-			include_once($sourcedir . '/Profile-View.php');
 			if (is_array($members))
 			{
 				$val = 'CASE ';
 				foreach ($members as $v)
-					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, [], false)) . ' ';
+					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(Alert::fetch_alerts($v, false, 0, [], false)) . ' ';
 				$val = $val . ' END';
 				$type = 'raw';
 			}
 			else
 			{
-				$blub = fetch_alerts($members, false, 0, [], false);
+				$blub = Alert::fetch_alerts($members, false, 0, [], false);
 				$val = count($blub);
 			}
 		}
@@ -332,6 +330,11 @@ function updateMemberData($members, $data)
 
 		$setString .= ' ' . $var . ' = {' . $type . ':p_' . $var . '},';
 		$parameters['p_' . $var] = $val;
+	}
+
+	if (trim($setString) == '')
+	{
+		return;
 	}
 
 	$smcFunc['db']->query('', '
@@ -1874,7 +1877,7 @@ function setupMenuContext()
 			'manage' => [
 				'url' => $scripturl,
 				'icon' => 'fas fa-tools fa-fw',
-				'visible' => $context['allow_admin'] || $context['can_mod'],
+				'visible' => $context['allow_admin'] || $context['user']['can_mod'],
 				'subitems' => [
 					'admin' => [
 						'title' => $txt['admin'],
@@ -1893,7 +1896,7 @@ function setupMenuContext()
 						'title' => $txt['approve_members_waiting'],
 						'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 						'visible' => !empty($context['unapproved_members']),
-						'amt' => $context['unapproved_members'],
+						'amt' => $context['unapproved_members'] ?? 0,
 					],
 					'contactform' => [
 						'title' => $txt['contact_us'],
@@ -2545,15 +2548,15 @@ function build_query_board($userid)
 	$query_part = [];
 	$groups = [];
 	$is_admin = false;
-	$mod_cache;
-	$ignoreboards;
+	$mod_cache = [];
+	$ignoreboards = [];
 
 	if (isset($user_info['id']) && $user_info['id'] == $userid)
 	{
 		$groups = $user_info['groups'];
 		$is_admin = $user_info['is_admin'];
-		$mod_cache = !empty($user_info['mod_cache']) ? $user_info['mod_cache'] : null;
-		$ignoreboards = !empty($user_info['ignoreboards']) ? $user_info['ignoreboards'] : null;
+		$mod_cache = !empty($user_info['mod_cache']) ? $user_info['mod_cache'] : [];
+		$ignoreboards = !empty($user_info['ignoreboards']) ? $user_info['ignoreboards'] : [];
 	}
 	else
 	{
@@ -2624,7 +2627,7 @@ function build_query_board($userid)
 		$query_part['query_see_board'] = '1=1';
 	// Otherwise just the groups in $user_info['groups'].
 	else
-		$query_part['query_see_board'] = '(((FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $groups) . ', b.member_groups) != 0) AND (FIND_IN_SET(' . implode(', b.deny_member_groups) = 0 AND FIND_IN_SET(', $groups) . ', b.deny_member_groups) = 0))' . (isset($mod_cache) ? ' OR ' . $mod_cache['mq'] : '') . ')';
+		$query_part['query_see_board'] = '(((FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $groups) . ', b.member_groups) != 0) AND (FIND_IN_SET(' . implode(', b.deny_member_groups) = 0 AND FIND_IN_SET(', $groups) . ', b.deny_member_groups) = 0))' . (isset($mod_cache['mq']) ? ' OR ' . $mod_cache['mq'] : '') . ')';
 
 	// Build the list of boards they WANT to see.
 	// This will take the place of query_see_boards in certain spots, so it better include the boards they can see also

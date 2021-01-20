@@ -53,10 +53,6 @@ $txt['permissionname_profile_forum'] = 'Allow Forum Profile edits';
 $txt['permissionhelp_profile_forum'] = 'This option will allow a member to edit their Forum Profile';
 $txt['permissionname_profile_forum_own'] = 'Own profile';
 $txt['permissionname_profile_forum_any'] = 'Any profile';
-$txt['permissionname_profile_website'] = 'Edit website';
-$txt['permissionhelp_profile_website'] = 'Allow the member to edit the website fields in their profile';
-$txt['permissionname_profile_website_own'] = 'Own profile';
-$txt['permissionname_profile_website_any'] = 'Any profile';
 $txt['permissions_profile_copy_from'] = 'Copy Permissions From';
 
 $txt['permissions_includes_inherited'] = 'Inherited Groups';

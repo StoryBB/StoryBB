@@ -865,13 +865,18 @@ class MySQL implements DatabaseAdapter
 
 						foreach ($replacement as $key => $value)
 						{
-							if ($replacement == 'null' || $replacement == '')
+							if ($value == 'null' || $value == '')
+							{
 								$replacement[$key] = 'null';
-							if (!IP::is_valid($value))
+							}
+							elseif (!IP::is_valid($value))
 							{
 								$this->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 							}
-							$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
+							else
+							{
+								$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
+							}
 						}
 
 						return implode(', ', $replacement);

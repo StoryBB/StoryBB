@@ -24,8 +24,6 @@ $txt['bookmarked_topic'] = 'Bookmarked Topic';
 $txt['remove_bookmarks'] = 'Remove Bookmarks';
 
 $txt['no_profile_edit'] = 'You are not allowed to change this person\'s profile.';
-$txt['website_title'] = 'Website title';
-$txt['website_url'] = 'Website URL';
 $txt['signature'] = 'Signature';
 $txt['profile_posts'] = 'Posts';
 $txt['immersive_mode'] = 'Enable immersive mode:';

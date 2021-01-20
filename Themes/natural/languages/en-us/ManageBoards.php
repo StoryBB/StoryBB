@@ -92,7 +92,6 @@ $txt['mboards_settings_desc'] = 'Edit general board and category settings.';
 $txt['mboards_settings_submit'] = 'Save';
 $txt['recycle_enable'] = 'Enable recycling of deleted topics';
 $txt['recycle_board'] = 'Board for recycled topics';
-$txt['redirect_board_desc'] = 'A board that redirects users if they visit it';
 $txt['recycle_board_unselected_notice'] = 'You have enabled the recycling of topics without specifying a board to place them in. This feature will not be enabled until you specify a board to place recycled topics into.';
 $txt['countChildPosts'] = 'Count sub-board\'s posts in parent\'s totals';
 $txt['allow_ignore_boards'] = 'Allow boards to be ignored';

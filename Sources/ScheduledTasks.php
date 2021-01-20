@@ -361,7 +361,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		if (!isset($tasks[0]) || is_numeric($tasks[0]))
 			$task_query = ' AND id_task IN ({array_int:tasks})';
 		else
-			$task_query = ' AND task IN ({array_string:tasks})';
+			$task_query = ' AND class IN ({array_string:tasks})';
 	}
 	$nextTaskTime = empty($tasks) ? time() + 86400 : $modSettings['next_task_time'];
 
