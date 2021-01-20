@@ -877,8 +877,8 @@ function UnreadTopics()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 			WHERE t.' . $query_this_board . (!empty($earliest_msg) ? '
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
-				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg' . ($modSettings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : '') . '',
+				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
+				AND t.approved = {int:is_approved}',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
