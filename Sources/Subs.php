@@ -214,14 +214,14 @@ function updateMemberData($members, $data)
 	$parameters = [];
 	if (is_array($members))
 	{
-		$condition = 'id_member IN ({array_int:members})';
+		$condition = 'mem.id_member IN ({array_int:members})';
 		$parameters['members'] = $members;
 	}
 	elseif ($members === null)
 		$condition = '1=1';
 	else
 	{
-		$condition = 'id_member = {int:member}';
+		$condition = 'mem.id_member = {int:member}';
 		$parameters['member'] = $members;
 	}
 
@@ -294,6 +294,12 @@ function updateMemberData($members, $data)
 		elseif ($var == 'member_ip2')
 			$type = 'inet';
 
+		$tableprefix = 'mem.';
+		if ($var == 'signature')
+		{
+			$tableprefix = 'chars.';
+		}
+
 		// Doing an increment?
 		if ($var == 'alerts' && ($val === '+' || $val === '-'))
 		{
@@ -301,7 +307,7 @@ function updateMemberData($members, $data)
 			{
 				$val = 'CASE ';
 				foreach ($members as $v)
-					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(Alert::fetch_alerts($v, false, 0, [], false)) . ' ';
+					$val .= 'WHEN mem.id_member = ' . $v . ' THEN '. count(Alert::fetch_alerts($v, false, 0, [], false)) . ' ';
 				$val = $val . ' END';
 				$type = 'raw';
 			}
@@ -313,7 +319,7 @@ function updateMemberData($members, $data)
 		}
 		elseif ($type == 'int' && ($val === '+' || $val === '-'))
 		{
-			$val = $var . ' ' . $val . ' 1';
+			$val = $tableprefix . $var . ' ' . $val . ' 1';
 			$type = 'raw';
 		}
 
@@ -323,12 +329,14 @@ function updateMemberData($members, $data)
 			if (preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
 			{
 				if ($match[1] != '+ ')
-					$val = 'CASE WHEN ' . $var . ' <= ' . abs($match[2]) . ' THEN 0 ELSE ' . $val . ' END';
+					$val = 'CASE WHEN ' . $tableprefix . $var . ' <= ' . abs($match[2]) . ' THEN 0 ELSE ' . $tableprefix . $val . ' END';
+				else
+					$val = $tableprefix . $val;
 				$type = 'raw';
 			}
 		}
 
-		$setString .= ' ' . $var . ' = {' . $type . ':p_' . $var . '},';
+		$setString .= ' ' . $tableprefix . $var . ' = {' . $type . ':p_' . $var . '},';
 		$parameters['p_' . $var] = $val;
 	}
 
@@ -338,9 +346,10 @@ function updateMemberData($members, $data)
 	}
 
 	$smcFunc['db']->query('', '
-		UPDATE {db_prefix}members
+		UPDATE {db_prefix}members mem, {db_prefix}characters chars
 		SET' . substr($setString, 0, -1) . '
-		WHERE ' . $condition,
+		WHERE (chars.id_member = mem.id_member AND chars.is_main = 1)
+			AND ' . $condition,
 		$parameters
 	);
 
