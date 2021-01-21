@@ -985,7 +985,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		$memberContext[$message['id_member_from']]['show_email'] |= $message['id_member_from'] == $user_info['id'];
 	}
 
-	$memberContext[$message['id_member_from']]['show_profile_buttons'] = $modSettings['show_profile_buttons'] && (!empty($memberContext[$message['id_member_from']]['can_view_profile']) || (!empty($memberContext[$message['id_member_from']]['website']['url']) && !isset($context['disabled_fields']['website'])) || $memberContext[$message['id_member_from']]['show_email'] || $context['can_send_pm']);
+	$memberContext[$message['id_member_from']]['show_profile_buttons'] = $modSettings['show_profile_buttons'] && (!empty($memberContext[$message['id_member_from']]['can_view_profile']) || $memberContext[$message['id_member_from']]['show_email'] || $context['can_send_pm']);
 
 	// Censor all the important text...
 	censorText($message['body']);

@@ -3,9 +3,47 @@ $default-background: #e9eef2 !default;
 $default-color: #4d4d4d !default;
 $default-font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif !default;
 
-$error-color: red;
-
-$warning-color: yellow;
-
 $link-color: #346 !default;
-$sidebar-link-color: $link-color !default;
+
+$primary-accent: #f00 !default;
+$primary-accent-contrast: #fff !default;
+$primary-accent-dark: darken($primary-accent, 10%) !default;
+$primary-accent-light: lighten($primary-accent, 10%) !default;
+
+$secondary-accent: #0f0 !default;
+$secondary-accent-contrast: #fff !default;
+$secondary-accent-dark: dark($secondary-accent, 10%) !default;
+$secondary-accent-light: lighten($primary-accent, 10%) !default;
+
+$tertiary-accent: #00f !default;
+$tertiary-accent-contrast: #fff !default;
+
+$primary-list-bg: #f8f8f8 !default;
+$secondary-list-bg: #f2f2f2 !default;
+
+$sidebar-bg: $secondary-accent !default;
+$sidebar-fg: $secondary-accent-contrast !default;
+$sidebar-bg-open: lighten($sidebar-bg, 10%);
+$sidebar-bg-hover: lighten($sidebar-bg, 20%);
+
+$sidebar-link-color: $tertiary-accent-contrast !default;
+
+$sidebar-amt-fg: $tertiary-accent-contrast !default;
+$sidebar-amt-bg: $tertiary-accent !default;
+$sidebar-amt-padding: 3px 5px !default;
+
+$menu-bg: #dedede !default;
+$menu-bg-dark: #ababab !default;
+
+$header-bg: $primary-accent !default;
+$header-fg: $primary-accent-contrast !default;
+
+$error-color: red !default;
+
+$warning-color: yellow !default;
+
+$sticky-topic-bg: #f2fffb !default;
+$unapproved-topic-bg: #fff2f2 !default;
+$unapproved-post-bg: #ffcbcb !default;
+
+$poster-fg: red !default;

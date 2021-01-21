@@ -16,7 +16,11 @@
 			<span class="smalltext">{{{txt.sig_info}}}</span>
 		</dt>
 		<dd>
+			{{#if context.signature.use_editor}}
+				{{{richtexteditor 'signature' context.signature.editor.smiley context.signature.editor.bbc}}}
+			{{else}}
 			<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%;">{{{context.member.signature}}}</textarea><br>
+			{{/if}}
 
 {{! Is there is a limit at all? }}
 {{#if (gt context.signature_limits.max_length 0)}}
@@ -40,6 +44,10 @@
 
 				$(document).ready(function() {
 					calcCharLeft();
+					{{#if context.signature.use_editor}}
+					$("#signature").data("sceditor").keyUp(calcCharLeft);
+					$("#signature").data("sceditor").nodeChanged(calcCharLeft);
+					{{/if}}
 					$("#preview_button").click(function() {
 						return ajax_getSignaturePreview(true);
 					});

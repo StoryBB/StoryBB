@@ -1,4 +1,4 @@
-	<div id="profileview" class="roundframe flow_auto noup">
+	<div id="profileview" class="flow_auto noup">
 		<div id="basicinfo">
 
 {{! Are there any custom profile fields for above the name? }}
@@ -76,11 +76,6 @@
 			{{! Link to see their posts }}
 			<a href="{{scripturl}}?action=profile;area=showposts;u={{context.id_member}}" class="infolinks">{{{txt.showPosts}}}</a>
 
-{{! Link to post drafts if it's the user's own profile }}
-{{#if (and context.user.is_owner modSettings.drafts_post_enabled)}}
-			<a href="{{scripturl}}?action=profile;area=showdrafts;u={{context.id_member}}" class="infolinks">{{{txt.drafts_show}}}</a>
-{{/if}}
-
 			{{! Link to the user's statistics}}
 			<a href="{{scripturl}}?action=profile;area=statistics;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a>
 
@@ -148,7 +143,7 @@
 {{#if (and context.can_view_warning context.member.warning)}}
 				<dt>{{{txt.profile_warning_level}}}</dt>
 				<dd>
-					<a href="{{scripturl}}?action=profile;u={{context.id_member}};area={{#if (and context.can_issue_warning (not context.user.is_owner))}}issuewarning{{else}}viewwarning{{/if}}">{{context.member.warning}}%</a>
+					<a href="{{scripturl}}?action=profile;u={{context.id_member}};area={{#if (and context.can_issue_warning (not context.user.is_owner))}}issue_warning{{else}}view_warnings{{/if}}">{{context.member.warning}}%</a>
 					{{#if context.warning_status}}
 						<span class="smalltext">({{{context.warning_status}}})</span>
 					{{/if}}
@@ -184,7 +179,7 @@
 	{{#if context.member.ip}}
 				<dt>{{txt.ip}}</dt>
 				<dd>
-					<a href="{{scripturl}}?action=profile;area=tracking;sa=ip;searchip={{context.member.ip}};u={{context.member.id}}">{{context.member.ip}}</a>
+					<a href="{{scripturl}}?action=admin;area=logs;sa=ip;searchip={{context.member.ip}};u={{context.member.id}}">{{context.member.ip}}</a>
 				</dd>
 	{{/if}}
 	{{#if (and context.member.ip (not modSettings.disableHostnameLookup))}}

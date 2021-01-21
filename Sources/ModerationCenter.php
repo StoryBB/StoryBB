@@ -1045,7 +1045,7 @@ function ViewWatchedUsers()
 				'data' => [
 					'function' => function($member) use ($scripturl)
 					{
-						return allowedTo('issue_warning') ? '<a href="' . $scripturl . '?action=profile;area=issuewarning;u=' . $member['id'] . '">' . $member['warning'] . '%</a>' : $member['warning'] . '%';
+						return allowedTo('issue_warning') ? '<a href="' . $scripturl . '?action=profile;area=issue_warning;u=' . $member['id'] . '">' . $member['warning'] . '%</a>' : $member['warning'] . '%';
 					},
 				],
 				'sort' => [
@@ -1059,7 +1059,7 @@ function ViewWatchedUsers()
 				],
 				'data' => [
 					'sprintf' => [
-						'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d;area=showposts;sa=messages">%2$s</a>',
+						'format' => '<a href="' . $scripturl . '?action=profile;area=posts;u=%1$d">%2$s</a>',
 						'params' => [
 							'id' => false,
 							'posts' => false,

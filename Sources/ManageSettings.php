@@ -1226,7 +1226,7 @@ function EditCustomProfiles()
 			'name' => '',
 			'col_name' => '???',
 			'desc' => '',
-			'profile_area' => 'forumprofile',
+			'profile_area' => 'account',
 			'reg' => false,
 			'display' => false,
 			'mlist' => false,
@@ -1307,7 +1307,7 @@ function EditCustomProfiles()
 		$show_reg = isset($_POST['reg']) ? (int) $_POST['reg'] : 0;
 		$show_display = isset($_POST['display']) ? 1 : 0;
 		$bbc = isset($_POST['bbc']) ? 1 : 0;
-		$show_profile = in_array($_POST['profile_area'], ['forumprofile', 'account']) ? $_POST['profile_area'] : 'forumprofile';
+		$show_profile = in_array($_POST['profile_area'], ['none', 'account', 'prefs']) ? $_POST['profile_area'] : 'account';
 		$active = isset($_POST['active']) ? 1 : 0;
 		$private = isset($_POST['private']) ? (int) $_POST['private'] : 0;
 		$can_search = isset($_POST['can_search']) ? 1 : 0;

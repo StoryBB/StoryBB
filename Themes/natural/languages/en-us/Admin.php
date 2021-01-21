@@ -207,6 +207,7 @@ $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';
 $txt['moderation_log'] = 'Moderation Log';
 $txt['moderation_log_desc'] = 'Lists moderation activities that have been performed by moderators on your forum.';
+$txt['ip_lookup'] = 'IP Lookup';
 $txt['log_settings_desc'] = 'Use these options to configure how logging works on your forum.';
 $txt['modlog_enabled'] = 'Enable the moderation log';
 $txt['adminlog_enabled'] = 'Enable the administration log';

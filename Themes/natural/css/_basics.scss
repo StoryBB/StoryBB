@@ -25,9 +25,6 @@ body, #wrapper {
 	padding: 10px;
 	margin-bottom: 3em;
 	background: #fff;
-	border: 1px solid #b8b8b8;
-	border-radius: 8px;
-	box-shadow: 0 2px3px rgba(0, 0, 0, 0.14);
 }
 
 a {
@@ -45,7 +42,6 @@ a:hover {
 /* This gives a better effect for those areas, and will default to bold for fonts which do not support numerical font-weight. */
 strong, .strong {
 	font-weight: bold;
-	color: #444;
 }
 
 em {
@@ -54,7 +50,7 @@ em {
 
 h1, h2, h3, h4, h5, h6 {
 	font-size: 1em;
-	color: #444;
+	color: $default-color;
 }
 
 hr {
@@ -62,7 +58,6 @@ hr {
 	margin: 12px 0;
 	height: 2px;
 	background: #fff;
-	box-shadow: 0 1px 0 #bbb inset;
 }
 
 ul.normallist {

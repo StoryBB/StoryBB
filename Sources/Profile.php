@@ -12,12 +12,487 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Navigation\Navigation;
+use StoryBB\Helper\Navigation\Item as NavItem;
+use StoryBB\Helper\Navigation\Section as NavSection;
+use StoryBB\Helper\Navigation\Tab as NavTab;
+use StoryBB\Helper\Navigation\HiddenTab as NavTabHidden;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
+
+function Profile()
+{
+	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
+	global $modSettings, $memberContext, $profile_vars, $post_errors, $user_settings;
+	global $smcFunc, $settings;
+
+	loadLanguage('Profile');
+	loadJavaScriptFile('profile.js', ['defer' => false], 'sbb_profile');
+
+	$memID = isset($_REQUEST['u']) ? (int) $_REQUEST['u'] : $user_info['id'];
+
+	$memberResult = loadMemberData($memID, false, 'profile');
+
+	if (!$memberResult)
+	{
+		fatal_lang_error('not_a_user', false, 404);
+	}
+
+	$context['id_member'] = $memID;
+	$cur_profile = $user_profile[$memID];
+
+	// Let's have some information about this member ready, too.
+	loadMemberContext($memID);
+	if (empty($memberContext[$memID]))
+	{
+		fatal_lang_error('not_a_user', false, 404);
+	}
+	$context['member'] = $memberContext[$memID];
+
+	// Is this the profile of the user himself or herself?
+	$context['user']['is_owner'] = $memID == $user_info['id'];
+
+	$navigation = new Navigation;
+
+	$profile = $navigation->add_tab(new NavTab('information', $txt['profiletab_information']));
+	$section = $profile->add_section(new NavSection('information', $txt['profiletab_information']));
+	$section->add_item(new NavItem(
+		'info_summary',
+		$txt['profile_info_summary'],
+		['area' => 'summary', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\InfoSummary',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+	));
+	$section->add_item(new NavItem(
+		'send_pm',
+		$txt['profile_send_pm'],
+		['action' => 'pm', 'sa' => 'send', 'u' => $memID],
+		'',
+		$context['user']['is_owner'] ? [] : ['pm_send']
+	));
+	$section->add_item(new NavItem(
+		'report_user',
+		$txt['profile_report_user'],
+		['action' => 'reporttm', 'u' => $memID],
+		'',
+		$context['user']['is_owner'] ? [] : ['report_user']
+	));
+	$section->add_item((new NavItem(
+		'show_drafts',
+		$txt['profile_show_drafts'],
+		['area' => 'drafts', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ShowDrafts',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['drafts_post_enabled']);
+	}));
+
+	$account_overview = $navigation->add_tab(new NavTab('account', $txt['profiletab_account_overview']));
+	$section = $account_overview->add_section(new NavSection('account', $txt['profiletab_account_overview']));
+	$section->add_item((new NavItem(
+		'view_warnings',
+		$txt['profile_view_warnings'],
+		['area' => 'view_warnings', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\WarningListing',
+		$context['user']['is_owner'] ? ['profile_warning_own', 'profile_warning_any', 'issue_warning', 'moderate_forum'] : ['profile_warning_any', 'issue_warning', 'moderate_forum']
+	))->is_enabled(function () use ($modSettings, $cur_profile) {
+		return $modSettings['warning_settings'][0] == 1 && !empty($cur_profile['warning']);
+	}));
+	$section->add_item((new NavItem(
+		'group_membership',
+		$txt['profile_group_membership'],
+		['area' => 'group_membership', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\GroupMembership',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['manage_membergroups']
+	))->is_enabled(function() use ($modSettings) {
+		return !empty($modSettings['show_group_membership']);
+	}));
+	$section->add_item(new NavItem(
+		'delete_account',
+		$txt['profile_delete_account'],
+		['area' => 'delete_account', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\DeleteAccount',
+		$context['user']['is_owner'] ? ['profile_remove_any', 'profile_remove_own'] : ['profile_remove_any']
+	));
+	$section->add_item(new NavItem(
+		'export_data',
+		$txt['profile_export_data'],
+		['area' => 'export_data', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ExportData',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['admin_forum']
+	));
+	$section->add_item((new NavItem(
+		'paid_subscriptions',
+		$txt['profile_paid_subscriptions'],
+		['area' => 'subscriptions', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\Subscriptions',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['moderate_forum']
+	))->is_enabled(function() use ($modSettings, $smcFunc) {
+		if (empty($modSettings['paid_enabled']))
+		{
+			return false;
+		}
+
+		// check for whethere there are any valid subs.
+		$get_active_subs = $smcFunc['db']->query('', '
+			SELECT COUNT(*)
+			FROM {db_prefix}subscriptions
+			WHERE active = {int:active}', [
+				'active' => 1,
+			]
+		);
+
+		list ($num_subs) = $smcFunc['db']->fetch_row($get_active_subs);
+		$smcFunc['db']->free_result($get_active_subs);
+
+		return $num_subs > 0;
+	}));
+	$section->add_item(new NavItem(
+		'merge_account',
+		$txt['merge_char_account'],
+		['area' => 'merge_acct', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\MergeAccount',
+		$context['user']['is_owner'] ? [] : ['admin_forum']
+	));
+	$section->add_item(new NavItem(
+		'account_settings',
+		$txt['profile_account_settings'],
+		['area' => 'account_settings', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AccountSettings',
+		$context['user']['is_owner'] ? ['profile_identity_any', 'profile_identity_own', 'profile_password_any', 'profile_password_own', 'manage_membergroups'] : ['profile_identity_any', 'profile_password_any', 'manage_membergroups']
+	));
+
+	$prefs = $navigation->add_tab(new NavTab('prefs', $txt['profiletab_preferences']));
+	$section = $prefs->add_section(new NavSection('prefs', $txt['profiletab_preferences']));
+	$section->add_item((new NavItem(
+		'ignored_boards',
+		$txt['profile_ignored_boards'],
+		['area' => 'ignored_boards', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\IgnoredBoards',
+		$context['user']['is_owner'] ? ['profile_extra_any', 'profile_extra_own'] : ['profile_extra_any']
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['allow_ignore_boards']);
+	}));
+	$section->add_item((new NavItem(
+		'buddy_list',
+		$txt['profile_buddy_list'],
+		['area' => 'buddies', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\BuddyList',
+		$context['user']['is_owner'] ? ['profile_extra_any', 'profile_extra_own'] : []
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['enable_buddylist']);
+	}));
+	$section->add_item((new NavItem(
+		'ignored_people',
+		$txt['profile_ignored_people'],
+		['area' => 'ignored_people', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\IgnoredPeople',
+		$context['user']['is_owner'] ? ['profile_extra_any', 'profile_extra_own'] : []
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['enable_buddylist']);
+	}));
+	$section->add_item(new NavItem(
+		'avatar_signature',
+		$txt['profile_avatar_signature'],
+		['area' => 'avatar_signature', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AvatarSignature',
+		$context['user']['is_owner'] ? ['profile_forum_any', 'profile_forum_own'] : ['profile_forum_any']
+	));
+	$section->add_item(new NavItem(
+		'preferences',
+		$txt['profile_forum_preferences'],
+		['area' => 'preferences', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\LookLayoutPreferences',
+		$context['user']['is_owner'] ? ['profile_extra_any', 'profile_extra_own'] : ['profile_extra_any']
+	));
+
+	$characters = $navigation->add_tab(new NavTab('characters', $txt['profiletab_characters']));
+	if (!empty($context['member']['characters']))
+	{
+		$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
+
+		$section = $characters->add_section(new NavSection('create_character', ''));
+		$section->add_item(new NavItem(
+			'create_character',
+			$txt['char_create'],
+			['area' => 'character_create', 'u' => $memID],
+			'StoryBB\\Controller\\Profile\\CharacterCreate',
+			$context['user']['is_owner'] ? ['is_not_guest'] : []
+		));
+
+		foreach ($context['member']['characters'] as $id_character => $character)
+		{
+			// Skip the OOC 'character'.
+			if ($character['is_main'])
+			{
+				continue;
+			}
+			$section = $characters->add_section(new NavSection('character_' . $id_character, $character['character_name']));
+			$section->add_item(new NavItem(
+				'character_profile_' . $id_character,
+				$txt['char_profile'],
+				['area' => 'characters', 'u' => $memID, 'char' => $id_character],
+				'StoryBB\\Controller\\Profile\\CharacterProfile',
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+			));
+			$section->add_item(new NavItem(
+				'character_sheet_' . $id_character,
+				$txt['char_sheet'],
+				['area' => 'character_sheet', 'u' => $memID, 'char' => $id_character],
+				'StoryBB\\Controller\\Profile\\CharacterSheet',
+				!empty($character['char_sheet']) || $char_sheet_override ? ['is_not_guest', 'profile_view'] : ['admin_forum']
+			));
+			$section->add_item(new NavItem(
+				'character_stats_' . $id_character,
+				$txt['char_stats'],
+				['area' => 'character_stats', 'u' => $memID, 'char' => $id_character],
+				'StoryBB\\Controller\\Profile\\CharacterStats',
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+			));
+			$section->add_item(new NavItem(
+				'character_posts_' . $id_character,
+				$txt['showPosts_char'],
+				['area' => 'character_posts', 'u' => $memID, 'char' => $id_character],
+				'StoryBB\\Controller\\Profile\\CharacterPosts',
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+			));
+			$section->add_item(new NavItem(
+				'character_topics_' . $id_character,
+				$txt['showTopics_char'],
+				['area' => 'character_topics', 'u' => $memID, 'char' => $id_character],
+				'StoryBB\\Controller\\Profile\\CharacterTopics',
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+			));
+		}
+	}
+
+	/*
+	$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
+	// Now we need to add the user's characters to the profile menu, "creatively".
+	if (!empty($context['member']['characters'])) {
+		foreach ($context['member']['characters'] as $id_character => $character) {
+			if (!empty($character['avatar'])) {
+				addInlineCss('
+span.character_' . $id_character . ' { background-image: url(' . $character['avatar'] . '); background-size: cover }');
+			}
+			$profile_areas['chars']['areas']['character_' . $id_character] = [
+				'function' => 'character_profile',
+				'file' => 'Profile-Chars.php',
+				'label' => $character['character_name'],
+				'icon' => !empty($character['avatar']) ? 'char_avatar character_' . $id_character : 'char_avatar char_unknown',
+				'enabled' => true,
+				'permission' => [
+					'own' => 'is_not_guest',
+					'any' => 'profile_view',
+				],
+				'select' => 'characters',
+				'custom_url' => $scripturl . '?action=profile;area=characters;char=' . $id_character,
+				'subsections' => [
+					'profile' => [$txt['char_profile'], ['is_not_guest', 'profile_view']],
+					'sheet' => [$txt['char_sheet'], !empty($character['char_sheet']) || $char_sheet_override ? ['is_not_guest', 'profile_view'] : ['admin_forum'], 'enabled' => empty($character['is_main'])],
+					'posts' => [$txt['showPosts_char'], ['is_not_guest', 'profile_view']],
+					'topics' => [$txt['showTopics_char'], ['is_not_guest', 'profile_view']],
+					'stats' => [$txt['char_stats'], ['is_not_guest', 'profile_view']],
+				],
+			];
+		}
+	}
+	*/
+
+	$notifications = $navigation->add_tab(new NavTab('notifications', $txt['profiletab_notification_settings']));
+	$section = $notifications->add_section(new NavSection('notifications', $txt['profiletab_notification_settings']));
+	$section->add_item(new NavItem(
+		'bookmarks',
+		$txt['profile_bookmarks'],
+		['area' => 'bookmarks', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\Bookmarks',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'ignored_topics',
+		$txt['profile_ignored_topics'],
+		['area' => 'ignored_topics', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\IgnoredTopics',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'alerts',
+		$txt['profile_my_alerts'],
+		['area' => 'alerts', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AlertsListing',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'watched_topics',
+		$txt['watched_topics'],
+		['area' => 'watched_topics', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\WatchedTopics',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_extra_any']
+	));
+	$section->add_item(new NavItem(
+		'watched_boards',
+		$txt['watched_boards'],
+		['area' => 'watched_boards', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\WatchedBoards',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_extra_any']
+	));
+	$section->add_item(new NavItem(
+		'alert_preferences',
+		$txt['profile_alert_preferences'],
+		['area' => 'alert_preferences', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AlertPreferences',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_extra_any']
+	));
+
+	$history = $navigation->add_tab(new NavTab('history', $txt['profiletab_history_stats']));
+	$section = $history->add_section(new NavSection('history', $txt['profiletab_history_stats']));
+	$section->add_item(new NavItem(
+		'posts',
+		$txt['profile_post_history'],
+		['area' => 'posts', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ShowPosts',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+	));
+	$section->add_item(new NavItem(
+		'topics',
+		$txt['profile_topic_history'],
+		['area' => 'topics', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ShowTopics',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+	));
+	$section->add_item(new NavItem(
+		'attachments',
+		$txt['profile_attachments'],
+		['area' => 'attachments', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ShowAttachments',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+	));
+	$section->add_item(new NavItem(
+		'show_stats',
+		$txt['profile_show_stats'],
+		['area' => 'stats', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\Stats',
+		$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+	));
+
+	$admin = $navigation->add_tab(new NavTab('admin', $txt['profiletab_admin']));
+	$section = $admin->add_section(new NavSection('admin', $txt['profiletab_admin']));
+	$section->add_item(new NavItem(
+		'account_activity',
+		$txt['profile_account_activity'],
+		['area' => 'activity', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AccountActivity',
+		['moderate_forum']
+	));
+	$section->add_item(new NavItem(
+		'ip_lookup',
+		$txt['profile_ip_lookup'],
+		['action' => 'admin', 'area' => 'logs', 'sa' => 'ip', 'u' => $memID],
+		'',
+		['moderate_forum']
+	));
+	$section->add_item((new NavItem(
+		'edit_history',
+		$txt['profile_edit_history'],
+		['area' => 'edit_history', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\EditHistory',
+		['moderate_forum']
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['userlog_enabled']);
+	}));
+	$section->add_item((new NavItem(
+		'login_history',
+		$txt['profile_login_history'],
+		['area' => 'login_history', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\LoginHistory',
+		['moderate_forum']
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['loginHistoryDays']);
+	}));
+	$section->add_item((new NavItem(
+		'group_requests',
+		$txt['profile_group_requests'],
+		['area' => 'group_requests', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\GroupRequests',
+		['moderate_forum']
+	))->is_enabled(function () use ($modSettings, $user_info) {
+		return !empty($modSettings['show_group_membership']) && $user_info['mod_cache']['gq'] != '0=1';
+	}));
+	$section->add_item(new NavItem(
+		'permissions',
+		$txt['profile_account_permissions'],
+		['area' => 'permissions', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ShowPermissions',
+		['manage_permissions']
+	));
+	$section->add_item((new NavItem(
+		'ban_account',
+		$txt['profile_ban_account'],
+		['action' => 'admin', 'area' => 'ban', 'sa' => 'add', 'u' => $memID],
+		'',
+		$context['user']['is_owner'] ? [] : ['manage_bans']
+	))->is_enabled(function () use ($cur_profile) {
+		return $cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']));
+	}));
+	$section->add_item((new NavItem(
+		'issue_warning',
+		$txt['profile_issue_warning'],
+		['area' => 'issue_warning', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\IssueWarning',
+		$context['user']['is_owner'] ? [] : ['issue_warning']
+	))->is_enabled(function () use ($modSettings) {
+		return !empty($modSettings['warning_settings'][0]);
+	}));
+
+	// This 'tab' is for the things we want to route from here but that we don't want to ever explicitly show on a tab.
+	$hidden = $navigation->add_tab(new NavTabHidden('hidden'));
+	$section = $hidden->add_section(new NavSection('hidden', ''));
+	$section->add_item(new NavItem(
+		'profile_popup',
+		'',
+		['area' => 'popup', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ProfilePopup',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'alerts_popup',
+		'',
+		['area' => 'alerts_popup', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AlertsPopup',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'characters_popup',
+		'',
+		['area' => 'characters_popup', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\CharactersPopup',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'character_switch',
+		'',
+		['area' => 'char_switch', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\CharacterSwitch',
+		$context['user']['is_owner'] ? ['is_not_guest'] : []
+	));
+	$section->add_item(new NavItem(
+		'activate_account',
+		'',
+		['area' => 'activate_account', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\ActivateAccount',
+		$context['user']['is_owner'] ? [] : ['moderate_forum']
+	));
+
+	$navigation->dispatch(array_merge($_REQUEST, ['u' => $memID]));
+	$context['navigation'] = $navigation->export(['action' => 'profile']);
+
+	// echo '<pre style="margin-left:100px">'; print_r($navigation); echo '</pre>';
+}
 
 /**
  * The main designating function for modifying profiles. Loads up info, determins what to do, etc.
  *
+ * @deprecated
  * @param array $post_errors Any errors that occurred
  */
 function ModifyProfile($post_errors = [])
@@ -108,162 +583,6 @@ function ModifyProfile($post_errors = [])
 				array $permission:	Array of permissions to determine who can access this area. Should contain arrays $own and $any.
 	*/
 	$profile_areas = [
-		'info' => [
-			'title' => $txt['profileInfo'],
-			'areas' => [
-				'summary' => [
-					'label' => $txt['summary'],
-					'file' => 'Profile-View.php',
-					'function' => 'summary',
-					'icon' => 'administration',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => 'profile_view',
-					],
-				],
-				'popup' => [
-					'function' => 'profile_popup',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'select' => 'summary',
-				],
-				'alerts_popup' => [
-					'function' => 'alerts_popup',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'select' => 'summary',
-				],
-				'characters_popup' => [
-					'function' => 'characters_popup',
-					'file' => 'Profile-Chars.php',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'enabled' => $context['user']['is_owner'],
-					'select' => 'summary',
-				],
-				'char_switch' => [
-					'function' => 'char_switch',
-					'file' => 'Profile-Chars.php',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'enabled' => $context['user']['is_owner'],
-					'select' => 'summary',
-				],
-				'char_switch_redir' => [
-					'function' => 'char_switch_redir',
-					'file' => 'Profile-Chars.php',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'enabled' => $context['user']['is_owner'],
-					'select' => 'summary',
-				],
-				'statistics' => [
-					'label' => $txt['statPanel'],
-					'file' => 'Profile-View.php',
-					'function' => 'statPanel',
-					'icon' => 'stats',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => 'profile_view',
-					],
-				],
-				'bookmarks' => [
-					'label' => $txt['bookmark_profile'],
-					'file' => 'Profile-View.php',
-					'function' => 'bookmarks',
-					'icon' => 'bookmark',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-				],
-				'showposts' => [
-					'label' => $txt['showPosts'],
-					'file' => 'Profile-View.php',
-					'function' => 'showPosts',
-					'icon' => 'posts',
-					'subsections' => [
-						'messages' => [$txt['showMessages'], ['is_not_guest', 'profile_view']],
-						'topics' => [$txt['showTopics'], ['is_not_guest', 'profile_view']],
-						'unwatchedtopics' => [$txt['showUnwatched'], ['is_not_guest', 'profile_view'], 'enabled' => $context['user']['is_owner']],
-						'attach' => [$txt['showAttachments'], ['is_not_guest', 'profile_view']],
-					],
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => 'profile_view',
-					],
-				],
-				'showdrafts' => [
-					'label' => $txt['drafts_show'],
-					'file' => 'Drafts.php',
-					'function' => 'showProfileDrafts',
-					'icon' => 'drafts',
-					'enabled' => !empty($modSettings['drafts_post_enabled']) && $context['user']['is_owner'],
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-				],
-				'showalerts' => [
-					'label' => $txt['alerts_show'],
-					'file' => 'Profile-View.php',
-					'function' => 'showAlerts',
-					'icon' => 'alerts',
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-				],
-				'permissions' => [
-					'label' => $txt['showPermissions'],
-					'file' => 'Profile-View.php',
-					'function' => 'showPermissions',
-					'icon' => 'permissions',
-					'permission' => [
-						'own' => 'manage_permissions',
-						'any' => 'manage_permissions',
-					],
-				],
-				'tracking' => [
-					'label' => $txt['trackUser'],
-					'file' => 'Profile-View.php',
-					'function' => 'tracking',
-					'icon' => 'logs',
-					'subsections' => [
-						'activity' => [$txt['trackActivity'], 'moderate_forum'],
-						'ip' => [$txt['trackIP'], 'moderate_forum'],
-						'edits' => [$txt['trackEdits'], 'moderate_forum', 'enabled' => !empty($modSettings['userlog_enabled'])],
-						'groupreq' => [$txt['trackGroupRequests'], 'approve_group_requests', 'enabled' => !empty($modSettings['show_group_membership'])],
-						'logins' => [$txt['trackLogins'], 'moderate_forum', 'enabled' => !empty($modSettings['loginHistoryDays'])],
-					],
-					'permission' => [
-						'own' => ['moderate_forum', 'approve_group_requests'],
-						'any' => ['moderate_forum', 'approve_group_requests'],
-					],
-				],
-				'viewwarning' => [
-					'label' => $txt['profile_view_warnings'],
-					'enabled' => $modSettings['warning_settings'][0] == 1 && $cur_profile['warning'],
-					'file' => 'Profile-View.php',
-					'function' => 'viewWarning',
-					'icon' => 'warning',
-					'permission' => [
-						'own' => ['profile_warning_own', 'profile_warning_any', 'issue_warning', 'moderate_forum'],
-						'any' => ['profile_warning_any', 'issue_warning', 'moderate_forum'],
-					],
-				],
-			],
-		],
 		'chars' => [
 			'title' => $txt['chars_menu_title'],
 			'areas' => [
@@ -276,222 +595,6 @@ function ModifyProfile($post_errors = [])
 						'own' => 'is_not_guest',
 						'any' => 'profile_view',
 					],
-				],
-				'char_create' => [
-					'label' => $txt['char_create'],
-					'file' => 'Profile-Chars.php',
-					'function' => 'char_create',
-					'enabled' => true,
-					'permission' => [
-						'own' => 'is_not_guest',
-						'any' => [],
-					],
-					'icon' => 'char_avatar char_unknown',
-				],
-			],
-		],
-		'edit_profile' => [
-			'title' => $txt['forumprofile'],
-			'areas' => [
-				'account' => [
-					'label' => $txt['account'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'account',
-					'icon' => 'maintain',
-					'enabled' => $context['user']['is_admin'] || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
-					'sc' => 'post',
-					'token' => 'profile-ac%u',
-					'password' => true,
-					'permission' => [
-						'own' => ['profile_identity_any', 'profile_identity_own', 'profile_password_any', 'profile_password_own', 'manage_membergroups'],
-						'any' => ['profile_identity_any', 'profile_password_any', 'manage_membergroups'],
-					],
-				],
-				'forumprofile' => [
-					'label' => $txt['forumprofile'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'forumProfile',
-					'icon' => 'members',
-					'sc' => 'post',
-					'token' => 'profile-fp%u',
-					'permission' => [
-						'own' => ['profile_forum_any', 'profile_forum_own'],
-						'any' => ['profile_forum_any'],
-					],
-				],
-				'theme' => [
-					'label' => $txt['theme'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'theme',
-					'icon' => 'features',
-					'sc' => 'post',
-					'token' => 'profile-th%u',
-					'permission' => [
-						'own' => ['profile_extra_any', 'profile_extra_own'],
-						'any' => ['profile_extra_any'],
-					],
-				],
-				'notification' => [
-					'label' => $txt['notification'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'notification',
-					'icon' => 'mail',
-					'sc' => 'post',
-					//'token' => 'profile-nt%u', This is not checked here. We do it in the function itself - but if it was checked, this is what it'd be.
-					'subsections' => [
-						'alerts' => [$txt['alert_prefs'], ['is_not_guest', 'profile_extra_any']],
-						'topics' => [$txt['watched_topics'], ['is_not_guest', 'profile_extra_any']],
-						'boards' => [$txt['watched_boards'], ['is_not_guest', 'profile_extra_any']],
-					],
-					'permission' => [
-						'own' => ['is_not_guest'],
-						'any' => ['profile_extra_any'], // If you change this, update it in the functions themselves; we delegate all saving checks there.
-					],
-				],
-				'ignoreboards' => [
-					'label' => $txt['ignoreboards'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'ignoreboards',
-					'icon' => 'boards',
-					'enabled' => !empty($modSettings['allow_ignore_boards']),
-					'sc' => 'post',
-					'token' => 'profile-ib%u',
-					'permission' => [
-						'own' => ['profile_extra_any', 'profile_extra_own'],
-						'any' => ['profile_extra_any'],
-					],
-				],
-				'lists' => [
-					'label' => $txt['editBuddyIgnoreLists'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'editBuddyIgnoreLists',
-					'icon' => 'frenemy',
-					'enabled' => !empty($modSettings['enable_buddylist']) && $context['user']['is_owner'],
-					'sc' => 'post',
-					'subsections' => [
-						'buddies' => [$txt['editBuddies']],
-						'ignore' => [$txt['editIgnoreList']],
-					],
-					'permission' => [
-						'own' => ['profile_extra_any', 'profile_extra_own'],
-						'any' => [],
-					],
-				],
-				'groupmembership' => [
-					'label' => $txt['groupmembership'],
-					'file' => 'Profile-Modify.php',
-					'function' => 'groupMembership',
-					'icon' => 'people',
-					'enabled' => !empty($modSettings['show_group_membership']) && $context['user']['is_owner'],
-					'sc' => 'request',
-					'token' => 'profile-gm%u',
-					'token_type' => 'request',
-					'permission' => [
-						'own' => ['is_not_guest'],
-						'any' => ['manage_membergroups'],
-					],
-				],
-			],
-		],
-		'profile_action' => [
-			'title' => $txt['profileAction'],
-			'areas' => [
-				'export_data' => [
-					'label' => $txt['profile_export_data'],
-					'file' => 'Profile-Actions.php',
-					'function' => 'exportData',
-					'icon' => 'inbox',
-					'token' => 'profile-ed%u',
-					'permission' => [
-						'own' => ['is_not_guest'],
-						'any' => ['admin_forum'],
-					],
-				],
-				'sendpm' => [
-					'label' => $txt['profileSendIm'],
-					'custom_url' => $scripturl . '?action=pm;sa=send',
-					'icon' => 'personal_message',
-					'permission' => [
-						'own' => [],
-						'any' => ['pm_send'],
-					],
-				],
-				'report' => [
-					'label' => $txt['report_profile'],
-					'custom_url' => $scripturl . '?action=reporttm;' . $context['session_var'] . '=' . $context['session_id'],
-					'icon' => 'warning',
-					'permission' => [
-						'own' => [],
-						'any' => ['report_user'],
-					],
-				],
-				'issuewarning' => [
-					'label' => $txt['profile_issue_warning'],
-					'enabled' => $modSettings['warning_settings'][0] == 1,
-					'file' => 'Profile-Actions.php',
-					'function' => 'issueWarning',
-					'icon' => 'warning',
-					'token' => 'profile-iw%u',
-					'permission' => [
-						'own' => [],
-						'any' => ['issue_warning'],
-					],
-				],
-				'banuser' => [
-					'label' => $txt['profileBanUser'],
-					'custom_url' => $scripturl . '?action=admin;area=ban;sa=add',
-					'icon' => 'ban',
-					'enabled' => $cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups'])),
-					'permission' => [
-						'own' => [],
-						'any' => ['manage_bans'],
-					],
-				],
-				'subscriptions' => [
-					'label' => $txt['subscriptions'],
-					'file' => 'Profile-Actions.php',
-					'function' => 'subscriptions',
-					'icon' => 'paid',
-					'enabled' => !empty($modSettings['paid_enabled']) && $context['subs_available'],
-					'permission' => [
-						'own' => ['is_not_guest'],
-						'any' => ['moderate_forum'],
-					],
-				],
-				'deleteaccount' => [
-					'label' => $txt['deleteAccount'],
-					'file' => 'Profile-Actions.php',
-					'function' => 'deleteAccount',
-					'icon' => 'members_delete',
-					'sc' => 'post',
-					'token' => 'profile-da%u',
-					'password' => true,
-					'permission' => [
-						'own' => ['profile_remove_any', 'profile_remove_own'],
-						'any' => ['profile_remove_any'],
-					],
-				],
-				'activateaccount' => [
-					'file' => 'Profile-Actions.php',
-					'function' => 'activateAccount',
-					'icon' => 'regcenter',
-					'sc' => 'get',
-					'token' => 'profile-aa%u',
-					'token_type' => 'get',
-					'permission' => [
-						'own' => [],
-						'any' => ['moderate_forum'],
-					],
-				],
-				'merge_acct' => [
-					'label' => $txt['merge_char_account'],
-					'file' => 'Profile-Chars.php',
-					'function' => 'char_merge_account',
-					'permission' => [
-						'own' => [],
-						'any' => ['admin_forum'],
-					],
-					'icon' => 'merge',
 				],
 			],
 		],
@@ -726,27 +829,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 			$profile_vars['member_ip'] = $user_info['ip'];
 
 		// Now call the sub-action function...
-		if ($current_area == 'activateaccount')
-		{
-			if (empty($post_errors))
-				activateAccount($memID);
-		}
-		elseif ($current_area == 'deleteaccount')
-		{
-			if (empty($post_errors))
-			{
-				deleteAccount2($memID);
-				redirectexit();
-			}
-		}
-		elseif ($current_area == 'groupmembership' && empty($post_errors))
-		{
-			$msg = groupMembership2($profile_vars, $post_errors, $memID);
-
-			// Whatever we've done, we have nothing else to do here...
-			redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
-		}
-		elseif (in_array($current_area, ['account', 'forumprofile', 'theme']))
+		if (in_array($current_area, ['account', 'forumprofile', 'theme']))
 			saveProfileFields();
 		else
 		{
@@ -854,124 +937,6 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	// Set the page title if it's not already set...
 	if (!isset($context['page_title']))
 		$context['page_title'] = $txt['profile'] . (isset($txt[$current_area]) ? ' - ' . $txt[$current_area] : '');
-}
-
-/**
- * Set up the requirements for the profile popup - the area that is shown as the popup menu for the current user.
- *
- * @param int $memID The ID of the member
- */
-function profile_popup($memID)
-{
-	global $context, $scripturl, $txt, $db_show_debug;
-
-	// We do not want to output debug information here.
-	$db_show_debug = false;
-
-	// We only want to output our little layer here.
-	$template = StoryBB\Template::set_layout('raw');
-	StoryBB\Template::remove_all_layers();
-
-	// This list will pull from the master list wherever possible. Hopefully it should be clear what does what.
-	$profile_items = [
-		[
-			'menu' => 'info',
-			'area' => 'summary',
-			'title' => $txt['popup_summary'],
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'account',
-		],
-		[
-			'menu' => 'info',
-			'area' => 'bookmarks',
-			'title' => $txt['popup_bookmarks'],
-		],
-		[
-			'menu' => 'info',
-			'area' => 'showposts',
-			'title' => $txt['popup_showposts'],
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'forumprofile',
-			'title' => $txt['forumprofile'],
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'notification',
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'theme',
-			'title' => $txt['theme'],
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'ignoreboards',
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'lists',
-			'url' => $scripturl . '?action=profile;area=lists;sa=ignore' . $context[$context['profile_menu_name']]['extra_parameters'],
-			'title' => $txt['popup_ignore'],
-		],
-		[
-			'menu' => 'edit_profile',
-			'area' => 'groupmembership',
-		],
-		[
-			'menu' => 'profile_action',
-			'area' => 'subscriptions',
-		],
-	];
-
-	call_integration_hook('integrate_profile_popup', [&$profile_items]);
-
-	// Now check if these items are available
-	$context['profile_items'] = [];
-	$menu_context = &$context[$context['profile_menu_name']]['sections'];
-	foreach ($profile_items as $item)
-	{
-		if (isset($menu_context[$item['menu']]['areas'][$item['area']]))
-		{
-			$area = $menu_context[$item['menu']]['areas'][$item['area']];
-			$context['profile_items'][] = [
-				'icon' => $area['icon'],
-				'url' => isset($item['url']) ? $item['url'] : $area['url'],
-				'title' => isset($item['title']) ? $item['title'] : $area['label'],
-			];
-		}
-	}
-}
-
-/**
- * Set up the requirements for the alerts popup - the area that shows all the alerts just quickly for the current user.
- *
- * @param int $memID The ID of the member
- */
-function alerts_popup($memID)
-{
-	global $context, $sourcedir, $db_show_debug, $cur_profile;
-
-	// Load the Alerts language file.
-	loadLanguage('Alerts');
-
-	// We do not want to output debug information here.
-	$db_show_debug = false;
-
-	// We only want to output our little layer here.
-	StoryBB\Template::remove_all_layers();
-	$template = StoryBB\Template::set_layout('raw');
-
-	$context['unread_alerts'] = [];
-	if (empty($_REQUEST['counter']) || (int) $_REQUEST['counter'] < $cur_profile['alerts'])
-	{
-		// Now fetch me my unread alerts, pronto!
-		require_once($sourcedir . '/Profile-View.php');
-		$context['unread_alerts'] = fetch_alerts($memID, false, $cur_profile['alerts'] - (!empty($_REQUEST['counter']) ? (int) $_REQUEST['counter'] : 0));
-	}
 }
 
 /**

@@ -92,7 +92,6 @@ $txt['whoadmin_packages'] = 'Viewing the package manager.';
 $txt['whoadmin_permissions'] = 'Editing the forum permissions.';
 $txt['whoadmin_pgdownload'] = 'Downloading a package.';
 $txt['whoadmin_theme'] = 'Editing the theme settings.';
-$txt['whoadmin_trackip'] = 'Tracking an IP address.';
 
 $txt['whoallow_manageboards'] = 'Editing the board and category settings.';
 $txt['whoallow_admin'] = 'Viewing the <a href="{scripturl}?action=admin">administration center</a>.';

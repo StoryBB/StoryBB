@@ -4,7 +4,6 @@ a:link, a:hover, a:visited {
 /* These divisions wrap the forum sections when a forum width is set. */
 h1.forumtitle {
 	color: #a85400;
-	text-shadow: -1px -1px 0 rgba(0,0,0,0.5), 1px 1px 0 #fff;
 }
 
 #inner_wrap {
@@ -129,6 +128,5 @@ h1.forumtitle {
 	padding: 6px 8px 8px 8px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
-	box-shadow: 0 -2px 2px rgba(0,0,0,0.1);
 	/* End [WIP] */
 }

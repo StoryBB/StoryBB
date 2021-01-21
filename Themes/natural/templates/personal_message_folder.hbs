@@ -186,7 +186,7 @@
 
 		{{#if member.can_see_warning}}
 					<li class="warning">
-						{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+						{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issue_warning;u={{member.id}}">{{/if}}
 						<span class="main_icons warning_{{member.warning_status}}"></span>{{#if ../context.can_issue_warning}}</a>{{/if}}
 						<span class="warn_{{member.warning_status}}">{{get_text (concat 'warn_' member.warning_status)}}</span>
 					</li>
@@ -230,7 +230,7 @@
 					<div class="under_message">
 
 			{{#if (and can_see_ip member.ip)}}
-						<a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{{../txt.ip}}}: {{member.ip}}</a>
+						<a href="{{../scripturl}}?action=admin;area=logs;sa=ip{{#if (gt member.id 1)}};u={{member.id}}{{/if}};searchip={{member.ip}}">{{{../txt.ip}}}: {{member.ip}}</a>
 			{{/if}}
 
 						<ul class="quickbuttons buttonrow">

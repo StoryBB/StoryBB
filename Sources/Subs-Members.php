@@ -939,6 +939,176 @@ function registerMember(&$regOptions, $return_errors = false)
 	return $memberID;
 }
 
+/**
+ * Perform the actual merger of accounts. Everything from $source gets added to $dest.
+ *
+ * @param int $source Account ID to merge from
+ * @param int $dest Account ID to merge into
+ * @return mixed True on success, otherwise string indicating error type
+ * @todo refactor this to emit exceptions rather than mixed types
+ */
+function mergeMembers($source, $dest)
+{
+	global $user_profile, $sourcedir, $smcFunc;
+
+	if ($source == $dest)
+		return 'no_same';
+
+	$loaded = loadMemberData([$source, $dest]);
+	if (!in_array($source, $loaded) || !in_array($dest, $loaded))
+		return 'no_exist';
+
+	if ($user_profile[$source]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$source]['additional_groups'])))
+		return 'no_merge_admin';
+
+	// Work out which the main characters are.
+	$source_main = 0;
+	$dest_main = 0;
+	foreach ($user_profile[$source]['characters'] as $id_char => $char)
+	{
+		if ($char['is_main'])
+		{
+			$source_main = $id_char;
+			break;
+		}
+	}
+	foreach ($user_profile[$dest]['characters'] as $id_char => $char)
+	{
+		if ($char['is_main'])
+		{
+			$dest_main = $id_char;
+			break;
+		}
+	}
+	if (empty($source_main) || empty($dest_main))
+		return 'no_main';
+
+	// Move characters
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}characters
+		SET id_member = {int:dest}
+		WHERE id_member = {int:source}
+			AND id_character != {int:source_main}',
+		[
+			'source' => $source,
+			'source_main' => $source_main,
+			'dest' => $dest,
+			'dest_main' => $dest_main,
+		]
+	);
+
+	// Move posts over - main
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}messages
+		SET id_member = {int:dest},
+			id_character = {int:dest_main}
+		WHERE id_member = {int:source}
+			AND id_character = {int:source_main}',
+		[
+			'source' => $source,
+			'source_main' => $source_main,
+			'dest' => $dest,
+			'dest_main' => $dest_main,
+		]
+	);
+
+	// Move posts over - characters (i.e. whatever's left)
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}messages
+		SET id_member = {int:dest}
+		WHERE id_member = {int:source}',
+		[
+			'source' => $source,
+			'dest' => $dest,
+		]
+	);
+
+	// @todo fix id_creator as well?
+
+	// Fix post counts of destination accounts
+	$total_posts = 0;
+	foreach ($user_profile[$source]['characters'] as $char)
+		$total_posts += $char['posts'];
+
+	if (!empty($total_posts))
+		updateMemberData($dest, ['posts' => 'posts + ' . $total_posts]);
+
+	if (!empty($user_profile[$source]['characters'][$source_main]['posts']))
+		updateCharacterData($dest_main, ['posts' => 'posts + ' . $user_profile[$source]['characters'][$source_main]['posts']]);
+
+	// Reassign topics
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}topics
+		SET id_member_started = {int:dest}
+		WHERE id_member_started = {int:source}',
+		[
+			'source' => $source,
+			'dest' => $dest,
+		]
+	);
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}topics
+		SET id_member_updated = {int:dest}
+		WHERE id_member_updated = {int:source}',
+		[
+			'source' => $source,
+			'dest' => $dest,
+		]
+	);
+
+	// Move PMs - sent items
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}personal_messages
+		SET id_member_from = {int:dest}
+		WHERE id_member_from = {int:source}',
+		[
+			'source' => $source,
+			'dest' => $dest,
+		]
+	);
+
+	// Move PMs - received items
+	// First we have to get all the existing recipient rows
+	$rows = [];
+	$request = $smcFunc['db']->query('', '
+		SELECT id_pm, bcc, is_read, is_new, deleted
+		FROM {db_prefix}pm_recipients
+		WHERE id_member = {int:source}',
+		[
+			'source' => $source,
+		]
+	);
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$rows[] = [
+			'id_pm' => $row['id_pm'],
+			'id_member' => $dest,
+			'bcc' => $row['bcc'],
+			'is_read' => $row['is_read'],
+			'is_new' => $row['is_new'],
+			'deleted' => $row['deleted'],
+			'is_inbox' => 1,
+		];
+	}
+	$smcFunc['db']->free_result($request);
+	if (!empty($rows))
+	{
+		$smcFunc['db']->insert('ignore',
+			'{db_prefix}pm_recipients',
+			[
+				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'is_read' => 'int',
+				'is_new' => 'int', 'deleted' => 'int', 'is_inbox' => 'int',
+			],
+			$rows,
+			['id_pm', 'id_member']
+		);
+	}
+
+	// Delete the source user
+	deleteMembers($source);
+
+	return true;
+}
 
 /**
  * Check if a name is in the reserved words list.

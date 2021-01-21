@@ -6,18 +6,19 @@ input, button, select, textarea {
 	outline: none !important;
 	border: 1px solid #bbb;
 	vertical-align: middle;
-	border-radius: 3px;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) inset;
-	padding: 0.3rem 0.4rem 0.33rem;
+	padding: 0.6rem 1.2rem;
+}
+
+input, button, select, textarea, .button {
+	border: 1px solid $secondary-accent;
+
+	&:hover {
+		border: 1px solid lighten($secondary-accent, 15%);
+	}
 }
 
 input, button, select {
 	font-size: 0.9rem;
-}
-
-/* Height fixation */
-input, select {
-	height: 2rem;
 }
 
 select option {
@@ -30,7 +31,6 @@ select[size], input[type=checkbox], input[type=radio], input[type=file] {
 
 input:hover, textarea:hover, button:hover, select:hover {
 	outline: none !important;
-	border: 1px solid #999;
 }
 
 textarea:hover {
@@ -39,8 +39,6 @@ textarea:hover {
 
 input:focus, textarea:focus, button:focus, select:focus {
 	outline: none !important;
-	border: 1px solid #999;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) inset;
 }
 
 /* Number inputs don't support size nor width, so let's set a default so [size] can be used */
@@ -72,7 +70,6 @@ fieldset {
 fieldset legend {
 	font-weight: bold;
 	color: #555;
-	box-shadow: none;
 	border: none;
 }
 
@@ -105,4 +102,17 @@ input[type=checkbox], input[type=radio] {
 
 .invalid_input {
 	background: #fff0f0;
+}
+
+/* Some things for the WYSIWYG editor */
+.sceditor-container iframe, .sceditor-container textarea {
+	padding: 5px 0 !important;
+}
+
+.sceditor-more-button.sceditor-more.button {
+    padding: 0 3px !important;
+    font: $default-font;
+    font-weight: 300;
+    margin-top: 10px !important;
+    margin-bottom: 10px;
 }

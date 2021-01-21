@@ -87,7 +87,7 @@ class PayPal implements PaymentProcessor
 	/**
 	 * Provide the fields to build a payment transaction form
 	 *
-	 * Called from Profile-Actions.php to return a unique set of fields for the given gateway
+	 * Called from StoryBB\Controller\Profile\Subscriptions to return a unique set of fields for the given gateway
 	 * plus all the standard ones for the subscription form
 	 *
 	 * @param string $unique_id The unique ID of this gateway

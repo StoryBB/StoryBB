@@ -453,7 +453,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		// IP Info?
 		if (isset($row['extra']['ip_range']))
 			if ($seeIP)
-				$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
+				$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
 			else
 				$row['extra']['ip_range'] = $txt['logged'];
 

@@ -1990,7 +1990,7 @@ function BanLog()
 				],
 				'data' => [
 					'sprintf' => [
-						'format' => '<a href="' . $scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=%1$s">%1$s</a>',
 						'params' => [
 							'ip' => false,
 						],
