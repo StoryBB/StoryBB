@@ -109,9 +109,10 @@ function sig_preview()
 	if (!empty($user) && $can_change)
 	{
 		$request = $smcFunc['db']->query('', '
-			SELECT signature
-			FROM {db_prefix}members
-			WHERE id_member = {int:id_member}
+			SELECT chars.signature
+			FROM {db_prefix}members mem
+			JOIN {db_prefix}characters chars ON (mem.id_member = chars.id_member AND chars.is_main = 1)
+			WHERE mem.id_member = {int:id_member}
 			LIMIT 1',
 			[
 				'id_member' => $user,
