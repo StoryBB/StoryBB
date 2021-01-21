@@ -327,7 +327,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($txt, $scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . ';sa=sheet" target="_blank" rel="noopener">' . $txt['char_sheet'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=character_sheet;char=' . $rowData['id_character'] . '" target="_blank" rel="noopener">' . $txt['char_sheet'] . '</a>';
 					},
 					'class' => 'centercol',
 				],

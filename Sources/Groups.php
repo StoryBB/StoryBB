@@ -444,7 +444,7 @@ function MembergroupMembers()
 			'id_character' => !empty($row['id_character']) ? $row['id_character'] : 0,
 			'character' => !empty($row['id_character']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>' : '',
 			'email' => $row['email_address'],
-			'ip' => '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>',
+			'ip' => '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>',
 			'registered' => timeformat($row['date_registered']),
 			'last_online' => $last_online,
 			'posts' => comma_format($row['posts']),

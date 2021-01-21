@@ -17,12 +17,12 @@
 			<img class="avatar" src="{{{settings.images_url}}}/default.png" alt=""><br><br>
 {{/if}}
 
-{{#if (and context.user.is_owner (neq user_info.id_character context.character.id_character))}}
-			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=char_switch_redir;char={{context.character.id_character}};{{session_url}}" class="button">{{{txt.switch_to_char}}}</a><br><br>
+{{#if (and context.user.is_owner (not (eq_coerce user_info.id_character context.character.id_character)))}}
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=char_switch;profile;char={{context.character.id_character}};{{session_url}}" class="button">{{{txt.switch_to_char}}}</a><br><br>
 {{/if}}
 
 {{#if (and (neq context.character.is_main 1) (gt context.character.char_sheet))}}'
-			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet" class="button">{{{txt.char_sheet}}}</a><br><br>
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=character_sheet;char={{context.character.id_character}}" class="button">{{{txt.char_sheet}}}</a><br><br>
 {{/if}}
 
 {{#if context.character.editable}}
@@ -38,7 +38,7 @@
 {{/if}}
 
 {{#if (and context.user.can_admin (neq context.character.is_main '1'))}}
-			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=move_acct;{{session_url}}" class="button">{{{txt.move_char_action}}}</a><br><br>
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=move_acct" class="button">{{{txt.move_char_action}}}</a><br><br>
 {{/if}}
 
 		</div>

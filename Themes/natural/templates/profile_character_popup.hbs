@@ -38,14 +38,15 @@
 						</span>
 						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
 
+						<span class="switch">
+							<a class="button" href="{{sheet_url}}">{{{../txt.char_sheet_link}}}</a>
+						</span>
+
 		{{#if (neq @key ../user_info.id_character)}}
 							<span class="switch">
-								<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
+								<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</span>
 							</span>
 		{{/if}}
-						<span class="switch">
-							<a class="button" href="{{../scripturl}}{{character_url}};sa=sheet">{{{../txt.char_sheet_link}}}</a>
-						</span>
 					</div>
 				</li>
 	{{/if}}
@@ -54,7 +55,7 @@
 		</div>
 		<br>
 		<div class="clear centertext">
-			<a class="button" href="{{scripturl}}?action=profile;u={{user_info.id}};area=char_create">{{{txt.char_create}}}</a>
+			<a class="button" href="{{scripturl}}?action=profile;u={{user_info.id}};area=character_create">{{{txt.char_create}}}</a>
 		</div>
 		<script>
 		$(".chars_container .switch span.button").on("click", function() {

@@ -10,6 +10,52 @@
  * @version 1.0 Alpha 1
  */
 
+// Profile tabs
+$txt['profiletab_information'] = 'Information';
+$txt['profile_info_summary'] = 'Info Summary';
+$txt['profile_send_pm'] = 'Send PM';
+$txt['profile_report_user'] = 'Report User';
+$txt['profile_show_drafts'] = 'Show Drafts';
+
+$txt['profiletab_characters'] = 'Characters';
+
+$txt['profiletab_notification_settings'] = 'Notification Settings';
+$txt['profile_bookmarks'] = 'Bookmarks';
+$txt['profile_ignored_topics'] = 'Ignored Topics';
+$txt['profile_my_alerts'] = 'My Alerts';
+
+$txt['profiletab_preferences'] = 'Preferences';
+$txt['profile_ignored_boards'] = 'Ignored Boards';
+$txt['profile_buddy_list'] = 'Buddy List';
+$txt['profile_alert_preferences'] = 'Alert Preferences';
+$txt['profile_ignored_people'] = 'Ignored People';
+$txt['profile_avatar_signature'] = 'Avatar and Signature';
+$txt['profile_forum_preferences'] = 'Forum Preferences';
+
+$txt['profiletab_account_overview'] = 'Account Overview';
+$txt['profile_view_warnings'] = 'View Warnings';
+$txt['profile_group_membership'] = 'Group Membership';
+$txt['profile_delete_account'] = 'Delete Account';
+$txt['profile_export_data'] = 'Export Data';
+$txt['profile_paid_subscriptions'] = 'Paid Subscriptions';
+$txt['profile_account_settings'] = 'Account Settings';
+
+$txt['profiletab_history_stats'] = 'History and Stats';
+$txt['profile_post_history'] = 'Post History';
+$txt['profile_topic_history'] = 'Topic History';
+$txt['profile_attachments'] = 'Attachments';
+$txt['profile_show_stats'] = 'Show Stats';
+
+$txt['profiletab_admin'] = 'Account Admin';
+$txt['profile_account_activity'] = 'Account Activity';
+$txt['profile_ip_lookup'] = 'IP Lookup';
+$txt['profile_edit_history'] = 'Edit History';
+$txt['profile_group_requests'] = 'Group Requests';
+$txt['profile_login_history'] = 'Login History';
+$txt['profile_account_permissions'] = 'Account Permissions';
+$txt['profile_ban_account'] = 'Ban Account';
+$txt['profile_issue_warning'] = 'Issue Warning';
+
 // Some of the things from the popup need their own descriptions
 $txt['popup_summary'] = 'My Profile';
 $txt['popup_showposts'] = 'My Posts';
@@ -589,7 +635,7 @@ $txt['character_updated_else'] = 'The character, %s, has been updated.';
 $txt['move_char_account'] = 'Move to another account';
 $txt['move_char_action'] = 'Move character';
 $txt['move_char_account_desc'] = 'From here you can migrate this character into another account, moving all the posts across.';
-$txt['move_char_to'] = 'Which account do you want to merge this one into?';
+$txt['move_char_to'] = 'Which account do you want to move this one into?';
 $txt['move_are_you_sure'] = 'Are you sure you want to move %1$s (plus all the posts) into %2$s\'s account?';
 
 $txt['cannot_move_main'] = 'You cannot move your OOC profile to another account.';

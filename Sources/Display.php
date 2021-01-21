@@ -1525,7 +1525,7 @@ function prepareDisplayContext($reset = false)
 			$character = $output['member']['characters'][$message['id_character']];
 			if (!empty($character['char_sheet']))
 			{
-				$output['member']['char_sheet_url'] = $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $output['id_character'] . ';sa=sheet';
+				$output['member']['char_sheet_url'] = $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=character_sheet;char=' . $output['id_character'];
 			}
 			if (!empty($character['avatar']))
 			{

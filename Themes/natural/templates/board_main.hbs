@@ -71,7 +71,7 @@
 							<a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>
 
 						{{#if this.new}}
-							<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})" class="new_posts">{{../../../txt.new}}</a>
+							<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})" class="new_posts"></a>
 						{{/if}}
 					{{/if}} {{! close if this.is_redirect on line 65 }}
 
@@ -95,10 +95,12 @@
 				<div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
 			
 			{{#if this.last_post.id}}
-					{{{this.last_post.member.avatar.image}}}
+					<div class="last_poster">
+						{{{this.last_post.member.avatar.image}}}
+					</div>
 			{{/if}}
 			
-			{{#if this.last_post.id}}{{{this.last_post.last_post_message}}}{{/if}}
+			{{#if this.last_post.id}}<p>{{{this.last_post.last_post_message}}}</p>{{/if}}
 
 				</div>
 			</div><!-- #board_{{this.id}} -->

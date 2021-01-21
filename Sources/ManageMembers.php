@@ -558,7 +558,7 @@ function ViewMemberlist()
 				],
 				'data' => [
 					'sprintf' => [
-						'format' => '<a href="' . strtr($scripturl, ['%' => '%%']) . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="' . strtr($scripturl, ['%' => '%%']) . '?action=admin;area=logs;sa=ip;searchip=%1$s">%1$s</a>',
 						'params' => [
 							'member_ip' => false,
 						],
@@ -914,7 +914,7 @@ function MembersAwaitingActivation()
 				],
 				'data' => [
 					'sprintf' => [
-						'format' => '<a href="' . strtr($scripturl, ['%' => '%%']) . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="' . strtr($scripturl, ['%' => '%%']) . '?action=admin;area=logs;sa=ip;searchip=%1$s">%1$s</a>',
 						'params' => [
 							'member_ip' => false,
 						],

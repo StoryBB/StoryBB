@@ -2,7 +2,7 @@
 #sidebar {
 	width: 70px;
 	position: fixed;
-	background: rgba(0, 0, 0, 0.1);
+	background: $sidebar-bg;
 	top: 0;
 	bottom: 0;
 	z-index: 100;
@@ -10,16 +10,17 @@
 #sidebar > div > a, #btn-search > a {
 	font-size: 30px;
 	line-height: 70px;
+	color: $sidebar-fg;
 }
 #sidebar > div {
 	text-align: center;
 	position: relative;
 }
 #sidebar > div.open, #btn-search.open {
-	background: rgba(0, 0, 0, 0.15);
+	background: $sidebar-bg-open;
 }
 #sidebar > div:hover, #btn-search:hover {
-	background: rgba(0, 0, 0, 0.2);
+	background: $sidebar-bg-hover;
 }
 
 #btn-search {
@@ -38,10 +39,11 @@
 }
 
 #sidebar > div .amt {
-	background: #800000;
+	background: $sidebar-amt-bg;
 	font-size: 13px;
 	line-height: 1em;
-	padding: 3px 5px;
+	padding: $sidebar-amt-padding;
+	color: $sidebar-amt-fg;
 }
 
 #sidebar > div > a > .amt {
@@ -59,6 +61,7 @@
 #sidebar > div > .top_menu {
 	top: 0px;
 	left: 70px;
+	text-align: left;
 }
 
 .top_menu.subitems {

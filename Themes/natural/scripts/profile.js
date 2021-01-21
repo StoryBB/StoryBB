@@ -47,6 +47,12 @@ function calcCharLeft()
 	if (!document.getElementById("signatureLeft"))
 		return;
 
+	var editor;
+	if (editor = $("#signature").data("sceditor"))
+	{
+		currentSignature = editor.val();
+	}
+
 	if (oldSignature != currentSignature)
 	{
 		oldSignature = currentSignature;
@@ -91,10 +97,20 @@ function ajax_getSignaturePreview (showPreview)
 	// Is the error box already visible?
 	var errorbox_visible = $("#profile_error").is(":visible");
 
+	var editor, currentSignature;
+	if (editor = $("#signature").data("sceditor"))
+	{
+		currentSignature = editor.val();
+	}
+	else
+	{
+		currentSignature = $("#signature").val();
+	}
+
 	$.ajax({
 		type: "POST",
 		url: sbb_scripturl + "?action=xmlhttp;sa=previews;xml",
-		data: {item: "sig_preview", signature: $("#signature").val(), user: $('input[name="u"]').attr("value")},
+		data: {item: "sig_preview", signature: currentSignature, user: $('input[name="u"]').attr("value")},
 		context: document.body,
 		success: function(request){
 			if (showPreview)

@@ -2,11 +2,11 @@
 		{{! Unlike almost every other template, this is designed to be included into the HTML directly via $().load() }}
 		<div class="alert_bar">
 			<div class="alerts_opts block">
-				<a href="{{scripturl}}?action=profile;area=notification;sa=markread;{{session_url}}" onclick="return markAlertsRead(this)">{{{txt.mark_alerts_read}}}</a>
+				<a href="{{scripturl}}?action=profile;u={{context.user.id}};area=alerts_popup;markread;{{session_url}}" onclick="return markAlertsRead(this)">{{{txt.mark_alerts_read}}}</a>
 				<a href="{{scripturl}}?action=profile;area=notification;sa=alerts" class="floatright">{{{txt.alert_settings}}}</a>
 			</div>
 			<div class="alerts_box centertext">
-				<a href="{{scripturl}}?action=profile;area=showalerts" class="button">{{{txt.all_alerts}}}</a>
+				<a href="{{scripturl}}?action=profile;area=alerts" class="button">{{{txt.all_alerts}}}</a>
 			</div>
 		</div>
 		<div class="alerts_unread">
@@ -14,12 +14,12 @@
 {{#if context.unread_alerts}}
 	{{#each context.unread_alerts}}
 			<div class="unread">
-				{{#if sender}}{{{sender.avatar.image}}}{{/if}}
+				{{#if sender}}<div class="sender">{{{sender.avatar.image}}}</div>{{/if}}
 				<div class="details">
 					{{#if icon}}{{{icon}}}{{/if}}
 					<span>{{{text}}}</span> - {{{time}}}
 				</div>
-				<button class="read_alert" data-url="{{../scripturl}}?action=profile;area=notification;sa=markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
+				<button class="read_alert" data-url="{{../scripturl}}?action=profile;u={{../context.user.id}};area=alerts_popup;markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
 			</div>
 	{{/each}}
 {{else}}

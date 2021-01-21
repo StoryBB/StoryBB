@@ -25,7 +25,7 @@ function on_allowed_reagreement_actions(): bool
 		'help' => true,
 		'profile' => [
 			['area' => 'export_data'],
-			['area' => 'deleteaccount'],
+			['area' => 'delete_account'],
 		],
 		'reagreement' => true,
 	];

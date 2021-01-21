@@ -4,7 +4,6 @@
 }
 #admin_content .windowbg {
 	margin: 5px 0 5px 0;
-	box-shadow: none;
 }
 .action_admin .table_grid td {
 	border: 1px solid #ddd;
@@ -306,7 +305,6 @@ fieldset.admin_group .inactive {
 button.plugin-enable, button.plugin-disable, button.plugin-remove {
 	cursor: pointer;
 	border: none;
-	box-shadow: none;
 	width: 48px;
 	height: 48px;
 	text-indent: -1000em;

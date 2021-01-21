@@ -4,7 +4,7 @@
 				{{#if context.can_draft}}<a href="{{scripturl}}?action=pm;sa=showpmdrafts">{{{txt.pm_drafts_short}}}</a>{{/if}}
 				<a href="{{scripturl}}?action=pm;sa=settings" class="floatright">{{{txt.pm_settings_short}}}</a>
 			</div>
-			<div class="pm_mailbox centertext">
+			<div class="pm_mailbox centertext buttonlist">
 				<a href="{{scripturl}}?action=pm" class="button">{{{txt.inbox}}}</a>
 				<a href="{{scripturl}}?action=pm;f=sent" class="button">{{{txt.sent_items}}}</a>
 			</div>
@@ -17,17 +17,17 @@
 
 {{#each context.unread_pms}}
 			<div class="unread">
-				{{#if member}}{{{member.avatar.image}}}{{/if}}
+				{{#if member}}<div class="sender">{{{member.avatar.image}}}</div>{{/if}}
 				<div class="details">
 					<div class="subject">{{{pm_link}}}</div>
-					<div class="sender">
+					<div class="pm_sender">
 
 	{{#if replied_to_you}}
 						<span class="main_icons replied centericon" style="margin-right: 4px" title="{{{txt.pm_you_were_replied_to}}}"></span>
 	{{else}}
 						<span class="main_icons im_off centericon" style="margin-right: 4px" title="{{{txt.pm_was_sent_to_you}}}"></span>
 	{{/if}}
-						{{#if member}}{{{member.link}}}:{{{member_from}}} - {{{time}}}{{/if}}
+						{{#if member}}{{{member.link}}}{{else}}{{{member_from}}}{{/if}} - {{{time}}}
 					</div>
 				</div>
 			</div>

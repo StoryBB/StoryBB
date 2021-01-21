@@ -40,7 +40,7 @@
 			</div>
 			<div id="quickReplyOptions">
 				<div class="roundframe">
-					<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
+					<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=character_sheet;char={{context.character.id_character}}" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
 						{{{richtexteditor 'message' 'smileyBox_message' 'bbcBox_message'}}}
 						<br class="clear_right">
 						<span id="post_confirm_buttons">

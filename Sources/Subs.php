@@ -1863,7 +1863,7 @@ function setupMenuContext()
 	{
 		$context['sidebar'] += [
 			'alerts' => [
-				'url' => $scripturl . '?action=profile;area=showalerts;u=' . $context['user']['id'],
+				'url' => $scripturl . '?action=profile;area=alerts;u=' . $context['user']['id'],
 				'icon' => 'far fa-bell fa-fw',
 				'popupmenu' => true,
 				'amt' => $context['user']['alerts'],
@@ -1972,6 +1972,12 @@ function setupMenuContext()
 
 		if (!empty($context['sidebar']['characterlist']['subitems']))
 		{
+			$context['sidebar']['characterlist']['subitems'] = [
+				'characterlist' => [
+					'title' => $txt['chars_menu_title'],
+					'url' => $scripturl . '?action=characters',
+				]
+			] + $context['sidebar']['characterlist']['subitems'];
 			addInlineJavaScript('
 	user_menus.add("characterlist", "", true);', true);
 		}

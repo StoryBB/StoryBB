@@ -352,7 +352,7 @@ class Alert
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
 				$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
-				$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
+				$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=character_sheet;char=' . $row['id_character'];
 			}
 			$smcFunc['db']->free_result($request);
 		}
@@ -419,5 +419,108 @@ class Alert
 		}
 
 		return $alerts;
+	}
+
+	/**
+	 * Get the list of alerts that can be configured.
+	 */
+	public static function alert_configuration()
+	{
+		global $modSettings, $txt;
+
+		loadLanguage('Profile');
+
+		// Now for the exciting stuff.
+		// We have groups of items, each item has both an alert and an email key as well as an optional help string.
+		// Valid values for these keys are 'always', 'yes', 'never'; if using always or never you should add a help string.
+		$alert_types = [
+			'board' => [
+				'topic_notify' => ['alert' => 'yes', 'email' => 'yes'],
+				'board_notify' => ['alert' => 'yes', 'email' => 'yes'],
+			],
+			'msg' => [
+				'msg_mention' => ['alert' => 'yes', 'email' => 'yes'],
+				'msg_quote' => ['alert' => 'yes', 'email' => 'yes'],
+				'msg_like' => ['alert' => 'yes', 'email' => 'never'],
+				'unapproved_reply' => ['alert' => 'yes', 'email' => 'yes'],
+			],
+			'pm' => [
+				'pm_new' => ['alert' => 'always', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => ['name' => 'pm_read', 'is_board' => false]],
+				'pm_reply' => ['alert' => 'always', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => ['name' => 'pm_send', 'is_board' => false]],
+			],
+			'groupr' => [
+				'groupr_approved' => ['alert' => 'always', 'email' => 'yes'],
+				'groupr_rejected' => ['alert' => 'always', 'email' => 'yes'],
+			],
+			'moderation' => [
+				'unapproved_post' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'approve_posts', 'is_board' => true]],
+				'msg_report' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_board', 'is_board' => true]],
+				'msg_report_reply' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_board', 'is_board' => true]],
+				'member_report' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+				'member_report_reply' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+				'approval_notify' => ['alert' => 'never', 'email' => 'yes', 'permission' => ['name' => 'approve_posts', 'is_board' => true]],
+			],
+			'members' => [
+				'member_register' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+				'request_group' => ['alert' => 'yes', 'email' => 'yes'],
+				'warn_any' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'issue_warning', 'is_board' => false]],
+				'buddy_request'  => ['alert' => 'yes', 'email' => 'never'],
+				'birthday'  => ['alert' => 'yes', 'email' => 'yes'],
+			],
+			'paidsubs' => [
+				'paidsubs_expiring' => ['alert' => 'yes', 'email' => 'yes'],
+			],
+		];
+		$group_options = [
+			'board' => [
+				['check', 'msg_auto_notify', 'position' => 'after'],
+				['check', 'msg_receive_body', 'position' => 'after'],
+				['select', 'msg_notify_pref', 'position' => 'before', 'opts' => [
+					0 => $txt['alert_opt_msg_notify_pref_nothing'],
+					1 => $txt['alert_opt_msg_notify_pref_instant'],
+					2 => $txt['alert_opt_msg_notify_pref_first'],
+					3 => $txt['alert_opt_msg_notify_pref_daily'],
+					4 => $txt['alert_opt_msg_notify_pref_weekly'],
+				]],
+				['select', 'msg_notify_type', 'position' => 'before', 'opts' => [
+					1 => $txt['notify_send_type_everything'],
+					2 => $txt['notify_send_type_everything_own'],
+					3 => $txt['notify_send_type_only_replies'],
+					4 => $txt['notify_send_type_nothing'],
+				]],
+			],
+			'pm' => [
+				['select', 'pm_notify', 'position' => 'before', 'opts' => [
+					1 => $txt['email_notify_all'],
+					2 => $txt['email_notify_buddies'],
+				]],
+			],
+		];
+
+		// Disable paid subscriptions at group level if they're disabled
+		if (empty($modSettings['paid_enabled']))
+			unset($alert_types['paidsubs']);
+
+		// Disable membergroup requests at group level if they're disabled
+		if (empty($modSettings['show_group_membership']))
+			unset($alert_types['groupr'], $alert_types['members']['request_group']);
+
+		// Disable mentions if they're disabled
+		if (empty($modSettings['enable_mentions']))
+			unset($alert_types['msg']['msg_mention']);
+
+		// Disable likes if they're disabled
+		if (empty($modSettings['enable_likes']))
+			unset($alert_types['msg']['msg_like']);
+
+		// Disable buddy requests if they're disabled
+		if (empty($modSettings['enable_buddylist']))
+			unset($alert_types['members']['buddy_request']);
+
+		// Now, now, we could pass this through global but we should really get into the habit of
+		// passing content to hooks, not expecting hooks to splatter everything everywhere.
+		call_integration_hook('integrate_alert_types', [&$alert_types, &$group_options]);
+
+		return [$alert_types, $group_options];
 	}
 }

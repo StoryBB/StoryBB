@@ -31,8 +31,8 @@
 						<dd>
 							<select name="profile_area" id="profile_area">
 								<option value="none"{{#if (eq context.field.profile_area 'none')}} selected{{/if}}>{{{txt.custom_edit_profile_none}}}</option>
-								<option value="none"{{#if (eq context.field.profile_area 'account')}} selected{{/if}}>{{{txt.account}}}</option>
-								<option value="none"{{#if (eq context.field.profile_area 'forumprofile')}} selected{{/if}}>{{{txt.forumprofile}}}</option>
+								<option value="account"{{#if (eq context.field.profile_area 'account')}} selected{{/if}}>{{{txt.account}}}</option>
+								<option value="prefs"{{#if (eq context.field.profile_area 'prefs')}} selected{{/if}}>{{{txt.profile_forum_preferences}}}</option>
 							</select>
 						</dd>
 						<dt>

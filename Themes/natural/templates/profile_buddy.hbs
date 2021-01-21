@@ -10,8 +10,6 @@
 				<th scope="col" class="quarter_table">{{{txt.name}}}</th>
 				<th scope="col">{{{txt.status}}}</th>
 
-				{{#if context.show_buddy_email_address}}<th scope="col">{{{txt.email}}}</th>{{/if}}
-
 				{{#each context.custom_pf}}
 				<th scope="col">{{{label}}}</th>
 				{{/each}}
@@ -40,7 +38,7 @@
 				<td class="lefttext">{{{lookup options @key}}}</td>
 		{{/each}}
 
-				<td><a href="{{../scripturl}}?action=profile;area=lists;sa=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
+				<td><a href="{{../scripturl}}?action=profile;area=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
 			</tr>
 	{{/each}}
 {{/unless}}
@@ -49,7 +47,7 @@
 	</div>
 
 	{{! Add a new buddy? }}
-	<form action="{{scripturl}}?action=profile;u={{{context.id_member}}};area=lists;sa=buddies" method="post" accept-charset="UTF-8">
+	<form action="{{scripturl}}?action=profile;u={{{context.id_member}}};area=buddies" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">{{{txt.buddy_add}}}</h3>
 		</div>

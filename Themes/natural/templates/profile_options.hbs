@@ -1,4 +1,19 @@
 	{{! Generic profile options. }}
+	{{! If an error occurred while trying to save previously, give the user some info. }}
+	<div class="errorbox"{{#unless context.post_errors}} style="display:none"{{/unless}} id="profile_error">
+{{#if context.post_errors}}
+		<span>{{#if context.custom_error_title}}{{{context.custom_error_title}}}{{else}}{{{txt.profile_errors_occurred}}}{{/if}}:</span>
+		<ul id="list_errors">
+
+	{{! Cycle through each error and display an error message. }}
+	{{#each context.post_errors}}
+			<li>{{get_text (concat 'profile_error_' .)}}</li>
+	{{/each}}
+
+		</ul>
+{{/if}}
+	</div>
+
 	<form action="{{{context.profile_submit_url}}}" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data"{{#if (eq context.menu_item_selected 'account')}} autocomplete="off"{{/if}}>
 		<div style="position:absolute; top:-100px;">
 			<input type="text" id="autocompleteFakeName"/>

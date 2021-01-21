@@ -1378,7 +1378,7 @@ function markAlertsRead(obj) {
 		function(data) {
 			ajax_indicator(false);
 			$("#alerts_menu_top span.amt").remove();
-			$("#alerts_menu div.alerts_unread").html(data);
+			$("#alerts_menu").html(data);
 		}
 	);
 	return false;

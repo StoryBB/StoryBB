@@ -1,0 +1,25 @@
+	<div class="generic_tabs">
+		<ul class="tabs">
+			{{#each context.navigation}}
+				<li{{#if active}} class="active"{{/if}}>{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}<span>{{label}}</span>{{/if}}</li>
+			{{/each}}
+		</ul>
+	</div>
+	<div class="generic_menu_container">
+		<div class="generic_menu_sidebar">
+			{{#each context.navigation}}
+				{{#if active}}
+					{{#each sections}}
+						{{#if (gt (count ../sections) 1)}}
+						<div class="heading">{{label}}</div>
+						{{/if}}
+						<ul>
+							{{#each links}}
+								<li{{#if active}} class="active"{{/if}}><a href="{{url}}">{{label}}</a></li>
+							{{/each}}
+						</ul>
+					{{/each}}
+				{{/if}}
+			{{/each}}
+		</div>
+		<div id="admin_content">

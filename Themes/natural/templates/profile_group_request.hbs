@@ -1,18 +1,11 @@
 	{{! Template for choosing group membership. }}
-	<form action="{{scripturl}}?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
+	<form action="{{scripturl}}?action=profile;area=group_membership" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3 class="catbg">
 				{{{txt.profile}}}
 			</h3>
 		</div>
 		<p class="information">{{{txt.groupMembership_info}}}</p>
-
-{{! Do we have an update message? }}
-{{#if context.update_message}}
-		<div class="infobox">
-			{{{context.update_message}}}.
-		</div>
-{{/if}}
 
 		<div id="groups">
 
@@ -50,7 +43,7 @@
 
 		{{! Can they leave their group? }}
 		{{#if can_leave}}
-				<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url context.token_check}}">{{{../txt.leave_group}}}</a>
+				<button type="submit" class="button" name="leave[{{id}}]">{{{../txt.leave_group}}}</button>
 		{{/if}}
 
 			</div>
@@ -74,14 +67,14 @@
 				{{#if desc}}<br><span class="smalltext">{{{desc}}}</span>{{/if}}
 
 			{{#if (eq_coerce type 3)}}
-				<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url ../context.token_check}}" class="button floatright">{{{../txt.join_group}}}</a>
+				<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=group_membership;{{session_url}};gid={{id}};{{token_url ../context.token_check}}" class="button floatright">{{{../txt.join_group}}}</a>
 			{{/if}}
 
 			{{#if (eq_coerce type 2)}}
 				{{#if pending}}
 					<span class="floatright">{{{../txt.approval_pending}}}</span>
 				{{else}}
-					<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=groupmembership;request={{id}}" class="button floatright">{{{../txt.request_group}}}</a>
+					<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=group_membership;request={{id}}" class="button floatright">{{{../txt.request_group}}}</a>
 				{{/if}}
 			{{/if}}
 

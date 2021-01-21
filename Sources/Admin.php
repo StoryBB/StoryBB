@@ -367,10 +367,12 @@ function AdminMain()
 					'label' => $txt['logs'],
 					'function' => 'AdminLogs',
 					'icon' => 'logs',
+					'permissions' => ['moderate_forum', 'admin_forum'],
 					'subsections' => [
 						'errorlog' => [$txt['errlog'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'],
 						'adminlog' => [$txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])],
 						'modlog' => [$txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])],
+						'ip' => [$txt['ip_lookup'], 'moderate_forum'],
 						'settings' => [$txt['log_settings'], 'admin_forum'],
 					],
 				],
@@ -699,6 +701,7 @@ function AdminLogs()
 		'errorlog' => ['ManageErrors.php', 'ViewErrorLog'],
 		'adminlog' => ['Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['adminlog_enabled'])],
 		'modlog' => ['Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['modlog_enabled'])],
+		'ip' => ['ManageIP.php', 'TrackIP'],
 		'settings' => ['ManageSettings.php', 'ModifyLogSettings'],
 	];
 
@@ -721,6 +724,9 @@ function AdminLogs()
 			],
 			'modlog' => [
 				'description' => $txt['moderation_log_desc'],
+			],
+			'ip' => [
+				'description' => '',
 			],
 			'settings' => [
 				'description' => $txt['log_settings_desc'],

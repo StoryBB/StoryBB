@@ -52,7 +52,7 @@
 
 	{{#if this.member.ip}}
 						<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=ip;value={{this.member.ip}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_ip}}" class="main_icons filter centericon"></a>
-						<strong><a href="{{scripturl}}?action=trackip;searchip={{this.member.ip}}">{{this.member.ip}}</a></strong>&nbsp;&nbsp;<br>
+						<strong><a href="{{scripturl}}?action=admin;area=logs;sa=ip;searchip={{this.member.ip}}">{{this.member.ip}}</a></strong>&nbsp;&nbsp;<br>
 	{{/if}}
 					</div>
 					<div style="float: left; width: 50%; line-height: 1.8em; padding: 0 4px;">

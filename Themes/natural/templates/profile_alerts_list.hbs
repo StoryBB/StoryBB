@@ -10,7 +10,7 @@
 			{{{txt.alerts_none}}}
 		</div>
 {{else}}
-		<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=showalerts;save" method="post" accept-charset="UTF-8" id="mark_all">
+		<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=alerts;save" method="post" accept-charset="UTF-8" id="mark_all">
 			<table id="alerts" class="table_grid">
 
 	{{#each context.alerts}}
@@ -20,10 +20,10 @@
 					<td>
 						<ul class="quickbuttons buttonrow">
 							<li>
-								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure main_icons remove_button">{{{../txt.delete}}}</a>
+								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure main_icons remove_button">{{{../txt.delete}}}</a>
 							</li>
 							<li>
-								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}" class="main_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}">{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a>
+								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}" class="main_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}">{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a>
 							</li>
 							<li>
 								<input type="checkbox" name="mark[{{@key}}]" value="{{@key}}">
