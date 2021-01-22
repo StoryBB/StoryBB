@@ -294,58 +294,6 @@ function saveProfileFields($section)
 }
 
 /**
- * Save the profile changes
- *
- * @param array &$profile_vars The items to save
- * @param array &$post_errors An array of information about any errors that occurred
- * @param int $memID The ID of the member whose profile we're saving
- */
-function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
-{
-	global $user_profile, $context;
-
-	// These make life easier....
-	$old_profile = &$user_profile[$memID];
-
-	// Permissions...
-	if ($context['user']['is_owner'])
-	{
-		$changeOther = allowedTo(['profile_extra_any', 'profile_extra_own', 'profile_signature_any', 'profile_signature_own']);
-	}
-	else
-		$changeOther = allowedTo(['profile_extra_any', 'profile_signature_any']);
-
-	// Arrays of all the changes - makes things easier.
-	$profile_bools = [];
-	$profile_ints = [];
-	$profile_floats = [];
-	$profile_strings = [];
-
-	// Here's where we sort out all the 'other' values...
-	if ($changeOther)
-	{
-		makeThemeChanges($memID, isset($_POST['id_theme']) ? (int) $_POST['id_theme'] : $old_profile['id_theme']);
-		//makeAvatarChanges($memID, $post_errors);
-
-		if (!empty($_REQUEST['sa']))
-			makeCustomFieldChanges($memID, $_REQUEST['sa'], false);
-
-		foreach ($profile_bools as $var)
-			if (isset($_POST[$var]))
-				$profile_vars[$var] = empty($_POST[$var]) ? '0' : '1';
-		foreach ($profile_ints as $var)
-			if (isset($_POST[$var]))
-				$profile_vars[$var] = $_POST[$var] != '' ? (int) $_POST[$var] : '';
-		foreach ($profile_floats as $var)
-			if (isset($_POST[$var]))
-				$profile_vars[$var] = (float) $_POST[$var];
-		foreach ($profile_strings as $var)
-			if (isset($_POST[$var]))
-				$profile_vars[$var] = $_POST[$var];
-	}
-}
-
-/**
  * Make any theme changes that are sent with the profile.
  *
  * @param int $memID The ID of the user
