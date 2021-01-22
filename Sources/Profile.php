@@ -89,6 +89,13 @@ function Profile()
 
 	$account_overview = $navigation->add_tab(new NavTab('account', $txt['profiletab_account_overview']));
 	$section = $account_overview->add_section(new NavSection('account', $txt['profiletab_account_overview']));
+	$section->add_item(new NavItem(
+		'account_settings',
+		$txt['profile_account_settings'],
+		['area' => 'account_settings', 'u' => $memID],
+		'StoryBB\\Controller\\Profile\\AccountSettings',
+		$context['user']['is_owner'] ? ['profile_identity_any', 'profile_identity_own', 'profile_password_any', 'profile_password_own', 'manage_membergroups'] : ['profile_identity_any', 'profile_password_any', 'manage_membergroups']
+	));
 	$section->add_item((new NavItem(
 		'view_warnings',
 		$txt['profile_view_warnings'],
@@ -153,13 +160,6 @@ function Profile()
 		['area' => 'merge_acct', 'u' => $memID],
 		'StoryBB\\Controller\\Profile\\MergeAccount',
 		$context['user']['is_owner'] ? [] : ['admin_forum']
-	));
-	$section->add_item(new NavItem(
-		'account_settings',
-		$txt['profile_account_settings'],
-		['area' => 'account_settings', 'u' => $memID],
-		'StoryBB\\Controller\\Profile\\AccountSettings',
-		$context['user']['is_owner'] ? ['profile_identity_any', 'profile_identity_own', 'profile_password_any', 'profile_password_own', 'manage_membergroups'] : ['profile_identity_any', 'profile_password_any', 'manage_membergroups']
 	));
 
 	$prefs = $navigation->add_tab(new NavTab('prefs', $txt['profiletab_preferences']));

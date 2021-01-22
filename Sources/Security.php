@@ -887,6 +887,18 @@ function allowedTo($permission, $boards = null)
 {
 	global $user_info, $smcFunc;
 
+	if (STORYBB == 'BACKGROUND')
+	{
+		log_error('Cron function requesting user permissions (permission "' . $permission . '"): ' . json_encode($GLOBALS['task_details']), 'cron');
+		die;
+	}
+
+	if (!isset($user_info['permissions']))
+	{
+		log_error('Permissions requested but not yet loaded.');
+		die;
+	}
+
 	// You're always allowed to do nothing. (unless you're a working man, MR. LAZY :P!)
 	if (empty($permission))
 		return true;
