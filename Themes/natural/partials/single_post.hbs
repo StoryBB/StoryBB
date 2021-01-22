@@ -188,13 +188,13 @@
 {{/unless}}
 
 {{! aything below the attachments? }}
-{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+{{#if (or report_link ../context.can_see_likes ../context.can_like quickbuttons)}}
 			<div class="under_message">
 {{/if}}
 
-{{#if ../context.can_report_moderator}}
+{{#if report_link}}
 				<ul class="floatright smalltext">
-					<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
+					<li class="report_link"><a href="{{{report_link}}}">{{{report_title}}}</a></li>
 				</ul>
 {{/if}}
 
@@ -228,94 +228,35 @@
 				</ul>
 {{/if}}
 
-{{! quick buttons }}
-{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+{{#if quickbuttons}}
 				<ul class="quickbuttons dropmenu">
-
-	{{#if ../context.can_quote}}
-					<li>
-						<a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a>
-					</li>
-					<li style="display:none;" id="quoteSelected_{{id}}">
-						<a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a>
-					</li>
-	{{/if}}
-
-	{{#if can_modify}}
-					<li class="quick_edit">
-						<a href title="{{../txt.modify_msg}}" class="modifybutton main_icons quick_edit_button" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')">{{../txt.quick_edit}}</a>
-					</li>
-	{{/if}}
-
-	{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
-					<li class="post_options">
-						<a href="#">{{../txt.post_options}}</a>
+	{{#each quickbuttons}}
+					<li{{#if li_class}} class="{{li_class}}"{{/if}}{{#if hidden}} style="display:none"{{/if}}{{#if li_id}} id="{{li_id}}"{{/if}}>
+						{{#if label}}<a{{#if url}} href="{{{url}}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if onclick}} onclick="{{{onclick}}}"{{/if}}{{#if title}} title="{{{title}}}"{{/if}}>{{{label}}}</a>{{/if}}
+		{{#if sub_items}}
 						<ul>
-
-		{{#if can_modify}}
-							<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}" class="main_icons modify_button">{{../txt.modify}}</a></li>
-		{{/if}}
-
-		{{#if (eq ../context.topic_first_message id)}}
-			{{#if ../context.can_delete}}
-							<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{session_url}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure main_icons remove_button">{{../txt.remove_topic}}</a></li>
-			{{/if}}
-		{{else}}
-			{{#if can_remove}}
-							<li><a href="{{../scripturl}}?action=deletemsg;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" data-confirm="{{../txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove}}</a></li>
-			{{/if}}
-		{{/if}}
-
-		{{#if can_switch_char}}
+			{{#each sub_items}}
 							<li>
-								<a href="#" onclick="return false" class="main_icons people">
-									{{../txt.switch_to_char_menu}}
-								</a>
+								<a{{#if url}} href="{{{url}}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if onclick}} onclick="{{{onclick}}}"{{/if}}{{#if title}} title="{{{title}}}"{{/if}}{{#if data-confirm}} data-confirm="{{{data-confirm}}}"{{/if}}>{{{label}}}</a>
+				{{#if sub_items}}
 								<ul>
-
-			{{#each possible_characters}}
+					{{#each sub_items}}
 									<li>
-										<a href="{{../scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{session_url}}">{{{name}}}</a>
+										<a{{#if url}} href="{{{url}}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if onclick}} onclick="{{{onclick}}}"{{/if}}{{#if title}} title="{{{title}}}"{{/if}}{{#if data-confirm}} data-confirm="{{{data-confirm}}}"{{/if}}>{{{label}}}</a>
 									</li>
-			{{/each}}
-
+					{{/each}}
 								</ul>
+				{{/if}}
 							</li>
-		{{/if}}
-
-		{{#if (and ../context.can_split ../context.real_num_replies)}}
-							<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}" class="main_icons split_button">{{../txt.split}}</a></li>
-		{{/if}}
-
+			{{/each}}
 						</ul>
-
+		{{/if}}
 					</li>
-	{{/if}}
-
-	{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
-					<li><a href="{{../scripturl}}?action=profile;area=issue_warning;u={{member.id}};msg={{id}}" class="main_icons warn_button">{{../txt.issue_warning}}</a></li>
-	{{/unless}}
-
-	{{#if ../context.can_restore_msg}}
-					<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}" class="main_icons restore_button">{{../txt.restore_message}}</a></li>
-	{{/if}}
-
-	{{#if can_approve}}
-					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons approve_button">{{../txt.approve}}</a></li>
-	{{/if}}
-
-	{{#if can_unapprove}}
-					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons unapprove_button">{{../txt.unapprove}}</a></li>
-	{{/if}}
-
-	{{#if can_remove}}
-						<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
-	{{/if}}
-
+	{{/each}}
 				</ul>
 {{/if}}
 
-{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+{{#if (or report_link ../context.can_see_likes ../context.can_like quickbuttons)}}
 			</div>
 {{/if}}
 

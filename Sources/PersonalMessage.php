@@ -767,6 +767,10 @@ function MessageFolder()
 			]
 		);
 		$context['message_labels'] = [];
+		foreach ($all_pms as $all_pms_id) {
+			$context['message_labels'][$all_pms_id] = [];
+		}
+
 		$context['message_replied'] = [];
 		$context['message_unread'] = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
@@ -997,6 +1001,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	// Send the array.
 	$output = [
 		'id' => $message['id_pm'],
+		'css_class' => 'windowbg',
 		'member' => &$memberContext[$message['id_member_from']],
 		'subject' => $message['subject'],
 		'time' => timeformat($message['msgtime']),
@@ -1011,9 +1016,48 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		'is_unread' => &$context['message_unread'][$message['id_pm']],
 		'is_selected' => !empty($temp_pm_selected) && in_array($message['id_pm'], $temp_pm_selected),
 		'is_message_author' => $message['id_member_from'] == $user_info['id'],
-		'can_report' => true,
 		'can_see_ip' => allowedTo('moderate_forum'),
 	];
+
+	if ($context['can_send_pm'])
+	{
+		$output += [
+			'report_link' => $scripturl . '?action=pm;sa=report;l=' . $context['current_label_id'] . ';pmsg=' . $message['id_pm'],
+			'report_title' => $txt['pm_report_to_admin'],
+		];
+
+		if (!$output['member']['is_guest'])
+		{
+			if ($output['number_recipients'] > 1)
+			{
+				$output['quickbuttons']['reply_to_all'] = [
+					'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $message['id_pm'] . ';quote;u=all',
+					'class' => 'main_icons reply_all_button',
+					'label' => $txt['reply_to_all'],
+				];
+			}
+
+			$output['quickbuttons']['reply'] = [
+				'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $message['id_pm'] . ';u=' . $output['member']['id'],
+				'class' => 'main_icons reply_button',
+				'label' => $txt['reply'],
+			];
+
+			$output['quickbuttons']['quote'] = [
+				'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $message['id_pm'] . ';quote' . ($context['folder'] != 'sent' ? ';u=' . $output['member']['id'] : ''),
+				'class' => 'main_icons quote',
+				'label' => $txt['quote_action'],
+			];
+		}
+		else
+		{
+			$output['quickbuttons']['replyquote'] = [
+				'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $message['id_pm'] . ';quote',
+				'class' => 'main_icons quote',
+				'label' => $txt['reply_quote'],
+			];
+		}
+	}
 
 	$counter++;
 

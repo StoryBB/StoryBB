@@ -17,11 +17,11 @@
 	</thead>
 	<tbody>
 
-{{#if context.show_delete}}
+{{#unless context.show_delete}}
 		<tr class="windowbg">
 			<td colspan="5">{{txt.pm_alert_none}}</td>
 		</tr>
-{{/if}}
+{{/unless}}
 
 {{#each context.subjects}}
 		<tr class="windowbg{{#if is_unread}} unread_pm{{/if}}">
