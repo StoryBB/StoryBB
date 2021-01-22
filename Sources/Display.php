@@ -1627,6 +1627,164 @@ function prepareDisplayContext($reset = false)
 		foreach ($memberContext[$message['id_member']]['custom_fields'] as $custom)
 			$output['custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
+	// Add the moderation link if relevant.
+	if ($context['can_report_moderator'])
+	{
+		$output += [
+			'report_link' => $scripturl . '?action=reporttm;topic=' . $topic . '.' . $counter . ';msg='. $message['id_msg'],
+			'report_title' => $txt['report_to_mod'],
+		];
+	}
+
+	// Add the per-message buttons.
+	$output['quickbuttons'] = [];
+	if ($context['can_quote'])
+	{
+		$output['quickbuttons']['quote'] = [
+			'url' => $scripturl . '?action=post;quote=' . $message['id_msg'] . ';topic=' . $topic . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'],
+			'onclick' => 'return oQuickReply.quote(' . $message['id_msg'] . ');',
+			'class' => 'main_icons quote',
+			'label' => $txt['quote_action'],
+		];
+		$output['quickbuttons']['quote_selected'] = [
+			'li_id' => 'quoteSelected_' . $message['id_msg'],
+			'hidden' => true,
+			'url' => 'javascript:void(0)',
+			'class' => 'main_icons quote_selected',
+			'label' => $txt['quote_selected_action'],
+		];
+	}
+
+	if ($output['can_modify'])
+	{
+		$output['quickbuttons']['quick_edit'] = [
+			'li_class' => 'quick_edit',
+			'url' => '',
+			'title' => $txt['quick_edit'],
+			'label' => $txt['quick_edit'],
+			'class' => 'modifybutton main_icons quick_edit_button',
+			'id' => 'modify_button_' . $message['id_msg'],
+			'onclick' => "oQuickModify.modifyMsg('" . $message['id_msg'] . "', '" . (!empty($modSettings['toggle_subject']) ? 'true' : 'false') . "')",
+		];
+	}
+
+	$output['quickbuttons']['more'] = [
+		'li_class' => 'post_options',
+		'url' => '#',
+		'label' => $txt['post_options'],
+		'onclick' => 'return false',
+		'sub_items' => [],
+	];
+
+	if ($output['can_modify'])
+	{
+		$output['quickbuttons']['more']['sub_items'][] = [
+			'url' => $scripturl . '?action=post;msg=' . $message['id_msg'] . ';topic=' . $topic . '.' . $context['start'],
+			'label' => $txt['modify'],
+			'class' => 'main_icons modify_button',
+		];
+	}
+
+	if ($context['can_delete'] && $context['topic_first_message'] == $message['id_msg'])
+	{
+		$output['quickbuttons']['more']['sub_items'][] = [
+			'url' => $scripturl . '?action=removetopic2;topic=' . $topic . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'data-confirm' => $txt['are_sure_remove_topic'],
+			'class' => 'you_sure main_icons remove_button',
+			'label' => $txt['remove_topic'],
+		];
+	}
+	elseif ($output['can_remove'])
+	{
+		$output['quickbuttons']['more']['sub_items'][] = [
+			'url' => $scripturl . '?action=deletemsg;topic=' . $topic . '.' . $context['start'] . ';msg=' . $message['id_msg'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'data-confirm' => $txt['remove_message_question'],
+			'class' => 'you_sure main_icons remove_button',
+			'label' => $txt['remove'],
+		];
+	}
+
+	if ($output['can_switch_char'])
+	{
+		$subitems = [];
+		foreach ($output['possible_characters'] as $id_character => $character)
+		{
+			$subitems[] = [
+				'url' => $scripturl . '?action=reattributepost;topic=' . $topic . ';msg=' . $message['id_msg'] . ';char=' . $id_character . ';' . $context['session_var'] . '=' . $context['session_id'],
+				'label' => $character['name'],
+			];
+		}
+		if (!empty($subitems))
+		{
+			$output['quickbuttons']['more']['sub_items'][] = [
+				'url' => '#',
+				'onclick' => 'return false',
+				'class' => 'main_icons people',
+				'label' => $txt['switch_to_char_menu'],
+				'sub_items' => $subitems,
+			];
+		}
+	}
+
+	if ($context['can_split'] && $context['real_num_replies'])
+	{
+		$output['quickbuttons']['more']['sub_items'][] = [
+			'url' => $scripturl . '?action=splittopics;topic=' . $topic . '.0;at=' . $message['id_msg'],
+			'class' => 'main_icons split_button',
+			'label' => $txt['split'],
+		];
+	}
+
+	if ($context['can_issue_warning'] && !$output['is_message_author'] && !$output['member']['is_guest'])
+	{
+		$output['quickbuttons']['warning'] = [
+			'url' => $scripturl . '?action=profile;area=issue_warning;u=' . $output['member']['id'] . ';msg=' . $message['id_msg'],
+			'label' => $txt['issue_warning'],
+			'class' => 'main_icons warn_button',
+		];
+	}
+
+	if ($context['can_restore_msg'])
+	{
+		$output['quickbuttons']['restore'] = [
+			'url' => $scripturl . '?action=restoretopic;msgs=' . $message['id_msg'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'label' => $txt['restore_message'],
+			'class' => 'main_icons restore_button',
+		];
+	}
+
+	if ($output['can_approve'])
+	{
+		$output['quickbuttons']['approve'] = [
+			'url' => $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $topic . '.' . $context['start'] . ';msg=' . $message['id_msg'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'label' => $txt['approve'],
+			'class' => 'main_icons approve_button',
+		];
+	}
+
+	if ($output['can_unapprove'])
+	{
+		$output['quickbuttons']['unapprove'] = [
+			'url' => $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $topic . '.' . $context['start'] . ';msg=' . $message['id_msg'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'label' => $txt['unapprove'],
+			'class' => 'main_icons unapprove_button',
+		];
+	}
+
+	if ($output['can_remove'])
+	{
+		$output['quickbuttons']['remove'] = [
+			'hidden' => true,
+			'li_id' => 'in_topic_mod_check_' . $message['id_msg'],
+		];
+	}
+
+	// Lastly if no menu, clean it up.
+	if (empty($output['quickbuttons']['more']['sub_items']))
+	{
+		unset ($output['quickbuttons']['more']);
+	}
+
 	if (empty($options['view_newest_first']))
 		$counter++;
 
