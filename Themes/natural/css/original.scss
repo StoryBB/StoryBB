@@ -360,19 +360,6 @@ p.information img {
 	vertical-align: middle;
 }
 
-/* This was named as "winfo" before, but its better named noup */
-.noup, .cat_bar + .windowbg, .cat_bar + .roundframe {
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-	margin-top: 0 !important;
-}
-
-.information.noup {
-	border-radius: 0;
-	margin: 0 !important;
-	border-bottom: none;
-}
-
 /* Lists with settings use these a lot. */
 dl.settings {
 	clear: right;
