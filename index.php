@@ -259,7 +259,6 @@ function sbb_main()
 		'unreadreplies' => ['Recent.php', 'UnreadReplies'],
 		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
 		'verificationcode' => ['Register.php', 'VerificationCode'],
-		'viewprofile' => ['Profile.php', 'ModifyProfile'],
 		'vote' => ['Poll.php', 'Vote'],
 		'viewquery' => ['ViewQuery.php', 'ViewQuery'],
 		'who' => ['Who.php', 'Who'],
