@@ -767,6 +767,10 @@ function MessageFolder()
 			]
 		);
 		$context['message_labels'] = [];
+		foreach ($all_pms as $all_pms_id) {
+			$context['message_labels'][$all_pms_id] = [];
+		}
+
 		$context['message_replied'] = [];
 		$context['message_unread'] = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
