@@ -143,10 +143,11 @@ function CharacterList()
 
 		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
-				chars.avatar, chars.posts, chars.date_created,
+				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.posts, chars.date_created,
 				chars.main_char_group, chars.char_groups, chars.char_sheet,
 				chars.retired
 			FROM {db_prefix}characters AS chars
+			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
 			WHERE ' . implode(' AND ', $clauses) . '
 			ORDER BY chars.character_name
 			LIMIT {int:start}, {int:limit}',
@@ -154,12 +155,14 @@ function CharacterList()
 		);
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
-				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
-			elseif (empty($row['avatar']))
-				$row['avatar'] = $settings['images_url'] . '/default.png';
+			$row['character_avatar'] = set_avatar_data([
+				'filename' => $row['filename'],
+				'avatar' => $row['avatar'],
+			]);
 
 			$row['date_created_format'] = timeformat($row['date_created']);
+
+			$row['character_link'] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'];
 
 			$groups = !empty($row['main_char_group']) ? [$row['main_char_group']] : [];
 			$groups = array_merge($groups, explode(',', $row['char_groups']));

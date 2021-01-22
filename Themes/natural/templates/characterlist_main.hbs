@@ -51,10 +51,10 @@
 	{{#each context.char_list}}
 				<div class="windowbg char_list">
 					<div class="char_list_name">
-						<a href="{{scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{character_name}}}</a>
+						<a href="{{{character_link}}}">{{{character_name}}}</a>
 					</div>
 					<div class="char_list_avatar">
-						<img src="{{{avatar}}}" class="avatar">
+						<img src="{{{character_avatar.url}}}" class="avatar">
 					</div>
 					<div class="char_list_group">
 						{{#if group_title}}{{{group_title}}}{{else}}<em>{{{../txt.char_no_group}}}</em>{{/if}}
