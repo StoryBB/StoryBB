@@ -1467,20 +1467,19 @@ h3 .collapse {
 }
 .children li {
 	min-width: 144px;
-	flex-grow: 2;
 	margin-right: 8px;
 }
 
 .children.columns_2 li {
-	width: 50%;
+	width: 49%;
 }
 
 .children.columns_3 li {
-	width: 33%;
+	width: 32%;
 }
 
 .children.columns_4 li {
-	width: 25%;
+	width: 23%;
 }
 
 .children li:not(:last-child) {
