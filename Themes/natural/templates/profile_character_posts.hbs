@@ -30,7 +30,7 @@
 			</div>
 
 	{{#if (or can_reply can_quote can_delete)}}
-			<ul class="quickbuttons buttonrow">
+			<ul class="quickbuttons dropmenu">
 
 		{{#if can_reply}}
 					<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{{../txt.reply}}}</a></li>
