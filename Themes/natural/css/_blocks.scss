@@ -2,6 +2,10 @@
 .blocktype_recentposts {
 	line-height: 1.6em;
 	font-size: 0.9em;
+
+	table {
+		width: 100%;
+	}
 }
 
 .blocktype_recentposts .block_content {
@@ -21,26 +25,6 @@
 
 .blocktype_recentposts tr:first-child td {
 	border-top: none;
-}
-
-.blocktype_recentposts .recentpost strong {
-	width: 40%;
-}
-
-.blocktype_recentposts .recentposter {
-	width: 15%;
-}
-
-.blocktype_recentposts .recentboard {
-	width: 20%;
-}
-
-.blocktype_recentposts .recenttime {
-	width: 25%;
-}
-
-.blocktype_recentposts .recenttime strong {
-	color: #555;
 }
 
 .blocktype_recentposts .windowbg {
