@@ -143,7 +143,7 @@ String.prototype.php_htmlspecialchars = function()
 
 String.prototype.php_unhtmlspecialchars = function()
 {
-	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/&#39;/g, "'");
 }
 
 String.prototype.php_addslashes = function()

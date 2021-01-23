@@ -48,7 +48,7 @@ var atwhoConfig = {
 					var callbackArray = [];
 					$.each(data.results, function (index, item) {
 						callbackArray[callbackArray.length] = {
-							name: item.char_name,
+							name: item.char_name.php_unhtmlspecialchars(),
 							avatar: item.avatar
 						};
 					});
