@@ -1386,6 +1386,8 @@ h3 .collapse {
 .board_icon, .info, .board_stats, .lastpost {
 	display: inline-block;
 	vertical-align: middle;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .lastpost img.avatar {
