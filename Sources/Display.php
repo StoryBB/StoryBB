@@ -1650,7 +1650,7 @@ function prepareDisplayContext($reset = false)
 			'li_id' => 'quoteSelected_' . $message['id_msg'],
 			'hidden' => true,
 			'url' => 'javascript:void(0)',
-			'class' => 'main_icons quote_selected',
+			'class' => 'main_icons quote',
 			'label' => $txt['quote_selected_action'],
 		];
 	}
