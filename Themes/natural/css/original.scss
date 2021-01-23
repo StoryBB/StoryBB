@@ -595,7 +595,6 @@ a.button_submit {
 	padding: 4px 7px 3px;
 	display: block;
 	border: 1px solid transparent;
-	border-radius: 4px;
 }
 
 #top_info > li > a {
@@ -881,6 +880,10 @@ a.button_submit {
 .quickbuttons li a, .quickbuttons li a:hover {
 	text-decoration: none;
 	color: inherit;
+}
+
+.quickbuttons li a:hover {
+	text-decoration: underline;
 }
 
 .quickbuttons > li > a {
