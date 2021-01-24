@@ -4,6 +4,24 @@
 					{{{txt.char_sheet}}} - {{{context.character.character_name}}}
 				</h3>
 			</div>
+			<div class="errorbox"{{#unless context.sheet_errors}} style="display: none"{{/unless}} id="errors">
+				<dl>
+					<dt>
+						<strong id="error_serious">{{{txt.error_while_submitting}}}</strong>
+					</dt>
+					<dd class="error" id="error_list">
+						{{#if context.sheet_errors}}{{{join context.warning_errors '<br>'}}}{{/if}}
+					</dd>
+				</dl>
+			</div>
+			<div id="box_preview"{{#unless context.sheet_preview}} style="display:none"{{/unless}}>
+				<div class="title_bar">
+					<h3 class="titlebg">{{{txt.preview}}}</h3>
+				</div>
+				<div class="roundframe">
+					<div id="sheet_preview">{{#if context.sheet_preview}}{{{context.sheet_preview}}}{{/if}}</div>
+				</div>
+			</div>
 			<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=character_sheet;char={{context.character.id_character}};edit" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
 				<div id="post_area">
 					<div class="roundframe">
@@ -22,7 +40,10 @@
 						{{{richtexteditor 'message' '' 'bbcBox'}}}
 
 						<br class="clear">
-						<input type="submit" value="{{{txt.save}}}" onclick="return submitThisOnce(this);">
+						<div class="buttonlist righttext">
+							<input type="submit" class="active" value="{{{txt.save}}}" onclick="return submitThisOnce(this);">
+							<input type="submit" name="preview" value="{{{txt.preview}}}" id="preview_sheet">
+						</div>
 					</div>
 				</div>
 				<br class="clear">

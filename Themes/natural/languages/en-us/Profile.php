@@ -707,3 +707,4 @@ $txt['char_sheet_updated'] = 'Character sheet was updated - %1$s';
 $txt['char_sheet_approved_on'] = '(approved %1$s by %2$s)';
 $txt['char_sheet_click_to_expand'] = '<a href="#" class="click_expand">show more</a>';
 $txt['char_sheet_click_to_collapse'] = '<a href="#" class="click_collapse">show less</a>';
+$txt['char_sheet_empty'] = 'No character sheet was given.';

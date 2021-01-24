@@ -438,6 +438,8 @@ class CharacterSheet extends AbstractProfileController
 
 		loadLanguage('Admin');
 
+		loadJavascriptFile('sheet_preview.js', ['default_theme' => true]);
+
 		// First, get rid of people shouldn't have a sheet at all - the OOC characters
 		if ($context['character']['is_main'])
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
@@ -467,10 +469,15 @@ class CharacterSheet extends AbstractProfileController
 		require_once($sourcedir . '/Subs-Post.php');
 		require_once($sourcedir . '/Subs-Editor.php');
 
+		if (!isset($context['sheet_preview_raw']))
+		{
+			$context['sheet_preview_raw'] = !empty($context['character']['sheet_details']['sheet_text']) ? un_preparsecode($context['character']['sheet_details']['sheet_text']) : '';
+		}
+
 		// Now create the editor.
 		$editorOptions = [
 			'id' => 'message',
-			'value' => !empty($context['character']['sheet_details']['sheet_text']) ? un_preparsecode($context['character']['sheet_details']['sheet_text']) : '',
+			'value' => $context['sheet_preview_raw'],
 			'labels' => [
 				'post_button' => $txt['save'],
 			],
@@ -539,6 +546,12 @@ class CharacterSheet extends AbstractProfileController
 
 		if (!empty($message))
 		{
+			if (!empty($_POST['preview']))
+			{
+				$context['sheet_preview_raw'] = un_preparsecode($message);
+				$context['sheet_preview'] = Parser::parse_bbc($message, false);
+				return $this->display_action();
+			}
 			// So we have a character sheet. Let's do a comparison against
 			// the last character sheet saved just in case the user did something
 			// a little bit weird/silly.

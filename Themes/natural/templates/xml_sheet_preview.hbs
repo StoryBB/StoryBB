@@ -1,0 +1,10 @@
+	<preview>
+		<sheet><![CDATA[{{{context.preview_sheet}}}]]></sheet>
+	</preview>
+	<errors serious="{{#if (eq context.error_type)}}1{{else}}0{{/if}}">
+		{{#if context.post_error.messages}}
+			{{#each context.post_error.messages}}
+				<error><![CDATA[{{{cleanXml .}}}]]></error>
+			{{/each}}
+		{{/if}}
+	</errors>
