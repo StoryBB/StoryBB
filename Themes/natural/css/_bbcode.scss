@@ -5,19 +5,16 @@ blockquote {
 	margin: 0 0 8px 0;
 	padding: 6px 10px;
 	font-size: small;
-	border: 1px solid #d6dfe2;
-	border-left: 2px solid #9a9a9a;
-	border-right: 2px solid #9a9a9a;
 }
 
 blockquote cite {
 	display: block;
-	border-bottom: 1px solid #9a9a9a;
 	font-size: 0.9em;
+	padding-bottom: 6px;
 }
 
 blockquote cite::before {
-	color: #9a9a9a;
+	color: $default-color;
 	font-size: 22px;
 	font-style: normal;
 	content: '\275D';
@@ -25,11 +22,15 @@ blockquote cite::before {
 }
 
 .bbc_standard_quote {
-	background-color: #e0e6f6;
+	border: 1px solid $quote-border;
+	border-left: 5px solid $quote-border;
+	background-color: $quote-bg;
 }
 
 .bbc_alternate_quote {
-	background-color: #ebf4f8;
+	border: 1px solid $quote-border-alt;
+	border-left: 5px solid $quote-border-alt;
+	background-color: $quote-bg-alt;
 }
 
 /* Let's get a bit more flexibility in font sizes for quotes and code.
@@ -44,9 +45,7 @@ blockquote cite::before {
 	font-family: "DejaVu Sans Mono", Monaco, Consolas, monospace;
 	font-size: 0.75em;
 	background: #f3f3f3;
-	border: 1px solid #dfdfdf;
-	border-top: 2px solid #bbb;
-	border-bottom: 3px solid #9a9a9a;
+	border: 2px solid #ababab;
 	border-radius: 2px;
 	margin: 1px 0 6px 0;
 	padding: 3px 12px;
