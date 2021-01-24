@@ -74,16 +74,29 @@
 			}
 		}
 	</script>
-	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;conversation;f={{context.folder}};start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder" id="forumposts">
+	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;conversation;start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder" id="forumposts">
 
+{{#unless context.current_pm}}
 		{{>pm_subjects}}
 		<div class="clear_right"><br></div>
 
 		<div class="pagesection">
 			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
 		</div>
+{{/unless}}
 
 {{#if context.messages}}
+		<div class="pm_info">
+			{{#if (eq context.folder 'sent')}}
+			<a href="{{scripturl}}?action=pm;f=sent">{{{txt.back_to_sent_items}}}</a>
+			{{else}}
+			<a href="{{scripturl}}?action=pm;f=inbox">{{{txt.back_to_inbox}}}</a>
+			{{/if}}
+
+			{{#each context.current_msg_labels}}
+			<span class="pm_label">{{{name}}}</span>
+			{{/each}}
+		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span id="author">{{txt.author}}</span>
@@ -100,8 +113,8 @@
 			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
 		</div>
 	{{/if}}
-	<br>
+		<br>
 {{/if}}
 
-	{{session_form}}
-</form>
+		{{session_form}}
+	</form>

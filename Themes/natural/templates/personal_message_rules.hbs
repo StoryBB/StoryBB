@@ -1,4 +1,4 @@
-	<form action="{{scripturl}}?action=pm;sa=manrules" method="post" accept-charset="UTF-8" name="manRules" id="manrules">
+	<form action="{{scripturl}}?action=pm;sa=manage_rules" method="post" accept-charset="UTF-8" name="manRules" id="manrules">
 		<div class="cat_bar">
 			<h3 class="catbg">{{txt.pm_manage_rules}}</h3>
 		</div>
@@ -31,7 +31,7 @@
 {{#each context.rules}}
 				<tr class="windowbg">
 					<td>
-						<a href="{{scripturl}}?action=pm;sa=manrules;add;rid={{id}}">{{name}}</a>
+						<a href="{{scripturl}}?action=pm;sa=manage_rules;add;rid={{id}}">{{name}}</a>
 					</td>
 					<td class="table_icon">
 						<input type="checkbox" name="delrule[{{id}}]">
@@ -41,14 +41,14 @@
 
 			</tbody>
 		</table>
-		<div class="righttext">
-			<a class="button" href="{{scripturl}}?action=pm;sa=manrules;add;rid=0">{{txt.pm_add_rule}}</a>
+		<div class="buttonlist righttext">
+			<a class="button" href="{{scripturl}}?action=pm;sa=manage_rules;add;rid=0">{{txt.pm_add_rule}}</a>
 
 {{#if context.rules}}
-			[<a href="{{scripturl}}?action=pm;sa=manrules;apply;{{session_url}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>]
-			{{session_form}}
-			<input type="submit" name="delselected" value="{{txt.pm_delete_selected_rule}}" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="smalltext you_sure">
+			<a class="button" href="{{scripturl}}?action=pm;sa=manage_rules;apply;{{session_url}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>
+			<input type="submit" name="delselected" value="{{txt.pm_delete_selected_rule}}" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="you_sure">
 {{/if}}
 
+			{{session_form}}
 		</div>
 	</form>

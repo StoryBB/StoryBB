@@ -2190,7 +2190,7 @@ input[name="attachBBC"] {
 #personal_messages .capacity_bar span {
 	border-right: 1px solid #adadad;
 	display: block;
-	height: 12px;
+	height: 10px;
 }
 
 #personal_messages .capacity_bar span.empty {
@@ -2234,6 +2234,17 @@ dl.addrules dt.floatleft {
 
 .unread_pm {
 	background: #CFC;
+}
+
+.pm_info {
+	padding-bottom: 12px;
+}
+
+span.pm_label {
+	border: 1px solid #dedede;
+	font-size: 0.9em;
+	margin-left: 5px;
+	padding: 2px;
 }
 
 /* 24# The profile section and character goodies

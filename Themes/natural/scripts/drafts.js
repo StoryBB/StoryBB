@@ -158,7 +158,7 @@ sbb_DraftAutoSave.prototype.draftPMSave = function ()
 		aSections[aSections.length] = 'message_mode=' + parseInt(document.forms.postmodify.elements['message_mode'].value);
 
 	// Send in (post) the document for saving
-	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=pm;sa=send2;xml", aSections.join("&"), this.onDraftDone);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=pm;sa=send;xml", aSections.join("&"), this.onDraftDone);
 
 	// Save the latest for compare
 	this.sCheckDraft = sPostdata;

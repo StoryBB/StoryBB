@@ -120,7 +120,7 @@
 			else
 			{
 				if (actionText != "")
-					text += {{{jsEscape txt.pm_readable_then}}} + actionText;
+					text += " " + {{{jsEscape txt.pm_readable_then}}} + " " + actionText;
 				text = {{{jsEscape txt.pm_readable_start}}} + text + {{{jsEscape txt.pm_readable_end}}};
 			}
 
@@ -128,7 +128,7 @@
 			setInnerHTML(document.getElementById("ruletext"), text);
 		}
 </script>
-<form action="{{scripturl}}?action=pm;sa=manrules;save;rid={{context.rid}}" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">
+<form action="{{scripturl}}?action=pm;sa=manage_rules;save;rid={{context.rid}}" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">
 		<div class="cat_bar">
 			<h3 class="catbg">
 				{{#if (eq context.rid 0)}}{{txt.pm_add_rule}}{{else}}{{txt.pm_edit_rule}}{{/if}}
@@ -163,7 +163,7 @@
 					<select name="ruledefgroup[{{@key}}]" id="ruledefgroup{{@key}}" onchange="rebuildRuleDesc();">
 						<option value="">{{../txt.pm_rule_sel_group}}</option>
 						{{#each ../context.groups}}
-						<option value="{{@key}}" {{#if (and (eq ../t 'gid') (eq ../v @key))}} selected{{/if}}>{{.}}</option>
+						<option value="{{@key}}" {{#if (and (eq ../t 'gid') (eq_coerce ../v @key))}} selected{{/if}}>{{.}}</option>
 						{{/each}}
 					</select>
 				</span>
@@ -195,7 +195,7 @@
 					<select name="labdef[{{@key}}]" id="labdef{{@key}}" onchange="rebuildRuleDesc();">
 						<option value="">{{../txt.pm_rule_sel_label}}</option>
 						{{#each ../context.labels}}{{#if (neq id -1)}}
-						<option value="{{id}}"{{#if (and (eq ../t 'lab') (eq ../v id))}} selected{{/if}}>{{name}}</option>
+						<option value="{{id}}"{{#if (and (eq ../t 'lab') (eq_coerce ../v id))}} selected{{/if}}>{{name}}</option>
 						{{/if}}{{/each}}
 					</select>
 				{{#unless t}}</div>{{/unless}}
