@@ -191,7 +191,7 @@ class Character
 		{
 			$context['sheet_templates'][$row['id_template']] = [
 				'name' => $row['template_name'],
-				'body' => strtr(un_htmlspecialchars($row['template']), ["\r" => '', '&#039' => '\'']),
+				'body' => strtr(un_htmlspecialchars(un_preparsecode($row['template'])), ["\r" => '', '&#039' => '\'']),
 			];
 		}
 		$smcFunc['db']->free_result($request);
