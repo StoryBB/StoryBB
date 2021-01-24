@@ -15,7 +15,10 @@
 
 	{{#each context.alerts}}
 				<tr class="windowbg">
-					<td>{{{text}}}</td>
+					<td>
+						<div class="sender">{{#if sender}}{{{sender.avatar.image}}}{{/if}}</div>
+						{{{text}}}
+					</td>
 					<td>{{{time}}}</td>
 					<td class="centertext">
 						<div class="buttonlist">
