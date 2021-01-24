@@ -47,3 +47,8 @@ $unapproved-topic-bg: #fff2f2 !default;
 $unapproved-post-bg: #ffcbcb !default;
 
 $poster-fg: red !default;
+
+$quote-border: $primary-accent !default;
+$quote-border-alt: $primary-accent-dark !default;
+$quote-bg: lighten($primary-accent, 43%) !default;
+$quote-bg-alt: lighten($primary-accent-dark, 57%) !default;
