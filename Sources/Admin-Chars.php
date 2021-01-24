@@ -165,6 +165,24 @@ function char_template_save()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	checkSession();
+
+	if (!empty($_POST['delete']))
+	{
+		$template_id = isset($_POST['template_id']) ? (int) $_POST['template_id'] : 0;
+		if (!empty($template_id))
+		{
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}character_sheet_templates
+				WHERE id_template = {int:template}
+				LIMIT 1',
+				[
+					'template' => $template_id,
+				]
+			);
+			redirectexit('action=admin;area=templates');
+		}
+	}
+
 	if (empty($_POST['template_name']) || empty($_POST['message']))
 		redirectexit('action=admin;area=templates');
 
