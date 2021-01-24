@@ -20,16 +20,30 @@ $txt['pm_no_unread'] = 'No unread messages.';
 $txt['pm_was_sent_to_you'] = 'You received a message.';
 $txt['pm_you_were_replied_to'] = 'A message of yours was replied to.';
 
+$txt['pmtab_mailbox'] = 'Mailbox';
+$txt['inbox'] = 'Inbox';
+$txt['sent_items'] = 'Sent Items';
+$txt['compose'] = 'Compose';
+$txt['show_drafts'] = 'Show Drafts';
+
+$txt['pmtab_management'] = 'Management';
+$txt['pm_search_bar_title'] = 'Search Messages';
+$txt['pm_prune'] = 'Prune Messages';
+$txt['pm_manage_labels'] = 'Manage Labels';
+$txt['pm_manage_rules'] = 'Manage Rules';
+$txt['pm_preferences'] = 'Preferences';
+
+$txt['back_to_inbox'] = '&larr; Back to Inbox';
+$txt['back_to_sent_items'] = '&larr; Back to Sent Items';
+
 $txt['pm_inbox'] = 'Personal Messages Index';
 $txt['send_message'] = 'Send message';
 $txt['pm_add'] = 'Add';
 $txt['make_bcc'] = 'Add BCC';
 $txt['pm_to'] = 'To';
 $txt['pm_bcc'] = 'Bcc';
-$txt['inbox'] = 'Inbox';
 $txt['conversation'] = 'Conversation';
 $txt['messages'] = 'Messages';
-$txt['sent_items'] = 'Sent Items';
 $txt['new_message'] = 'New Message';
 $txt['delete_message'] = 'Delete Messages';
 // Don't translate "PMBOX" in this string.
@@ -38,6 +52,9 @@ $txt['delete_all_confirm'] = 'Are you sure you want to delete all messages?';
 $txt['recipient'] = 'Recipient';
 
 $txt['delete_selected_confirm'] = 'Are you sure you want to delete all selected personal messages?';
+
+$txt['understand_deletion'] = 'I confirm I want to delete all of my personal messages.';
+$txt['your_messages_were_deleted'] = 'Your messages were successfully deleted.';
 
 $txt['sent_to'] = 'Sent to';
 $txt['reply_to_all'] = 'Reply to All';
@@ -61,7 +78,6 @@ $txt['pm_read'] = 'Read';
 $txt['pm_replied'] = 'Replied To';
 
 // Message Pruning.
-$txt['pm_prune'] = 'Prune Messages';
 $txt['pm_prune_desc1'] = 'Delete all personal messages older than';
 $txt['pm_prune_desc2'] = 'days.';
 $txt['pm_prune_warning'] = 'Are you sure you wish to prune your personal messages? They cannot be recovered!';
@@ -77,7 +93,6 @@ $txt['pm_actions_go'] = 'Go';
 
 // Manage Labels Screen.
 $txt['pm_apply'] = 'Apply';
-$txt['pm_manage_labels'] = 'Manage labels';
 $txt['pm_labels_delete'] = 'Are you sure you wish to delete the selected labels?';
 $txt['pm_labels_desc'] = 'From here you can add, edit and delete the labels used in your personal message center.';
 $txt['pm_label_add_new'] = 'Add new label';
@@ -96,7 +111,6 @@ $txt['pm_sel_label_title'] = 'Label selected';
 $txt['pm_labels'] = 'Labels';
 $txt['pm_messages'] = 'Messages';
 $txt['pm_actions'] = 'Actions';
-$txt['pm_preferences'] = 'Preferences';
 
 $txt['pm_is_replied_to'] = 'You have forwarded or responded to this message.';
 $txt['pm_sent_is_replied_to'] = 'Recipient have forwarded or responded to this message';
@@ -123,7 +137,6 @@ $txt['pm_report_done'] = 'Thank you for submitting this report. You should hear 
 $txt['pm_report_return'] = 'Return to the inbox';
 
 $txt['pm_search_title'] = 'Search personal messages';
-$txt['pm_search_bar_title'] = 'Search messages';
 $txt['pm_search_text'] = 'Search for';
 $txt['pm_search_go'] = 'Search';
 $txt['pm_search_advanced'] = 'Advanced search';
@@ -153,7 +166,6 @@ $txt['pm_visual_verification_desc'] = 'Please enter the code in the image above 
 $txt['pm_settings'] = 'Change settings';
 $txt['pm_change_view'] = 'Change view';
 
-$txt['pm_manage_rules'] = 'Manage Rules';
 $txt['pm_manage_rules_desc'] = 'Message rules allow you to automatically sort incoming messages dependent on a set of criteria you define. Below are all the rules you currently have setup. To edit a rule simply click the rule name.';
 $txt['pm_rules_none'] = 'You have not yet setup any message rules.';
 $txt['pm_rule_title'] = 'Rule';

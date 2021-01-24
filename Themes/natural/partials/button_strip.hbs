@@ -1,7 +1,7 @@
 <div class="buttonlist{{#if direction}} float{{direction}}{{/if}}">
 
 {{#each button_strip}}
-		<a class="button button_strip_{{@key}}{{#if active}} active{{/if}}{{class}}" {{#if url}}href="{{url}}"{{/if}} {{{custom}}}>{{lookup ../txt text}}</a>
+		<a class="button button_strip_{{@key}}{{#if active}} active{{/if}}{{#if class}} {{class}}{{/if}}" {{#if url}}href="{{url}}"{{/if}} {{{custom}}}>{{lookup ../txt text}}</a>
 
 	{{#if sub_buttons}}
 		<div class="top_menu dropmenu {{@key}}_dropdown">

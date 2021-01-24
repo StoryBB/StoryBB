@@ -20,18 +20,18 @@
 			<div class="list_posts">{{{message}}}</div>
 
 	{{#if has_actions}}
-			<ul class="quickbuttons buttonrow">
+			<ul class="quickbuttons dropmenu">
 
 		{{#if can_reply}}
-				<li><a href="{{scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
+				<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
 		{{/if}}
 
 		{{#if can_quote}}
-				<li><a href="{{scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
+				<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
 		{{/if}}
 
 		{{#if can_delete}}
-				<li><a href="{{scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};recent;{{session_url}}" data-confirm="{{../txt.remove_message}}" class="you_sure main_icons remove_button">{{../txt.remove}}</a></li>
+				<li><a href="{{../scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};recent;{{session_url}}" data-confirm="{{../txt.remove_message}}" class="you_sure main_icons remove_button">{{../txt.remove}}</a></li>
 		{{/if}}
 			</ul>
 	{{/if}}

@@ -61,7 +61,7 @@ class Navigation
 		return null;
 	}
 
-	public function dispatch($params): void
+	public function set_visible_menu_item($params): ?Item
 	{
 		$result = null;
 		foreach ($this->tabs as $tab)
@@ -82,6 +82,13 @@ class Navigation
 				}
 			}
 		}
+
+		return $result;
+	}
+
+	public function dispatch($params): void
+	{
+		$result = $this->set_visible_menu_item($params);
 
 		if ($result)
 		{

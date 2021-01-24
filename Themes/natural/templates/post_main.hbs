@@ -46,7 +46,7 @@
 
 {{#if context.locked}}
 			<p class="errorbox">
-				{{txt.topic_locked_no_reply}}
+				{{{txt.topic_locked_no_reply}}}
 			</p>
 {{/if}}
 
@@ -633,12 +633,12 @@
 				</h5>&nbsp;-&nbsp;{{{time}}}
 
 		{{#if ../context.can_quote}}
-				<ul class="quickbuttons buttonrow" id="msg_{{id}}_quote">
-					<li style="display:none;" id="quoteSelected_{{id}}" data-msgid="{{id}}">
-						<a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a>
-					</li>
+				<ul class="quickbuttons dropmenu" id="msg_{{id}}_quote">
 					<li id="post_modify">
 						<a href="#postmodify" onclick="return insertQuoteFast({{id}});" class="main_icons quote">{{../txt.quote}}</a>
+					</li>
+					<li style="display:none;" id="quoteSelected_{{id}}" data-msgid="{{id}}">
+						<a href="javascript:void(0)" class="main_icons quote">{{../txt.quote_selected_action}}</a>
 					</li>
 				</ul>
 		{{/if}}

@@ -24,10 +24,7 @@ class CharacterSwitch extends AbstractProfileController
 
 		$profile_redirect = isset($_GET['profile']);
 
-		if ($char === null)
-		{
-			$char = isset($_GET['char']) ? (int) $_GET['char'] : 0;
-		}
+		$char = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 
 		if (empty($char))
 		{

@@ -1650,7 +1650,7 @@ function prepareDisplayContext($reset = false)
 			'li_id' => 'quoteSelected_' . $message['id_msg'],
 			'hidden' => true,
 			'url' => 'javascript:void(0)',
-			'class' => 'main_icons quote_selected',
+			'class' => 'main_icons quote',
 			'label' => $txt['quote_selected_action'],
 		];
 	}
@@ -1737,7 +1737,7 @@ function prepareDisplayContext($reset = false)
 
 	if ($context['can_issue_warning'] && !$output['is_message_author'] && !$output['member']['is_guest'])
 	{
-		$output['quickbuttons']['warning'] = [
+		$output['quickbuttons']['more']['sub_items']['warning'] = [
 			'url' => $scripturl . '?action=profile;area=issue_warning;u=' . $output['member']['id'] . ';msg=' . $message['id_msg'],
 			'label' => $txt['issue_warning'],
 			'class' => 'main_icons warn_button',
@@ -1764,16 +1764,16 @@ function prepareDisplayContext($reset = false)
 
 	if ($output['can_unapprove'])
 	{
-		$output['quickbuttons']['unapprove'] = [
+		$output['quickbuttons']['more']['sub_items']['unapprove'] = [
 			'url' => $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $topic . '.' . $context['start'] . ';msg=' . $message['id_msg'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 			'label' => $txt['unapprove'],
 			'class' => 'main_icons unapprove_button',
 		];
 	}
 
-	if ($output['can_remove'])
+	if ($output['can_remove'] || ($context['can_split'] && $context['real_num_replies']))
 	{
-		$output['quickbuttons']['remove'] = [
+		$output['quickbuttons']['tickbox'] = [
 			'hidden' => true,
 			'li_id' => 'in_topic_mod_check_' . $message['id_msg'],
 		];

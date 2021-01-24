@@ -488,7 +488,6 @@ $txt['profile_error_signature_allow_smileys'] = 'You are not allowed to use any 
 $txt['profile_error_signature_max_smileys'] = 'You are not allowed to use more than %1$d smileys within your signature';
 $txt['profile_error_signature_disabled_bbc'] = 'The following BBC is not allowed within your signature: %1$s';
 
-$txt['profile_export_data'] = 'Export data';
 $txt['profile_export_data_desc'] = 'From this page you can download all the things you have submitted to this site.';
 $txt['profile_export_data_go'] = 'I want an export of data';
 $txt['profile_export_data_requested_on'] = 'Export requested on';

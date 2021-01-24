@@ -11,7 +11,7 @@
 			<div class="custom_fields_above_member">
 				<ul class="nolist">
 				{{#each custom_fields.above_member}}
-					<li class="custom {{col_name}}">{{value}}</li>
+					<li class="custom {{col_name}}">{{{value}}}</li>
 				{{/each}}
 				</ul>
 			</div>
@@ -40,7 +40,7 @@
 				<div class="custom_fields_above_member">
 					<ul class="nolist">
 					{{#each custom_fields.below_avatar}}
-						<li class="custom {{col_name}}">{{value}}</li>
+						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
 					</ul>
 				</div>
@@ -90,7 +90,7 @@
 	{{/if}}
 
 	{{#each custom_fields.standard}}
-				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+				<li class="custom {{col_name}}">{{title}}: {{{value}}}</li>
 	{{/each}}
 
 {{else}}
@@ -112,7 +112,7 @@
 
 {{!  Are there any custom fields to show at the bottom of the poster info? }}
 {{#each custom_fields.bottom_poster}}
-				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+				<li class="custom {{col_name}}">{{title}}: {{{value}}}</li>
 {{/each}}
 			</ul>
 		</div>
@@ -267,7 +267,7 @@
 					<ul class="nolist">
 
 	{{#each custom_fields.above_signature}}
-						<li class="custom {{col_name}}">{{value}}</li>
+						<li class="custom {{col_name}}">{{{value}}}</li>
 	{{/each}}
 
 					</ul>
@@ -284,7 +284,7 @@
 				<div class="custom_fields_below_signature">
 					<ul class="nolist">
 						{{#each custom_fields.below_signature}}
-						<li class="custom {{col_name}}">{{value}}</li>
+						<li class="custom {{col_name}}">{{{value}}}</li>
 						{{/each}}
 					</ul>
 				</div>

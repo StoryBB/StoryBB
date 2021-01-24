@@ -40,12 +40,12 @@
 			<td>{{{time}}}</td>
 			<td>
 
-	{{#if (eq ../context.current_pm id)}}
+	{{#if (eq_coerce ../context.current_pm id)}}
 				<img src="{{../settings.images_url}}/selected.png" alt="*">
 	{{/if}}
-				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
-					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}
-				</a>
+				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}}{{/unless}}">
+					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts"></span>{{/if}}</a>
+				{{#each labels}}<span class="pm_label">{{{name}}}</span>{{/each}}
 			</td>
 			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{{implode recipients.to}}}{{/if}}{{/if}}</td>
 			<td class="centercol table_icon">

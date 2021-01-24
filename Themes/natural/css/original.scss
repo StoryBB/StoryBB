@@ -454,10 +454,6 @@ img.sort, .sort {
 	margin-left: inherit;
 }
 
-.button_submit, input[type="submit"] {
-	float: right;
-}
-
 a.button_submit {
 	margin-top: 15px;
 }
@@ -595,7 +591,6 @@ a.button_submit {
 	padding: 4px 7px 3px;
 	display: block;
 	border: 1px solid transparent;
-	border-radius: 4px;
 }
 
 #top_info > li > a {
@@ -671,8 +666,7 @@ a.button_submit {
 .dropmenu li li a:hover, .dropmenu li li a:focus {
 	color: #333;
 	text-decoration: none;
-	border: 1px solid #cfcfcf;
-	border-top: 1px solid #d4dee6;
+	background: rgba(0, 0, 0, 0.2);
 }
 
 .dropmenu li li.subsections > a::after {
@@ -884,6 +878,10 @@ a.button_submit {
 	color: inherit;
 }
 
+.quickbuttons li a:hover {
+	text-decoration: underline;
+}
+
 .quickbuttons > li > a {
 	border: none;
 }
@@ -910,12 +908,17 @@ a.button_submit {
 	border-top-right-radius: 4px;
 }
 
+#recent .quickbuttons {
+    clear: initial;
+    margin-top: 0;
+    padding-bottom: 3px;
+}
+
 /* 9# Titles and categories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 div.cat_bar {
 	background: $primary-accent;
-	border-bottom: 1px solid #777;
 	padding: 0;
 }
 
@@ -1383,6 +1386,8 @@ h3 .collapse {
 .board_icon, .info, .board_stats, .lastpost {
 	display: inline-block;
 	vertical-align: middle;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .lastpost img.avatar {
@@ -1462,20 +1467,19 @@ h3 .collapse {
 }
 .children li {
 	min-width: 144px;
-	flex-grow: 2;
 	margin-right: 8px;
 }
 
 .children.columns_2 li {
-	width: 50%;
+	width: 49%;
 }
 
 .children.columns_3 li {
-	width: 33%;
+	width: 32%;
 }
 
 .children.columns_4 li {
-	width: 25%;
+	width: 23%;
 }
 
 .children li:not(:last-child) {
@@ -2186,7 +2190,7 @@ input[name="attachBBC"] {
 #personal_messages .capacity_bar span {
 	border-right: 1px solid #adadad;
 	display: block;
-	height: 12px;
+	height: 10px;
 }
 
 #personal_messages .capacity_bar span.empty {
@@ -2230,6 +2234,17 @@ dl.addrules dt.floatleft {
 
 .unread_pm {
 	background: #CFC;
+}
+
+.pm_info {
+	padding-bottom: 12px;
+}
+
+span.pm_label {
+	border: 1px solid #dedede;
+	font-size: 0.9em;
+	margin-left: 5px;
+	padding: 2px;
 }
 
 /* 24# The profile section and character goodies

@@ -17,18 +17,14 @@
 				<tr class="windowbg">
 					<td>{{{text}}}</td>
 					<td>{{{time}}}</td>
-					<td>
-						<ul class="quickbuttons buttonrow">
-							<li>
-								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure main_icons remove_button">{{{../txt.delete}}}</a>
-							</li>
-							<li>
-								<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}" class="main_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}">{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a>
-							</li>
-							<li>
-								<input type="checkbox" name="mark[{{@key}}]" value="{{@key}}">
-							</li>
-						</ul>
+					<td class="centertext">
+						<div class="buttonlist">
+							<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}" class="button {{#unless (gt is_read '0')}}active{{/unless}}">{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a>
+							<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=alerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure button">{{{../txt.delete}}}</a>
+						</div>
+					</td>
+					<td class="centertext">
+						<input type="checkbox" name="mark[{{@key}}]" value="{{@key}}">
 					</td>
 				</tr>
 	{{/each}}

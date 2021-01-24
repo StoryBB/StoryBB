@@ -171,10 +171,6 @@ img#sbblogo {
 	float: right;
 }
 
-/* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button_submit, input[type="submit"] {
-	float: left;
-}
 /* The framing graphics */
 #search_form {
 	text-align: left;

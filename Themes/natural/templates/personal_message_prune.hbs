@@ -13,9 +13,12 @@
 		</form>
 	</div>
 	<div class="windowbg">
-		<form action="{{scripturl}}?action=pm;sa=removeall2" method="post" onsubmit="return confirm('{{txt.pm_remove_all_warning}}');">
+		<form action="{{scripturl}}?action=pm;sa=prune" method="post" onsubmit="return confirm('{{txt.pm_remove_all_warning}}');">
 			<p>{{txt.pm_remove_all}}</p>
-			<input type="submit" value="{{txt.delete_all_prune}}">
+			<input type="checkbox" name="all"> {{txt.understand_deletion}}
+			<div class="buttonlist righttext">
+				<input type="submit" value="{{txt.delete_all_prune}}">
+			</div>
 			{{session_form}}
 		</form>
 	</div>
