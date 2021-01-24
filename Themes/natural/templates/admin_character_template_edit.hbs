@@ -8,10 +8,11 @@
 				<br><br>
 				{{{richtexteditor 'message' '' 'bbcBox'}}}
 				<br>
-				<div>
-					{{session_form}}
-					<input type="hidden" name="template_id" value="{{{context.template_id}}}">
-					<input type="submit" value="{{{txt.save}}}">
+				{{session_form}}
+				<input type="hidden" name="template_id" value="{{{context.template_id}}}">
+				<div class="buttonlist righttext">
+					<input type="submit" class="active" name="save" value="{{{txt.save}}}">
+					<input type="submit" name="delete" class="you_sure" value="{{{txt.delete}}}">
 				</div>
 			</div>
 		</form>

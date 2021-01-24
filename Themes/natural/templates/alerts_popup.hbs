@@ -14,7 +14,7 @@
 {{#if context.unread_alerts}}
 	{{#each context.unread_alerts}}
 			<div class="unread">
-				{{#if sender}}<div class="sender">{{{sender.avatar.image}}}</div>{{/if}}
+				<div class="sender">{{#if sender}}{{{sender.avatar.image}}}{{/if}}</div>
 				<div class="details">
 					{{#if icon}}{{{icon}}}{{/if}}
 					<span>{{{text}}}</span> - {{{time}}}

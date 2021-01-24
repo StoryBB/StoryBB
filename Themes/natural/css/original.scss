@@ -803,19 +803,27 @@ a.button_submit {
 	border-bottom: none;
 }
 
-.top_menu.scrollable .sender {
+.top_menu.scrollable .sender, #alerts .windowbg .sender {
 	width: 40px;
 	height: 40px;
 	text-align: center;
 	display: inline-block;
 }
 
-.top_menu.scrollable .avatar {
+#alerts .windowbg .sender {
+	margin: 0 10px;
+}
+
+.top_menu.scrollable .avatar, #alerts .windowbg .avatar {
 	margin: 4px;
 	max-width: 40px;
 	max-height: 40px;
 	display: inline-block;
 	vertical-align: middle;
+}
+
+#alerts .windowbg .avatar {
+	margin: 0;
 }
 
 .top_menu.scrollable .details {
