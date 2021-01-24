@@ -77,6 +77,7 @@ function RetrievePreview()
 	$items = [
 		'sig_preview',
 		'warning_preview',
+		'char_sheet_preview',
 	];
 
 	$context['sub_template'] = 'xml_generic';
@@ -85,6 +86,37 @@ function RetrievePreview()
 		return false;
 
 	$_POST['item']();
+}
+
+/**
+ * Handles previewing character sheets.
+ */
+function char_sheet_preview()
+{
+	global $context, $sourcedir, $txt, $user_info, $scripturl;
+
+	require_once($sourcedir . '/Subs-Post.php');
+
+	loadLanguage('Profile');
+
+	$context['post_error']['sheet'] = [];
+
+	$sheet = $_POST['sheet'] ?? '';
+	$sheet = trim(StringLibrary::escape($sheet));
+
+	if (!empty($sheet))
+	{
+		preparsecode($sheet);
+		$context['preview_sheet'] = Parser::parse_bbc($sheet, false);
+	}
+	else
+	{
+		$context['error_type'] = true;
+		$context['post_error']['sheet'][] = $txt['char_sheet_empty'];
+	}
+
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_sheet_preview';
 }
 
 /**

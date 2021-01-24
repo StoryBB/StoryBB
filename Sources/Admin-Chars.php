@@ -10,6 +10,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Helper\Parser;
 
 /**
  * Front end controller for the character sheet templates section in the admin area.
@@ -92,7 +93,7 @@ function char_template_add()
 	// Now create the editor.
 	$editorOptions = [
 		'id' => 'message',
-		'value' => '',
+		'value' => $context['sheet_preview_raw'] ?? '',
 		'labels' => [
 			'post_button' => $txt['save'],
 		],
@@ -103,11 +104,13 @@ function char_template_add()
 		'required' => true,
 	];
 	create_control_richedit($editorOptions);
-	$context['template_name'] = '';
+	$context['template_name'] = $context['template_name_escaped'] ?? '';
 	$context['template_id'] = 0;
 
 	$context['page_title'] = $txt['char_templates_add'];
 	$context['sub_template'] = 'admin_character_template_edit';
+
+	loadJavascriptFile('sheet_preview.js', ['default_theme' => true]);
 }
 
 /**
@@ -119,7 +122,7 @@ function char_template_edit()
 	require_once($sourcedir . '/Subs-Post.php');
 	require_once($sourcedir . '/Subs-Editor.php');
 
-	$template_id = isset($_GET['template_id']) ? (int) $_GET['template_id'] : 0;
+	$template_id = isset($_REQUEST['template_id']) ? (int) $_REQUEST['template_id'] : 0;
 	$request = $smcFunc['db']->query('', '
 		SELECT id_template, template_name, template
 		FROM {db_prefix}character_sheet_templates
@@ -134,12 +137,12 @@ function char_template_edit()
 		redirectexit('action=admin;area=templates');
 	}
 	$context['template_id'] = $template_id;
-	$context['template_name'] = $row['template_name'];
+	$context['template_name'] = $context['template_name_escaped'] ?? $row['template_name'];
 
 	// Now create the editor.
 	$editorOptions = [
 		'id' => 'message',
-		'value' => un_preparsecode($row['template']),
+		'value' => $context['sheet_preview_raw'] ?? un_preparsecode($row['template']),
 		'labels' => [
 			'post_button' => $txt['save'],
 		],
@@ -153,6 +156,8 @@ function char_template_edit()
 
 	$context['page_title'] = $txt['char_templates_edit'];
 	$context['sub_template'] = 'admin_character_template_edit';
+
+	loadJavascriptFile('sheet_preview.js', ['default_theme' => true]);
 }
 
 /**
@@ -160,7 +165,7 @@ function char_template_edit()
  */
 function char_template_save()
 {
-	global $smcFunc, $sourcedir;
+	global $smcFunc, $sourcedir, $context;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -183,12 +188,25 @@ function char_template_save()
 		}
 	}
 
-	if (empty($_POST['template_name']) || empty($_POST['message']))
-		redirectexit('action=admin;area=templates');
-
-	$template_name = StringLibrary::escape(trim($_POST['template_name']), ENT_QUOTES);
-	$template = StringLibrary::escape($_POST['message'], ENT_QUOTES);
+	$template_name = StringLibrary::escape(trim($_POST['template_name']) ?? '', ENT_QUOTES);
+	$template = StringLibrary::escape($_POST['message'] ?? '', ENT_QUOTES);
 	preparsecode($template);
+
+	if (!empty($_POST['preview']) || empty($_POST['template_name']) || empty($_POST['message']))
+	{
+		$context['template_name_escaped'] = $template_name;
+		$context['sheet_preview'] = Parser::parse_bbc($template, false);
+		$context['sheet_preview_raw'] = un_preparsecode($template);
+
+		if (!empty((int) $_POST['template_id']))
+		{
+			return char_template_edit();
+		}
+		else
+		{
+			return char_template_add();
+		}
+	}
 
 	$template_id = isset($_POST['template_id']) ? (int) $_POST['template_id'] : 0;
 
