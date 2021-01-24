@@ -404,6 +404,11 @@ class Alert
 						$repl[] = $chars_sheets[$alert['chars_src']];
 					}
 				}
+				elseif (!empty($memberContext[$alert['sender_id']]))
+				{
+					$search[] = '{char_link}';
+					$repl[] = !empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'];
+				}
 				if (!empty($alert['chars_dest']))
 				{
 					$search[] = '{your_chr}';
