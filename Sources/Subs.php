@@ -1907,6 +1907,31 @@ function setupMenuContext()
 						'visible' => !empty($context['unapproved_members']),
 						'amt' => $context['unapproved_members'] ?? 0,
 					],
+					'pending_character_sheets' => [
+						'title' => $txt['char_sheet_admin'],
+						'url' => $scripturl . '?action=admin;area=sheets',
+						'visible' => allowedTo('admin_forum'),
+						'amt_callback' => function() use ($smcFunc) {
+							$count = 0;
+							$request = $smcFunc['db']->query('', '
+								SELECT csv.id_character, MAX(csv.created_time) AS latest_version,
+									MAX(csv.approved_time) AS last_approval, MAX(csv.approval_state) AS approval_state
+								FROM {db_prefix}character_sheet_versions AS csv
+								GROUP BY csv.id_character
+								ORDER BY latest_version ASC'
+							);
+							while ($row = $smcFunc['db']->fetch_assoc($request))
+							{
+								// If it's actually pending approval (strict mode makes this complicated), count it.
+								if (!empty($row['approval_state']))
+								{
+									$count++;
+								}
+							}
+							$smcFunc['db']->free_result($request);
+							return $count;
+						}
+					],
 					'contactform' => [
 						'title' => $txt['contact_us'],
 						'url' => $scripturl . '?action=admin;area=contactform',

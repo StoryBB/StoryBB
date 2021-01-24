@@ -41,6 +41,7 @@ $txt['last_updated'] = 'Last updated';
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
 $txt['chars_menu_title'] = 'Characters';
+$txt['char_sheet_admin'] = 'Pending Character Sheets';
 
 $txt['save'] = 'Save';
 $txt['upload'] = 'Upload';
