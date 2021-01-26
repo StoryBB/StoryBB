@@ -48,7 +48,9 @@
 				<br>
 				<div class="smalltext">{{{txt.you_can_add_later}}}</div>
 				<input type="hidden" name="u" value="{{context.id_member}}">
-				<input type="submit" name="create_char" value="{{{txt.char_create}}}">
+				<div class="buttonlist righttext">
+					<button type="submit" name="create_char" value="create_char" class="active button">{{{txt.char_create}}}</button>
+				</div>
 				{{session_form}}
 			</form>
 		</div>

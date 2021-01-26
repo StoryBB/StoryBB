@@ -543,22 +543,6 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	if (!this.bButtonsShown && this.opt.sButtonStripDisplay)
 	{
 		var oButtonStrip = document.getElementById(this.opt.sButtonStrip);
-		var oButtonStripDisplay = document.getElementById(this.opt.sButtonStripDisplay);
-
-		// Make sure it can go somewhere.
-		if (typeof(oButtonStripDisplay) == 'object' && oButtonStripDisplay != null)
-			oButtonStripDisplay.style.display = "";
-		else
-		{
-			var oNewDiv = document.createElement('div');
-			var oNewList = document.createElement('a');
-
-			oNewDiv.id = this.opt.sButtonStripDisplay;
-			oNewDiv.className = this.opt.sButtonStripClass ? this.opt.sButtonStripClass : 'buttonlist floatbottom';
-
-			oNewDiv.appendChild(oNewList);
-			oButtonStrip.appendChild(oNewDiv);
-		}
 
 		// Add the 'remove selected items' button.
 		if (this.opt.bCanRemove)

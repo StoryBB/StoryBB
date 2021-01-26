@@ -106,8 +106,8 @@
 
 		</table>
 		<br>
-		<div>
-			<input id="notify_submit" type="submit" name="notify_submit" value="{{{txt.notify_save}}}">
+		<div class="buttonlist righttext">
+			<button id="notify_submit" type="submit" name="notify_submit" value="notify_submit" class="active button">{{{txt.notify_save}}}</button>
 			{{session_form}}
 			{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 			<input type="hidden" name="u" value="{{context.id_member}}">

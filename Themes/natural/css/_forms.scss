@@ -41,6 +41,11 @@ input:focus, textarea:focus, button:focus, select:focus {
 	outline: none !important;
 }
 
+input[type="search"] {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
 /* Number inputs don't support size nor width, so let's set a default so [size] can be used */
 input[type="number"] {
 	padding-right: 0; /* Removes extra white space after arrows in some browsers */

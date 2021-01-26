@@ -92,7 +92,7 @@ addLoadEvent(smc_toggleImageDimensions);
 
 function sbb_addButton(stripId, image, options)
 {
-	$('#' + stripId).append(
-		'<a href="' + options.sUrl + '" class="button" ' + ('sCustom' in options ? options.sCustom : '') + ' ' + ('sId' in options ? ' id="' + options.sId + '_text"' : '') + '>' + options.sText + '</a>'
+	$('#' + stripId + ' .buttonlist').append(
+		' <a href="' + options.sUrl + '" class="button" ' + ('sCustom' in options ? options.sCustom : '') + ' ' + ('sId' in options ? ' id="' + options.sId + '_text"' : '') + '>' + options.sText + '</a>'
 	);
 }

@@ -132,7 +132,7 @@ class Bookmarks extends AbstractProfileController
 			'additional_rows' => [
 				[
 					'position' => 'bottom_of_list',
-					'value' => '<input type="submit" name="remove_bookmarks" value="' . $txt['remove_bookmarks'] . '">',
+					'value' => '<button type="submit" name="remove_bookmarks" value="remove_bookmarks" class="button">' . $txt['remove_bookmarks'] . '</button>',
 					'class' => 'floatright',
 				],
 			],
