@@ -1565,21 +1565,6 @@ input[type="submit"].qaction {
 }
 
 /* Icons and jump to */
-#topic_legend {
-	font-size: 0.9em;
-	border-radius: 4px;
-	padding: 8px 10px;
-}
-
-.topic_legend {
-	display: inline-block;
-	columns: 2;
-}
-
-.topic_legend li {
-	margin-bottom: 4px;
-}
-
 .generic_list_wrapper, .windowbg, #forumposts .approvebg {
 	background: $unapproved-post-bg;
 	margin: 12px 0 0 0;
