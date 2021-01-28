@@ -68,7 +68,7 @@
 }
 
 .auto_suggest_item {
-	background: #dcdcdc;
+	background: $primary-border;
 	padding: 1px 4px;
 }
 
@@ -88,7 +88,7 @@
 	display: none;
 	margin-top: 18px;
 	background: white;
-	border: 1px solid #dcdcdc;
+	border: 1px solid $primary-border;
 	border-radius: 3px;
 	min-width: 120px;
 	z-index: 11110 !important;
@@ -121,7 +121,7 @@
 .atwho-view ul li {
 	display: block;
 	padding: 5px;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 1px solid $primary-border;
 	cursor: pointer;
 }
 
