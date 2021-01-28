@@ -2,7 +2,7 @@
 
 {{! Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page) }}
 {{#if (gt previous_page -1)}}
-	<a class="navPages main_icons previous_page" href="{{textTemplate base_url previous_page}}"></a>
+	<a class="navPages previous_page" href="{{textTemplate base_url previous_page}}"></a>
 {{/if}}
 
 {{! Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15) }}
@@ -44,5 +44,5 @@
 
 {{! Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<) }}
 {{#if (gt next_page -1)}}
-	<a class="navPages main_icons next_page" href="{{textTemplate base_url next_page}}"></a>
+	<a class="navPages next_page" href="{{textTemplate base_url next_page}}"></a>
 {{/if}}

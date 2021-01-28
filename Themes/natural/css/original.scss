@@ -1237,6 +1237,24 @@ body#help_popup {
 
 .navPages {
 	padding: 0 1px;
+
+	&.previous_page, &.next_page {
+		border: 8px solid transparent;
+	    width: 0;
+	    height: 0;
+	    display: inline-block;
+	    vertical-align: middle;
+	}
+	&.previous_page {
+		border-right-color: $primary-accent;
+		margin-left: -5px;
+		margin-right: 5px;
+	}
+	&.next_page {
+		border-left-color: $primary-accent;
+		margin-left: 5px;
+		margin-right: -5px;
+	}
 }
 
 .expand_pages {
