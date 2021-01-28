@@ -57,7 +57,7 @@ class Bookmarks extends AbstractProfileController
 
 							if ($topic['new'])
 							{
-								$link .= ' <a href="' . $topic['new_href'] . '" class="new_posts">' . $txt['new'] . '</a>';
+								$link .= ' <a href="' . $topic['new_href'] . '" class="new_posts"></a>';
 							}
 
 							$link .= '<br><span class="smalltext"><em>' . $txt['in'] . ' ' . $topic['board_link'] . '</em></span>';
