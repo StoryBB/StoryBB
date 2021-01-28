@@ -149,8 +149,8 @@ class WatchedBoards extends AbstractProfileController
 			'additional_rows' => [
 				[
 					'position' => 'bottom_of_list',
-					'value' => '<input type="submit" name="edit_notify_boards" value="' . $txt['notifications_update'] . '">
-								<input type="submit" name="remove_notify_boards" value="' . $txt['notification_remove_pref'] . '">',
+					'value' => '<button type="submit" name="edit_notify_boards" value="edit" class="button">' . $txt['notifications_update'] . '</button>
+								<button type="submit" name="remove_notify_boards" value="remove" class="button">' . $txt['notification_remove_pref'] . '</button>',
 					'class' => 'floatright',
 				],
 			],

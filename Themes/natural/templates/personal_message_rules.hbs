@@ -46,7 +46,7 @@
 
 {{#if context.rules}}
 			<a class="button" href="{{scripturl}}?action=pm;sa=manage_rules;apply;{{session_url}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>
-			<input type="submit" name="delselected" value="{{txt.pm_delete_selected_rule}}" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="you_sure">
+			<button type="submit" name="delselected" value="delselected" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="you_sure button">{{txt.pm_delete_selected_rule}}</button>
 {{/if}}
 
 			{{session_form}}
