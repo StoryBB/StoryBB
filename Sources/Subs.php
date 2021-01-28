@@ -17,6 +17,7 @@ use StoryBB\Model\Alert;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
+use StoryBB\Hook\Mutatable;
 use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 
@@ -2022,6 +2023,8 @@ function setupMenuContext()
 			],
 		];
 	}
+
+	(new Mutatable\SidebarMenu($context['sidebar']))->execute();
 
 	foreach ($context['sidebar'] as $key => $item)
 	{
