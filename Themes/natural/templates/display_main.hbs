@@ -238,7 +238,7 @@
 					'<input type="hidden" name="topic" value="{{context.current_topic}}">' +
 					'<input type="hidden" name="msg" value="%msg_id%">' +
 					'<div class="buttonlist righttext quickModifyMargin">' +
-						'<input type="submit" class="active" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s"> <input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();">' +
+						'<button type="submit" class="active button" name="post" value="post" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s">{{txt.save}}</button> <button type="submit" name="cancel" value="cancel" class="button" onclick="return oQuickModify.modifyCancel();">{{txt.modify_cancel}}</button>' +
 					'</div>' +
 				'</div>',
 				sTemplateSubjectEdit: {{{json '<input type="text" name="subject" value="%subject%" size="80" maxlength="80">'}}},
