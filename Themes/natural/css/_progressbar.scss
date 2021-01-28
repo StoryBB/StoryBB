@@ -3,8 +3,8 @@
 .progressBar {
 	height: 20px;
 	margin: 1px;
-	background: #F8F8F8;
-	border: 1px solid #C5C5C5;
+	background: $primary-list-bg;
+	border: 1px solid $primary-border;
 	border-radius: 7px;
 	vertical-align: middle;
 }
@@ -38,7 +38,7 @@
 
 .progress_bar {
 	height: 15pt;
-	border: 1px solid #dcdcdc;
+	border: 1px solid $primary-border;
 	background-color: #fff;
 	width: 80%;
 	margin: 20px auto 0 auto;

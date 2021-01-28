@@ -15,7 +15,7 @@
 	{{/if}}
 			</div>
 
-			<div id="unread">
+			<div id="unread" class="clear">
 				<div id="topic_header" class="title_bar">
 					<div class="info">
 						<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
@@ -37,9 +37,11 @@
 						<div class="info">
 							{{! Now we handle the icons }}
 							<div class="icons floatright">
-								{{#if is_locked}} <span class="main_icons lock"></span>{{/if}}
-								{{#if is_sticky}} <span class="main_icons sticky"></span>{{/if}}
-								{{#if is_poll}} <span class="main_icons poll"></span>{{/if}}
+								{{#if is_watched}}<span class="main_icons watch" title="{{../txt.watching_this_topic}}"></span>{{/if}}
+								{{#if is_locked}}<span class="main_icons lock" title="{{../txt.locked_topic}}"></span>{{/if}}
+								{{#if is_sticky}}<span class="main_icons sticky" title="{{../txt.sticky_topic}}"></span>{{/if}}
+								{{#if is_redirect}}<span class="main_icons move" title="{{../txt.moved_topic}}"></span>{{/if}}
+								{{#if is_poll}}<span class="main_icons poll" title="{{../txt.poll}}"></span>{{/if}}
 							</div>
 							<div class="first_poster">
 								{{{first_post.member.avatar.image}}}
@@ -47,7 +49,7 @@
 							</div>
 							<div class="msg_container">
 								<div class="recent_title">
-									<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}" class="new_posts">{{{../txt.new}}}</a>
+									<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}" class="new_posts"></a>
 									{{#if is_sticky}}<strong>{{/if}}<span class="preview" title="{{#if modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}"><span id="msg_{{first_post.id}}">{{{first_post.link}}}</span></span>{{#if is_sticky}}</strong>{{/if}}
 								</div>
 								<div>
@@ -64,8 +66,10 @@
 							</p>
 						</div>
 						<div class="lastpost">
-							{{{last_post.member.avatar.image}}}
-							{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}
+							<div class="last_poster">
+								{{{last_post.member.avatar.image}}}
+							</div>
+							<p>{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}</p>
 						</div>
 
 						<div class="moderation">
@@ -99,7 +103,3 @@
 {{/if}}
 		</form>
 	</div>
-
-{{#unless context.no_topic_listing}}
-	{{> topic_legend}}
-{{/unless}}

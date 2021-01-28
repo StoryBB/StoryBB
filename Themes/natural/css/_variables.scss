@@ -2,6 +2,7 @@
 $default-background: #e9eef2 !default;
 $default-color: #4d4d4d !default;
 $default-font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif !default;
+$content-background: #e9eef2 !default;
 
 $link-color: #346 !default;
 
@@ -20,6 +21,9 @@ $tertiary-accent-contrast: #fff !default;
 
 $primary-list-bg: #f8f8f8 !default;
 $secondary-list-bg: #f2f2f2 !default;
+$primary-border: #dedede !default;
+
+$content-subject-accent: lighten($primary-accent, 10%) !default;
 
 $sidebar-bg: $secondary-accent !default;
 $sidebar-fg: $secondary-accent-contrast !default;
@@ -47,8 +51,14 @@ $unapproved-topic-bg: #fff2f2 !default;
 $unapproved-post-bg: #ffcbcb !default;
 
 $poster-fg: red !default;
+$post-divider-fg: $primary-border !default;
 
 $quote-border: $primary-accent !default;
 $quote-border-alt: $primary-accent-dark !default;
 $quote-bg: lighten($primary-accent, 43%) !default;
 $quote-bg-alt: lighten($primary-accent-dark, 57%) !default;
+
+$navigation-divider-fg: lighten($primary-accent, 10%) !default;
+
+$quickbutton-link-fg: $default-color !default;
+$quickbutton-link-fg-hover: inherit !default;
