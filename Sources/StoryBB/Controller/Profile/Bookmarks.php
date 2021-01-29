@@ -144,6 +144,14 @@ class Bookmarks extends AbstractProfileController
 		$listOptions['title'] = $txt['bookmarks_ic'];
 		$listOptions['get_items']['params'][1] = 1;
 
+		$listOptions['default_sort_col'] .= '_ic';
+
+		foreach ($listOptions['columns'] as $columnkey => $column)
+		{
+			$listOptions['columns'][$columnkey . '_ic'] = $column;
+			unset($listOptions['columns'][$columnkey]);
+		}
+
 		createList($listOptions);
 
 		$context['sub_template'] = 'profile_bookmarks';
