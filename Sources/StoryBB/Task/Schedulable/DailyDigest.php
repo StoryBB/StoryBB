@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Send out a daily email of all subscribed topics.
  */
@@ -297,7 +299,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			$email['body'] .= "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']);
 
 			// Send it - low priority!
-			StoryBB\Helper\Mail::send($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);
+			Mail::send($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);
 		}
 
 		// Clean up...

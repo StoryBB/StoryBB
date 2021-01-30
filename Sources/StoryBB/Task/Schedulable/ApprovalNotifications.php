@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Send out notifications of things that need approving.
  */
@@ -251,7 +253,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			$emaildata = loadEmailTemplate('scheduled_approval', $replacements, $current_language);
 
 			// Send the actual email.
-			StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'schedapp', $emaildata['is_html'], 2);
+			Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'schedapp', $emaildata['is_html'], 2);
 		}
 
 		// All went well!

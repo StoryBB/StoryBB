@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * This taks handles notifying someone that a user has requested to join a group they moderate.
  */
@@ -120,7 +122,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 					];
 
 					$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
-					StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'groupreq' . $this->_details['id_group'], $emaildata['is_html'], 2);
+					Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'groupreq' . $this->_details['id_group'], $emaildata['is_html'], 2);
 				}
 			}
 		}

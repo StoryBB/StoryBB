@@ -12,6 +12,7 @@
 namespace StoryBB\Task\Adhoc;
 
 use StoryBB\Helper\Mentions;
+use StoryBB\Helper\Mail;
 
 /**
  * This file contains background notification code for any create post action.
@@ -165,7 +166,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				];
 
 				$emaildata = loadEmailTemplate($message_type, $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
-				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
+				Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
 			}
 
 			if ($pref & 0x01)
@@ -273,7 +274,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				];
 
 				$emaildata = loadEmailTemplate('msg_quote', $replacements, empty($member['lngfile']) || empty($modSettings['userLanguage']) ? $language : $member['lngfile']);
-				StoryBB\Helper\Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_quote_' . $msgOptions['id'], $emaildata['is_html'], 2);
+				Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_quote_' . $msgOptions['id'], $emaildata['is_html'], 2);
 			}
 
 			if ($prefs[$id]['msg_quote'] & 0x01)
@@ -432,7 +433,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				];
 
 				$emaildata = loadEmailTemplate('msg_mention', $replacements, empty($member['lngfile']) || empty($modSettings['userLanguage']) ? $language : $member['lngfile']);
-				StoryBB\Helper\Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_mention_' . $msgOptions['id'], $emaildata['is_html'], 2);
+				Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_mention_' . $msgOptions['id'], $emaildata['is_html'], 2);
 			}
 
 			if ($prefs[$id]['msg_mention'] & 0x01)
