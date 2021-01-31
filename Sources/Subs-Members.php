@@ -174,7 +174,7 @@ function deleteMembers($users, $check_not_admin = false)
 			[
 				'characters' => array_keys($characters),
 			]
-		)
+		);
 	}
 
 	// Then delete their characters.
