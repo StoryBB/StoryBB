@@ -98,17 +98,20 @@ class Bookmark
 		$request = $smcFunc['db']->query('', '
 			SELECT
 				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name,
-				t.id_topic, ms.subject, ms.id_member, COALESCE(mem.real_name, ms.poster_name) AS real_name_col,
+				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
-				COALESCE(mem2.real_name, ml.poster_name) AS last_real_name,
-				lt.unwatched
+				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
+				lt.unwatched, chars.is_main AS started_ooc, chars2.is_main AS updated_ooc,
+				chars.id_character AS started_char, chars2.id_character AS updated_char
 			FROM {db_prefix}bookmark AS bm
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = bm.id_topic AND t.approved = {int:is_approved})
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ms.id_member)
+				LEFT JOIN {db_prefix}characters AS chars ON (ms.id_character = chars.id_character AND chars.id_member = mem.id_member)
 				LEFT JOIN {db_prefix}members AS mem2 ON (mem2.id_member = ml.id_member)
+				LEFT JOIN {db_prefix}characters AS chars2 ON (chars2.id_character = ml.id_character AND chars2.id_member = mem2.id_member)
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
 			WHERE bm.id_member = {int:current_member}
@@ -130,8 +133,8 @@ class Bookmark
 
 			$bookmarks[] = [
 				'id' => $row['id_topic'],
-				'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name_col'] . '</a>',
-				'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . '">' . $row['last_real_name'] . '</a>',
+				'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (empty($row['started_ooc']) && !empty($row['started_char']) ? ';area=characters;char=' . $row['started_char'] : '') . '">' . $row['real_name_col'] . '</a>',
+				'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . (empty($row['updated_ooc']) && !empty($row['updated_char']) ? ';area=characters;char=' . $row['updated_char'] : '') . '">' . $row['last_real_name'] . '</a>',
 				'subject' => $row['subject'],
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',

@@ -485,10 +485,11 @@ function loadCustomFields($memID, $area = 'summary')
 	// Load all the relevant fields - and data.
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			col_name, field_name, field_desc, field_type, field_order, show_reg, field_length, field_options,
+			id_field, col_name, field_name, field_desc, field_type, field_order, show_reg, field_length, field_options,
 			default_value, bbc, enclose, placement
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
+			AND in_character = 0
 		ORDER BY field_order',
 		[
 			'area' => $area,
@@ -496,16 +497,30 @@ function loadCustomFields($memID, $area = 'summary')
 	);
 	$context['custom_fields'] = [];
 	$context['custom_fields_required'] = false;
+
+	if ($memID && isset($user_profile[$memID]))
+	{
+		foreach ($user_profile[$memID]['characters'] as $id_character => $character)
+		{
+			if ($character['is_main'])
+			{
+				$context['character'] = $character;
+				break;
+			}
+		}
+	}
+
+	// @todo deduplicate this with the profile controllers' trait?
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Shortcut.
-		$exists = $memID && isset($user_profile[$memID], $user_profile[$memID]['options'][$row['col_name']]);
-		$value = $exists ? $user_profile[$memID]['options'][$row['col_name']] : '';
+		$exists = $memID && isset($context['character']['cfraw'][$row['id_field']]);
+		$value = $exists ? $context['character']['cfraw'][$row['id_field']] : '';
 
 		// If this was submitted already then make the value the posted version.
-		if (isset($_POST['customfield']) && isset($_POST['customfield'][$row['col_name']]))
+		if (isset($_POST['customfield']) && isset($_POST['customfield'][$row['id_field']]))
 		{
-			$value = StringLibrary::escape($_POST['customfield'][$row['col_name']]);
+			$value = StringLibrary::escape($_POST['customfield'][$row['id_field']]);
 			if (in_array($row['field_type'], ['select', 'radio']))
 					$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
 		}
@@ -515,12 +530,12 @@ function loadCustomFields($memID, $area = 'summary')
 		if ($row['field_type'] == 'check')
 		{
 			$true = (!$exists && $row['default_value']) || $value;
-			$input_html = '<input type="checkbox" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($true ? ' checked' : '') . '>';
+			$input_html = '<input type="checkbox" name="customfield[' . $row['id_field'] . ']" id="customfield[' . $row['id_field'] . ']"' . ($true ? ' checked' : '') . '>';
 			$output_html = $true ? $txt['yes'] : $txt['no'];
 		}
 		elseif ($row['field_type'] == 'select')
 		{
-			$input_html = '<select name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"><option value="-1"></option>';
+			$input_html = '<select name="customfield[' . $row['id_field'] . ']" id="customfield[' . $row['id_field'] . ']"><option value="-1"></option>';
 			$options = explode(',', $row['field_options']);
 			foreach ($options as $k => $v)
 			{
@@ -539,7 +554,7 @@ function loadCustomFields($memID, $area = 'summary')
 			foreach ($options as $k => $v)
 			{
 				$true = (!$exists && $row['default_value'] == $v) || $value == $v;
-				$input_html .= '<label for="customfield_' . $row['col_name'] . '_' . $k . '"><input type="radio" name="customfield[' . $row['col_name'] . ']" id="customfield_' . $row['col_name'] . '_' . $k . '" value="' . $k . '"' . ($true ? ' checked' : '') . '>' . $v . '</label><br>';
+				$input_html .= '<label for="customfield_' . $row['id_field'] . '_' . $k . '"><input type="radio" name="customfield[' . $row['id_field'] . ']" id="customfield_' . $row['id_field'] . '_' . $k . '" value="' . $k . '"' . ($true ? ' checked' : '') . '>' . $v . '</label><br>';
 				if ($true)
 					$output_html = $v;
 			}
@@ -547,12 +562,12 @@ function loadCustomFields($memID, $area = 'summary')
 		}
 		elseif ($row['field_type'] == 'text')
 		{
-			$input_html = '<input type="text" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($row['field_length'] != 0 ? ' maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . un_htmlspecialchars($value) . '"' . ($row['show_reg'] == 2 ? ' required' : '') . '>';
+			$input_html = '<input type="text" name="customfield[' . $row['id_field'] . ']" id="customfield[' . $row['id_field'] . ']"' . ($row['field_length'] != 0 ? ' maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . un_htmlspecialchars($value) . '"' . ($row['show_reg'] == 2 ? ' required' : '') . '>';
 		}
 		else
 		{
 			@list ($rows, $cols) = @explode(',', $row['default_value']);
-			$input_html = '<textarea name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . (!empty($rows) ? ' rows="' . $rows . '"' : '') . (!empty($cols) ? ' cols="' . $cols . '"' : '') . ($row['show_reg'] == 2 ? ' required' : '') . '>' . un_htmlspecialchars($value) . '</textarea>';
+			$input_html = '<textarea name="customfield[' . $row['id_field'] . ']" id="customfield[' . $row['id_field'] . ']"' . (!empty($rows) ? ' rows="' . $rows . '"' : '') . (!empty($cols) ? ' cols="' . $cols . '"' : '') . ($row['show_reg'] == 2 ? ' required' : '') . '>' . un_htmlspecialchars($value) . '</textarea>';
 		}
 
 		// Parse BBCode

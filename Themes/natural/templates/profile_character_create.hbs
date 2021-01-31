@@ -20,10 +20,12 @@
 					<dd>
 						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50">
 					</dd>
-					<dt>{{{txt.age}}}:</dt>
-					<dd>
-						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50">
-					</dd>
+{{#if context.character.custom_fields}}
+	{{#each context.character.custom_fields}}
+					<dt>{{{field_name}}}:</dt>
+					<dd>{{{input_html}}}</dd>
+	{{/each}}
+{{/if}}
 				</dl>
 				<dl class="char_sheet_text">
 					<dt>{{{txt.char_sheet}}}</dt>

@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Notifies moderators once their moderation comment is replied to.
  */
@@ -69,7 +71,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 				];
 
 				$emaildata = loadEmailTemplate('alert_unapproved_reply', $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
-				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
+				Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
 			}
 
 			if ($pref & 0x01)

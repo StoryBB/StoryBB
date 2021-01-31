@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Notify moderators that a post needs to be approved.
  */
@@ -76,7 +78,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 				];
 
 				$emaildata = loadEmailTemplate('alert_unapproved_post', $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
-				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
+				Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
 			}
 
 			if ($pref & 0x01)

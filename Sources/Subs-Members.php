@@ -166,6 +166,17 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 	}
 
+	if (!empty($characters))
+	{
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}custom_field_values
+			WHERE id_character IN ({array_int:characters})',
+			[
+				'characters' => array_keys($characters),
+			]
+		);
+	}
+
 	// Then delete their characters.
 	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}characters
@@ -779,13 +790,13 @@ function registerMember(&$regOptions, $return_errors = false)
 	$smcFunc['db']->insert('',
 		'{db_prefix}characters',
 		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
-			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
 			'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int',
 			'main_char_group' => 'int', 'char_groups' => 'string',
 		],
 		[
 			$memberID, $regOptions['register_vars']['real_name'], '',
-			'', 0, 0, '',
+			'', 0, 0,
 			time(), 0, 1,
 			0, '',
 		],
@@ -798,11 +809,11 @@ function registerMember(&$regOptions, $return_errors = false)
 		$smcFunc['db']->insert('',
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
-				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
 				'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int'],
 			[
 				$memberID, $regOptions['extra_register_vars']['first_char'], '',
-				'', 0, 0, '',
+				'', 0, 0,
 				time(), 0, 0
 			],
 			['id_character']

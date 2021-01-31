@@ -203,7 +203,7 @@ class General extends RawMinkContext implements Context
 			$rows_to_insert[] = [
 				$userids[$character_to_create['username']], $character_to_create['character_name'], '',
 				'', 0, 0,
-				'', $now, $now,
+				$now, $now,
 				0, 0, '',
 				0, 0
 			];
@@ -213,7 +213,7 @@ class General extends RawMinkContext implements Context
 			'{db_prefix}characters',
 			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
-				'age' => 'string', 'date_created' => 'int', 'last_active' => 'int',
+				'date_created' => 'int', 'last_active' => 'int',
 				'is_main' => 'int', 'main_char_group' => 'int', 'char_groups' => 'string',
 				'char_sheet' => 'int', 'retired' => 'int'],
 			$rows_to_insert,

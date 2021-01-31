@@ -282,7 +282,7 @@ function saveProfileFields($section)
 		makeThemeChanges($context['id_member'], isset($_POST['id_theme']) ? (int) $_POST['id_theme'] : $old_profile['id_theme']);
 		if (!empty($section))
 		{
-			$custom_fields_errors = makeCustomFieldChanges($context['id_member'], $section, false, true);
+			$custom_fields_errors = makeCustomFieldChanges($context['id_member'], 0, $section, false, true);
 
 			if (!empty($custom_fields_errors))
 				$post_errors = array_merge($post_errors, $custom_fields_errors);
@@ -392,7 +392,7 @@ function makeThemeChanges($memID, $id_theme)
  * @param bool $returnErrors Whether or not to return any error information
  * @return void|array Returns nothing or returns an array of error info if $returnErrors is true
  */
-function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors = false)
+function makeCustomFieldChanges($memID, $character = 0, $area, $sanitize = true, $returnErrors = false)
 {
 	global $context, $smcFunc, $user_profile, $user_info, $modSettings;
 	global $sourcedir;
@@ -404,15 +404,71 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 
 	$where = $area == 'register' ? 'show_reg != 0' : 'show_profile = {string:area}';
 
+	// If we're doing the OOC, we need to fetch the character ID for them.
+	$in_character = !empty($character);
+	if (empty($character))
+	{
+		$request = $smcFunc['db']->query('', '
+			SELECT id_character, character_name
+			FROM {db_prefix}characters
+			WHERE is_main = 1
+				AND id_member = {int:memID}',
+			[
+				'memID' => $memID,
+			]
+		);
+		$character_details = $smcFunc['db']->fetch_assoc($request);
+		$smcFunc['db']->free_result($request);
+	}
+	else
+	{
+		$request = $smcFunc['db']->query('', '
+			SELECT id_character, character_name
+			FROM {db_prefix}characters
+			WHERE id_character = {int:character}
+				AND id_member = {int:memID}',
+			[
+				'character' => $character,
+				'memID' => $memID,
+			]
+		);
+		$character_details = $smcFunc['db']->fetch_assoc($request);
+		$smcFunc['db']->free_result($request);
+	}
+
+	// If this doesn't match up, abort because something went really wrong.
+	if (empty($character_details))
+	{
+		fatal_lang_error('no_access');
+	}
+
+	// Now we load the existing values for this character.
+	$existing_values = [];
+	$request = $smcFunc['db']->query('', '
+		SELECT id_field, value
+		FROM {db_prefix}custom_field_values
+		WHERE id_character = {int:character}',
+		[
+			'character' => $character,
+		]
+	);
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$existing_values[$row['id_field']] = $row['value'];
+	}
+	$smcFunc['db']->free_result($request);
+
 	// Load the fields we are saving too - make sure we save valid data (etc).
 	$request = $smcFunc['db']->query('', '
-		SELECT col_name, field_name, field_desc, field_type, field_length, field_options, default_value, show_reg, mask, private
+		SELECT id_field, col_name, field_name, field_desc, field_type, field_length, field_options, default_value, show_reg, mask, private
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
+			AND in_character = {int:in_character}
 			AND active = {int:is_active}',
 		[
 			'is_active' => 1,
 			'area' => $area,
+			'in_character' => $in_character ? 1 : 0,
 		]
 	);
 	$changes = [];
@@ -430,18 +486,18 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 
 		// Validate the user data.
 		if ($row['field_type'] == 'check')
-			$value = isset($_POST['customfield'][$row['col_name']]) ? 1 : 0;
+			$value = isset($_POST['customfield'][$row['id_field']]) ? 1 : 0;
 		elseif ($row['field_type'] == 'select' || $row['field_type'] == 'radio')
 		{
 			$value = $row['default_value'];
 			foreach (explode(',', $row['field_options']) as $k => $v)
-				if (isset($_POST['customfield'][$row['col_name']]) && $_POST['customfield'][$row['col_name']] == $k)
+				if (isset($_POST['customfield'][$row['id_field']]) && $_POST['customfield'][$row['id_field']] == $k)
 					$value = $v;
 		}
 		// Otherwise some form of text!
 		else
 		{
-			$value = isset($_POST['customfield'][$row['col_name']]) ? $_POST['customfield'][$row['col_name']] : '';
+			$value = isset($_POST['customfield'][$row['id_field']]) ? $_POST['customfield'][$row['id_field']] : '';
 			if ($row['field_length'])
 				$value = StringLibrary::substr($value, 0, $row['field_length']);
 
@@ -490,20 +546,38 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 		}
 
 		// Did it change?
-		if (!isset($user_profile[$memID]['options'][$row['col_name']]) || $user_profile[$memID]['options'][$row['col_name']] !== $value)
+		if (!isset($existing_values[$row['id_field']]) || $existing_values[$row['id_field']] !== $value)
 		{
-			$log_changes[] = [
-				'action' => 'customfield_' . $row['col_name'],
-				'log_type' => 'user',
-				'extra' => [
-					'previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '',
-					'new' => $value,
-					'applicator' => $user_info['id'],
-					'member_affected' => $memID,
-				],
-			];
-			$changes[] = [1, $row['col_name'], $value, $memID];
-			$user_profile[$memID]['options'][$row['col_name']] = $value;
+			if (!$in_character)
+			{
+				$log_changes[] = [
+					'action' => 'customfield_' . $row['col_name'],
+					'log_type' => 'user',
+					'extra' => [
+						'previous' => !empty($existing_values[$row['id_field']]) ? $existing_values[$row['id_field']] : '',
+						'new' => $value,
+						'applicator' => $user_info['id'],
+						'member_affected' => $memID,
+					],
+				];
+				$changes[] = [$row['id_field'], $character_details['id_character'], $value];
+			}
+			else
+			{
+				$log_changes[] = [
+					'action' => 'customfield_' . $row['col_name'],
+					'log_type' => 'user',
+					'extra' => [
+						'previous' => !empty($existing_values[$row['id_field']]) ? $existing_values[$row['id_field']] : '',
+						'new' => $value,
+						'applicator' => $user_info['id'],
+						'member_affected' => $memID,
+						'id_character' => $character_details['id_character'],
+						'character_name' => $character_details['character_name'],
+					],
+				];
+				$changes[] = [$row['id_field'], $character_details['id_character'], $value];
+			}
 		}
 	}
 	$smcFunc['db']->free_result($request);
@@ -517,10 +591,10 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	if (!empty($changes) && empty($context['password_auth_failed']) && empty($errors))
 	{
 		$smcFunc['db']->insert('replace',
-			'{db_prefix}themes',
-			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'],
+			'{db_prefix}custom_field_values',
+			['id_field' => 'int', 'id_character' => 'int', 'value' => 'string-65534'],
 			$changes,
-			['id_theme', 'variable', 'id_member']
+			['id_field', 'id_character']
 		);
 		if (!empty($log_changes) && !empty($modSettings['modlog_enabled']))
 		{

@@ -70,6 +70,8 @@ class CharacterProfile extends AbstractProfileController
 			$context['character']['posts_per_day'] = comma_format($context['character']['posts'] / $context['character']['days_registered'], 2);
 
 		$context['sub_template'] = 'profile_character_summary';
+
+		$this->load_custom_fields();
 	}
 
 	protected function display_action_retire()
@@ -199,18 +201,7 @@ class CharacterProfile extends AbstractProfileController
 			updateMemberData($member, ['alerts' => $alert_count]);
 		}
 
-		// And lastly any avatar attached to them.
-		require_once($sourcedir . '/ManageAttachments.php');
-		removeAttachments(['id_character' => $context['character']['id_character'], 'attachment_type' => Attachment::ATTACHMENT_AVATAR]);
-
-		// So we can delete them.
-		$smcFunc['db']->query('', '
-			DELETE FROM {db_prefix}characters
-			WHERE id_character = {int:char}',
-			[
-				'char' => $context['character']['id_character'],
-			]
-		);
+		Character::delete_character($context['character']['id_character']);
 
 		redirectexit('action=profile;u=' . $context['id_member']);
 	}
@@ -441,6 +432,15 @@ class CharacterProfile extends AbstractProfileController
 		create_control_richedit($editorOptions);
 
 		createToken('edit-char' . $context['character']['id_character'], 'post');
+
+		$this->load_custom_fields(true);
+		foreach ($context['character']['custom_fields'] as $key => $value)
+		{
+			if ($value['show_profile'] != 'char')
+			{
+				unset ($context['character']['custom_fields'][$key]);
+			}
+		}
 	}
 
 	protected function post_action_edit()
@@ -523,16 +523,18 @@ class CharacterProfile extends AbstractProfileController
 			$changes['char_groups'] = $new_char_groups;
 		}
 
-		$new_age = !empty($_POST['age']) ? StringLibrary::escape(trim($_POST['age']), ENT_QUOTES) : '';
-		if ($new_age != $context['character']['age'])
-			$changes['age'] = $new_age;
-
 		$new_sig = !empty($_POST['char_signature']) ? StringLibrary::escape($_POST['char_signature'], ENT_QUOTES) : '';
 		$valid_sig = profileValidateSignature($new_sig);
 		if ($valid_sig === true)
 			$changes['signature'] = $new_sig; // sanitised by profileValidateSignature
 		else
 			$context['form_errors'][] = $valid_sig;
+
+		$cf_errors = makeCustomFieldChanges($context['id_member'], $context['character']['id_character'], 'char', true, true);
+		foreach ($cf_errors as $error)
+		{
+			$context['form_errors'][] = $cf_errors;
+		}
 
 		if (!empty($changes) && empty($context['form_errors']))
 		{

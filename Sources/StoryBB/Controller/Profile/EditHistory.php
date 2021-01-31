@@ -96,7 +96,12 @@ class EditHistory extends AbstractProfileController
 							else
 								$character_name = $extra['character_name'];
 
+							$old_action_text = $action_text;
 							$action_text = sprintf($action_text, $character_name);
+							if ($old_action_text == $action_text)
+							{
+								$action_text = $character_name . ' - ' . $action_text;
+							}
 						}
 
 						// Parse BBC?

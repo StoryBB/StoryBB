@@ -129,7 +129,7 @@ class AccountSettings extends AbstractProfileController
 				$context['modify_error'][$error_type] = true;
 		}
 		// If it's you then we should redirect upon save.
-		elseif (!empty($profile_vars) && $context['user']['is_owner'] && !$context['do_preview'])
+		elseif (!empty($profile_vars) && $context['user']['is_owner'])
 		{
 			session_flash('success', $txt['profile_updated_own']);
 			redirectexit('action=profile;area=account_settings');

@@ -48,8 +48,11 @@
 				<dd>{{{context.character.character_name}}}</dd>
 				<dt>{{{txt.profile_posts}}}:</dt>
 				<dd>{{{comma context.character.posts}}} {{#if (gt context.character.days_registered 1)}} ({{{context.character.posts_per_day}}} {{{txt.posts_per_day}}}){{/if}}</dd>
-				<dt>{{{txt.age}}}:</dt>
-				<dd>{{#if context.character.age}}{{{context.character.age}}}{{else}}{{{txt.not_applicable}}}{{/if}}</dd>
+
+{{#each context.character.custom_fields}}
+				<dt>{{{field_name}}}:</dt>
+				<dd>{{{output_html}}}</dd>
+{{/each}}
 			</dl>
 
 {{#if context.character.signature}}

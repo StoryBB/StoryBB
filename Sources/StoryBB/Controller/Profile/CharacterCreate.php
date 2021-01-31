@@ -17,6 +17,8 @@ use StoryBB\Model\Character;
 
 class CharacterCreate extends AbstractProfileController
 {
+	use CharacterTrait;
+
 	public function display_action()
 	{
 		global $context, $smcFunc, $txt, $sourcedir;
@@ -29,7 +31,6 @@ class CharacterCreate extends AbstractProfileController
 		{
 			$context['character'] = [
 				'character_name' => '',
-				'age' => '',
 				'sheet' => '',
 			];
 		}
@@ -68,6 +69,15 @@ class CharacterCreate extends AbstractProfileController
 			if (sheet_templates.hasOwnProperty(tmpl))
 				$("#message").data("sceditor").InsertText(sheet_templates[tmpl].body);
 		});', true);
+
+		$this->load_custom_fields(true);
+		foreach ($context['character']['custom_fields'] as $key => $value)
+		{
+			if ($value['show_profile'] != 'char')
+			{
+				unset ($context['character']['custom_fields'][$key]);
+			}
+		}
 	}
 
 	public function post_action()
@@ -75,9 +85,9 @@ class CharacterCreate extends AbstractProfileController
 		global $context, $smcFunc, $txt, $sourcedir;
 
 		require_once($sourcedir . '/Subs-Post.php');
+		require_once($sourcedir . '/Profile-Modify.php');
 
 		$context['character']['character_name'] = !empty($_POST['char_name']) ? StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES) : '';
-		$context['character']['age'] = !empty($_POST['age']) ? StringLibrary::escape($_POST['age'], ENT_QUOTES) : '';
 		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 		preparsecode($message);
 		$context['character']['sheet'] = $message;
@@ -109,18 +119,20 @@ class CharacterCreate extends AbstractProfileController
 				'{db_prefix}characters',
 				['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
 					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
-					'age' => 'string', 'date_created' => 'int', 'last_active' => 'int',
+					'date_created' => 'int', 'last_active' => 'int',
 					'is_main' => 'int', 'main_char_group' => 'int', 'char_groups' => 'string',
 					'char_sheet' => 'int', 'retired' => 'int'],
 				[$context['id_member'], $context['character']['character_name'], '',
 					'', 0, 0,
-					$context['character']['age'], time(), time(),
+					time(), time(),
 					0, 0, '',
 					0, 0],
 				['id_character']
 			);
 			$context['character']['id_character'] = $smcFunc['db']->inserted_id();
 			trackStats(['chars' => '+']);
+
+			makeCustomFieldChanges($context['id_member'], $context['character']['id_character'], 'char');
 
 			if (!empty($context['character']['sheet']))
 			{

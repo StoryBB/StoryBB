@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Send people a notification wishing them a happy birthday.
  */
@@ -107,7 +109,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 					if ($pref & 0x02)
 					{
 						$emaildata = loadEmailTemplate('happy_birthday', $replacements, $lang, false);
-						StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'birthday', $emaildata['is_html'], 4);
+						Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'birthday', $emaildata['is_html'], 4);
 					}
 				}
 			}

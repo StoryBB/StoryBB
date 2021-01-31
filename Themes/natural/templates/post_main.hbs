@@ -160,6 +160,7 @@
 
 {{#if modSettings.additional_options_collapsable}}
 			<div id="postAdditionalOptionsHeader">
+				<span id="postMoreExpandToggle"></span>
 				<strong><a href="#" id="postMoreExpandLink">{{#if context.can_post_attachment}}{{txt.post_additionalopt_attach}}{{else}}{{txt.post_additionalopt}}{{/if}}</a></strong>
 			</div>
 {{/if}}
@@ -337,7 +338,6 @@
 							</div>
 						</dd>
 					</dd>
-					{{! {{>upload_template}} }}
 					<dd class="smalltext">
 						{{#if modSettings.attachmentCheckExtensions}}{{txt.allowed_types}}: {{context.allowed_extensions}}<br>{{/if}}
 						{{#if context.attachment_restrictions}}{{{txt.attach_restrictions}}} {{#each context.attachment_restrictions}}{{.}},{{/each}}<br>{{/if}}
@@ -577,7 +577,7 @@
 			],
 			aSwapImages: [
 				{
-					sId: '#postMoreExpandLink',
+					sId: '#postMoreExpandToggle',
 					altExpanded: '-',
 					altCollapsed: '+'
 				}

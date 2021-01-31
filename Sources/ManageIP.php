@@ -101,9 +101,9 @@ function TrackIP()
 
 	loadLanguage('Profile');
 
+	$memID = 0;
 	if (isset($_GET['u']))
 	{
-		$memID = 0;
 		if (loadMemberData((int) $_GET['u']))
 		{
 			$memID = (int) $_GET['u'];

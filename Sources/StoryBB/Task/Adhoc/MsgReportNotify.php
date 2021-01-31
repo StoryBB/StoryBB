@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * This task handles notifying users when a message gets reported.
  */
@@ -177,7 +179,7 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 
 				// And do the actual sending...
 				foreach ($recipients as $email_address)
-					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'report' . $this->_details['report_id'], $emaildata['is_html'], 2);
+					Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'report' . $this->_details['report_id'], $emaildata['is_html'], 2);
 			}
 		}
 

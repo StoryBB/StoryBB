@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use StoryBB\Helper\Mail;
+
 /**
  * Perform the standard checks on expiring/near expiring subscriptions.
  */
@@ -114,7 +116,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 
 			// Send the actual email.
 			if ($notifyPrefs[$row['id_member']] & 0x02)
-				StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'paid_sub_remind', $emaildata['is_html'], 2);
+				Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'paid_sub_remind', $emaildata['is_html'], 2);
 
 			if ($notifyPrefs[$row['id_member']] & 0x01)
 			{

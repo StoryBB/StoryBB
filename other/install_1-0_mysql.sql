@@ -349,9 +349,10 @@ VALUES (1, 0, '{$default_category_name}', '', 1);
 #
 
 INSERT INTO {$db_prefix}custom_fields
-  (`col_name`, `field_name`, `field_desc`, `field_type`, `field_length`, `field_options`, `field_order`, `mask`, `show_reg`, `show_display`, `show_profile`, `private`, `active`, `bbc`, `can_search`, `default_value`, `enclose`, `placement`)
-VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1),
-  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 2, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '', 0);
+  (`col_name`, `field_name`, `field_desc`, `field_type`, `field_length`, `field_options`, `field_order`, `mask`, `show_reg`, `show_display`, `show_profile`, `private`, `active`, `bbc`, `can_search`, `default_value`, `enclose`, `placement`, `in_character`)
+VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1, 0),
+  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 2, 'nohtml', 0, 1, 'forumprofile', 0, 1, 0, 0, '', '', 0, 0),
+  ('cust_age', 'Age', 'Character age', 'text', 3, '', 1, 'numeric', 0, 1, 'char', 0, 1, 0, 0, '', '', 0, 0);
 
 # --------------------------------------------------------
 
@@ -649,7 +650,7 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('defaultMaxListItems', '15'),
   ('loginHistoryDays', '30'),
   ('allow_expire_redirect', '1'),
-  ('displayFields', '[{"col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","mlist":"0"}]'),
+  ('displayFields', '{"ic":[{"id":"3","col_name":"cust_age","title":"Age","type":"text","order":"1","bbc":"0","placement":"0","enclose":"","options":[]}],"ooc":[{"id":"1","col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"0","enclose":"<a href=\"skype:{INPUT}?call\"><img src=\"{DEFAULT_IMAGES_URL}/skype.png\" alt=\"{INPUT}\" title=\"{INPUT}\" /></a> ","options":[]},{"id":"12","col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","options":[]}]}'),
   ('minimize_files', '1'),
   ('enable_mentions', '1'),
   ('retention_policy_standard', 90),

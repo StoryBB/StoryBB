@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * This task handles notifying users when they've commented to a moderation report and someone else replies to them.
  */
@@ -203,7 +205,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 
 				// And do the actual sending...
 				foreach ($recipients as $email_address)
-					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'rptrpy' . $this->_details['comment_id'], $emaildata['is_html'], 3);
+					Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'rptrpy' . $this->_details['comment_id'], $emaildata['is_html'], 3);
 			}
 		}
 

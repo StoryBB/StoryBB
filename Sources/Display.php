@@ -1585,6 +1585,8 @@ function prepareDisplayContext($reset = false)
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$is_online ? 'online' : 'offline']
 			];
+
+			$output['member']['custom_fields'] = $output['member']['characters'][$message['id_character']]['custom_fields'];
 		}
 	}
 
@@ -1621,11 +1623,6 @@ function prepareDisplayContext($reset = false)
 	// Did they give a reason for editing?
 	if (!empty($output['modified']['name']) && !empty($output['modified']['reason']))
 		$output['modified']['last_edit_text'] .= '&nbsp;' . sprintf($txt['last_edit_reason'], $output['modified']['reason']);
-
-	// Any custom profile fields?
-	if (!empty($memberContext[$message['id_member']]['custom_fields']))
-		foreach ($memberContext[$message['id_member']]['custom_fields'] as $custom)
-			$output['custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
 	// Add the moderation link if relevant.
 	if ($context['can_report_moderator'])

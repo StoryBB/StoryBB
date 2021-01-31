@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\Mail;
+
 /**
  * This task handles notifying users when someone new signs up.
  */
@@ -126,7 +128,7 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 
 				// And do the actual sending...
 				foreach ($recipients as $email_address)
-					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'newmember' . $this->_details['new_member_id'], $emaildata['is_html'], 0);
+					Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'newmember' . $this->_details['new_member_id'], $emaildata['is_html'], 0);
 			}
 		}
 

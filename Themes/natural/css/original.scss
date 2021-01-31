@@ -358,6 +358,13 @@ dl.settings dt {
 	clear: both;
 }
 
+dl.settings dl dt {
+	width: 30%;
+}
+dl.settings dl dd {
+	width: 68%;
+}
+
 dl.settings.report dt {
 	float: none;
 	width: auto;
