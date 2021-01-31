@@ -1,0 +1,111 @@
+		{{! Editing a character template }}
+		<form method="post" action="{{scripturl}}?action=admin;area=pages;sa={{#if context.page.id_page}}edit_page{{else}}add_page{{/if}}">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{context.page_title}}}</h3>
+			</div>
+			<div class="errorbox"{{#unless context.page_errors}} style="display: none"{{/unless}} id="errors">
+				<dl>
+					<dt>
+						<strong id="error_serious">{{{txt.error_while_submitting}}}</strong>
+					</dt>
+					<dd class="error" id="error_list">
+						{{#if context.page_errors}}{{{join context.page_errors '<br>'}}}{{/if}}
+					</dd>
+				</dl>
+			</div>
+			<div id="box_preview"{{#unless context.page_preview}} style="display:none"{{/unless}}>
+				<div class="title_bar">
+					<h3 class="titlebg">{{{txt.preview}}}</h3>
+				</div>
+				<div class="roundframe">
+					<div id="page_preview">{{#if context.page_preview}}{{{context.page_preview}}}{{/if}}</div>
+				</div>
+			</div>
+			<div class="windowbg">
+				<dl class="settings">
+					<dt>{{{txt.page_name}}}:</dt>
+					<dd>{{{scripturl}}}?action=pages;page= <input type="text" name="page_name" value="{{{context.page.page_name}}}" required></dd>
+					<dt>{{{txt.page_title}}}:</dt>
+					<dd><input type="text" name="page_title" value="{{{context.page.page_title}}}" required></dd>
+				</dl>
+				{{{richtexteditor 'message' 'smileyBox' 'bbcBox'}}}
+				<br>
+
+				<dl class="settings">
+					<dt>{{{txt.page_access_desc}}}</dt>
+					<dd>
+						<dl>
+							<dt>
+								<span class="perms"><strong>{{{txt.permissions_option_on}}}</strong></span>
+								<span class="perms"><strong>{{{txt.permissions_option_off}}}</strong></span>
+								<span class="perms red"><strong>{{{txt.permissions_option_deny}}}</strong></span>
+							</dt>
+							<dd>
+							</dd>
+{{#each context.page.groups.account}}
+							<dt>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="a"{{#if (eq access 'a')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="x"{{#if (eq access 'x')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="d"{{#if (eq access 'd')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+							</dt>
+							<dd>
+								<span>{{{name}}}</span>
+							</dd>
+{{/each}}
+						</dl>
+					</dd>
+				</dl>
+
+				<dl class="settings">
+					<dt>{{{txt.page_show_help}}}:</dt>
+					<dd><input type="checkbox" name="show_help" value="1"{{#if context.page.show_help}} checked{{/if}}></dd>
+				</dl>
+
+{{#if (or context.page.fields.account context.page.fields.character)}}
+				<dl class="settings">
+					<dt>{{{txt.page_display_custom_field}}}:</dt>
+					<dd>
+						<select name="show_custom_field">
+							<option value="0">{{{txt.page_custom_field_none}}}</option>
+	{{#if context.page.fields.account}}
+							<optgroup label="{{{txt.page_custom_field_ooc}}}">
+		{{#each context.page.fields.account}}
+								<option value="{{@key}}"{{#if (eq_coerce @key ../context.page.show_custom_field)}} selected{{/if}}>{{{.}}}</option>
+		{{/each}}
+							</optgroup>
+	{{/if}}
+	{{#if context.page.fields.character}}
+							<optgroup label="{{{txt.page_custom_field_ic}}}">
+		{{#each context.page.fields.character}}
+								<option value="{{@key}}"{{#if (eq_coerce @key ../context.page.show_custom_field)}} selected{{/if}}>{{{.}}}</option>
+		{{/each}}
+							</optgroup>
+	{{/if}}
+						</select>
+					</dd>
+					<dt>{{{txt.page_custom_field_post_age}}}:</dt>
+					<dd>
+						<select name="custom_field_filter">
+							<option value="0"{{#if (eq_coerce '0' context.page.custom_field_filter)}} selected{{/if}}>{{{txt.page_custom_field_post_age_any}}}</option>
+							<option value="1"{{#if (eq_coerce '1' context.page.custom_field_filter)}} selected{{/if}}>{{{txt.page_custom_field_post_age_1month}}}</option>
+							<option value="2"{{#if (eq_coerce '2' context.page.custom_field_filter)}} selected{{/if}}>{{{txt.page_custom_field_post_age_3months}}}</option>
+							<option value="3"{{#if (eq_coerce '3' context.page.custom_field_filter)}} selected{{/if}}>{{{txt.page_custom_field_post_age_6months}}}</option>
+							<option value="4"{{#if (eq_coerce '4' context.page.custom_field_filter)}} selected{{/if}}>{{{txt.page_custom_field_post_age_ever}}}</option>
+						</select>
+					</dd>
+				</dl>
+{{else}}
+				<input type="hidden" name="show_custom_field" value="0">
+				<inptu type="hidden" name="custom_field_filter" value="0">
+{{/if}}
+				{{session_form}}
+				<input type="hidden" name="pid" value="{{{context.page.id_page}}}">
+				<div class="buttonlist righttext">
+					<input type="submit" class="active" name="save" value="{{{txt.save}}}">
+					<input type="submit" name="preview" value="{{{txt.preview}}}" id="preview_page">
+					{{#if context.page.id_page}}
+					<input type="submit" name="delete" class="you_sure" value="{{{txt.delete}}}">
+					{{/if}}
+				</div>
+			</div>
+		</form>

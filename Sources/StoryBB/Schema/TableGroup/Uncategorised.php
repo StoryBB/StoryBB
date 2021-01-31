@@ -871,6 +871,34 @@ class Uncategorised
 					Index::primary(['id_board', 'id_group']),
 				]
 			),
+			Table::make('page',
+				[
+					'id_page' => Column::mediumint()->auto_increment(),
+					'page_name' => Column::varchar(64),
+					'page_title' => Column::varchar(255),
+					'page_content' => Column::mediumtext(),
+					'show_help' => Column::tinyint(),
+					'show_custom_field' => Column::smallint(),
+					'custom_field_filter' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_page']),
+					Index::key(['page_name']),
+				]
+			),
+			Table::make('page_access',
+				[
+					'id_page' => Column::mediumint(),
+					'id_group' => Column::smallint()->signed(),
+					'allow_deny' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_page', 'id_group']),
+				],
+				[
+					Constraint::from('page_access.id_page')->to('page.id_page'),
+				]
+			),
 			Table::make('permission_profiles',
 				[
 					'id_profile' => Column::smallint()->auto_increment(),

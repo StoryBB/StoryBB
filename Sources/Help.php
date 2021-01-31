@@ -72,11 +72,84 @@ function ShowHelp()
 	}
 	$smcFunc['db']->free_result($request);
 
+	// Now let's see if there are any pages for the user.
+	$pages = get_custom_help_pages();
+	if (!empty($pages))
+	{
+		foreach ($pages as $id_page => $page)
+		{
+			$context['manual_sections']['page_' . $id_page] = [
+				'title' => $page['page_title'],
+				'desc' => '',
+				'link' => $scripturl . '?action=pages;page=' . $page['page_name'],
+			];
+		}
+	}
+
 	// CRUD $subActions as needed.
 	routing_integration_hook('integrate_manage_help', [&$subActions]);
 
 	$context['subaction'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
 	call_helper($subActions[$context['subaction']]);
+}
+
+function get_custom_help_pages()
+{
+	global $smcFunc, $user_info;
+
+	$pages = [];
+
+	$base_access = allowedTo('admin_forum') ? 'a' : 'x';
+
+	$request = $smcFunc['db']->query('', '
+		SELECT id_page, page_name, page_title
+		FROM {db_prefix}page
+		WHERE show_help = 1
+		ORDER BY page_title');
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$row['access'] = $base_access;
+		$pages[$row['id_page']] = $row;
+	}
+	$smcFunc['db']->free_result($request);
+
+	if (empty($pages))
+	{
+		return [];
+	}
+
+	// Admins don't need to check.
+	if (allowedTo('admin_forum'))
+	{
+		return $pages;
+	}
+
+	$request = $smcFunc['db']->query('', '
+		SELECT id_page, MAX(allow_deny) AS access
+		FROM {db_prefix}page_access
+		WHERE id_page IN ({array_int:pages})
+			AND id_group IN ({array_int:groups})
+		GROUP BY id_page',
+		[
+			'pages' => array_keys($pages),
+			'groups' => $user_info['groups'],
+		]
+	);
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$pages[$row['id_page']]['access'] = $row['access'] ? 'd' : 'a';
+	}
+	$smcFunc['db']->free_result($request);
+
+	foreach ($pages as $id_page => $page)
+	{
+		if ($page['access'] != 'a')
+		{
+			unset($pages[$id_page]);
+		}
+	}
+
+	return $pages;
 }
 
 /**

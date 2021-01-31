@@ -1,0 +1,34 @@
+	<div class="cat_bar">
+		<h3 class="catbg">{{{context.page.page_title}}}</h3>
+	</div>
+{{#if context.page.page_content}}
+	<div class="windowbg">
+		{{{context.page.page_content}}}
+	</div>
+	<br>
+{{/if}}
+
+{{#if context.page.custom_fields}}
+	{{#each context.page.custom_fields}}
+		<div class="title_bar">
+			<h3 class="titlebg">{{{../context.page.field_name}}} {{#if (neq @key ' ')}}- {{@key}}{{/if}}</h3>
+		</div>
+		{{#each .}}
+		<div class="up_contain">
+			<div class="lastpost">
+				<div class="last_poster">
+					{{{avatar.image}}}
+				</div>
+{{#if (eq_coerce ../../context.page.in_character '1')}}
+				<p><a href="{{{character_link}}}">{{{character_name}}}</a><br>(<a href="{{{account_link}}}">{{{real_name}}}</a>)</p>
+{{else}}
+				<p><a href="{{{account_link}}}">{{{real_name}}}</a></p>
+{{/if}}
+			</div>
+			<div class="info">
+				{{{value}}}
+			</div>
+		</div>
+		{{/each}}
+	{{/each}}
+{{/if}}
