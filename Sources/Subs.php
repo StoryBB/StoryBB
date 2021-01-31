@@ -2739,7 +2739,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 	if (empty($user_profile[$id_member]))
 		loadMemberData($id_member);
 	if (empty($memberContext[$id_member]))
-		loadMemberContext($id_member);
+		loadMemberContext($id_member, true);
 
 	if (empty($memberContext[$id_member]['characters']))
 	{

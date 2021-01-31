@@ -1043,10 +1043,11 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$user_profile[$new_id]['member_group'] = $user_profile[$new_id]['character_group'];
 			}
 		}
+		$characters_loaded = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_member, chars.id_character, chars.character_name, 
 				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.signature, chars.id_theme,
-				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
+				chars.posts, chars.date_created, chars.last_active, chars.is_main,
 				chars.main_char_group, chars.char_groups, chars.char_sheet, chars.retired
 			FROM {db_prefix}characters AS chars
 			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
@@ -1075,7 +1076,6 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'sig_parsed' => !empty($row['signature']) ? Parser::parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],
 				'posts' => $row['posts'],
-				'age' => $row['age'],
 				'date_created' => $row['date_created'],
 				'last_active' => $row['last_active'],
 				'is_main' => $row['is_main'],
@@ -1095,6 +1095,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$user_profile[$row['id_member']]['id_attach'] = $row['id_attach'];
 			}
 			$image = '';
+
+			$characters_loaded[$row['id_character']] = $row['id_member'];
 
 			if (!empty($row['avatar']))
 			{
@@ -1121,6 +1123,20 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				});
 			}
 		}
+
+		$request = $smcFunc['db']->query('', '
+			SELECT id_field, id_character, value
+			FROM {db_prefix}custom_field_values
+			WHERE id_character IN ({array_int:character_ids})',
+			[
+				'character_ids' => array_keys($characters_loaded),
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$user_profile[$characters_loaded[$row['id_character']]]['characters'][$row['id_character']]['cfraw'][$row['id_field']] = $row['value'];
+		}
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db']->query('', '
 			SELECT id_member, variable, value
@@ -1360,57 +1376,82 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// Are we also loading the members custom fields into context?
 	if ($display_custom_fields && !empty($modSettings['displayFields']))
 	{
-		$memberContext[$user]['custom_fields'] = [];
-
 		if (!isset($context['display_fields']))
 			$context['display_fields'] = sbb_json_decode($modSettings['displayFields'], true);
 
-		foreach ($context['display_fields'] as $custom)
+		foreach ($memberContext[$user]['characters'] as $id_character => $character)
 		{
-			if (!isset($custom['col_name']) || trim($custom['col_name']) == '' || empty($profile['options'][$custom['col_name']]))
+			$memberContext[$user]['characters'][$id_character]['custom_fields'] = [];
+			$fieldset = $character['is_main'] ? 'ooc' : 'ic';
+
+			if (!isset($context['display_fields'][$fieldset]))
+			{
 				continue;
+			}
 
-			$value = $profile['options'][$custom['col_name']];
-
-			$fieldOptions = [];
-			$currentKey = 0;
-
-			// Create a key => value array for multiple options fields
-			if (!empty($custom['options']))
-				foreach ($custom['options'] as $k => $v)
+			foreach ($context['display_fields'][$fieldset] as $custom)
+			{
+				if (empty($character['cfraw'][$custom['id']]))
 				{
-					$fieldOptions[] = $v;
-					if (empty($currentKey))
-						$currentKey = $v == $value ? $k : 0;
+					continue;
 				}
 
-			// BBC?
-			if ($custom['bbc'])
-				$value = Parser::parse_bbc($value);
-			// ... or checkbox?
-			elseif (isset($custom['type']) && $custom['type'] == 'check')
-				$value = $value ? $txt['yes'] : $txt['no'];
+				$value = $character['cfraw'][$custom['id']];
 
-			// Enclosing the user input within some other text?
-			if (!empty($custom['enclose']))
-				$value = strtr($custom['enclose'], [
-					'{SCRIPTURL}' => $scripturl,
-					'{IMAGES_URL}' => $settings['images_url'],
-					'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
-					'{INPUT}' => $value,
-				]);
-
-			$memberContext[$user]['custom_fields'][] = [
-				'title' => !empty($custom['title']) ? $custom['title'] : $custom['col_name'],
-				'col_name' => $custom['col_name'],
-				'value' => un_htmlspecialchars($value),
-				'placement' => !empty($custom['placement']) ? $custom['placement'] : 0,
-			];
+				$placement = !empty($custom['placement']) ? $context['cust_profile_fields_placement'][$custom['placement']] : 'standard';
+				$memberContext[$user]['characters'][$id_character]['custom_fields'][$placement][] = [
+					'title' => !empty($custom['title']) ? $custom['title'] : $custom['col_name'],
+					'col_name' => $custom['col_name'],
+					'value' => process_custom_field($custom, $value),
+				];
+			}
 		}
 	}
 
 	call_integration_hook('integrate_member_context', [&$memberContext[$user], $user, $display_custom_fields]);
 	return true;
+}
+
+function process_custom_field($custom, $value)
+{
+	global $txt, $scripturl, $settings;
+
+	$fieldOptions = [];
+	$currentKey = 0;
+
+	// Create a key => value array for multiple options fields
+	if (!empty($custom['options']))
+		foreach ($custom['options'] as $k => $v)
+		{
+			$fieldOptions[] = $v;
+			if (empty($currentKey))
+				$currentKey = $v == $value ? $k : 0;
+		}
+
+	// BBC?
+	if (!empty($custom['bbc']))
+	{
+		$value = Parser::parse_bbc($value);
+	}
+	// ... or checkbox?
+	elseif (isset($custom['type']) && $custom['type'] == 'check')
+	{
+		$value = $value ? $txt['yes'] : $txt['no'];
+	}
+
+	// Enclosing the user input within some other text?
+	if (!empty($custom['enclose']))
+	{
+		$value = strtr($custom['enclose'], [
+			'{SCRIPTURL}' => $scripturl,
+			'{IMAGES_URL}' => $settings['images_url'],
+			'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
+			'{INPUT}' => $value,
+			'{KEY}' => $currentKey,
+		]);
+	}
+
+	return un_htmlspecialchars($value);
 }
 
 /**

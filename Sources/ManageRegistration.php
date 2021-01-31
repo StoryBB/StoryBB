@@ -117,7 +117,7 @@ function AdminRegister()
 			if (!empty($_POST['customfield']))
 			{
 				require_once($sourcedir . '/Profile-Modify.php');
-				makeCustomFieldChanges($memberID, 'register');
+				makeCustomFieldChanges($memberID, 0, 'register');
 			}
 
 			$context['new_member'] = [

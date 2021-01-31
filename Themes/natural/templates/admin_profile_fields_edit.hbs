@@ -30,11 +30,17 @@
 						</dt>
 						<dd>
 							<select name="profile_area" id="profile_area">
+{{#if context.field.in_character}}
+								<option value="none"{{#if (eq context.field.profile_area 'none')}} selected{{/if}}>{{{txt.custom_edit_profile_none}}}</option>
+								<option value="char"{{#if (eq context.field.profile_area 'char')}} selected{{/if}}>{{{txt.custom_edit_profile_char}}}</option>
+{{else}}
 								<option value="none"{{#if (eq context.field.profile_area 'none')}} selected{{/if}}>{{{txt.custom_edit_profile_none}}}</option>
 								<option value="account"{{#if (eq context.field.profile_area 'account')}} selected{{/if}}>{{{txt.account}}}</option>
 								<option value="prefs"{{#if (eq context.field.profile_area 'prefs')}} selected{{/if}}>{{{txt.profile_forum_preferences}}}</option>
+{{/if}}
 							</select>
 						</dd>
+{{#unless context.field.in_character}}
 						<dt>
 							<strong><label for="reg">{{{txt.custom_edit_registration}}}:</label></strong>
 						</dt>
@@ -45,6 +51,7 @@
 								<option value="2"{{#if (eq context.field.reg '2')}} selected{{/if}}>{{{txt.custom_edit_registration_require}}}</option>
 							</select>
 						</dd>
+{{/unless}}
 						<dt>
 							<strong><label for="display">{{{txt.custom_edit_display}}}:</label></strong>
 						</dt>
@@ -154,6 +161,7 @@
 								<input type="text" name="regex" value="{{{context.field.regex}}}" size="30">
 							</span>
 						</dd>
+{{#unless context.field.in_character}}
 						<dt>
 							<strong><label for="private">{{{txt.custom_edit_privacy}}}:</label></strong>
 							<span class="smalltext">{{{txt.custom_edit_privacy_desc}}}</span>
@@ -173,12 +181,13 @@
 						<dd>
 							<input type="checkbox" name="can_search" id="can_search_dd"{{#if (eq context.field.can_search '1')}} checked{{/if}}>
 						</dd>
+{{/unless}}
 						<dt>
-							<strong><label for="can_search_check">{{{txt.custom_edit_active}}}:</label></strong><br>
+							<strong><label for="active_check">{{{txt.custom_edit_active}}}:</label></strong><br>
 							<span class="smalltext">{{{txt.custom_edit_active_desc}}}</span>
 						</dt>
 						<dd>
-							<input type="checkbox" name="active" id="can_search_check"{{#if (eq context.field.active '1')}} checked{{/if}}>
+							<input type="checkbox" name="active" id="active_check"{{#if (eq context.field.active '1')}} checked{{/if}}>
 						</dd>
 					</dl>
 				</fieldset>
@@ -190,6 +199,11 @@
 			</div>
 			{{session_form}}
 			{{token_form 'admin-ecp'}}
+{{#if context.field.in_character}}
+			<input type="hidden" id="private" name="private" value="0">
+			<input type="hidden" id="can_search_dd" name="can_search" value="0">
+{{/if}}
+			<input type="hidden" name="new_ic" value="{{#if context.field.in_character}}1{{else}}0{{/if}}">
 		</form>
 	</div>
 	<script>

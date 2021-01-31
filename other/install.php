@@ -1390,14 +1390,14 @@ function AdminAccount()
 				$db_prefix . 'characters',
 				[
 					'id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
-					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
 					'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int',
 					'main_char_group' => 'int', 'char_groups' => 'string', 'char_sheet' => 'int',
 					'retired' => 'int',
 				],
 				[
 					$incontext['member_id'], stripslashes($_POST['username']), '',
-					'', 0, 0, '',
+					'', 0, 0,
 					time(), 0, 1,
 					0, '', 0,
 					0,

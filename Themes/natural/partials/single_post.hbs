@@ -7,10 +7,10 @@
 	<div class="post_wrapper">
 		<div class="poster">
 
-{{#if custom_fields.above_member}}
+{{#if member.custom_fields.above_member}}
 			<div class="custom_fields_above_member">
 				<ul class="nolist">
-				{{#each custom_fields.above_member}}
+				{{#each member.custom_fields.above_member}}
 					<li class="custom {{col_name}}">{{{value}}}</li>
 				{{/each}}
 				</ul>
@@ -36,10 +36,10 @@
 				</li>
 {{/if}}
 
-{{#if custom_fields.below_avatar}}
+{{#if member.custom_fields.below_avatar}}
 				<div class="custom_fields_above_member">
 					<ul class="nolist">
-					{{#each custom_fields.below_avatar}}
+					{{#each member.custom_fields.below_avatar}}
 						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
 					</ul>
@@ -64,10 +64,10 @@
 				<li class="blurb">{{member.blurb}}</li>
 	{{/if}}
 
-	{{#if custom_fields.icons}}
+	{{#if member.custom_fields.icons}}
 				<li class="im_icons">
 					<ol>
-					{{#each custom_fields.icons}}
+					{{#each member.custom_fields.icons}}
 						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
 					</ol>
@@ -89,7 +89,7 @@
 				</li>
 	{{/if}}
 
-	{{#each custom_fields.standard}}
+	{{#each member.custom_fields.standard}}
 				<li class="custom {{col_name}}">{{title}}: {{{value}}}</li>
 	{{/each}}
 
@@ -111,7 +111,7 @@
 {{/if}}
 
 {{!  Are there any custom fields to show at the bottom of the poster info? }}
-{{#each custom_fields.bottom_poster}}
+{{#each member.custom_fields.bottom_poster}}
 				<li class="custom {{col_name}}">{{title}}: {{{value}}}</li>
 {{/each}}
 			</ul>
@@ -262,11 +262,11 @@
 
 			<div class="moderatorbar">
 
-{{#if custom_fields.above_signature}}
+{{#if member.custom_fields.above_signature}}
 				<div class="custom_fields_above_signature">
 					<ul class="nolist">
 
-	{{#each custom_fields.above_signature}}
+	{{#each member.custom_fields.above_signature}}
 						<li class="custom {{col_name}}">{{{value}}}</li>
 	{{/each}}
 
@@ -280,7 +280,7 @@
 				</div>
 {{/if}}
 
-{{#if custom_fields.below_signature}}
+{{#if member.custom_fields.below_signature}}
 				<div class="custom_fields_below_signature">
 					<ul class="nolist">
 						{{#each custom_fields.below_signature}}

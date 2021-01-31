@@ -552,6 +552,15 @@ class Folder extends AbstractPMController
 			'labels' => $context['message_labels'][$message['id_pm_head']] ?? [],
 		];
 
+		$output['member']['custom_fields'] = [];
+		foreach ($output['member']['characters'] as $character)
+		{
+			if ($character['is_main'])
+			{
+				$output['member']['custom_fields'] = $character['custom_fields'];
+			}
+		}
+
 		if ($context['can_send_pm'])
 		{
 			$output += [
@@ -593,11 +602,6 @@ class Folder extends AbstractPMController
 		}
 
 		$counter++;
-
-		// Any custom profile fields?
-		if (!empty($memberContext[$message['id_member_from']]['custom_fields']))
-			foreach ($memberContext[$message['id_member_from']]['custom_fields'] as $custom)
-				$output['custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
 		call_integration_hook('integrate_prepare_pm_context', [&$output, &$message, $counter]);
 

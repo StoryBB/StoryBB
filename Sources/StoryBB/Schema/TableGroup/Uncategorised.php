@@ -200,7 +200,6 @@ class Uncategorised
 					'signature' => Column::text(),
 					'id_theme' => Column::tinyint(),
 					'posts' => Column::mediumint(),
-					'age' => Column::varchar(255),
 					'date_created' => Column::int(),
 					'last_active' => Column::int(),
 					'is_main' => Column::tinyint(),
@@ -303,10 +302,27 @@ class Uncategorised
 					'default_value' => Column::varchar(255),
 					'enclose' => Column::text(),
 					'placement' => Column::tinyint(),
+					'in_character' => Column::tinyint(),
 				],
 				[
 					Index::primary(['id_field']),
 					Index::unique(['col_name']),
+				]
+			),
+			table::make('custom_field_values',
+				[
+					'id_value' => Column::int()->auto_increment(),
+					'id_field' => Column::smallint(),
+					'id_character' => Column::int(),
+					'value' => Column::text(),
+				],
+				[
+					Index::primary(['id_value']),
+					Index::unique(['id_field', 'id_character']),
+				],
+				[
+					Constraint::from('custom_field_ic_values.id_field')->to('custom_fields.id_field'),
+					Constraint::from('custom_field_ic_values.id_character')->to('characters.id_character'),
 				]
 			),
 			Table::make('files',

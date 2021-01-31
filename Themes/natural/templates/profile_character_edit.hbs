@@ -60,6 +60,15 @@
 					</dd>
 				</dl>
 
+{{#if context.character.custom_fields}}
+	{{#each context.character.custom_fields}}
+				<dl>
+					<dt>{{{field_name}}}:</dt>
+					<dd>{{{input_html}}}</dd>
+				</dl>
+	{{/each}}
+{{/if}}
+
 				<dl>
 					<dt>
 						<strong id="personal_picture">
@@ -138,12 +147,6 @@
 					</dd>
 				</dl>
 
-				<dl>
-					<dt>{{{txt.age}}}:</dt>
-					<dd>
-						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50">
-					</dd>
-				</dl>
 				<div class="char_signature"></div>
 				<dl class="noborder" id="current_sig">
 					<dt>{{{txt.current_signature}}}:</dt>

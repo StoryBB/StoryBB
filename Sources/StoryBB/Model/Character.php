@@ -266,4 +266,35 @@ class Character
 
 		return true;
 	}
+
+	/**
+	 * Deletes a character, regardless of its type.
+	 *
+	 * @param int $character_id The character to delete. Will also delete OOC character entries.
+	 */
+	public static function delete_character(int $character_id)
+	{
+		global $smcFunc, $sourcedir;
+
+		require_once($sourcedir . '/ManageAttachments.php');
+		removeAttachments(['id_character' => $character_id, 'attachment_type' => Attachment::ATTACHMENT_AVATAR]);
+
+		// And their custom fields.
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}custom_field_values
+			WHERE id_character = {int:char}',
+			[
+				'char' => $character_id,
+			]
+		);
+
+		// So we can delete them.
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}characters
+			WHERE id_character = {int:char}',
+			[
+				'char' => $character_id,
+			]
+		);
+	}
 }

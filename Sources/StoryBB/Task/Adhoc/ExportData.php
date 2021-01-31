@@ -209,7 +209,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.character_name, chars.avatar, chars.signature,
-				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
+				chars.posts, chars.date_created, chars.last_active, chars.is_main,
 				a.id_attach, a.filename, a.attachment_type
 			FROM {db_prefix}characters AS chars
 			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
@@ -257,23 +257,24 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$exports[$main_char] += $row;
 		}
 
-		// Add custom fields to the account entry.
-		if (!empty($main_char))
+		// Add custom fields.
+		if (!empty($exports))
 		{
 			$request = $smcFunc['db']->query('', '
-				SELECT cf.field_name, th.value
+				SELECT cf.field_name, cfv.id_character, cfv.value
 				FROM {db_prefix}custom_fields AS cf
-				INNER JOIN {db_prefix}themes AS th ON (th.id_member = {int:member} AND th.variable = cf.col_name)
+				INNER JOIN {db_prefix}custom_field_values AS cfv ON (cf.id_field = cfv.id_field)
 				WHERE cf.private < {int:admin_only}
+					AND cfv.id_character IN ({array_int:characters})
 				ORDER BY cf.field_order',
 				[
-					'member' => $this->_details['id_member'],
+					'characters' => array_keys($exports),
 					'admin_only' => 3,
 				]
 			);
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
-				$exports[$main_char]['custom_fields'][$row['field_name']] = $row['value'];
+				$exports[$row['id_character']]['custom_fields'][$row['field_name']] = $row['value'];
 			}
 		}
 
@@ -361,6 +362,21 @@ class ExportData extends \StoryBB\Task\Adhoc
 				}
 				$details[] = '';
 				$details[] = 'Last active: ' . date('j F Y, H:i:s', $character['last_active']);
+
+				if (!empty($character['custom_fields']))
+				{
+					$added = false;
+					foreach ($character['custom_fields'] as $name => $value)
+					{
+						if ($value)
+						{
+							$added = true;
+							$details[] = $name . ': ' . $value;
+						}
+					}
+					if ($added)
+						$details[] = '';
+				}
 
 				$zip->addEmptyDir('account_and_characters/' . $character['export_folder'] . '/sheets');
 			}

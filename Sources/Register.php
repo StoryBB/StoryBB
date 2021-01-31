@@ -486,7 +486,7 @@ function Register2()
 	{
 		require_once($sourcedir . '/Profile.php');
 		require_once($sourcedir . '/Profile-Modify.php');
-		makeCustomFieldChanges($memberID, 'register');
+		makeCustomFieldChanges($memberID, 0, 'register');
 	}
 
 	// Basic template variable setup.
