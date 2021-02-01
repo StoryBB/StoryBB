@@ -12,6 +12,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Helper\FontAwesome;
 use StoryBB\Helper\Parser;
 
 function ManagePages()
@@ -153,8 +154,11 @@ function AddPage()
 		'show_help' => 0,
 		'show_custom_field' => 0,
 		'custom_field_filter' => 0,
+		'show_sidebar' => 0,
+		'sidebar_icon' => '',
 	];
 
+	load_page_sidebar_icons();
 	load_page_access();
 	load_page_fields();
 
@@ -170,11 +174,13 @@ function AddPage()
 				'{db_prefix}page',
 				[
 					'page_name' => 'string', 'page_title' => 'string', 'page_content' => 'string',
-					'show_help' => 'int', 'show_custom_field' => 'int', 'custom_field_filter' => 'int'
+					'show_help' => 'int', 'show_custom_field' => 'int', 'custom_field_filter' => 'int',
+					'show_sidebar' => 'int', 'sidebar_icon' => 'string',
 				],
 				[
 					$context['page']['page_name'], $context['page']['page_title'], $context['page']['page_content'],
 					$context['page']['show_help'], $context['page']['show_custom_field'], $context['page']['custom_field_filter'],
+					$context['page']['show_sidebar'], $context['page']['sidebar_icon'],
 				],
 				['id_page'],
 				1
@@ -224,7 +230,7 @@ function EditPage()
 	$page = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 0;
 
 	$request = $smcFunc['db']->query('', '
-		SELECT id_page, page_name, page_title, page_content, show_help, show_custom_field, custom_field_filter
+		SELECT id_page, page_name, page_title, page_content, show_help, show_custom_field, custom_field_filter, show_sidebar, sidebar_icon
 		FROM {db_prefix}page
 		WHERE id_page = {int:page}',
 		[
@@ -239,6 +245,7 @@ function EditPage()
 		redirectexit('action=admin;area=pages');
 	}
 
+	load_page_sidebar_icons();
 	load_page_access();
 	load_page_fields();
 
@@ -278,7 +285,9 @@ function EditPage()
 					page_content = {string:page_content},
 					show_help = {int:show_help},
 					show_custom_field = {int:show_custom_field},
-					custom_field_filter = {int:custom_field_filter}
+					custom_field_filter = {int:custom_field_filter},
+					show_sidebar = {int:show_sidebar},
+					sidebar_icon = {string:sidebar_icon}
 				WHERE id_page = {int:id_page}',
 				$context['page']
 			);
@@ -312,6 +321,18 @@ function EditPage()
 		'required' => false,
 	];
 	create_control_richedit($editorOptions);
+}
+
+function load_page_sidebar_icons()
+{
+	global $context;
+
+	$fontawesome_title = FontAwesome::get_icon_set_name();
+	foreach (FontAwesome::get_icons() as $section => $icons)
+	{
+		$section_title = $fontawesome_title . ' (' . $section . ')';
+		$context['page']['icons'][$section_title] = $icons;
+	}
 }
 
 function load_page_access()
@@ -526,6 +547,20 @@ function check_page()
 
 	$_POST['custom_field_filter'] = isset($_POST['custom_field_filter']) ? (int) $_POST['custom_field_filter'] : 0;
 	$context['page']['custom_field_filter'] = min(max($_POST['custom_field_filter'], 0), 4); // Clamp the value to between 0 and 4.
+
+	$context['page']['show_sidebar'] = !empty($_POST['show_sidebar']) ? 1 : 0;
+	$context['page']['sidebar_icon'] = '';
+	if (!empty($_POST['sidebar_icon']))
+	{
+		foreach ($context['page']['icons'] as $set => $icons)
+		{
+			if (in_array($_POST['sidebar_icon'], $icons))
+			{
+				$context['page']['sidebar_icon'] = $_POST['sidebar_icon'];
+				break;
+			}
+		}
+	}
 
 	update_page_access_from_post();
 }

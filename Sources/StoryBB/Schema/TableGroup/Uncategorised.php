@@ -880,6 +880,8 @@ class Uncategorised
 					'show_help' => Column::tinyint(),
 					'show_custom_field' => Column::smallint(),
 					'custom_field_filter' => Column::tinyint(),
+					'show_sidebar' => Column::tinyint(),
+					'sidebar_icon' => Column::varchar(100),
 				],
 				[
 					Index::primary(['id_page']),
