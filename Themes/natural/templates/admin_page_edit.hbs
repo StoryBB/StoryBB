@@ -61,6 +61,24 @@
 					<dd><input type="checkbox" name="show_help" value="1"{{#if context.page.show_help}} checked{{/if}}></dd>
 				</dl>
 
+				<dl class="settings">
+					<dt>{{{txt.page_show_sidebar}}}:</dt>
+					<dd><input type="checkbox" name="show_sidebar" value="1"{{#if context.page.show_sidebar}} checked{{/if}}></dd>
+					<dt>{{{txt.page_sidebar_icon}}}</dt>
+					<dd>
+						<select name="sidebar_icon">
+							<option value="">{{{txt.page_sidebar_icon_select}}}</option>
+{{#each context.page.icons}}
+							<optgroup label="{{{@key}}}">
+	{{#each .}}
+								<option value="{{{.}}}"{{#if (eq . ../../context.page.sidebar_icon)}} selected{{/if}}>{{{@key}}}</option>
+	{{/each}}
+							</optgroup>
+{{/each}}
+						</select>
+					</dd>
+				</dl>
+
 {{#if (or context.page.fields.account context.page.fields.character)}}
 				<dl class="settings">
 					<dt>{{{txt.page_display_custom_field}}}:</dt>

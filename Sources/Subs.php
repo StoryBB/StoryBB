@@ -1882,8 +1882,19 @@ function setupMenuContext()
 			],
 			'characterlist' => [
 				'url' => $scripturl . '?action=characters',
-				'icon' => 'fas fa-user-circle fa-fw',
+				'icon' => 'fas fa-users fa-fw',
 			],
+		];
+
+		foreach (get_sidebar_page_items() as $page)
+		{
+			$context['sidebar']['page-' . $page['page_name']] = [
+				'url' => $scripturl . '?action=pages;page=' . $page['page_name'],
+				'icon' => $page['sidebar_icon'] . ' fa-fw',
+			];
+		}
+
+		$context['sidebar'] += [
 			'manage' => [
 				'url' => $scripturl,
 				'icon' => 'fas fa-tools fa-fw',
@@ -2068,6 +2079,70 @@ function setupMenuContext()
 	}
 
 	$context['footer_links'] = Policy::get_footer_policies();
+}
+
+function get_sidebar_page_items()
+{
+	global $smcFunc, $user_info;
+
+	$pages = [];
+
+	$base_access = allowedTo('admin_forum') ? 'a' : 'x';
+
+	$request = $smcFunc['db']->query('', '
+		SELECT id_page, page_name, page_title, sidebar_icon
+		FROM {db_prefix}page
+		WHERE show_sidebar = 1
+		ORDER BY page_title');
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$row['access'] = $base_access;
+
+		if (empty($row['sidebar_icon']))
+		{
+			$row['sidebar_icon'] = 'far fa-question-circle';
+		}
+		$pages[$row['id_page']] = $row;
+	}
+	$smcFunc['db']->free_result($request);
+
+	if (empty($pages))
+	{
+		return [];
+	}
+
+	// Admins don't need to check.
+	if (allowedTo('admin_forum'))
+	{
+		return $pages;
+	}
+
+	$request = $smcFunc['db']->query('', '
+		SELECT id_page, MAX(allow_deny) AS access
+		FROM {db_prefix}page_access
+		WHERE id_page IN ({array_int:pages})
+			AND id_group IN ({array_int:groups})
+		GROUP BY id_page',
+		[
+			'pages' => array_keys($pages),
+			'groups' => $user_info['groups'],
+		]
+	);
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$pages[$row['id_page']]['access'] = $row['access'] ? 'd' : 'a';
+	}
+	$smcFunc['db']->free_result($request);
+
+	foreach ($pages as $id_page => $page)
+	{
+		if ($page['access'] != 'a')
+		{
+			unset($pages[$id_page]);
+		}
+	}
+
+	return $pages;
 }
 
 /**

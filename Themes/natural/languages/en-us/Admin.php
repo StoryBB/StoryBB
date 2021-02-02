@@ -674,6 +674,9 @@ $txt['edit_page'] = 'Edit Page';
 $txt['invalid_page_name'] = 'The page name is invalid, it can only contain A-Z, a-z, 0-9, _ (underscore) and - (hyphen).';
 $txt['duplicate_page_name'] = 'This page name is already in use with another page.';
 $txt['empty_page_title'] = 'The page must have a title.';
+$txt['page_show_sidebar'] = 'Show in sidebar menu';
+$txt['page_sidebar_icon'] = 'Sidebar menu icon';
+$txt['page_sidebar_icon_select'] = 'Select an icon...';
 
 $txt['contact_form_no_messages'] = 'No messages have been received from the contact form.';
 $txt['contact_form_sender'] = 'Sent by';

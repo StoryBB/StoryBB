@@ -171,6 +171,12 @@ function AdminMain()
 						'maintenance' => [$txt['attachment_manager_maintenance']],
 					],
 				],
+				'pages' => [
+					'label' => $txt['admin_pages'],
+					'file' => 'ManagePages.php',
+					'function' => 'ManagePages',
+					'permission' => 'admin_forum',
+				],
 			],
 		],
 		'members' => [
