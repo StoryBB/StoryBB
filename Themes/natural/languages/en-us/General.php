@@ -597,6 +597,8 @@ $txt['who_viewing_topic'] = ' are viewing this topic.';
 $txt['who_viewing_board'] = ' are viewing this board.';
 $txt['who_member'] = 'Member';
 
+$txt['affiliates_title'] = 'Affiliates';
+
 // Current footer strings, no longer used
 $txt['rss'] = 'RSS';
 $txt['atom'] = 'Atom';

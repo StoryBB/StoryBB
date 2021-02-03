@@ -3222,7 +3222,7 @@ span.draggable-handle {
 	font-size: 12px;
 	font-family: sans-serif;
 	letter-spacing: 2px;
-	color: #cccccc;
+	color: $secondary-accent-dark;
 }
 
 span.draggable-handle::after {
@@ -3317,7 +3317,7 @@ div#manage_boards dl dd textarea[name=desc] {
 	padding: 6px;
 }
 
-.action_home {
+.action_forum {
 	.blocktype_multiblock {
 		.cat_bar {
 			background: $secondary-accent;
@@ -3333,11 +3333,68 @@ div#manage_boards dl dd textarea[name=desc] {
 			border-top: none;
 		}
 		.subbg {
-			color: #ddd
+			color: $secondary-accent-contrast;
+		}
+	}
+	.blocktype_affiliates {
+		.cat_bar {
+			background: $secondary-accent;
+		}
+		.titlebg {
+			color: $secondary-accent-contrast;
+		}
+		.information {
+			padding: 0;
+			border-color: $secondary-accent-light;
+		}
+		.information.block_content {
+			border-top: none;
+		}
+		.title_bar {
+			margin-top: 0;
+			padding: 0;
+			border: none;
+		}
+		.centertext {
+			padding: 5px 5%;
+
+			a {
+				display: inline-block;
+				margin: 10px 5px;
+				line-height: 1;
+			}
 		}
 	}
 }
 
 .boardindex_table.sub_boards .cat_bar {
 	background: $secondary-accent-light;
+}
+
+#admin_content .up_contain {
+	&.affiliate {
+		padding: 10px 0;
+		position: relative;
+
+		.affiliate-image, .affiliate-desc, .affiliate-options {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		.affiliate-image {
+			margin-right: 10px;
+		}
+		.affiliate-options {
+			position: absolute;
+			right: 15px;
+
+			.buttonlist {
+				margin: 0;
+				padding: 0;
+			}
+		}
+	}
+}
+
+.hiddenelement {
+	display: none;
 }

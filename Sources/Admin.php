@@ -95,6 +95,12 @@ function AdminMain()
 					'icon' => 'contact',
 					'permission' => ['admin_forum'],
 				],
+				'affiliates' => [
+					'label' => $txt['affiliates'],
+					'file' => 'ManageAffiliates.php',
+					'function' => 'ManageAffiliates',
+					'permission' => ['admin_forum'],
+				],
 				'adminlogoff' => [
 					'label' => $txt['admin_logoff'],
 					'function' => 'AdminEndSession',
