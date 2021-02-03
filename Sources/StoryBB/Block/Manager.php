@@ -17,93 +17,70 @@ namespace StoryBB\Block;
  */
 class Manager
 {
-	static protected $block_instances = null;
-
-	public static function load_blocks($current_context = true)
+	public static function load_current_blocks()
 	{
 		global $smcFunc, $user_info, $context;
 
-		if (static::$block_instances === null)
+		$result = $smcFunc['db']->query('', '
+			SELECT id_instance, class, visibility, configuration, region, position, active
+			FROM {db_prefix}block_instances
+			WHERE active = {int:active}
+			ORDER BY region, position',
+			[
+				'active' => 1,
+			]
+		);
+
+		$instances = [];
+
+		while ($row = $smcFunc['db']->fetch_assoc($result))
 		{
-			static::$block_instances = [];
-
-			$result = $smcFunc['db']->query('', '
-				SELECT id_instance, class, visibility, configuration, region, position, active
-				FROM {db_prefix}block_instances
-			');
-
-			while ($row = $smcFunc['db']->fetch_assoc($result))
+			// Apply visibility.
+			if (!empty($row['visibility']))
 			{
-				$row['object'] = null;
-				if (class_exists($row['class']))
+				// Unbundle the JSON. If we can't unbundle it, assume it's not visible.
+				$visibility = @json_decode($row['visibility'], true);
+				if (empty($visibility))
 				{
-					$config = !empty($row['configuration']) ? json_decode($row['configuration'], true) : [];
-					$row['object'] = new $row['class']($config);
+					continue;
 				}
-				static::$block_instances[$row['region']][$row['id_instance']] = $row;
-			}
-			$smcFunc['db']->free_result($result);
 
-			foreach (static::$block_instances as $region => $instances)
-			{
-				uasort($instances, function($a, $b)
+				// Does this block require groups? Do you have any of those groups?
+				if (!empty($visibility['groups_include']) && count(array_intersect($visibility['groups_include'], $user_info['groups'])) === 0)
 				{
-					return $a['position'] <=> $b['position'];
-				});
-				static::$block_instances[$region] = $instances;
-			}
-		}
+					continue;
+				}
 
-		if ($current_context)
-		{
-			$block_instances = [];
-			foreach (static::$block_instances as $region => $instances)
-			{
-				foreach ($instances as $instance_id => $instance)
+				// Does this block exclude any groups? Do you have any of those?
+				if (!empty($visibility['groups_exclude']) && count(array_intersect($visibility['groups_exclude'], $user_info['groups'])) > 0)
 				{
-					if (empty($instance['active']) || empty($instance['object']))
-					{
-						continue;
-					}
-
-					// Apply visibility.
-					if (!empty($instance['visibility']))
-					{
-						// Unbundle the JSON. If we can't unbundle it, assume it's not visible.
-						$visibility = @json_decode($instance['visibility'], true);
-						if (empty($visibility))
-						{
-							continue;
-						}
-
-						// Does this block require groups? Do you have any of those groups?
-						if (!empty($visibility['groups_include']) && count(array_intersect($visibility['groups_include'], $user_info['groups'])) === 0)
-						{
-							continue;
-						}
-
-						// Does this block exclude any groups? Do you have any of those?
-						if (!empty($visibility['groups_exclude']) && count(array_intersect($visibility['groups_exclude'], $user_info['groups'])) > 0)
-						{
-							continue;
-						}
-					}
-
-					// Apply filtering to current setup.
-					// Is this filtered to a (legacy) action? If so, check it's on the list.
-					if (!empty($visibility['action']) && !in_array($context['current_action'], $visibility['action']))
-					{
-						continue;
-					}
-
-					$block_instances[$region][$instance_id] = $instance['object'];
+					continue;
 				}
 			}
 
-			return $block_instances;
-		}
+			// Apply filtering to current setup.
+			// Is this filtered to a (legacy) action? If so, check it's on the list.
+			if (!empty($visibility['action']) && !in_array($context['current_action'], $visibility['action']))
+			{
+				continue;
+			}
 
-		return static::$block_instances;
+			$row['object'] = null;
+			if (!class_exists($row['class']))
+			{
+				continue;
+			}
+			$config = !empty($row['configuration']) ? json_decode($row['configuration'], true) : [];
+			$row['object'] = new $row['class']($config);
+
+			// Force a preload of the content.
+			$row['object']->get_block_content();
+
+			$instances[$row['region']][$row['id_instance']] = $row;
+		}
+		$smcFunc['db']->free_result($result);
+
+		return $instances;
 	}
 
 	public static function render_region(string $region)
@@ -123,8 +100,9 @@ class Manager
 		$template_cache = [];
 		$compiled_cache = [];
 
-		foreach ($context['page_blocks'][$region] as $instance_id => $instance)
+		foreach ($context['page_blocks'][$region] as $instance_id => $instance_details)
 		{
+			$instance = $instance_details['object'];
 			$partial_name = $instance->get_render_template();
 
 			if (!isset($template_cache[$partial_name]))

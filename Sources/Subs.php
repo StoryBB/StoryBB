@@ -1260,10 +1260,7 @@ function setupThemeContext($forceload = false)
 
 	$loaded = true;
 
-	$context['page_blocks'] = \StoryBB\Block\Manager::load_blocks();
-
 	$context['in_maintenance'] = !empty($maintenance);
-	$context['current_action'] = isset($_GET['action']) ? StringLibrary::escape($_GET['action']) : '';
 
 	if (!$user_info['is_guest'])
 	{
@@ -1363,6 +1360,8 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $context['page_title_html_safe']];
 		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['page_title_html_safe']];
 	}
+
+	$context['page_blocks'] = \StoryBB\Block\Manager::load_current_blocks();
 
 	call_integration_hook('integrate_theme_context');
 }

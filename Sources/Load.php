@@ -1850,7 +1850,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['forum_name'] = $modSettings['forum_name'];
 	$context['forum_name_html_safe'] = StringLibrary::escape($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : StringLibrary::escape($settings['header_logo_url']);
-	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	$context['can_register'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] != 3;
 	if (isset($modSettings['load_average']))
