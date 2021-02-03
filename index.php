@@ -114,8 +114,31 @@ function sbb_main()
 	// Load the current user's permissions.
 	loadPermissions();
 
+	if (empty($_REQUEST['action']))
+	{
+		// Action and board are both empty... BoardIndex! Unless someone else wants to do something different.
+		if (empty($board) && empty($topic))
+		{
+			$_REQUEST['action'] = !empty($modSettings['integrate_default_action']) ? $modSettings['integrate_default_action'] : 'forum';
+		}
+
+		// Topic is empty, and action is empty.... MessageIndex!
+		elseif (empty($topic))
+		{
+			$_REQUEST['action'] = 'board';
+		}
+
+		// Board is not empty... topic is not empty... action is empty.. Display!
+		else
+		{
+			$_REQUEST['action'] = 'topic';
+		}
+	}
+
+	$context['current_action'] = StringLibrary::escape($_REQUEST['action']);
+
 	// Attachments don't require the entire theme to be loaded.
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'dlattach')
+	if ($context['current_action'] == 'dlattach')
 		detectBrowser();
 	// Load the current theme.  (note that ?theme=1 will also work, may be used for guest theming.)
 	else
@@ -131,7 +154,7 @@ function sbb_main()
 	$no_stat_actions = ['autocomplete', 'dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery'];
 	call_integration_hook('integrate_pre_log_stats', [&$no_stat_actions]);
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
+	if (!in_array($context['current_action'], $no_stat_actions))
 	{
 		// Log this user as online.
 		writeLog();
@@ -164,29 +187,8 @@ function sbb_main()
 		}
 	}
 
-	if (empty($_REQUEST['action']))
-	{
-		// Action and board are both empty... BoardIndex! Unless someone else wants to do something different.
-		if (empty($board) && empty($topic))
-		{
-			$_REQUEST['action'] = !empty($modSettings['integrate_default_action']) ? $modSettings['integrate_default_action'] : 'forum';
-		}
-
-		// Topic is empty, and action is empty.... MessageIndex!
-		elseif (empty($topic))
-		{
-			$_REQUEST['action'] = 'board';
-		}
-
-		// Board is not empty... topic is not empty... action is empty.. Display!
-		else
-		{
-			$_REQUEST['action'] = 'topic';
-		}
-	}
-
 	// Setting the cookie cookie.
-	if ($_REQUEST['action'] == 'cookie')
+	if ($context['current_action'] == 'cookie')
 	{
 		if ($context['show_cookie_notice'] && $context['user']['is_guest'])
 		{
@@ -194,8 +196,6 @@ function sbb_main()
 		}
 		redirectexit();
 	}
-
-	$context['current_action'] = isset($_REQUEST['action']) ? StringLibrary::escape($_REQUEST['action']) : null;
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = [

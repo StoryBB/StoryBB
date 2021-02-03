@@ -1,0 +1,24 @@
+		<form method="post" action="{{scripturl}}?action=admin;area=affiliates;sa=save_tier">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{context.page_title}}}</h3>
+			</div>
+			<div class="windowbg">
+				<dl class="settings">
+					<dt>{{{txt.tier_name}}}:</dt>
+					<dd><input type="text" name="tier_name" value="{{{context.tier_name}}}"></dd>
+					<dt>{{{txt.affiliate_image_width}}}:</dt>
+					<dd><input name="image_width" type="number" min="1" max="1500" value="{{{context.tier_image_width}}}"></dd>
+					<dt>{{{txt.affiliate_image_height}}}:</dt>
+					<dd><input name="image_height" type="number" min="1" max="1000" value="{{{context.tier_image_height}}}"></dd>
+				</dl>
+
+				{{session_form}}
+				<input type="hidden" name="tier_id" value="{{{context.tier_id}}}">
+				<div class="buttonlist righttext">
+					<button type="submit" class="active button" name="save" value="save">{{{txt.save}}}</button>
+					{{#if context.tier_id}}
+					<button type="submit" name="delete" value="delete" class="you_sure button">{{{txt.delete}}}</button>
+					{{/if}}
+				</div>
+			</div>
+		</form>

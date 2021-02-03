@@ -1,0 +1,62 @@
+		{{! Managing tiers of affiliates. }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.affiliates}}}</h3>
+		</div>
+
+{{#if context.tiers}}
+			<div class="buttonlist righttext">
+				<a class="button" href="{{scripturl}}?action=admin;area=affiliates;sa=add_tier">{{{txt.add_tier}}}</a>
+			</div>
+			<br>
+	{{#each context.tiers}}
+				<div class="title_bar">
+					<h3 class="title_bg">{{{tier_name}}}</h3>
+				</div>
+
+				<form action="{{../scripturl}}?action=admin;area=affiliates;sa=update_tier" method="post" class="affiliate_tier affiliate_tier_{{id_tier}}">
+					<div class="windowbg">
+		{{#if affiliates}}
+						<ul class="sortable ui-sortable">
+			{{#each affiliates}}
+							<li class="up_contain affiliate">
+								<span class="draggable-handle ui-sortable-handle"></span>
+								<input type="hidden" name="affiliate[]" value="{{id_affiliate}}">
+
+								<div class="affiliate-image">
+									<img src="{{{image}}}" alt="">
+								</div>
+								<div class="affiliate-desc">
+									{{{affiliate_name}}}<br>
+									<a href="{{{url}}}" target="_blank" rel="noopener">{{{url}}}</a>
+								</div>
+								<div class="affiliate-options">
+									<div class="buttonlist">
+				{{#if enabled}}
+										<a href="{{../../scripturl}}?action=admin;area=affiliates;sa=toggle_enabled;affiliate={{id_affiliate}};{{session_url}}" class="button">{{../../txt.disable_affiliate}}</a>
+				{{else}}
+										<a href="{{../../scripturl}}?action=admin;area=affiliates;sa=toggle_enabled;affiliate={{id_affiliate}};{{session_url}}" class="active button">{{../../txt.enable_affiliate}}</a>
+				{{/if}}
+										<a href="{{../../scripturl}}?action=admin;area=affiliates;sa=edit_affiliate;affiliate={{id_affiliate}}" class="button">{{../../txt.modify}}</a>
+									</div>
+								</div>
+							</li>
+			{{/each}}
+						</ul>
+		{{/if}}
+					</div>
+
+					<div class="buttonlist righttext">
+						<button class="button hiddenelement" name="save_order" type="submit">{{../txt.save_new_order}}</button>
+						<a class="button" href="{{../scripturl}}?action=admin;area=affiliates;sa=add_affiliate;tier={{{id_tier}}}">{{{../txt.add_affiliate}}}</a>
+						<a class="button" href="{{../scripturl}}?action=admin;area=affiliates;sa=edit_tier;tier={{{id_tier}}}">{{{../txt.edit_tier}}}</a>
+					</div>
+					<input type="hidden" name="tier" value="{{id_tier}}">
+					{{session_form}}
+				</form>
+	{{/each}}
+{{else}}
+			<div class="windowbg centertext">{{{txt.affiliate_tiers_none}}}</div>
+			<div class="buttonlist righttext">
+				<a class="button" href="{{scripturl}}?action=admin;area=affiliates;sa=add_tier">{{{txt.add_tier}}}</a>
+			</div>
+{{/if}}

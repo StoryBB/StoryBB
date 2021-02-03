@@ -1,0 +1,51 @@
+		<form method="post" action="{{scripturl}}?action=admin;area=affiliates;sa=save_affiliate" accept-charset="UTF-8" enctype="multipart/form-data">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{context.page_title}}}</h3>
+			</div>
+{{#if context.errors}}
+			<div class="errorbox">
+				<ul id="list_errors">
+
+	{{! Cycle through each error and display an error message. }}
+	{{#each context.post_errors}}
+					<li>{{get_text (concat 'profile_error_' .)}}</li>
+	{{/each}}
+				</ul>
+			</div>
+{{/if}}
+
+			<div class="windowbg affiliate_tier_{{{context.tier.id_tier}}}">
+				<dl class="settings">
+					<dt>{{{txt.tier_name}}}:</dt>
+					<dd>{{{context.tier.tier_name}}}</dd>
+					<dt>{{{txt.affiliate_name}}}:</dt>
+					<dd><input type="text" name="affiliate_name" value="{{{context.affiliate.name}}}" required></dd>
+					<dt>{{{txt.affiliate_enabled}}}</dt>
+					<dd><input type="checkbox" name="affiliate_enabled" value="1"{{#if context.affiliate.enabled}} checked{{/if}}></dd>
+				</dl>
+				<dl class="settings">
+					<dt>{{{txt.affiliate_url}}}</dt>
+					<dd><input type="url" name="affiliate_url" placeholder="https://" value="{{context.affiliate.url}}" required></dd>
+				</dl>
+				<dl class="settings">
+					<dt>{{{txt.current_affiliate_image}}}</dt>
+					<dd>{{{context.affiliate.current_image}}}</dd>
+					<dt>{{{txt.affiliate_image}}}</dt>
+					<dt>{{{txt.affiliate_image_url}}}:</dt>
+					<dd><input type="url" name="affiliate_image_url" placeholder="https://" value="{{{context.affiliate.image_url}}}"></dd>
+					<dt>{{{txt.affiliate_or_upload}}}:</dt>
+					<dd><input type="file" name="affiliate_image_upload"></dd>
+					<dt>{{{context.affiliate_image_hint}}}</dt>
+				</dl>
+
+				{{session_form}}
+				<input type="hidden" name="tier_id" value="{{{context.tier.id_tier}}}">
+				<input type="hidden" name="affiliate_id" value="{{{context.affiliate.id_affiliate}}}">
+				<div class="buttonlist righttext">
+					<button type="submit" class="active button" name="save" value="save">{{{txt.save}}}</button>
+					{{#if context.affiliate.id_affiliate}}
+					<button type="submit" name="delete" value="delete" class="you_sure button">{{{txt.delete}}}</button>
+					{{/if}}
+				</div>
+			</div>
+		</form>
