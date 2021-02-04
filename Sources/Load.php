@@ -1580,6 +1580,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 	global $txt, $boardurl, $scripturl, $modSettings;
 	global $context, $settings, $options, $sourcedir, $smcFunc, $language, $board, $image_proxy_enabled;
 
+	if (!isset($context['current_action']))
+	{
+		// If we're here and this has happened, we probably hit an error early on.
+		$context['current_action'] = 'error';
+	}
+
 	// The theme was specified by parameter.
 	if (!empty($id_theme))
 		$id_theme = (int) $id_theme;
