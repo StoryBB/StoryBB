@@ -1847,6 +1847,42 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$container = Container::instance();
 	$urlgenerator = $container->get('urlgenerator');
 
+	// Everyone loves favicons.
+	if (!empty($modSettings['favicon_cache']))
+	{
+		$favicons = json_decode($modSettings['favicon_cache'], true);
+
+		$types = [
+			0 => ['rel' => 'icon', 'type' => 'image/png', 'sizes' => '16x16'],
+			1 => ['rel' => 'icon', 'type' => 'image/png', 'sizes' => '32x32'],
+			2 => ['rel' => 'apple-touch-icon'],
+			3 => ['rel' => 'apple-touch-icon', 'sizes' => '180x180'],
+			4 => ['rel' => 'apple-touch-icon', 'sizes' => '152x152'],
+			5 => ['rel' => 'apple-touch-icon', 'sizes' => '167x167'],
+			6 => ['rel' => 'shortcut icon', 'sizes' => '128x128'],
+			7 => ['rel' => 'shortcut icon', 'sizes' => '192x192'],
+		];
+
+		foreach ($types as $id => $params)
+		{
+			if (empty($favicons['favicon_' . $id]))
+			{
+				continue;
+			}
+
+			$params['href'] = $urlgenerator->generate('favicon', ['id' => $id, 'timestamp' => $favicons['favicon_' . $id]]);
+
+			$link = '<link';
+			foreach ($params as $param => $value)
+			{
+				$link .= ' ' . $param . '="' . $value . '"';
+			}
+			$link .= '>';
+
+			$context['html_headers'] .= $link;
+		}
+	}
+
 	$context['login_url'] = $urlgenerator->generate('login_login');
 	$context['menu_separator'] = ' ';
 

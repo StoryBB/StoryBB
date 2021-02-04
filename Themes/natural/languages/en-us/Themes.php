@@ -139,3 +139,17 @@ $txt['themeadmin_themelist_link'] = 'Show the list of themes';
 /* Open Graph */
 $txt['og_image'] = 'OG Image';
 $txt['og_image_desc'] = 'Link to your Open Graph optimized image, suggested size 175x175px<br><span class="smalltext">You can read more about here <a href="http://ogp.me/">Open Graph</a></span>';
+
+$txt['favicon_explain'] = 'Favicons are images used by different browsers to help users identify your site among others on their computer, e.g. in browser tabs, bookmarks and similar. The most common sizes are supported below.';
+$txt['favicon_0'] = '16x16 PNG (browser tab icon)';
+$txt['favicon_1'] = '32x32 PNG (browser tab icon)';
+$txt['favicon_2'] = '120x120 PNG (older iPhone/Android)';
+$txt['favicon_3'] = '180x180 PNG (new iPhone/Android)';
+$txt['favicon_4'] = '152x152 PNG (older iPad)';
+$txt['favicon_5'] = '167x167 PNG (newer iPad)';
+$txt['favicon_6'] = '128x128 PNG (Android)';
+$txt['favicon_7'] = '192x192 PNG (Android)';
+$txt['favicon_none'] = '(none currently uploaded)';
+$txt['favicon_wrong_type'] = 'The image uplodaed for "%1$s" was not a PNG image.';
+$txt['favicon_could_not_save'] = 'The image uploaded for "%1$s" could not be saved.';
+$txt['favicon_saved'] = 'The image uploaded for "%1$s" was saved successfully.';

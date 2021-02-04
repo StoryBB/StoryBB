@@ -67,6 +67,7 @@ function ThemesMain()
 		'pick' => 'PickTheme',
 		'enable' => 'EnableTheme',
 		'copy' => 'CopyTemplate',
+		'favicon' => 'FaviconSettings',
 	];
 
 	// @todo Layout Settings?  huh?
@@ -1460,4 +1461,140 @@ function SetJavaScript()
 
 	// Don't output anything...
 	redirectexit($settings['images_url'] . '/blank.png');
+}
+
+function FaviconSettings()
+{
+	global $context, $txt, $smcFunc;
+
+	isAllowedTo('admin_forum');
+
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+	$filesystem = $container->get('filesystem');
+
+	if (isset($_POST['save']))
+	{
+		checkSession();
+
+		$accepted = [
+			0 => [16, 16],
+			1 => [32, 32],
+			2 => [120, 120],
+			3 => [180, 180],
+			4 => [152, 152],
+			5 => [167, 167],
+			6 => [128, 128],
+			7 => [192, 192],
+		];
+
+		foreach ($accepted as $id => $valid_size)
+		{
+			if (empty($_FILES['favicon']['tmp_name'][$id]))
+			{
+				continue;
+			}
+
+			$image_size = @getimagesize($_FILES['favicon']['tmp_name'][$id]);
+			if ($image_size[2] != IMAGETYPE_PNG)
+			{
+				session_flash('error', sprintf($txt['favicon_wrong_type'], $txt['favicon_' . $id]));
+				continue;
+			}
+
+			if ($image_size[0] != $valid_size[0] || $image_size[1] != $valid_size[1])
+			{
+				// Image is the wrong size, we need to fix that.
+				$src_img = imagecreatefromstring(file_get_contents($_FILES['favicon']['tmp_name'][$id]));
+				$dst_img = imagecreatetruecolor($valid_size[0], $valid_size[1]);
+
+				// Deal nicely with a PNG - because we can.
+				imagealphablending($dst_img, false);
+				imagesavealpha($dst_img, true);
+
+				imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $valid_size[0], $valid_size[1], $image_size[0], $image_size[1]);
+
+				imagepng($dst_img, $_FILES['favicon']['tmp_name'][$id]);
+				imagedestroy($src_img);
+				imagedestroy($dst_img);
+			}
+
+			// Either way, time to save.
+			$updated = true;
+			try
+			{
+				$filesystem->delete_file('favicon', $id);
+			}
+			catch (Exception $e)
+			{
+				$deleted = false;
+			}
+
+			try
+			{
+				$filesystem->upload_physical_file($_FILES['favicon']['tmp_name'][$id], 'favicon_' . $id . '.png', 'image/png', 'favicon', $id);
+			}
+			catch (Exception $e)
+			{
+				$updated = false;
+			}
+
+			if ($updated)
+			{
+				session_flash('success', sprintf($txt['favicon_saved'], $txt['favicon_' . $id]));
+			}
+			else
+			{
+				session_flash('error', sprintf($txt['favicon_could_not_save'], $txt['favicon_' . $id]));
+			}
+		}
+
+		// And rebuild the cache.
+		$cache = [];
+		$request = $smcFunc['db']->query('', '
+			SELECT content_id, timemodified
+			FROM {db_prefix}files
+			WHERE handler = {literal:favicon}');
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$cache['favicon_' . $row['content_id']] = (int) $row['timemodified'];
+		}
+		$smcFunc['db']->free_result($request);
+
+		updateSettings(['favicon_cache' => json_encode($cache)]);
+
+		redirectexit('action=admin;area=theme;sa=favicon');
+	}
+
+	$context['favicons'] = [
+		'favicon_0' => $txt['favicon_none'],
+		'favicon_1' => $txt['favicon_none'],
+		'favicon_2' => $txt['favicon_none'],
+		'favicon_3' => $txt['favicon_none'],
+		'favicon_4' => $txt['favicon_none'],
+		'favicon_5' => $txt['favicon_none'],
+		'favicon_6' => $txt['favicon_none'],
+		'favicon_7' => $txt['favicon_none'],
+	];
+	$request = $smcFunc['db']->query('', '
+		SELECT content_id, timemodified
+		FROM {db_prefix}files
+		WHERE handler = {literal:favicon}');
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		if (!isset($context['favicons']['favicon_' . $row['content_id']]))
+		{
+			continue;
+		}
+
+		$url = $urlgenerator->generate('favicon', [
+			'id' => $row['content_id'],
+			'timestamp' => $row['timemodified'],
+		]);
+
+		$context['favicons']['favicon_' . $row['content_id']] = '<img src="' . $url . '" alt="">';
+	}
+	$smcFunc['db']->free_result($request);
+
+	$context['sub_template'] = 'admin_themes_favicon';
 }
