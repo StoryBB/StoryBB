@@ -581,7 +581,7 @@ function AffiliateSave()
 		// Remove any existing one first.
 		delete_uploaded_affiliate((int) $context['affiliate']['id_affiliate']);
 
-		$filename = 'affiliate_' . $context['affiliate']['id_affiliate'] . '.' . $valid_types[$imagesize[2]][9];
+		$filename = 'affiliate_' . $context['affiliate']['id_affiliate'] . '.' . $valid_types[$imagesize[2]][0];
 		$mimetype = $valid_types[$imagesize[2]][1];
 
 		$filesystem->upload_physical_file($context['affiliate_uploaded'], $filename, $mimetype, 'affiliate', $context['affiliate']['id_affiliate']);
