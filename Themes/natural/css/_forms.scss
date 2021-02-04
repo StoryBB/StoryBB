@@ -78,6 +78,17 @@ fieldset legend {
 	border: none;
 }
 
+/* Mostly for legacy purposes, e.g. new login form. */
+.roundframe {
+	fieldset {
+		border: none;
+
+		legend {
+			display: none;
+		}
+	}
+}
+
 /* Give disabled text input elements a different background color. */
 input[disabled], select[disabled] {
 	background: #eee;
@@ -115,9 +126,9 @@ input[type=checkbox], input[type=radio] {
 }
 
 .sceditor-more-button.sceditor-more.button {
-    padding: 0 3px !important;
-    font: $default-font;
-    font-weight: 300;
-    margin-top: 10px !important;
-    margin-bottom: 10px;
+	padding: 0 3px !important;
+	font: $default-font;
+	font-weight: 300;
+	margin-top: 10px !important;
+	margin-bottom: 10px;
 }

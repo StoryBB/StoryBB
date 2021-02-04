@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Helper\IP;
 use StoryBB\Hook\Observable;
 use StoryBB\Hook\Mutatable;
@@ -31,6 +32,12 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+	$form = $container->instantiate('StoryBB\\Form\\General\\Login', $urlgenerator->generate('login_login'));
+
+	$context['form'] = $form->render();
+
 	$context['sub_template'] = 'login_kick_guest';
 	$context['page_title'] = $txt['login'];
 }
@@ -49,6 +56,12 @@ function InMaintenance()
 
 	// Send a 503 header, so search engines don't bother indexing while we're in maintenance mode.
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
+
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+	$form = $container->instantiate('StoryBB\\Form\\General\\Login', $urlgenerator->generate('login_login'));
+
+	$context['form'] = $form->render();
 
 	// Basic template stuff..
 	$context['sub_template'] = 'login_maintenance';

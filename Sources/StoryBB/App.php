@@ -295,8 +295,19 @@ class App
 			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/natural/templates');
 			$latte->setLoader($loader);
 
-			$latte->addFilter('translate', function ($string, $langfile = '') {
-				return $string . ($langfile ? ' (' . $langfile . ')' : '');
+			$latte->addFilter('translate', function ($string) {
+				global $txt;
+				$split = explode(':', $string, 2);
+				switch (count($split))
+				{
+					case 1:
+						loadLanguage('General');
+						return $txt[$split[0]] ?? '[[' . $split[0] . ']]';
+
+					case 2:
+						loadLanguage($split[0]);
+						return $txt[$split[1]] ?? '[[' . $split[1] . ']]';
+				}
 			});
 			$latte->addFilter('slugify', function ($string) {
 				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
