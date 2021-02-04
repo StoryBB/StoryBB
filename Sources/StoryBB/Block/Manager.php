@@ -60,7 +60,7 @@ class Manager
 
 			// Apply filtering to current setup.
 			// Is this filtered to a (legacy) action? If so, check it's on the list.
-			if (!empty($visibility['action']) && !in_array($context['current_action'], $visibility['action']))
+			if (empty($context['current_action']) || (!empty($visibility['action']) && !in_array($context['current_action'], $visibility['action'])))
 			{
 				continue;
 			}
