@@ -603,6 +603,7 @@ $txt['permissions_post_moderation'] = 'Post Moderation';
 $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
+$txt['themeadmin_favicon'] = 'Favicons';
 $txt['admin_browse_register_new'] = 'Register new member';
 $txt['admin_policies'] = 'Site Policies';
 

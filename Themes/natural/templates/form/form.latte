@@ -12,12 +12,12 @@
 	{foreach $sections as $section_name => $section}
 		<fieldset id="section-{$section_name|slugify}">
 			{if $section->has_label()}
-			<legend>{$section->get_label()}</legend>
+			<legend>{$section->get_label()|translate}</legend>
 			{/if}
 			<dl>
 				{foreach $section->get_fields() as $field}
-					{if $field->labelable()}
-						<dt><label id="element-label-{$field->get_name()|slugify}" for="element-{$field->get_name()|slugify}">{$field->get_label()}</label></dt>
+					{if $field->labelable() and $field->has_label()}
+						<dt><label id="element-label-{$field->get_name()|slugify}" for="element-{$field->get_name()|slugify}">{$field->get_label()|translate}</label></dt>
 					{else}
 						<dt class="collapse-label"></dt>
 					{/if}
@@ -26,7 +26,7 @@
 						{if isset($errors[$field->get_name()])}
 							<ul class="field-errors">
 							{foreach $errors[$field->get_name()] as $error}
-								{$error}
+								{$error|translate}
 							{/foreach}
 							</ul>
 						{/if}

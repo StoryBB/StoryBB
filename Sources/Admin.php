@@ -86,6 +86,7 @@ function AdminMain()
 						'admin' => [$txt['themeadmin_admin_title']],
 						'list' => [$txt['themeadmin_list_title']],
 						'reset' => [$txt['themeadmin_reset_title']],
+						'favicon' => [$txt['themeadmin_favicon']],
 					],
 				],
 				'contactform' => [

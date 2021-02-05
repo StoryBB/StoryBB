@@ -1,0 +1,68 @@
+<div id="admincenter">
+	<div class="cat_bar">
+		<h3 class="catbg">
+			{{txt.themeadmin_favicon}}
+		</h3>
+	</div>
+	<div class="information">
+		{{txt.favicon_explain}}
+	</div>
+	<div class="windowbg">
+		<form action="{{scripturl}}?action=admin;area=theme;sa=favicon" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+			<dl class="settings">
+				<dt>{{{txt.favicon_0}}}</dt>
+				<dd data-id="0">
+					{{{context.favicons.favicon_0}}}
+				</dd>
+				<dt>{{{txt.favicon_1}}}</dt>
+				<dd data-id="1">
+					{{{context.favicons.favicon_1}}}
+				</dd>
+			</dl>
+			<dl class="settings">
+				<dt>{{{txt.favicon_2}}}</dt>
+				<dd data-id="2">
+					{{{context.favicons.favicon_2}}}
+				</dd>
+				<dt>{{{txt.favicon_3}}}</dt>
+				<dd data-id="3">
+					{{{context.favicons.favicon_3}}}
+				</dd>
+			</dl>
+			<dl class="settings">
+				<dt>{{{txt.favicon_4}}}</dt>
+				<dd data-id="4">
+					{{{context.favicons.favicon_4}}}
+				</dd>
+				<dt>{{{txt.favicon_5}}}</dt>
+				<dd data-id="5">
+					{{{context.favicons.favicon_5}}}
+				</dd>
+			</dl>
+			<dl class="settings">
+				<dt>{{{txt.favicon_6}}}</dt>
+				<dd data-id="6">
+					{{{context.favicons.favicon_6}}}
+				</dd>
+				<dt>{{{txt.favicon_7}}}</dt>
+				<dd data-id="7">
+					{{{context.favicons.favicon_7}}}
+				</dd>
+			</dl>
+			{{session_form}}
+			<div class="buttonlist righttext">
+				<button class="button active" type="submit" name="save">{{txt.save}}</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+	$('form dd[data-id]').each(function() {
+		$(this).append('<button class="button">' + {{{json txt.modify}}} + '</button>');
+		$(this).find('button').on('click', function() {
+			var $dd = $(this).closest('dd');
+			$dd.empty();
+			$dd.html('<input type="file" name="favicon[' + $dd.data('id') + ']" accept="image/png">');
+		});
+	});
+</script>

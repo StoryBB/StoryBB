@@ -1,4 +1,3 @@
-<form action="{{context.login_url}}" method="post" accept-charset="UTF-8">
 	<div class="login" id="maintenance_mode">
 		<div class="cat_bar">
 			<h3 class="catbg">{{context.title}}</h3>
@@ -10,21 +9,7 @@
 		<div class="title_bar">
 			<h4 class="titlebg">{{txt.admin_login}}</h4>
 		</div>
-		<div class="roundframe">
-			<dl>
-				<dt>{{txt.username}}:</dt>
-				<dd><input type="text" name="user" size="20"></dd>
-
-				<dt>{{txt.password}}:</dt>
-				<dd><input type="password" name="passwrd" size="20"></dd>
-
-				<dt>{{txt.always_logged_in}}:</dt>
-				<dd><input type="checkbox" name="cookieneverexp"></dd>
-			</dl>
-			<input type="submit" value="{{txt.login}}">
-			<br class="clear">
+		<div class="roundframe noup">
+			{{{context.form}}}
 		</div>
-		{{session_form}}
-		{{token_form 'login'}}
 	</div>
-</form>

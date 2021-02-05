@@ -130,7 +130,7 @@ abstract class Base
 		{
 			$class = get_class($this);
 			[$token, $expiry] = $this->get_form_token();
-			if ($data['csrftoken'] !== $token || $expiry < time())
+			if (empty($data['csrftoken']) || $data['csrftoken'] !== $token || $expiry < time())
 			{
 				$this->errors['_form'][] = 'Errors:token_verify_fail';
 				$this->create_form_token();
@@ -237,6 +237,11 @@ abstract class Base
 	{
 		$session = $this->session();
 		$formtokens = $session->get('formtokens');
+
+		if (empty($formtokens))
+		{
+			return;
+		}
 
 		foreach ($formtokens as $key => $token)
 		{

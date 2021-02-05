@@ -169,11 +169,15 @@ function sbb_main()
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
 		// You're getting maintenance mode; neither login nor logout run through here.
+		$context['current_action'] = 'in_maintenance';
 		return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
 	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
+	{
+		$context['current_action'] = 'kick_guest';
 		return 'KickGuest';
+	}
 
 	// Apply policy settings if appropriate.
 	if ($user_info['id'] && $user_info['policy_acceptance'] != 2) /* StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED */
