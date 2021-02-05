@@ -30,6 +30,11 @@ class Schema
 	{
 		return [
 			'\\StoryBB\\Schema\\TableGroup\\Affiliates',
+			'\\StoryBB\\Schema\\TableGroup\\ForumContent',
+			'\\StoryBB\\Schema\\TableGroup\\PersonalMessages',
+			'\\StoryBB\\Schema\\TableGroup\\Permissions',
+			'\\StoryBB\\Schema\\TableGroup\\Policies',
+			'\\StoryBB\\Schema\\TableGroup\\Polls',
 			'\\StoryBB\\Schema\\TableGroup\\Tasks',
 			'\\StoryBB\\Schema\\TableGroup\\Uncategorised',
 		];
