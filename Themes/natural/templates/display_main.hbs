@@ -7,7 +7,7 @@
 {{! New topic info }}
 <div id="display_head" class="information">
 	<h2 class="display_title">
-		<span id="top_subject">{{context.subject}}</span>
+		<span id="top_subject">{{{context.subject}}}</span>
 		{{#if context.is_locked}}<span class="main_icons lock"></span>{{/if}}
 		{{#if context.is_sticky}}<span class="main_icons sticky"></span>{{/if}}
 	</h2>

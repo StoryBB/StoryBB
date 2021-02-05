@@ -11,6 +11,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Model\Alert;
 
 /**
  * The main dispatcher.
@@ -36,6 +37,38 @@ function ListContact()
 {
 	global $context, $txt, $sourcedir, $smcFunc, $modSettings, $scripturl;
 	require_once($sourcedir . '/Subs-List.php');
+
+	if (isset($_GET['delete']))
+	{
+		checkSession('get');
+		$message = (int) $_GET['delete'];
+		if (!empty($message))
+		{
+			// Delete any alerts sent out.
+			$alerts = Alert::find_alerts(['content_type' => 'contactform', 'content_id' => $message]);
+			foreach ($alerts as $member => $alert_ids)
+			{
+				Alert::delete($alert_ids, $member);
+			}
+
+			// Delete the messages.
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}contact_form_response
+				WHERE id_message = {int:message}',
+				[
+					'message' => $_GET['delete'],
+				]
+			);
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}contact_form
+				WHERE id_message = {int:message}',
+				[
+					'message' => $_GET['delete'],
+				]
+			);
+		}
+		redirectexit('action=admin;area=contactform');
+	}
 
 	$listOptions = [
 		'id' => 'contact_form',
@@ -142,6 +175,18 @@ function ListContact()
 								return $txt['contact_form_status_answered'];
 						}
 					}
+				],
+			],
+			'actions' => [
+				'header' => [
+					'value' => '',
+				],
+				'data' => [
+					'function' => function($rowData) use ($txt, $scripturl, $context)
+					{
+						return '<a href="' . $scripturl . '?action=admin;area=contactform;delete=' . $rowData['id_message'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" class="you_sure button">' . $txt['delete'] . '</a>';
+					},
+					'class' => 'centertext',
 				],
 			],
 		],

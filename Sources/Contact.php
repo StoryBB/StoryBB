@@ -104,7 +104,7 @@ function Contact()
 					'id_member_started' => $context['user']['id'],
 					'member_name' => $context['contact']['name'],
 					'content_type' => 'contactform',
-					'content_id' => 0,
+					'content_id' => $message,
 					'content_action' => 'received',
 					'is_read' => 0,
 					'extra' => json_encode(['contact_link' => '?action=admin;area=contactform;sa=viewcontact;msg=' . $message]),

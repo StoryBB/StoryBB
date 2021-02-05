@@ -1085,10 +1085,33 @@ function sbb_prepareScriptUrl(sUrl)
 	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
 }
 
+function sbb_preparePrettyUrl(sUrl)
+{
+	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' ? '' : '&');
+}
+
 function addLoadEvent(fNewOnload)
 {
 	$(document).ready(fNewOnload);
 }
+
+// Keep the session alive - always!
+var lastKeepAliveCheck = new Date().getTime();
+function sbb_sessionKeepAlive()
+{
+	var curTime = new Date().getTime();
+
+	// Prevent a Firefox bug from hammering the server.
+	if (sbb_keepalive_url && curTime - lastKeepAliveCheck > 900000)
+	{
+		var tempImage = new Image();
+		tempImage.src = sbb_preparePrettyUrl(sbb_keepalive_url) + 'time=' + curTime;
+		lastKeepAliveCheck = curTime;
+	}
+
+	window.setTimeout('sbb_sessionKeepAlive();', 1200000);
+}
+window.setTimeout('sbb_sessionKeepAlive();', 1200000);
 
 // Get the text in a code tag.
 function sbbSelectText(oCurElement, bActOnElement)

@@ -5,10 +5,10 @@
 {{/if}}
 
 <div class="cat_bar">
-	<h3 class="catbg">{{context.name}}</h3>
+	<h3 class="catbg">{{{context.name}}}</h3>
 	{{#if (or context.description context.moderators)}}
 	<div class="desc">
-		{{context.description}}&nbsp;
+		{{{context.description}}}&nbsp;
 
 		{{#if context.moderators}}
 			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{join context.link_moderators ', '}}}.

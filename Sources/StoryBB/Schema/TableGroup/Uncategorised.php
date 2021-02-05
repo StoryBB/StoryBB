@@ -104,6 +104,9 @@ class Uncategorised
 					Index::primary(['id_ban']),
 					Index::key(['id_ban_group']),
 					Index::key(['ip_low', 'ip_high']),
+				],
+				[
+					Constraint::from('ban_items.id_ban_group')->to('ban_groups.id_ban_group'),
 				]
 			),
 			Table::make('block_instances',
@@ -120,49 +123,6 @@ class Uncategorised
 					Index::primary(['id_instance']),
 				]
 			),
-			Table::make('board_permissions',
-				[
-					'id_group' => Column::smallint()->signed(),
-					'id_profile' => Column::smallint(),
-					'permission' => Column::varchar(30),
-					'add_deny' => Column::tinyint()->default(1),
-				],
-				[
-					Index::primary(['id_group', 'id_profile', 'permission']),
-				]
-			),
-			Table::make('boards',
-				[
-					'id_board' => Column::smallint()->auto_increment(),
-					'id_cat' => Column::tinyint(),
-					'child_level' => Column::tinyint(),
-					'id_parent' => Column::smallint(),
-					'board_order' => Column::smallint()->signed(),
-					'id_last_msg' => Column::int(),
-					'id_msg_updated' => Column::int(),
-					'member_groups' => Column::varchar(255)->default('-1,0'),
-					'id_profile' => Column::smallint()->default(1),
-					'name' => Column::varchar(255),
-					'description' => Column::text(),
-					'num_topics' => Column::mediumint(),
-					'num_posts' => Column::mediumint(),
-					'count_posts' => Column::tinyint(),
-					'id_theme' => Column::tinyint(),
-					'override_theme' => Column::tinyint(),
-					'unapproved_posts' => Column::smallint()->signed(),
-					'unapproved_topics' => Column::smallint()->signed(),
-					'redirect' => Column::varchar(255),
-					'deny_member_groups' => Column::varchar(255),
-					'in_character' => Column::tinyint(),
-				],
-				[
-					Index::primary(['id_board']),
-					Index::unique(['id_cat', 'id_board']),
-					Index::key(['id_parent']),
-					Index::key(['id_msg_updated']),
-					Index::key(['member_groups' => 48]),
-				]
-			),
 			Table::make('bookmark',
 				[
 					'id_bookmark' => Column::int()->auto_increment(),
@@ -177,18 +137,6 @@ class Uncategorised
 				[
 					Constraint::from('bookmark.id_member')->to('members.id_member'),
 					Constraint::from('bookmark.id_topic')->to('topics.id_topic'),
-				]
-			),
-			Table::make('categories',
-				[
-					'id_cat' => Column::tinyint()->auto_increment(),
-					'cat_order' => Column::tinyint(),
-					'name' => Column::varchar(255),
-					'description' => Column::text(),
-					'can_collapse' => Column::tinyint()->default(1),
-				],
-				[
-					Index::primary(['id_cat']),
 				]
 			),
 			Table::make('characters',
@@ -211,6 +159,9 @@ class Uncategorised
 				[
 					Index::primary(['id_character']),
 					Index::key(['id_member']),
+				],
+				[
+					Constraint::from('characters.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('character_sheet_comments',
@@ -224,6 +175,10 @@ class Uncategorised
 				[
 					Index::primary(['id_comment']),
 					Index::key(['id_character', 'time_posted']),
+				],
+				[
+					Constraint::from('character_sheet_comments.id_character')->to('characters.id_character'),
+					Constraint::from('character_sheet_comments.id_author')->to('members.id_member'),
 				]
 			),
 			Table::make('character_sheet_templates',
@@ -321,8 +276,8 @@ class Uncategorised
 					Index::unique(['id_field', 'id_character']),
 				],
 				[
-					Constraint::from('custom_field_ic_values.id_field')->to('custom_fields.id_field'),
-					Constraint::from('custom_field_ic_values.id_character')->to('characters.id_character'),
+					Constraint::from('custom_field_values.id_field')->to('custom_fields.id_field'),
+					Constraint::from('custom_field_values.id_character')->to('characters.id_character'),
 				]
 			),
 			Table::make('files',
@@ -349,6 +304,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_group', 'id_member']),
+				],
+				[
+					Constraint::from('group_moderators.id_group')->to('membergroups.id_group'),
+					Constraint::from('group_moderators.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('language_delta',
@@ -558,16 +517,6 @@ class Uncategorised
 				[],
 				[
 					'prefer_engine' => ['MEMORY', 'InnoDB'],
-				]
-			),
-			Table::make('log_polls',
-				[
-					'id_poll' => Column::mediumint(),
-					'id_member' => Column::mediumint(),
-					'id_choice' => Column::tinyint(),
-				],
-				[
-					Index::key(['id_poll', 'id_member', 'id_choice']),
 				]
 			),
 			Table::make('log_reported',
@@ -817,42 +766,6 @@ class Uncategorised
 					Index::key(['id_member']),
 				]
 			),
-			Table::make('messages',
-				[
-					'id_msg' => Column::int()->auto_increment(),
-					'id_topic' => Column::mediumint(),
-					'id_board' => Column::smallint(),
-					'poster_time' => Column::int(),
-					'id_creator' => Column::mediumint(),
-					'id_member' => Column::mediumint(),
-					'id_character' => Column::int(),
-					'id_msg_modified' => Column::int(),
-					'subject' => Column::varchar(255),
-					'poster_name' => Column::varchar(255),
-					'poster_email' => Column::varchar(255),
-					'poster_ip' => Column::varbinary(16)->nullable(),
-					'smileys_enabled' => Column::tinyint()->default(1),
-					'modified_time' => Column::int(),
-					'modified_name' => Column::varchar(255),
-					'modified_reason' => Column::varchar(255),
-					'body' => Column::mediumtext(),
-					'approved' => Column::tinyint()->default(1),
-					'likes' => Column::smallint(),
-				],
-				[
-					Index::primary(['id_msg']),
-					Index::unique(['id_board', 'id_msg']),
-					Index::unique(['id_member', 'id_msg']),
-					Index::key(['approved']),
-					Index::key(['poster_ip', 'id_topic']),
-					Index::key(['id_member', 'id_topic']),
-					Index::key(['id_member', 'id_board']),
-					Index::key(['id_member', 'approved', 'id_msg']),
-					Index::key(['id_topic', 'id_msg', 'id_member', 'approved']),
-					Index::key(['id_member', 'poster_ip', 'id_msg']),
-					Index::key(['likes']),
-				]
-			),
 			Table::make('moderators',
 				[
 					'id_board' => Column::smallint(),
@@ -860,6 +773,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_board', 'id_member']),
+				],
+				[
+					Constraint::from('moderators.id_board')->to('boards.id_board'),
+					Constraint::from('moderators.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('moderator_groups',
@@ -869,6 +786,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_board', 'id_group']),
+				],
+				[
+					Constraint::from('moderator_groups.id_board')->to('boards.id_board'),
+					Constraint::from('moderator_groups.id_group')->to('membergroups.id_group'),
 				]
 			),
 			Table::make('page',
@@ -899,175 +820,6 @@ class Uncategorised
 				],
 				[
 					Constraint::from('page_access.id_page')->to('page.id_page'),
-				]
-			),
-			Table::make('permission_profiles',
-				[
-					'id_profile' => Column::smallint()->auto_increment(),
-					'profile_name' => Column::varchar(255),
-				],
-				[
-					Index::primary(['id_profile']),
-				]
-			),
-			Table::make('permissions',
-				[
-					'id_group' => Column::smallint()->signed(),
-					'permission' => Column::varchar(30),
-					'add_deny' => Column::tinyint()->default(1),
-				],
-				[
-					Index::primary(['id_group', 'permission']),
-				]
-			),
-			Table::make('personal_messages',
-				[
-					'id_pm' => Column::int()->auto_increment(),
-					'id_pm_head' => Column::int(),
-					'id_member_from' => Column::mediumint(),
-					'deleted_by_sender' => Column::tinyint(),
-					'from_name' => Column::varchar(255),
-					'msgtime' => Column::int(),
-					'subject' => Column::varchar(255),
-					'body' => Column::text(),
-				],
-				[
-					Index::primary(['id_pm']),
-					Index::key(['id_member_from', 'deleted_by_sender']),
-					Index::key(['msgtime']),
-					Index::key(['id_pm_head']),
-				]
-			),
-			Table::make('pm_labels',
-				[
-					'id_label' => Column::int()->auto_increment(),
-					'id_member' => Column::mediumint(),
-					'name' => Column::varchar(30),
-				],
-				[
-					Index::primary(['id_label']),
-				]
-			),
-			Table::make('pm_labeled_messages',
-				[
-					'id_label' => Column::int(),
-					'id_pm' => Column::int(),
-				],
-				[
-					Index::primary(['id_label', 'id_pm']),
-				]
-			),
-			Table::make('pm_recipients',
-				[
-					'id_pm' => Column::int(),
-					'id_member' => Column::mediumint(),
-					'bcc' => Column::tinyint(),
-					'is_read' => Column::tinyint(),
-					'is_new' => Column::tinyint(),
-					'deleted' => Column::tinyint(),
-					'in_inbox' => Column::tinyint()->default(1),
-				],
-				[
-					Index::primary(['id_pm', 'id_member']),
-					Index::unique(['id_member', 'deleted', 'id_pm']),
-				]
-			),
-			Table::make('pm_rules',
-				[
-					'id_rule' => Column::int()->auto_increment(),
-					'id_member' => Column::mediumint(),
-					'rule_name' => Column::varchar(60),
-					'criteria' => Column::text(),
-					'actions' => Column::text(),
-					'delete_pm' => Column::tinyint(),
-					'is_or' => Column::tinyint(),
-				],
-				[
-					Index::primary(['id_rule']),
-					Index::key(['id_member']),
-					Index::key(['delete_pm']),
-				]
-			),
-			Table::make('policy',
-				[
-					'id_policy' => Column::smallint()->auto_increment(),
-					'policy_type' => Column::tinyint(),
-					'language' => Column::varchar(20),
-					'title' => Column::varchar(100),
-					'description' => Column::varchar(200),
-					'last_revision' => Column::int(),
-				],
-				[
-					Index::primary(['id_policy']),
-				]
-			),
-			Table::make('policy_acceptance',
-				[
-					'id_policy' => Column::smallint()->auto_increment(),
-					'id_member' => Column::mediumint(),
-					'id_revision' => Column::int(),
-					'acceptance_time' => Column::int(),
-				],
-				[
-					Index::primary(['id_policy', 'id_member', 'id_revision']),
-				]
-			),
-			Table::make('policy_revision',
-				[
-					'id_revision' => Column::int()->auto_increment(),
-					'id_policy' => Column::smallint(),
-					'last_change' => Column::int(),
-					'short_revision_note' => Column::text(),
-					'revision_text' => Column::text(),
-					'edit_id_member' => Column::mediumint(),
-					'edit_member_name' => Column::varchar(50),
-				],
-				[
-					Index::primary(['id_revision']),
-					Index::key(['id_policy']),
-				]
-			),
-			Table::make('policy_types',
-				[
-					'id_policy_type' => Column::tinyint()->auto_increment(),
-					'policy_type' => Column::varchar(50),
-					'require_acceptance' => Column::tinyint(),
-					'show_footer' => Column::tinyint(),
-					'show_reg' => Column::tinyint(),
-					'show_help' => Column::tinyint(),
-				],
-				[
-					Index::primary(['id_policy_type']),
-				]
-			),
-			Table::make('polls',
-				[
-					'id_poll' => Column::mediumint()->auto_increment(),
-					'question' => Column::varchar(255),
-					'voting_locked' => Column::tinyint(),
-					'max_votes' => Column::tinyint()->default(1),
-					'expire_time' => Column::int(),
-					'hide_results' => Column::tinyint(),
-					'change_vote' => Column::tinyint(),
-					'guest_vote' => Column::tinyint(),
-					'num_guest_voters' => Column::int(),
-					'reset_poll' => Column::int(),
-					'id_member' => Column::mediumint(),
-					'poster_name' => Column::varchar(255),
-				],
-				[
-					Index::primary(['id_poll']),
-				]
-			),
-			Table::make('poll_choices',
-				[
-					'id_poll' => Column::mediumint(),
-					'id_choice' => Column::tinyint(),
-					'label' => Column::varchar(255),
-					'votes' => Column::smallint(),
-				],
-				[
-					Index::primary(['id_poll', 'id_choice']),
 				]
 			),
 			Table::make('qanda',
@@ -1160,44 +912,6 @@ class Uncategorised
 				[
 					Index::primary(['id_theme', 'id_member', 'variable']),
 					Index::key(['id_member']),
-				]
-			),
-			Table::make('topics',
-				[
-					'id_topic' => Column::mediumint()->auto_increment(),
-					'is_sticky' => Column::tinyint(),
-					'id_board' => Column::smallint(),
-					'id_first_msg' => Column::int(),
-					'id_last_msg' => Column::int(),
-					'id_member_started' => Column::mediumint(),
-					'id_member_updated' => Column::mediumint(),
-					'id_poll' => Column::mediumint(),
-					'id_previous_board' => Column::smallint(),
-					'id_previous_topic' => Column::mediumint(),
-					'num_replies' => Column::int(),
-					'num_views' => Column::int(),
-					'locked' => Column::tinyint(),
-					'redirect_expires' => Column::int(),
-					'id_redirect_topic' => Column::mediumint(),
-					'unapproved_posts' => Column::smallint(),
-					'approved' => Column::tinyint()->default(1),
-					'is_moved' => Column::tinyint(),
-				],
-				[
-					Index::primary(['id_topic']),
-					Index::unique(['id_last_msg', 'id_board']),
-					Index::unique(['id_first_msg', 'id_board']),
-					Index::unique(['id_poll', 'id_topic']),
-					Index::key(['is_sticky']),
-					Index::key(['approved']),
-					Index::key(['id_member_started', 'id_board']),
-					Index::key(['id_board', 'is_sticky', 'id_last_msg']),
-					Index::key(['id_board', 'id_first_msg']),
-				],
-				[
-					Constraint::from('topics.id_board')->to('boards.id_board'),
-					Constraint::from('topics.id_first_msg')->to('messages.id_msg'),
-					Constraint::from('topics.id_last_msg')->to('messages.id_msg'),
 				]
 			),
 			Table::make('user_alerts',
