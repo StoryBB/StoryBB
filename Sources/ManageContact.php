@@ -11,6 +11,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Model\Alert;
 
 /**
  * The main dispatcher.
@@ -43,6 +44,14 @@ function ListContact()
 		$message = (int) $_GET['delete'];
 		if (!empty($message))
 		{
+			// Delete any alerts sent out.
+			$alerts = Alert::find_alerts(['content_type' => 'contactform', 'content_id' => $message]);
+			foreach ($alerts as $member => $alert_ids)
+			{
+				Alert::delete($alert_ids, $member);
+			}
+
+			// Delete the messages.
 			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}contact_form_response
 				WHERE id_message = {int:message}',
