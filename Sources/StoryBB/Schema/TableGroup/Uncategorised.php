@@ -104,6 +104,9 @@ class Uncategorised
 					Index::primary(['id_ban']),
 					Index::key(['id_ban_group']),
 					Index::key(['ip_low', 'ip_high']),
+				],
+				[
+					Constraint::from('ban_items.id_ban_group')->to('ban_groups.id_ban_group'),
 				]
 			),
 			Table::make('block_instances',
@@ -156,6 +159,9 @@ class Uncategorised
 				[
 					Index::primary(['id_character']),
 					Index::key(['id_member']),
+				],
+				[
+					Constraint::from('characters.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('character_sheet_comments',
@@ -169,6 +175,10 @@ class Uncategorised
 				[
 					Index::primary(['id_comment']),
 					Index::key(['id_character', 'time_posted']),
+				],
+				[
+					Constraint::from('character_sheet_comments.id_character')->to('characters.id_character'),
+					Constraint::from('character_sheet_comments.id_author')->to('members.id_member'),
 				]
 			),
 			Table::make('character_sheet_templates',
@@ -266,8 +276,8 @@ class Uncategorised
 					Index::unique(['id_field', 'id_character']),
 				],
 				[
-					Constraint::from('custom_field_ic_values.id_field')->to('custom_fields.id_field'),
-					Constraint::from('custom_field_ic_values.id_character')->to('characters.id_character'),
+					Constraint::from('custom_field_values.id_field')->to('custom_fields.id_field'),
+					Constraint::from('custom_field_values.id_character')->to('characters.id_character'),
 				]
 			),
 			Table::make('files',
@@ -294,6 +304,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_group', 'id_member']),
+				],
+				[
+					Constraint::from('group_moderators.id_group')->to('membergroups.id_group'),
+					Constraint::from('group_moderators.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('language_delta',
@@ -759,6 +773,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_board', 'id_member']),
+				],
+				[
+					Constraint::from('moderators.id_board')->to('boards.id_board'),
+					Constraint::from('moderators.id_member')->to('members.id_member'),
 				]
 			),
 			Table::make('moderator_groups',
@@ -768,6 +786,10 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_board', 'id_group']),
+				],
+				[
+					Constraint::from('moderator_groups.id_board')->to('boards.id_board'),
+					Constraint::from('moderator_groups.id_group')->to('membergroups.id_group'),
 				]
 			),
 			Table::make('page',
