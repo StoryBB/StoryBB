@@ -309,8 +309,6 @@ function AffiliateTierUpdate()
 
 		$new_affiliates[] = $affiliate;
 		unset ($affiliates[$affiliate]);
-
-		$new_pos++;
 	}
 
 	// In case we were given bad data, also backfill with everything else.
