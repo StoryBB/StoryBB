@@ -8,7 +8,7 @@
 
 {{#each context.themes}}
 			<div class="char_theme_container">
-				<button name="theme[{{{@key}}}]" class="button"><img src="{{{thumbnail}}}" alt=""></button>
+				<button name="chartheme[{{{@key}}}]" value="{{{@key}}}" class="button"><img src="{{{thumbnail}}}" alt=""></button>
 				{{{name}}}
 			</div>
 {{/each}}
