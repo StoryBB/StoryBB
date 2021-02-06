@@ -1825,6 +1825,7 @@ div#pollmoderation {
 .postarea {
 	flex: 1 1 auto;
 	padding: 12px;
+	width: calc(100% - 200px)
 }
 
 .postarea div.flow_hidden {
