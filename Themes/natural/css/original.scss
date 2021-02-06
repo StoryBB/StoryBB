@@ -3364,6 +3364,15 @@ div#manage_boards dl dd textarea[name=desc] {
 				line-height: 1;
 			}
 		}
+
+		.affiliate_tier.desaturate img {
+		    filter: grayscale(1);
+    		transition: all 300ms ease;
+
+    		&:hover {
+    		    filter: grayscale(0);
+    		}
+		}
 	}
 }
 

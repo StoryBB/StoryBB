@@ -10,6 +10,8 @@
 					<dd><input name="image_width" type="number" min="1" max="1500" value="{{{context.tier_image_width}}}"></dd>
 					<dt>{{{txt.affiliate_image_height}}}:</dt>
 					<dd><input name="image_height" type="number" min="1" max="1000" value="{{{context.tier_image_height}}}"></dd>
+					<dt>{{{txt.affiliate_desaturate}}}:</dt>
+					<dd><input type="checkbox" name="desaturate" value="1"{{#if context.tier_desaturate}} checked{{/if}}></dd>
 				</dl>
 
 				{{session_form}}
