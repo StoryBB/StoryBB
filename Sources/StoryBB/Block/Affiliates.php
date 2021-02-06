@@ -66,12 +66,13 @@ class Affiliates extends AbstractBlock implements Block
 		$tiers = [];
 
 		$request = $smcFunc['db']->query('', '
-			SELECT id_tier, tier_name, sort_order, image_width, image_height
+			SELECT id_tier, tier_name, sort_order, image_width, image_height, desaturate
 			FROM {db_prefix}affiliate_tier
 			ORDER BY sort_order');
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['affiliates'] = [];
+			$row['desaturate'] = !empty($row['desaturate']);
 			$tiers[$row['id_tier']] = $row;
 		}
 		$smcFunc['db']->free_result($request);

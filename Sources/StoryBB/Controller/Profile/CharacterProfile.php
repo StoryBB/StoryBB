@@ -340,15 +340,20 @@ class CharacterProfile extends AbstractProfileController
 
 	protected function post_action_theme()
 	{
-		global $context;
+		global $context, $user_info;
 		$this->display_action_theme();
 
-		if (!empty($_POST['theme']) && is_array($_POST['theme']))
+		if (!empty($_POST['chartheme']) && is_array($_POST['chartheme']))
 		{
-			list($id_theme) = array_keys($_POST['theme']);
+			list($id_theme) = array_keys($_POST['chartheme']);
 			if (isset($context['themes'][$id_theme]))
 			{
 				updateCharacterData($context['character']['id_character'], ['id_theme' => $id_theme]);
+
+				if ($context['user']['is_owner'] && $context['character']['id_character'] == $user_info['id_character'])
+				{
+					unset ($_SESSION['id_theme']);
+				}
 			}
 		}
 

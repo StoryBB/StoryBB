@@ -111,6 +111,7 @@ function AffiliateTierAdd()
 	$context['tier_name'] = $context['tier_name_escaped'] ?? '';
 	$context['tier_image_width'] = $context['tier_image_width'] ?? 88;
 	$context['tier_image_height'] = $context['tier_image_height'] ?? 31;
+	$context['tier_desaturate'] = $context['tier_desaturate'] ?? 0;
 
 	$context['sub_template'] = 'admin_affiliate_edit_tier';
 }
@@ -135,6 +136,8 @@ function AffiliateTierEdit()
 	$context['tier_image_width'] = $context['tier_image_width'] ?? $row['image_width'];
 	$context['tier_image_height'] = $context['tier_image_height'] ?? $row['image_height'];
 
+	$context['tier_desaturate'] = $context['tier_desaturate'] ?? (int) $row['desaturate'];
+
 	$context['sub_template'] = 'admin_affiliate_edit_tier';
 }
 
@@ -150,6 +153,7 @@ function AffiliateTierSave()
 	$context['tier_image_width'] = min(1500, max(0, $context['tier_image_width']));
 	$context['tier_image_height'] = (int) ($_POST['image_height'] ?? 0);
 	$context['tier_image_height'] = min(1000, max(0, $context['tier_image_height']));
+	$context['tier_desaturate'] = !empty($_POST['desaturate']) ? 1 : 0;
 
 	if (!empty($_POST['delete']))
 	{
@@ -194,12 +198,14 @@ function AffiliateTierSave()
 			SET
 				tier_name = {string:tier_name},
 				image_width = {int:image_width},
-				image_height = {int:image_height}
+				image_height = {int:image_height},
+				desaturate = {int:desaturate}
 			WHERE id_tier = {int:tier}',
 			[
 				'tier_name' => $context['tier_name_escaped'],
 				'image_width' => $context['tier_image_width'],
 				'image_height' => $context['tier_image_height'],
+				'desaturate' => $context['tier_desaturate'],
 				'tier' => $context['tier_id'],
 			]
 		);
@@ -214,8 +220,8 @@ function AffiliateTierSave()
 
 		$smcFunc['db']->insert('insert',
 			'{db_prefix}affiliate_tier',
-			['tier_name' => 'string', 'image_width' => 'int', 'image_height' => 'int', 'sort_order' => 'int'],
-			[$context['tier_name_escaped'], $context['tier_image_width'], $context['tier_image_height'], $sort_order],
+			['tier_name' => 'string', 'image_width' => 'int', 'image_height' => 'int', 'sort_order' => 'int', 'desaturate'],
+			[$context['tier_name_escaped'], $context['tier_image_width'], $context['tier_image_height'], $sort_order, $context['tier_desaturate']],
 			['id_tier']
 		);
 	}
@@ -645,7 +651,7 @@ function load_affiliate_tier(int $tier): array
 	global $smcFunc;
 
 	$request = $smcFunc['db']->query('', '
-		SELECT id_tier, tier_name, sort_order, image_width, image_height
+		SELECT id_tier, tier_name, sort_order, image_width, image_height, desaturate
 		FROM {db_prefix}affiliate_tier
 		WHERE id_tier = {int:tier}',
 		[

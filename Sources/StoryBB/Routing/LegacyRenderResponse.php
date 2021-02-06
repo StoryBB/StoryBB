@@ -51,6 +51,6 @@ class LegacyRenderResponse extends Response
 		$context['sub_template'] = 'legacycontent';
 
 		$context['legacycontent'] = $templater->renderToString($template, $rendercontext);
-		obExit(null, null, true);
+		obExit(null, null, false);
 	}
 }

@@ -1825,6 +1825,7 @@ div#pollmoderation {
 .postarea {
 	flex: 1 1 auto;
 	padding: 12px;
+	width: calc(100% - 200px)
 }
 
 .postarea div.flow_hidden {
@@ -3363,6 +3364,15 @@ div#manage_boards dl dd textarea[name=desc] {
 				margin: 10px 5px;
 				line-height: 1;
 			}
+		}
+
+		.affiliate_tier.desaturate img {
+		    filter: grayscale(1);
+    		transition: all 300ms ease;
+
+    		&:hover {
+    		    filter: grayscale(0);
+    		}
 		}
 	}
 }

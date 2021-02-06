@@ -53,6 +53,7 @@ class Affiliates
 					'image_width' => Column::smallint(),
 					'image_height' => Column::smallint(),
 					'sort_order' => Column::smallint(),
+					'desaturate' => Column::tinyint(),
 				],
 				[
 					Index::primary(['id_tier']),

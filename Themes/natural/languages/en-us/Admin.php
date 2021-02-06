@@ -704,6 +704,7 @@ $txt['edit_affiliate'] = 'Edit Affiliate';
 $txt['tier_name'] = 'Tier Name';
 $txt['affiliate_image_width'] = 'Affiliate image width';
 $txt['affiliate_image_height'] = 'Affiliate image height';
+$txt['affiliate_desaturate'] = 'Desaturate/greyscale the icons (full color on hover)';
 $txt['save_tier'] = 'Save tier';
 $txt['affiliate_name'] = 'Affiliate Name';
 $txt['affiliate_url'] = 'Affiliate URL';
