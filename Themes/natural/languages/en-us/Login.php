@@ -45,6 +45,7 @@ $txt['activate_account'] = 'Account activation';
 $txt['activate_success'] = 'Your account has been successfully activated. You can now proceed to login.';
 $txt['activate_not_completed1'] = 'Your email address needs to be validated before you can login.';
 $txt['activate_not_completed2'] = 'Need another activation email?';
+$txt['activate_not_completed'] = 'Your email address needs to be validated before you can login. <a href="%1$s">Resend activation email?</a>';
 $txt['activate_after_registration'] = 'Thank you for signing up. You will receive an email soon with a link to activate your account. If you don\'t receive an email after some time, check your spam folder.';
 $txt['invalid_userid'] = 'User does not exist';
 $txt['invalid_activation_code'] = 'Invalid activation code';

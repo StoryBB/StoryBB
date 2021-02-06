@@ -19,6 +19,7 @@ use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
+use StoryBB\Phrase;
 use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Routing\RenderResponse;
 use StoryBB\Routing\LegacyRenderResponse;
@@ -133,7 +134,7 @@ class Login implements Routable, MaintenanceAccessible
 
 		if (empty($user))
 		{
-			$this->login_errors[] = 'incorrect_password';
+			$this->login_errors[] = new Phrase('Login:incorrect_password');
 			return $this->return_login_form($form);
 		}
 
@@ -145,6 +146,19 @@ class Login implements Routable, MaintenanceAccessible
 
 		if ($auth->validate($username, $password, $user['passwd']))
 		{
+			$status = $user['is_activated'] % 10;
+			if ($status == 3)
+			{
+				$this->login_errors[] = new Phrase('Errors:still_awaiting_approval');
+				return $this->return_login_form($form);
+			}
+
+			if ($status != 1)
+			{
+				$this->login_errors[] = sprintf(new Phrase('Login:activate_not_completed'), App::get_global_config_item('boardurl') . '/index.php?action=activate;sa=resend;u=' . $user['id_member']);
+				return $this->return_login_form($form);
+			}
+
 			$redirect = new RedirectResponse($this->get_post_login_redirect());
 
 			if ($stayloggedin)
@@ -164,7 +178,7 @@ class Login implements Routable, MaintenanceAccessible
 
 		// @todo validatePasswordFlood
 
-		$this->login_errors[] = 'incorrect_password';
+		$this->login_errors[] = new Phrase('Login:incorrect_password');
 		return $this->return_login_form($form);
 	}
 

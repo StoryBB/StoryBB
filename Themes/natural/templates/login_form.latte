@@ -6,11 +6,13 @@
 		</div>
 		<div class="roundframe noup">
 			{if $login_errors}
-				<ul>
-					{foreach $login_errors as $error}
-					<li>{$error|noescape}</li>
-					{/foreach}
-				</ul>
+				<div class="errorbox">
+					<ul>
+						{foreach $login_errors as $error}
+						<li>{$error|noescape}</li>
+						{/foreach}
+					</ul>
+				</div>
 			{/if}
 			{$form|noescape}
 		</div>
