@@ -16,7 +16,7 @@
 							<strong><label for="field_name">{{{txt.custom_edit_name}}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="text" name="field_name" id="field_name" value="{{context.field.name}}" size="20" maxlength="40">
+							<input type="text" name="field_name" id="field_name" value="{{context.field.name}}" size="20" maxlength="40" required>
 						</dd>
 						<dt>
 							<strong><label for="field_desc">{{{txt.custom_edit_desc}}}:</label></strong>
@@ -65,7 +65,7 @@
 							<select name="placement" id="placement">
 
 {{#each context.cust_profile_fields_placement}}
-								<option value="{{@key}}"{{#if (eq ../context.field.placement @key)}} selected{{/if}}>{{{get_text 'custom_profile_placement_' .}}}</option>
+								<option value="{{@key}}"{{#if (eq_coerce ../context.field.placement @key)}} selected{{/if}}>{{{get_text 'custom_profile_placement_' .}}}</option>
 {{/each}}
 							</select>
 						</dd>
