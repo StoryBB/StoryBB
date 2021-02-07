@@ -1435,15 +1435,17 @@ function EditCustomProfiles()
 		// Everyone needs a name - even the (bracket) unknown...
 		if (trim($_POST['field_name']) == '')
 		{
+			loadLanguage('Errors');
 			session_flash('error', $txt['custom_option_need_name']);
-			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
+			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid'] . ';new_ic=' . ($context['field']['in_character'] ? '1' : '0'));
 		}
 
 		// Regex you say?  Do a very basic test to see if the pattern is valid
 		if (!empty($_POST['regex']) && @preg_match($_POST['regex'], 'dummy') === false)
 		{
+			loadLanguage('Errors');
 			session_flash('error', $txt['custom_option_regex_error']);
-			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
+			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid'] . ';new_ic=' . ($context['field']['in_character'] ? '1' : '0'));
 		}
 
 		$_POST['field_name'] = StringLibrary::escape($_POST['field_name']);
