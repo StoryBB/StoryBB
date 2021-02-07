@@ -63,7 +63,12 @@
 {{#if context.character.custom_fields}}
 	{{#each context.character.custom_fields}}
 				<dl>
-					<dt>{{{field_name}}}:</dt>
+					<dt>
+						{{{field_name}}}:
+						{{#if field_desc}}
+						<div class="smalltext">{{{field_desc}}}</div>
+						{{/if}}
+					</dt>
 					<dd>{{{input_html}}}</dd>
 				</dl>
 	{{/each}}
