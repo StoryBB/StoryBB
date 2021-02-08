@@ -315,6 +315,86 @@ $txt['language_other_files'] = 'Other Language Content';
 $txt['configured_elsewhere'] = 'Some language content is configured elsewhere:';
 $txt['all_site_policies'] = 'All site policies';
 
+$txt['edit_email_templates'] = 'Edit Email Templates';
+$txt['email_subject'] = 'Subject:';
+$txt['email_body'] = 'Body:';
+$txt['email_template_group_registration'] = 'Registration Emails';
+$txt['email_template_group_registration_admin'] = 'Registration Emails (Admin)';
+$txt['email_template_group_personal_messages'] = 'Personal Messages';
+$txt['email_template_group_account_changes'] = 'Account Changes';
+$txt['email_template_group_content_notifications'] = 'Content Notifications';
+$txt['email_template_group_mod_notifications'] = 'Moderation Notifications';
+$txt['email_template_group_reported_content'] = 'Reported Content';
+$txt['email_template_group_group_membership'] = 'Group Membership';
+$txt['email_template_group_paid_subs'] = 'Paid Subscriptions';
+$txt['email_template_group_general'] = 'General Emails';
+
+$txt['email_template_desc_register_activate'] = 'Sent when a user registers and needs to activate their account.';
+$txt['email_template_desc_register_immediate'] = 'Sent when a user registers and is immediately approved.';
+$txt['email_template_desc_register_pending'] = 'Sent to a user when they have registered and the registration is waiting for admin approval.';
+$txt['email_template_desc_resend_activate_message'] = 'Sent to a user who tries to re-register but is already registered and awaiting email activation.';
+$txt['email_template_desc_resend_pending_message'] = 'Sent to a user who tries to re-register but is already registered and awaiting admin approval.';
+
+$txt['email_template_desc_admin_approve_accept'] = 'Sent when an admin approves a new member (when admin approval is enabled)';
+$txt['email_template_desc_admin_approve_activation'] = 'Sent when an admin approves a new member, but selects "approve with activation"';
+$txt['email_template_desc_admin_approve_reject'] = 'Sent when an admin rejects a new member from joining (when admin approval is enabled)';
+$txt['email_template_desc_admin_approve_delete'] = 'Sent when an admin deletes a new member (when admin approval is enabled)';
+$txt['email_template_desc_admin_approve_remind'] = 'Sent when an admin sends a reminder to a new user to activate their account via welcome email.';
+$txt['email_template_desc_admin_register_activate'] = 'Sent when an admin creates a new account in registration, and wants the user to activate their account.';
+$txt['email_template_desc_admin_register_immediate'] = 'Sent when an admin creates a new account in the registration area.';
+$txt['email_template_desc_admin_notify'] = 'Sent to admins when a new member joins (without admin approval)';
+$txt['email_template_desc_admin_notify_approval'] = 'Sent to admins when a new member joins and is in need of approval.';
+
+$txt['email_template_desc_request_membership'] = 'Sent to admins and group moderators when a new group request is made, for their review.';
+$txt['email_template_desc_mc_group_approve'] = 'Sent to users to tell them when a group request they made was approved.';
+$txt['email_template_desc_mc_group_reject'] = 'Sent to users to tell them when a group request they made was rejected.';
+$txt['email_template_desc_mc_group_reject_reason'] = 'Sent to users to tell them when a group request they made was rejected, and the reason why.';
+
+$txt['email_template_desc_new_pm'] = 'Sent to users when they receive a PM and the message body will not be included in the message.';
+$txt['email_template_desc_new_pm_body'] = 'Sent to users when they receive a PM and the message body will be included in the message.';
+$txt['email_template_desc_new_pm_tolist'] = 'Sent to users when they and someone else receive a PM and the message body will not be included in the message.';
+$txt['email_template_desc_new_pm_body_tolist'] = 'Sent to users when they and someone else receive a PM and the message body will be included in the message.';
+
+$txt['email_template_desc_notify_boards'] = 'Sent to users requesting notifications on new topics in a board. (Every new topic, does not include message body.)';
+$txt['email_template_desc_notify_boards_body'] = 'Sent to users requesting notifications on new topics in a board. (Every new topic, does include message body.)';
+$txt['email_template_desc_notify_boards_once'] = 'Sent to users requesting notifications on new topics in a board. (First new topic, no more notifications until they visit the board, does not include message body.)';
+$txt['email_template_desc_notify_boards_once_body'] = 'Sent to users requesting notifications on new topics in a board. (First new topic, no more notifications until they visit the board, does include message body.)';
+$txt['email_template_desc_notification_reply'] = 'Sent to users requesting notifications on new replies to a topic. (Every reply, does not include message body.)';
+$txt['email_template_desc_notification_reply_body'] = 'Sent to users requesting notifications on new replies to a topic. (Every reply, does include message body.)';
+$txt['email_template_desc_notification_reply_once'] = 'Sent to users requesting notifications on new replies to a topoic. (Sent on first reply, no more notifications until the thread is read. Does not include message body.)';
+$txt['email_template_desc_notification_reply_body_once'] = 'Sent to users requesting notifications on new replies to a topoic. (Sent on first reply, no more notifications until the thread is read. Does include message body.)';
+$txt['email_template_desc_msg_quote'] = 'Sent to users requesting notification emails when a message of theirs is quoted.';
+$txt['email_template_desc_msg_mention'] = 'Sent to users requesting notification emails when they are mentioned in a message.';
+
+$txt['email_template_desc_notification_sticky'] = 'Sent to users when a topic they are watching gets stickied.';
+$txt['email_template_desc_notification_lock'] = 'Sent to users when a topic they are watching gets locked.';
+$txt['email_template_desc_notification_unlock'] = 'Sent to users when a topic they are watching gets unlocked.';
+$txt['email_template_desc_notification_remove'] = 'Sent to users when a topic they are watching gets removed.';
+$txt['email_template_desc_notification_move'] = 'Sent to users when a topic they are watching gets moved.';
+$txt['email_template_desc_notification_merge'] = 'Sent to users when a topic they are watching gets merged.';
+$txt['email_template_desc_notification_split'] = 'Sent to users when a topic they are watching gets split.';
+$txt['email_template_desc_alert_unapproved_reply'] = 'Sent to the topic starter of an unapproved topic when there is a reply to it (e.g. moderators)';
+$txt['email_template_desc_alert_unapproved_post'] = 'Sent to moderators when a new post has been made that is not approved.';
+$txt['email_template_desc_alert_unapproved_topic'] = 'Sent to moderators when a new topic has been made that is not approved.';
+$txt['email_template_desc_scheduled_approval'] = 'Sent to moderators regularly listing all the unapproved content for them to review.';
+
+$txt['email_template_desc_report_to_moderator'] = 'Sent to moderators when a post is reported.';
+$txt['email_template_desc_reply_to_moderator'] = 'Sent to moderators after a comment is made on a previously-reported post.';
+$txt['email_template_desc_report_member_profile'] = 'Sent to moderators when a profile is reported.';
+$txt['email_template_desc_reply_to_member_report'] = 'Sent to moderators after a comment is made on a previously-reported profile.';
+
+$txt['email_template_desc_activate_reactivate'] = 'Sent to a user when they change their email address and it needs activation.';
+$txt['email_template_desc_forgot_password'] = 'Sent to a user when requesting a new password through the forgot-password reminder.';
+$txt['email_template_desc_change_password'] = 'Sent to a user when the admin resets their username/password through the profile area.';
+
+$txt['email_template_desc_paid_subscription_new'] = 'Sent to admins when a new paid subscription is taken out.';
+$txt['email_template_desc_paid_subscription_reminder'] = 'Sent to users who have a paid subscription which will expire in the next 24 hours.';
+$txt['email_template_desc_paid_subscription_refund'] = 'Sent to admins when a paid subsciption refund is processed by the payment provider.';
+$txt['email_template_desc_paid_subscription_error'] = 'Sent to admins when a paid subscription error occurs with the payment provider.';
+
+$txt['email_template_desc_contact_form_response'] = 'Sent to people when admins respond to messages from the contact form.';
+$txt['email_template_desc_admin_attachments_full'] = 'Sent to admins when the attachments folder gets close to the maximum defined size.';
+
 $txt['lang_file_desc_General'] = 'General strings';
 $txt['lang_file_desc_ManagePaid'] = 'Paid subscriptions';
 $txt['lang_file_desc_Modlog'] = 'Moderation log';

@@ -34,6 +34,8 @@ function ManageLanguages()
 	$subActions = [
 		'edit' => 'ModifyLanguages',
 		'editlang' => 'ModifyLanguage',
+		'editemail' => 'ModifyEmailTemplates',
+		'editemailtemplate' => 'ModifySpecificEmailTemplate',
 	];
 
 	// By default we're managing languages.
@@ -476,6 +478,8 @@ function ModifyLanguage()
 		'rtl' => !empty($language_manifest['is_rtl']),
 	];
 
+	$context['email_templates'] = get_email_templates($context['lang_id']);
+
 	// If we are editing a file work away at that.
 	if ($current_file)
 	{
@@ -578,4 +582,266 @@ function ModifyLanguage()
 	}
 
 	createToken('admin-mlang');
+}
+
+function ModifyEmailTemplates()
+{
+	global $settings, $context, $txt, $scripturl;
+
+	loadLanguage('ManageSettings');
+
+	// Select the languages tab.
+	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
+	$context['page_title'] = $txt['edit_email_templates'];
+
+	// Clean the ID - just in case.
+	$context['lang_id'] = $_GET['lid'] ?? '';
+	if (preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches))
+	{
+		$context['lang_id'] = $matches[1];
+	}
+	else
+	{
+		$context['lang_id'] = '';
+	}
+
+	$languages = getLanguages();
+	if (!isset($languages[$context['lang_id']]))
+	{
+		redirectexit('action=admin;area=languages');
+	}
+
+	// Get the emails in the requested group.
+	$context['email_templates'] = get_email_templates($context['lang_id']);
+
+	$context['email_group'] = $_GET['emailgroup'] ?? '';
+	if (!isset($context['email_templates'][$context['email_group']]))
+	{
+		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
+	}
+
+	$current_file = $settings['default_theme_dir'] . '/languages/' . $context['lang_id'] . '/EmailTemplates.php';
+	$master = Language::get_file_for_editing($current_file);
+	$delta = Language::get_language_changes(1, $context['lang_id'], 'EmailTemplates');
+
+	$context['email_template_group'] = $context['email_templates'][$context['email_group']];
+	foreach ($context['email_template_group']['emails'] as $email_key => $email_details)
+	{
+		$context['email_template_group']['emails'][$email_key]['desc'] = $txt['email_template_desc_' . $email_key];
+		$context['email_template_group']['emails'][$email_key]['subject'] = $delta['txt'][$email_key . '_subject'] ?? $master['txt'][$email_key . '_subject'];
+		$context['email_template_group']['emails'][$email_key]['body'] = nl2br(StringLibrary::escape(shorten_subject($delta['txt'][$email_key . '_body'] ?? $master['txt'][$email_key . '_body'], 100), ENT_QUOTES), false);
+		$context['email_template_group']['emails'][$email_key]['editlink'] = $scripturl . '?action=admin;area=languages;sa=editemailtemplate;lid=' . $context['lang_id'] . ';emailgroup=' . $context['email_group'] . ';email=' . $email_key;
+	}
+
+
+	$context['sub_template'] = 'admin_languages_edit_email_group';
+}
+
+function ModifySpecificEmailTemplate()
+{
+	global $settings, $context, $txt, $scripturl;
+
+	loadLanguage('ManageSettings');
+
+	// Select the languages tab.
+	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
+
+	// Clean the ID - just in case.
+	$context['lang_id'] = $_GET['lid'] ?? '';
+	if (preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches))
+	{
+		$context['lang_id'] = $matches[1];
+	}
+	else
+	{
+		$context['lang_id'] = '';
+	}
+
+	$languages = getLanguages();
+	if (!isset($languages[$context['lang_id']]))
+	{
+		redirectexit('action=admin;area=languages');
+	}
+
+	// Get the emails in the requested group.
+	$context['email_templates'] = get_email_templates($context['lang_id']);
+
+	$context['email_group'] = $_GET['emailgroup'] ?? '';
+	if (!isset($context['email_templates'][$context['email_group']]))
+	{
+		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
+	}
+
+	$context['email_template'] = $_GET['email'] ?? '';
+	if (!isset($context['email_templates'][$context['email_group']]['emails'][$context['email_template']]))
+	{
+		redirectexit('action=admin;area=languages;sa=editemail;lid=' . $context['lang_id'] . ';emailgroup=' . $context['email_group']);
+	}
+
+	$current_file = $settings['default_theme_dir'] . '/languages/' . $context['lang_id'] . '/EmailTemplates.php';
+	$master = Language::get_file_for_editing($current_file);
+	$delta = Language::get_language_changes(1, $context['lang_id'], 'EmailTemplates');
+
+	$current_subject = $delta['txt'][$context['email_template'] . '_subject'] ?? $master['txt'][$context['email_template'] . '_subject'];
+	$current_body = $delta['txt'][$context['email_template'] . '_body'] ?? $master['txt'][$context['email_template'] . '_body'];
+
+	$context['email_template_content'] = [
+		'desc' => $txt['email_template_desc_' . $context['email_template']],
+		'subject' => StringLibrary::escape($current_subject, ENT_QUOTES),
+		'body' => StringLibrary::escape($current_body, ENT_QUOTES),
+		'editlink' => $scripturl . '?action=admin;area=languages;sa=editemailtemplate;lid=' . $context['lang_id'] . ';emailgroup=' . $context['email_group'] . ';email=' . $context['email_template'],
+	];
+
+	$context['page_title'] = $txt['edit_email_templates'] . ' - ' . $context['email_template'];
+	$context['sub_template'] = 'admin_languages_edit_email_template';
+
+	if (!empty($_POST['save']))
+	{
+		checkSession();
+
+		// Note that we don't validate these like others; they're for email bodies and thus not subject to HTML sanitisation rules.
+		$subject = trim($_POST['subject'] ?? '');
+		$body = trim($_POST['body'] ?? '');
+
+		if (!empty($subject) && !empty($body))
+		{
+			// If what we're saving for subject/body is the same as default, revert to default. Otherwise save.
+			if ($subject == $master['txt'][$context['email_template'] . '_subject'])
+			{
+				Language::delete_current_entry(1, $context['lang_id'], 'EmailTemplates', 'txt', $context['email_template'] . '_subject');
+			}
+			else
+			{
+				Language::save_single_entry(1, $context['lang_id'], 'EmailTemplates', 'txt', $context['email_template'] . '_subject', $subject);
+			}
+
+			if ($body == $master['txt'][$context['email_template'] . '_body'])
+			{
+				Language::delete_current_entry(1, $context['lang_id'], 'EmailTemplates', 'txt', $context['email_template'] . '_body');
+			}
+			else
+			{
+				Language::save_single_entry(1, $context['lang_id'], 'EmailTemplates', 'txt', $context['email_template'] . '_body', $body);
+			}
+
+			session_flash('success', $txt['settings_saved']);
+			redirectexit('action=admin;area=languages;sa=editemail;lid=' . $context['lang_id'] . ';emailgroup=' . $context['email_group']);
+		}
+
+		// If we get to here, we had an issue and are returning back to the form.
+	}
+}
+
+function get_email_templates(string $lang): array
+{
+	global $txt, $scripturl;
+
+	$email_templates = [
+		'registration' => [
+			'emails' => [
+				'register_activate' => [],
+				'register_immediate' => [],
+				'register_pending' => [],
+				'resend_activate_message' => [],
+				'resend_pending_message' => [],
+			],
+		],
+		'registration_admin' => [
+			'emails' => [
+				'admin_approve_accept' => [],
+				'admin_approve_activation' => [],
+				'admin_approve_reject' => [],
+				'admin_approve_delete' => [],
+				'admin_approve_remind' => [],
+				'admin_register_activate' => [],
+				'admin_register_immediate' => [],
+				'admin_notify' => [],
+				'admin_notify_approval' => [],
+			],
+		],
+		'personal_messages' => [
+			'emails' => [
+				'new_pm' => [],
+				'new_pm_body' => [],
+				'new_pm_tolist' => [],
+				'new_pm_body_tolist' => [],
+			],
+		],
+		'content_notifications' => [
+			'emails' => [
+				'notify_boards' => [],
+				'notify_boards_body' => [],
+				'notify_boards_once' => [],
+				'notify_boards_once_body' => [],
+				'notification_reply' => [],
+				'notification_reply_body' => [],
+				'notification_reply_once' => [],
+				'notification_reply_body_once' => [],
+				'msg_quote' => [],
+				'msg_mention' => [],
+			],
+		],
+		'mod_notifications' => [
+			'emails' => [
+				'notification_sticky' => [],
+				'notification_lock' => [],
+				'notification_unlock' => [],
+				'notification_remove' => [],
+				'notification_move' => [],
+				'notification_merge' => [],
+				'notification_split' => [],
+				'alert_unapproved_reply' => [],
+				'alert_unapproved_post' => [],
+				'alert_unapproved_topic' => [],
+				'scheduled_approval' => [],
+			],
+		],
+		'reported_content' => [
+			'report_to_moderator' => [],
+			'reply_to_moderator' => [],
+			'report_member_profile' => [],
+			'reply_to_member_report' => [],
+		],
+		'group_membership' => [
+			'emails' => [
+				'request_membership' => [],
+				'mc_group_approve' => [],
+				'mc_group_reject' => [],
+				'mc_group_reject_reason' => [],
+			],
+		],
+		'account_changes' => [
+			'activate_reactivate' => [],
+			'forgot_password' => [],
+			'change_password' => [],
+		],
+		'paid_subs' => [
+			'emails' => [
+				'paid_subscription_new' => [],
+				'paid_subscription_reminder' => [],
+				'paid_subscription_refund' => [],
+				'paid_subscription_error' => [],
+			],
+		],
+		'general' => [
+			'emails' => [
+				'contact_form_response' => [],
+				'admin_attachments_full' => [],
+			],
+		],
+	];
+
+	foreach ($email_templates as $email_group_id => $email_group)
+	{
+		if (empty($email_group['emails']))
+		{
+			unset ($email_templates[$email_group_id]);
+			continue;
+		}
+
+		$email_templates[$email_group_id]['title'] = $txt['email_template_group_' . $email_group_id];
+		$email_templates[$email_group_id]['editlink'] = $scripturl . '?action=admin;area=languages;sa=editemail;lid=' . $lang . ';emailgroup=' . $email_group_id;
+	}
+
+	return $email_templates;
 }

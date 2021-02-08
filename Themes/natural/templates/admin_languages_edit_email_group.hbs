@@ -1,0 +1,21 @@
+	{{! Select which of the emails you wish to edit. }}
+	<div id="admincenter">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{{txt.edit_email_templates}}} - {{{context.email_template_group.title}}}
+			</h3>
+		</div>
+		<div class="windowbg">
+{{#each context.email_template_group.emails}}
+			<dl class="settings">
+				<dt><a href="{{{editlink}}}">{{{@key}}}</dt>
+				<dd>
+					<div class="information">{{{desc}}}</div>
+					<div class="email_subject">{{{../txt.email_subject}}} {{subject}}</div>
+					<div class="email_body_header">{{{../txt.email_body}}}</div>
+					<div class="email_body">{{{body}}}</div>
+				</dd>
+			</dl>
+{{/each}}
+		</div>
+	</div>

@@ -427,17 +427,6 @@ Please log in to the forum to review these items.
 {REGARDS}';
 
 /**
-	@additional_params: send_email
-		EMAILSUBJECT: The subject the user wants to email.
-		EMAILBODY: The body the user wants to email.
-		SENDERNAME: The name of the member sending the email.
-		RECPNAME: The name of the person receiving the email.
-	@description:
-*/
-$txt['send_email_subject'] = '{EMAILSUBJECT}';
-$txt['send_email_body'] = '{EMAILBODY}';
-
-/**
 	@additional_params: report_to_moderator
 		TOPICSUBJECT: The subject of the reported post.
 		POSTERNAME: The reported post's author's name.

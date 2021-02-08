@@ -51,5 +51,18 @@
 				</ul>
 				<a href="{{scripturl}}?action=admin;area=regcenter;sa=policies">{{{txt.all_site_policies}}}</a>
 			</div>
+
+			<div class="title_bar">
+				<h3 class="titlebg">
+					{{{txt.edit_email_templates}}}
+				</h3>
+			</div>
+			<div class="windowbg noup">
+				<ul class="normallist">
+{{#each context.email_templates}}
+					<li><a href="{{{editlink}}}">{{{title}}}</a></li>
+{{/each}}
+				</ul>
+			</div>
 		</div>
 	</div>
