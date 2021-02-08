@@ -220,7 +220,7 @@ function AffiliateTierSave()
 
 		$smcFunc['db']->insert('insert',
 			'{db_prefix}affiliate_tier',
-			['tier_name' => 'string', 'image_width' => 'int', 'image_height' => 'int', 'sort_order' => 'int', 'desaturate'],
+			['tier_name' => 'string', 'image_width' => 'int', 'image_height' => 'int', 'sort_order' => 'int', 'desaturate' => 'int'],
 			[$context['tier_name_escaped'], $context['tier_image_width'], $context['tier_image_height'], $sort_order, $context['tier_desaturate']],
 			['id_tier']
 		);
