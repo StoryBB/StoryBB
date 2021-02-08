@@ -73,10 +73,12 @@ class BuddyList extends AbstractProfileController
 			SELECT col_name, field_name, field_desc, field_type, bbc, enclose
 			FROM {db_prefix}custom_fields
 			WHERE active = {int:active}
-				AND private < {int:private_level}',
+				AND private < {int:private_level}
+				AND in_character = {int:not_in_character}',
 			[
 				'active' => 1,
 				'private_level' => 2,
+				'not_in_character' => 0,
 			]
 		);
 
@@ -120,35 +122,28 @@ class BuddyList extends AbstractProfileController
 		$context['buddies'] = [];
 		foreach ($buddies as $buddy)
 		{
-			loadMemberContext($buddy);
+			loadMemberContext($buddy, true);
 			$context['buddies'][$buddy] = $memberContext[$buddy];
 
-			// Make sure to load the appropriate fields for each user
-			if (!empty($context['custom_pf']))
+			foreach ($context['buddies'][$buddy]['characters'] as $character)
 			{
-				foreach ($context['custom_pf'] as $key => $column)
+				if ($character['is_main'])
 				{
-					// Don't show anything if there isn't anything to show.
-					if (!isset($context['buddies'][$buddy]['options'][$key]))
+					$context['buddies'][$buddy]['options'] = [];
+					$fields = [];
+					foreach ($character['custom_fields'] as $placement => $fields)
 					{
-						$context['buddies'][$buddy]['options'][$key] = '';
-						continue;
+						foreach ($fields as $field)
+						{
+							$fields[$field['col_name']] = $field['value'];
+						}
 					}
 
-					if ($column['bbc'] && !empty($context['buddies'][$buddy]['options'][$key]))
-						$context['buddies'][$buddy]['options'][$key] = strip_tags(Parser::parse_bbc($context['buddies'][$buddy]['options'][$key]));
-
-					elseif ($column['type'] == 'check')
-						$context['buddies'][$buddy]['options'][$key] = $context['buddies'][$buddy]['options'][$key] == 0 ? $txt['no'] : $txt['yes'];
-
-					// Enclosing the user input within some other text?
-					if (!empty($column['enclose']) && !empty($context['buddies'][$buddy]['options'][$key]))
-						$context['buddies'][$buddy]['options'][$key] = strtr($column['enclose'], [
-							'{SCRIPTURL}' => $scripturl,
-							'{IMAGES_URL}' => $settings['images_url'],
-							'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
-							'{INPUT}' => $context['buddies'][$buddy]['options'][$key],
-						]);
+					foreach (array_keys($context['custom_pf']) as $field)
+					{
+						$context['buddies'][$buddy]['options'][] = $fields[$field] ?? '';
+					}
+					break;
 				}
 			}
 		}

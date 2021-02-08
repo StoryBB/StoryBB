@@ -29,16 +29,12 @@
 				<td>{{{link}}}</td>
 				<td><a href="{{{online.href}}}"><span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
 
-		{{#if show_email}}
-				<td><a href="mailto:{{email}}" rel="nofollow" class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></a></td>
-		{{/if}}
-
 		{{! Show the custom profile fields for this user. }}
-		{{#each ../context.custom_pf}}
-				<td class="lefttext">{{{lookup options @key}}}</td>
+		{{#each options}}
+				<td class="lefttext">{{{.}}}</td>
 		{{/each}}
 
-				<td><a href="{{../scripturl}}?action=profile;area=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
+				<td class="centercol"><a href="{{../scripturl}}?action=profile;area=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
 			</tr>
 	{{/each}}
 {{/unless}}
