@@ -213,6 +213,7 @@ $txt['last_edit_reason'] = '<span id="reason" class="lastedit">Reason</span>: %1
 $txt['notify_deactivate'] = 'Would you like to deactivate notification on this topic?';
 
 $txt['recent_posts'] = 'Recent Posts';
+$txt['online_in_discord'] = 'Online in Discord';
 
 $txt['location'] = 'Location';
 $txt['date_registered'] = 'Date Registered';
