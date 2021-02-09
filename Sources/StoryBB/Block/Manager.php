@@ -137,6 +137,7 @@ class Manager
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
 				'blocktype' => self::get_blocktype($instance),
 				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
+				'fa-icon' => isset($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
 				'collapsible' => !empty($toggle),
 				'collapsed' => $toggle && $toggle->currently_collapsed(),
 			]);

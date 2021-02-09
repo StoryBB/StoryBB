@@ -79,6 +79,7 @@ class Multiblock extends AbstractBlock implements Block
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
 				'blocktype' => Manager::get_blocktype($instance),
 				'icon' => !empty($block_config['icon']) ? $block_config['icon'] : '',
+				'fa-icon' => !empty($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
 				'collapsible' => false,
 				'collapsed' => false,
 			]);
