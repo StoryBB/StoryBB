@@ -8,6 +8,13 @@
 	}
 }
 
+.block_title {
+	.fas, .far, .fab {
+		font-size: 16px;
+		margin-right: 4px;
+	}
+}
+
 .blocktype_recentposts .block_content {
 	width: 100%;
 }
@@ -42,4 +49,18 @@
 
 .blocktype_multiblock .block:first-of-type .sub_bar {
 	border-top: 0;
+}
+
+.blocktype_discordserver {
+	.online_discord {
+		display: inline-block;
+		vertical-align: middle;
+		margin-right: 15px;
+
+		img {
+			max-height: 25px;
+			vertical-align: middle;
+			margin-right: 4px;
+		}
+	}
 }

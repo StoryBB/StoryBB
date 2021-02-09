@@ -1,0 +1,9 @@
+<strong>{{txt.online}}:</strong> {{{online_string}}}
+
+{{#if online}}
+	<br><br>
+
+	{{#each online}}
+		<div class="online_discord">{{#if avatar}}<img src="{{avatar}}" alt="">{{/if}} {{name}}</div>
+	{{/each}}
+{{/if}}
