@@ -14,6 +14,7 @@ namespace StoryBB\Controller\PM;
 
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 class Compose extends AbstractPMController
 {
