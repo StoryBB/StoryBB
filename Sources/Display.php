@@ -151,7 +151,7 @@ function Display()
 	// Get all the important topic info.
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
+			t.num_replies, t.num_views, t.locked, ms.subject, ms.body, ms.smileys_enabled, t.is_sticky, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.id_redirect_topic,
 			COALESCE(mem.real_name, ms.poster_name) AS topic_started_name, ms.poster_time AS topic_started_time,
 			IFNULL(chars.character_name, IFNULL(mem.real_name, ms.poster_name)) AS topic_started_name,
@@ -350,6 +350,10 @@ function Display()
 	// Censor the title...
 	censorText($context['topicinfo']['subject']);
 	$context['page_title'] = $context['topicinfo']['subject'];
+
+	censorText($context['topicinfo']['body']);
+	$context['topicinfo']['body'] = Parser::parse_bbc($context['topicinfo']['body'], $context['topicinfo']['smileys_enabled'], $context['topicinfo']['id_first_msg']);
+	$context['meta_description'] = shorten_subject(strip_tags(preg_replace('/<br ?\/?>/i', "\n", $context['topicinfo']['body'])), 500);
 
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
