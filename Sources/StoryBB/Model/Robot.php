@@ -31,8 +31,9 @@ class Robot
 			'adbeat' => 'adbeat',
 			'ahrefsbot' => 'ahrefs',
 			'adidxbot' => 'bingads',
-			'adsbot-google' => 'googleadsence',
+			'adsbot-google' => 'googleadsense',
 			'alexabot' => 'alexacertify',
+			'apis-google' => 'google',
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
 			'baiduspider' => 'baidu',
@@ -40,6 +41,7 @@ class Robot
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
 			'deadlinkchecker' => 'deadlinkchecker',
+			'discordapp' => 'discord',
 			'duckduckbot' => 'duckduckgo',
 			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
@@ -158,6 +160,10 @@ class Robot
 			'deadlinkchecker' => [
 				'title' => 'Dead Link Checker',
 				'link' => 'https://www.deadlinkchecker.com/',
+			],
+			'discord' => [
+				'title' => 'Discord',
+				'link' => 'https://discordapp.com/',
 			],
 			'duckduckgo' => [
 				'title' => 'DuckDuckGo',
