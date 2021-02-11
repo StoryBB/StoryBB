@@ -1348,7 +1348,35 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['meta_tags'][] = ['property' => 'og:url', 'content' => $context['canonical_url']];
 
 	if (!empty($settings['og_image']))
+	{
 		$context['meta_tags'][] = ['property' => 'og:image', 'content' => $settings['og_image']];
+	}
+	elseif (!empty($modSettings['favicon_cache']))
+	{
+		$favicons = json_decode($modSettings['favicon_cache'], true);
+
+		$container = Container::instance();
+		$urlgenerator = $container->get('urlgenerator');
+
+		$sizes = [
+			7 => [192, 192],
+			3 => [180, 180],
+			5 => [167, 167],
+			4 => [152, 152],
+			6 => [128, 128],
+		];
+
+		foreach ($sizes as $favicon_id => $size)
+		{
+			if (isset($favicons['favicon_' . $favicon_id]))
+			{
+				$context['meta_tags'][] = ['property' => 'og:image', 'content' => $urlgenerator->generate('favicon', ['id' => $favicon_id, 'timestamp' => $favicons['favicon_' . $favicon_id]])];
+				$context['meta_tags'][] = ['property' => 'og:image:width', 'content' => $size[0]];
+				$context['meta_tags'][] = ['property' => 'og:image:height', 'content' => $size[1]];
+				break;
+			}
+		}
+	}
 
 	if (!empty($context['meta_description']))
 	{
