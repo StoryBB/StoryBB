@@ -1355,6 +1355,11 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $context['meta_description']];
 		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['meta_description']];
 	}
+	elseif (!empty($modSettings['meta_description']))
+	{
+		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $modSettings['meta_description']];
+		$context['meta_tags'][] = ['name' => 'description', 'content' => $modSettings['meta_description']];
+	}
 	else
 	{
 		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $context['page_title_html_safe']];

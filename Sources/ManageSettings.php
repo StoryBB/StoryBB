@@ -119,6 +119,7 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// SEO stuff
 			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],
+			['large_text', 'meta_description'],
 		'',
 			// Number formatting, timezones.
 			['select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()],
