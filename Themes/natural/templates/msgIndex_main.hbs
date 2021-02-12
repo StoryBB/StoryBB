@@ -17,16 +17,18 @@
 	{{/if}}
 </div>
 
-{{#if settings.display_who_viewing}}
+{{#if (or (eq_coerce settings.display_who_viewing '1') (eq_coerce settings.display_who_viewing '2'))}}
 		<div class="information">
 
-	{{#if (eq settings.display_who_viewing 1)}}
-			{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
+	{{#if (eq_coerce settings.display_who_viewing '1')}}
+			{{#if (eq_coerce (getNumItems context.view_members) '1')}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 	{{else}}
 			{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}} 0 {{txt.members}}{{/if}}
 	{{/if}}
-			{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
+			{{txt.who_and}} {{context.view_num_guests}} {{#if (eq_coerce context.view_num_guests '1')}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 		</div>
+{{else}}
+	<br>
 {{/if}}
 
 {{#if context.boards}}
