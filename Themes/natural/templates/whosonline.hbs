@@ -40,15 +40,15 @@
 									{{#if ../context.can_send_pm}}</a>{{/if}}
 								</span>
 	{{/unless}}
-								<span class="member{{#if is_hidden}} hidden{{/if}}">
+								<span class="member{{#if is_hidden}} hidden{{/if}}"{{#if title}} title="{{{title}}}"{{/if}}>
 									{{#if is_guest}}
-										{{{name}}}
+										{{#if link}}{{{link}}}{{else}}{{{name}}}{{/if}}
 									{{else}}
 										<a href="{{{href}}}" title="{{../txt.profile_of}} {{{name}}}"{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</a>
 									{{/if}}
 								</span>
 	{{#if ip}}
-								(<a href="{{scripturl}}?action=admin;area=logs;sa=ip;{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
+								(<a href="{{../scripturl}}?action=admin;area=logs;sa=ip;{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
 	{{/if}}
 							</td>
 							<td class="time">{{time}}</td>
