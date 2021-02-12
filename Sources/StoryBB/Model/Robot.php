@@ -69,6 +69,7 @@ class Robot
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
 			'scrubby' => 'scrubtheweb',
+			'semrushbot' => 'semrush',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
 			'speedy spider' => 'entireweb',
@@ -236,6 +237,10 @@ class Robot
 			'scoutjet' => [
 				'title' => 'ScoutJet',
 				'link' => 'http://scoutjet.com/',
+			],
+			'semrush' => [
+				'title' => 'SemrushBot',
+				'link' => 'https://semrush.com/bot/',
 			],
 			'slack' => [
 				'title' => 'Slack',
