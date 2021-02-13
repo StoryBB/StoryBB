@@ -1356,7 +1356,7 @@ function EditCustomProfiles()
 				'regex' => substr($row['mask'], 0, 5) == 'regex' ? substr($row['mask'], 5) : '',
 				'enclose' => $row['enclose'],
 				'placement' => $row['placement'],
-				'in_character' => $row['in_character'],
+				'in_character' => (int) $row['in_character'],
 			];
 		}
 		$smcFunc['db']->free_result($request);
