@@ -43,11 +43,11 @@
 	{{#if (eq_coerce ../context.current_pm id)}}
 				<img src="{{../settings.images_url}}/selected.png" alt="*">
 	{{/if}}
-				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}}{{/unless}}">
+				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}}{{#if (eq ../context.folder 'sent')}};f=sent{{/if}}{{/unless}}">
 					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts"></span>{{/if}}</a>
 				{{#each labels}}<span class="pm_label">{{{name}}}</span>{{/each}}
 			</td>
-			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{{implode recipients.to}}}{{/if}}{{/if}}</td>
+			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{{join ', ' recipients.to}}}{{/if}}{{/if}}</td>
 			<td class="centercol table_icon">
 				<input type="checkbox" name="pms[]" id="deletelisting{{id}}" value="{{id}}"{{#if is_selected}} checked{{/if}} onclick="if (document.getElementById('deletedisplay{{id}}')) document.getElementById('deletedisplay{{id}}').checked = this.checked;">
 			</td>
