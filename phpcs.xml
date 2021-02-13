@@ -13,7 +13,6 @@
     <exclude-pattern>./cache/*</exclude-pattern>
 
     <!-- Don't include anything that we know ahead of time to be minified. -->
-    <exclude-pattern>./Themes/natural/css/minified.css</exclude-pattern>
     <exclude-pattern>./Themes/natural/css/select2.css</exclude-pattern>
     <exclude-pattern>./Themes/natural/css/select2.min.css</exclude-pattern>
     <exclude-pattern>./Themes/natural/scripts/dropzone.min.js</exclude-pattern>

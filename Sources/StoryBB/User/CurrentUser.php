@@ -41,11 +41,12 @@ class CurrentUser
 		{
 			$request = $db->query('', '
 				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
-					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
+					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, ac.filename AS chars_filename, mainchar.avatar AS char_avatar, chars.avatar AS ic_avatar, mainchar.avatar AS ooc_avatar
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
 					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
+					LEFT JOIN {db_prefix}attachments AS ac ON (ac.id_character = chars.id_character AND ac.attachment_type = 1)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
 				[
@@ -63,6 +64,9 @@ class CurrentUser
 
 			$this->user_data['groups'] = array_merge([$this->user_data['id_group']], explode(',', $this->user_data['additional_groups']));
 			$this->user_data['groups'] = array_unique(array_map('intval', $this->user_data['groups']));
+
+			$this->user_data['ic_avatar'] = set_avatar_data(['filename' => $user_data['chars_filename'], 'avatar' => $user_data['ic_avatar']]);
+			$this->user_data['ooc_avatar'] = set_avatar_data(['filename' => $user_data['filename'], 'avatar' => $user_data['ooc_avatar']]);
 		}
 		else
 		{

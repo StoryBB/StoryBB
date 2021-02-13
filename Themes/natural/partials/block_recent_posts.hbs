@@ -1,20 +1,24 @@
 {{#if latest_posts}}
 	<table>
-		<tr>
-			<th class="recentpost">{{txt.message}}</th>
-			<th class="recentposter">{{txt.author}}</th>
-			<th class="recentboard">{{txt.board}}</th>
-			<th class="recenttime">{{txt.date}}</th>
-		</tr>
+		<thead>
+			<tr>
+				<th class="recentpost">{{txt.message}}</th>
+				<th class="recentposter">{{txt.author}}</th>
+				<th class="recentboard">{{txt.board}}</th>
+				<th class="recenttime">{{txt.date}}</th>
+			</tr>
+		</thead>
 
+		<tbody>
 	{{#each latest_posts}}
-		<tr>
-			<td class="recentpost"><strong>{{{link}}}</strong></td>
-			<td class="recentposter">{{{poster.link}}}</td>
-			<td class="recentboard">{{{board.link}}}</td>
-			<td class="recenttime">{{{time}}}</td>
-		</tr>
+			<tr>
+				<td class="recentpost"><strong>{{{link}}}</strong></td>
+				<td class="recentposter">{{{poster.link}}}</td>
+				<td class="recentboard">{{{board.link}}}</td>
+				<td class="recenttime">{{{time}}}</td>
+			</tr>
 	{{/each}}
+		</tbody>
 
 	</table>
 {{/if}}

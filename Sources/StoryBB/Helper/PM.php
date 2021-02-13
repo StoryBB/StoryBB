@@ -21,7 +21,7 @@ class PM
 		$context['labels'] = [];
 
 		// Load the label data.
-		if ($user_settings['new_pm'] || ($context['labels'] = cache_get_data('labelCounts:' . $user_info['id'], 720)) === null)
+		if (!empty($user_settings['new_pm']) || ($context['labels'] = cache_get_data('labelCounts:' . $user_info['id'], 720)) === null)
 		{
 			// Inbox "label"
 			$context['labels'][-1] = [
@@ -84,7 +84,7 @@ class PM
 		}
 
 		// Now we have the labels, and assuming we have unsorted mail, apply our rules!
-		if ($user_settings['new_pm'])
+		if (!empty($user_settings['new_pm']))
 		{
 			ApplyRules();
 			updateMemberData($user_info['id'], ['new_pm' => 0]);

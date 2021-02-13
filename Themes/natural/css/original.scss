@@ -111,9 +111,10 @@ h3.largetext {
 #characters_menu {
 	color: $default-color;
 	padding-bottom: 10px;
+	width: 30em;
 }
 
-#profile_menu_top > img.avatar {
+#profile_menu_top > img.avatar, #characters_menu_top > img.avatar {
 	max-height: 64px;
 	max-width: 64px;
 	margin-right: 7px;
@@ -407,6 +408,7 @@ dl.settings img {
 	overflow: auto;
 	line-height: 1.4em;
 	padding: 1px 0;
+	clear: both;
 }
 
 /* GenericList */
@@ -586,12 +588,14 @@ a.button_submit {
 .dropmenu > li, #top_info > li {
 	display: inline-block;
 }
+#top_info > li {
+	vertical-align: middle;
+	position: relative;
+}
 
 .dropmenu ul, .top_menu {
 	padding: 0.4em;
-	border: solid 1px #999;
-	border-left: solid 1px #bbb;
-	border-top: solid 1px #ccc;
+	border: 1px solid $primary-border;
 }
 
 .dropmenu a {
@@ -622,8 +626,12 @@ a.button_submit {
 	background: $menu-bg;
 }
 
-.top_menu a, #profile_menu a, #character_menu a {
-	color: #000;
+.top_menu, #profile_menu, #characters_menu {
+	color: $menu-fg;
+}
+
+.top_menu a, #profile_menu a, #characters_menu a:not(.button) {
+	color: $menu-fg-link;
 	text-decoration: underline;
 
 	&:hover {
@@ -755,9 +763,38 @@ a.button_submit {
 }
 
 /* User information. */
-#profile_menu_top::after {
-	content: ' \25BC';
+@media screen and (max-width: 575px) {
+	#profile_menu_top, #characters_menu_top {
+		width: 70px;
+		text-align: center;
+
+	 	&> img.avatar {
+	 		margin-right: 0;
+	 	}
+
+		&::after {
+			content: 'OOC \25BC';
+		    position: absolute;
+		    right: 5px;
+		    top: 45px;
+		    border-radius: 8px;
+			background: $sidebar-amt-bg;
+			font-size: 13px;
+			line-height: 1em;
+			padding: $sidebar-amt-padding;
+			color: $sidebar-amt-fg;
+		}
+	}
+	#characters_menu_top::after {
+		content: 'IC \25BC';
+	}
 }
+@media screen and (min-width: 576px) {
+	#profile_menu_top::after, #characters_menu_top::after {
+		content: ' \25BC';
+	}
+}
+
 
 .profile_user_info, .profile_user_avatar {
 	display: inline-block;
@@ -1394,29 +1431,6 @@ h3 .collapse {
 	color: $content-subject-accent;
 }
 
-.board_stats {
-	width: 14%;
-	padding: 10px;
-	font-size: 0.9em;
-}
-
-.board_stats p {
-	border-left: 1px solid $primary-border;
-	border-right: 1px solid $primary-border;
-	text-align: center;
-	margin: 3px 0 0;
-}
-
-.lastpost {
-	width: 25%;
-	font-size: 0.9em;
-}
-
-.lastpost p {
-	display: inline-block;
-	vertical-align: middle;
-}
-
 .board_icon, .info, .board_stats, .lastpost {
 	display: inline-block;
 	vertical-align: middle;
@@ -1830,6 +1844,114 @@ div#pollmoderation {
 
 .postarea div.flow_hidden {
 	width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+	#forumposts .post_wrapper, #quickReplyOptions .post_wrapper {
+		display: block;
+
+		.poster {
+			width: 100%;
+
+			h4 {
+				.on, .off {
+					display: none;
+				}
+
+				a {
+					position: absolute;
+					left: 70px; /* 50px for the avatar + 10px padding either side. */
+				}
+			}
+
+			.user_info {
+				li.avatar {
+					margin: 0 0 10px 0;
+					display: inline-block;
+
+					a {
+						width: 50px;
+						height: 50px;
+						text-align: center;
+						display: inline-block;
+
+						img {
+							max-width: 50px;
+							max-height: 50px;
+						}
+					}
+				}
+
+				li.icons {
+					display: none;
+				}
+
+				li.membergroup {
+					display: block;
+					position: absolute;
+					left: 70px;
+					top: 30px;
+				}
+
+				li.postcount {
+					display: none;
+				}
+
+				li.profile {
+					display: none;
+				}
+
+				li.im_icons {
+					display: none;
+				}
+
+				li.custom {
+					display: none;
+				}
+			}
+
+			.user_info_arrow {
+				border: 10px solid transparent;
+				left: 28px;
+				bottom: 0;
+				right: auto;
+			}
+		}
+
+		.postarea {
+			width: 100%;
+		}
+	}
+
+	#quickReplyOptions .post_wrapper {
+		h4 {
+			position: absolute;
+			left: 70px;
+		}
+
+		li.avatar {
+			width: 50px;
+			height: 50px;
+			text-align: center;
+			display: inline-block;
+
+			img {
+				max-width: 50px;
+				max-height: 50px;
+			}
+		}
+
+	}
+
+	#forumposts, #quickReplyOptions {
+		.windowbg:nth-of-type(odd) .poster .user_info_arrow {
+			border-bottom-color: $primary-list-bg;
+		}
+
+		.windowbg:nth-of-type(even) .poster .user_info_arrow {
+			border-bottom-color: $secondary-list-bg;
+		}
+	}
 }
 
 .moderatorbar {

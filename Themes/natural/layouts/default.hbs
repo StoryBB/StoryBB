@@ -35,9 +35,13 @@
 	{{{context.html_headers}}}
 </head>
 <body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
+	<div id="sidebar-bars">
+		<i class="fa-fw fas fa-bars"></i>
+	</div>
 	<div id="sidebar">
 		{{#each context.sidebar}}
-			<div id="btn-{{@key}}">
+			{{#if (eq position 'left')}}
+			<div class="navigation-item" id="btn-{{@key}}">
 				<a href="{{{url}}}"{{#if popup}} onclick="return reqOverlayDiv(this.href, {{{jsEscape popup}}});"{{/if}}{{#if (or popupmenu subitems)}} id="{{@key}}_menu_top"{{/if}}><i class="{{icon}}"></i>{{#if amt}}<span class="amt">{{amt}}</span>{{/if}}</a>
 				{{#if popupmenu}}<div id="{{@key}}_menu" class="top_menu scrollable"></div>{{/if}}
 				{{#if subitems}}
@@ -50,6 +54,7 @@
 					</div>
 				{{/if}}
 			</div>
+			{{/if}}
 		{{/each}}
 	</div>
 	<div id="wrapper">
@@ -60,18 +65,34 @@
 			<ul class="floatleft" id="top_info">
 				<li>
 					<a href="{{scripturl}}?action=profile"{{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
-	{{#if context.user.avatar}}
-						{{{context.user.avatar.image}}}
-	{{/if}}
-						{{context.user.name}}
+						{{{user_info.ooc_avatar.image}}}
+						<span class="username">{{context.user.name}}</span>
 					</a>
 					<div id="profile_menu" class="top_menu"></div>
-				</li>
-				<li>
+				</li>{{! Forcing no whitespace here to make the CSS behave nicely.
+			}}<li>
 					<a href="{{scripturl}}?action=profile;area=characters" id="characters_menu_top" onclick="return false;">
-					{{textTemplate txt.posting_as user_info.character_name}} &#9660;</a>
+					{{{user_info.ic_avatar.image}}}
+					<span class="character_name">{{textTemplate txt.posting_as user_info.character_name}}</span></a>
 					<div id="characters_menu" class="top_menu"></div>
 				</li>
+	{{#each context.sidebar}}
+		{{#if (eq position 'top')}}
+				<li class="navigation-item" id="btn-{{@key}}">
+					<a href="{{{url}}}"{{#if popup}} onclick="return reqOverlayDiv(this.href, {{{jsEscape popup}}});"{{/if}}{{#if (or popupmenu subitems)}} id="{{@key}}_menu_top"{{/if}}><i class="{{icon}}"></i>{{#if amt}}<span class="amt">{{amt}}</span>{{/if}}</a>
+					{{#if popupmenu}}<div id="{{@key}}_menu" class="top_menu scrollable"></div>{{/if}}
+					{{#if subitems}}
+						<div id="{{@key}}_menu" class="top_menu scrollable subitems">
+							<ul class="btn-subitems">
+							{{#each subitems}}
+								<li><a href="{{url}}">{{{title}}}{{#if (gt amt 0)}}<span class="amt">{{amt}}</span>{{/if}}</a>
+							{{/each}}
+							</ul>
+						</div>
+					{{/if}}
+				</li>
+		{{/if}}
+	{{/each}}
 			</ul>
 
 {{else}}
@@ -87,23 +108,8 @@
 			</ul>
 {{/if}}
 		
-{{#if modSettings.userLanguage}}
-	{{#if (gt (count context.languages) 1)}}
-			<form id="languages_form" method="get" class="floatright">
-				<select id="language_select" name="language" onchange="this.form.submit()">
-		{{#each context.languages}}
-					<option value="{{filename}}"{{#if (eq context.user.language filename)}} selected{{/if}}>{{name}}</option>
-		{{/each}}
-				</select>
-				<noscript>
-					<input type="submit" value="{{txt.quick_mod_go}}" />
-				</noscript>
-			</form>
-	{{/if}}
-{{/if}}
-		
 {{#if context.allow_search}}
-	<div id="btn-search" class="floatright">
+	<!--<div id="btn-search" class="floatright">
 		<a href="{{scripturl}}?action=search" id="search_menu_top"><i class="fas fa-search fa-fq"></i></a>
 		<div id="search_menu" class="top_menu scrollable subitems">
 			<form id="search_form" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
@@ -127,7 +133,7 @@
 				<input type="hidden" name="advanced" value="0">
 			</form>
 		</div>
-	</div>
+	</div>-->
 
 {{/if}}
 		</div><!-- #top_section -->
@@ -189,6 +195,10 @@
 {{/each}}
 
 				<li class="copyright">{{{copyright}}}</li>
+
+{{#if debug}}
+				<li class="debug">Debug</li>
+{{/if}}
 			</ul>
 
 			<div class="jump_buttons" style="display: none;">

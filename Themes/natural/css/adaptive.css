@@ -2,9 +2,44 @@
 
 /* Wide screens
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
+footer li.debug {
+	float: left;
+}
+@media screen and (min-width: 100px) {
+	footer li.debug::after {
+		content: " (-576px)";
+	}
+	#top_info > li > a > span.username, #top_info > li > a > span.character_name {
+		display: none;
+	}
+}
+@media screen and (min-width: 576px) {
+	footer li.debug::after {
+		content: " (576-767px)";
+	}
+	#top_info > li > a > span.username, #top_info > li > a > span.character_name {
+		display: inline;
+	}
+}
+@media screen and (min-width: 768px) {
+	footer li.debug::after {
+		content: " (768-991px)";
+	}
+}
+@media screen and (min-width: 992px) {
+	footer li.debug::after {
+		content: " (992-1199px)";
+	}
+}
+@media screen and (min-width: 1200px) {
+	footer li.debug::after {
+		content: " (1200-1800px)";
+	}
+}
 @media screen and (min-width: 1800px) {
-	
+	footer li.debug::after {
+		content: " (1800+px)";
+	}
 }
 
 /* Mobile devices, windowed browsers and the like
@@ -20,7 +55,7 @@
 		margin: 0 2.5%;
 	}
 
-	footer, #top_section {
+	footer {
 		padding-left: calc(2.5% + 10px);
 		padding-right: calc(2.5% + 10px);
 	}
@@ -42,14 +77,13 @@
 @media screen and (max-width: 600px) {
 	#content_wrapper {
 		width: 100%;
-		border-radius: 0;
 	}
 
 	header {
 		margin: 0;
 	}
 
-	footer, #top_section {
+	footer {
 		padding-left: 10px;
 		padding-right: 10px;
 	}

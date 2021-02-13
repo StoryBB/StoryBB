@@ -190,7 +190,7 @@ class Folder extends AbstractPMController
 					AND pm.deleted_by_sender = {int:deleted_by}' : '1=1') . (empty($pmsg) ? '' : '
 					AND pm.id_pm = {int:pmsg}') . $labelQuery2 . '
 				GROUP BY pm.id_pm_head'.($_GET['sort'] != 'pm.id_pm' ? ',' . $_GET['sort'] : '') . '
-				ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($_GET['pmsg']) ? '
+				ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($_GET['pmsg']) ? '
 				LIMIT ' . $_GET['start'] . ', ' . $maxPerPage : ''),
 				[
 					'current_member' => $user_info['id'],
@@ -376,7 +376,7 @@ class Folder extends AbstractPMController
 						LEFT JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)' : '') . ($context['sort_by'] == 'name' ? '
 						LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = {raw:id_member})' : '') . '
 					WHERE pm.id_pm IN ({array_int:display_pms})' . ($context['folder'] == 'sent' ? '
-					GROUP BY pm.id_pm, pm.subject, pm.id_member_from, pm.body, pm.msgtime, pm.from_name' : '') . '
+					GROUP BY pm.id_pm, pm.id_pm_head, pm.subject, pm.id_member_from, pm.body, pm.msgtime, pm.from_name' : '') . '
 					ORDER BY pm.id_pm' . ($descending ? ' DESC' : ' ASC') . '
 					LIMIT {int:limit}',
 					[

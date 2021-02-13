@@ -201,8 +201,28 @@ class InfoSummary extends AbstractProfileController
 
 		// Any custom profile fields?
 		if (!empty($context['custom_fields']))
+		{
 			foreach ($context['custom_fields'] as $custom)
+			{
 				$context['print_custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
+			}
+
+			foreach ($context['print_custom_fields'] as $placement => $fields)
+			{
+				foreach ($fields as $id => $field)
+				{
+					if (empty($field['output_html']))
+					{
+						unset($context['print_custom_fields'][$placement][$id]);
+					}
+				}
+
+				if (empty($context['print_custom_fields'][$placement]))
+				{
+					unset ($context['print_custom_fields'][$placement]);
+				}
+			}
+		}
 
 		$cur_profile = $user_profile[$memID];
 		$main_char = $cur_profile['characters'][$cur_profile['main_char']];

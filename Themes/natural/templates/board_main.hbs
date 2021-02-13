@@ -27,20 +27,27 @@
 			topics (# of), posts (# of), link, href, and last_post. (see below.)
 		}}
 		{{#each this.boards}}
-			<div id="board_{{this.id}}" class="up_contain {{#if this.css_class}}{{{this.css_class}}}{{/if}}">
+			<div id="board_{{this.id}}" class="up_contain {{#if this.css_class}}{{{this.css_class}}}{{/if}} board-display">
 				<div class="board_icon">
 					<a href="{{#if (or this.is_redirect ../../context.user.is_guest)}}{{this.href}}{{else}}{{../../scripturl}}?action=unread;board={{this.id}}.0;children{{/if}}" class="board_{{this.board_class}}" {{#if this.board_tooltip}}title="{{this.board_tooltip}}"{{/if}}></a>
 				</div>
 				<div class="info">
 					<a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
 						{{{this.name}}}
-						<p class="board_description mobile_display">{{{this.description}}}</p>
 					</a>
 
 			{{! Does board have outstanding posts for approval? }}
 			{{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
 					<a href="{{../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
 			{{/if}}
+					<div class="board_stats_inline">
+				{{#if this.is_redirect}}
+						<div class="board_stats_redirects">{{comma posts}} {{../../txt.redirects}}</div>
+				{{else}}
+						<div class="board_stats_posts">{{comma posts}} {{../../txt.posts}}</div>
+						<div class="board_stats_topics">{{comma this.topics}} {{../../txt.board_topics}}</div>
+				{{/if}}
+					</div>
 					<p class="board_description">{{{this.description}}}</p>
 					
 			{{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}

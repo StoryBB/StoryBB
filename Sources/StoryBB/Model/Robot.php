@@ -31,8 +31,9 @@ class Robot
 			'adbeat' => 'adbeat',
 			'ahrefsbot' => 'ahrefs',
 			'adidxbot' => 'bingads',
-			'adsbot-google' => 'googleadsence',
+			'adsbot-google' => 'googleadsense',
 			'alexabot' => 'alexacertify',
+			'apis-google' => 'google',
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
 			'baiduspider' => 'baidu',
@@ -40,7 +41,9 @@ class Robot
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
 			'deadlinkchecker' => 'deadlinkchecker',
+			'discordapp' => 'discord',
 			'duckduckbot' => 'duckduckgo',
+			'duckduckgo-favicon' => 'duckduckgo',
 			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
 			'facebot' => 'facebook',
@@ -67,6 +70,8 @@ class Robot
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
 			'scrubby' => 'scrubtheweb',
+			'semrushbot' => 'semrush',
+			'serendeputybot' => 'serendeputy',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
 			'speedy spider' => 'entireweb',
@@ -80,6 +85,7 @@ class Robot
 			'w3c-mobileok' => 'w3c_validator_mobile',
 			'w3c_unicorn' => 'w3c_unicorn',
 			'w3c_validator' => 'w3c_validator',
+			'who.is bot' => 'who.is_bot',
 			'xenu link sleuth' => 'xenulinksleuth',
 			'yacybot' => 'yacy',
 			'yahoo! slurp' => 'yahoo',
@@ -159,6 +165,10 @@ class Robot
 				'title' => 'Dead Link Checker',
 				'link' => 'https://www.deadlinkchecker.com/',
 			],
+			'discord' => [
+				'title' => 'Discord',
+				'link' => 'https://discordapp.com/',
+			],
 			'duckduckgo' => [
 				'title' => 'DuckDuckGo',
 				'link' => 'http://duckduckgo.com/duckduckbot.html',
@@ -231,6 +241,14 @@ class Robot
 				'title' => 'ScoutJet',
 				'link' => 'http://scoutjet.com/',
 			],
+			'semrush' => [
+				'title' => 'SemrushBot',
+				'link' => 'https://semrush.com/bot/',
+			],
+			'serendeputy' => [
+				'title' => 'Serendeputy',
+				'link' => 'http://serendeputy.com/about/serendeputy-bot',
+			],
 			'slack' => [
 				'title' => 'Slack',
 				'link' => 'https://api.slack.com/robots',
@@ -290,6 +308,10 @@ class Robot
 			'webhose' => [
 				'title' => 'Webhose.io (Omgilibot)',
 				'link' => 'https://blog.webhose.io/2017/12/28/what-is-the-omgili-bot-and-why-is-it-crawling-your-website/',
+			],
+			'who.is_bot' => [
+				'title' => 'Who.is Bot',
+				'link' => 'https://who.is/',
 			],
 			'xenulinksleuth' => [
 				'title' => 'Xenu\'s Link Sleuth',

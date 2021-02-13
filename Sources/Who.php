@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Who's online, and what are they doing?
  * This function prepares the who's online data for the Who template.
@@ -157,7 +159,8 @@ function Who()
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
 			'robot_name' => $row['robot_name'],
-			'color' => empty($row['online_color']) ? '' : $row['online_color']
+			'color' => empty($row['online_color']) ? '' : $row['online_color'],
+			'user_agent' => !empty($actions['USER_AGENT']) ? $actions['USER_AGENT'] : '',
 		];
 
 		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name']];
@@ -208,12 +211,19 @@ function Who()
 					'id' => 0,
 					'name' => $robot_details['title'],
 					'group' => $txt['robots'],
-					'href' => '',
-					'link' => $robot_details['title'],
+					'href' => isset($robot_details['link']) && allowedTo('admin_forum') ? $robot_details['link'] : '',
+					'link' => isset($robot_details['link']) && allowedTo('admin_forum') ? '<a href="' . $robot_details['link'] . '" target="_blank" rel="noopener">' . $robot_details['title'] . '</a>' : $robot_details['title'],
 					'email' => $robot_details['title'],
 					'is_guest' => true,
 				];
 				continue;
+			}
+		}
+		elseif ($member['id'] == 0)
+		{
+			if (allowedTo('admin_forum'))
+			{
+				$context['members'][$i]['title'] = StringLibrary::escape($member['user_agent'], ENT_QUOTES);
 			}
 		}
 

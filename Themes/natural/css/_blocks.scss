@@ -1,12 +1,4 @@
 /** Blocks */
-.blocktype_recentposts {
-	line-height: 1.6em;
-	font-size: 0.9em;
-
-	table {
-		width: 100%;
-	}
-}
 
 .block_title {
 	.fas, .far, .fab {
@@ -15,27 +7,89 @@
 	}
 }
 
-.blocktype_recentposts .block_content {
-	width: 100%;
+@media screen and (max-width: 575px) {
+	.blocktype_recentposts {
+		thead {
+			display: none;
+		}
+
+		tbody tr {
+			display: flex;
+			align-content: stretch;
+			flex-flow: row wrap;
+
+			margin-bottom: 15px;
+		}
+
+		.recentpost {
+			display: inline-flex;
+			order: 1;
+			width: 100%;
+		}
+
+		.recentposter {
+			display: inline;
+			order: 2;
+
+			a {
+				font-weight: normal;
+			}
+
+			&::after {
+				content: "\2022";
+				padding: 0 2px;
+			}
+		}
+
+		.recentboard {
+			display: inline-flex;
+			order: 4;
+			width: 100%;
+
+			a {
+				font-weight: normal;
+			}
+		}
+
+		.recenttime {
+			display: inline;
+			order: 3;
+		}
+	}
 }
 
-.blocktype_recentposts th {
-	text-align: left;
-	padding: 4px 8px;
-}
+@media screen and (min-width: 576px) {
+	.blocktype_recentposts {
+		line-height: 1.6em;
+		font-size: 0.9em;
 
-.blocktype_recentposts td {
-	border-top: 1px solid #eaeaea;
-	padding: 4px 8px;
-	vertical-align: top;
-}
+		table {
+			width: 100%;
+		}
+	}
 
-.blocktype_recentposts tr:first-child td {
-	border-top: none;
-}
+	.blocktype_recentposts .block_content {
+		width: 100%;
+	}
 
-.blocktype_recentposts .windowbg {
-	background: none;
+	.blocktype_recentposts th {
+		text-align: left;
+		padding: 4px 8px;
+	}
+
+	.blocktype_recentposts td {
+		border-top: 1px solid $primary-border;
+		padding: 4px 8px;
+		vertical-align: top;
+	}
+
+	.blocktype_recentposts tr:first-child td {
+		border-top: none;
+	}
+
+	.blocktype_recentposts .windowbg {
+		background: none;
+	}
 }
 
 .block:not(.blocktype_multiblock) .block_content {
@@ -43,8 +97,15 @@
 	padding: 2px 29px;
 }
 
+@media screen and (max-width: 575px) {
+	.block:not(.blocktype_multiblock) .block_content {
+		line-height: 1.6em;
+		padding: 2px 10px;
+	}
+}
+
 .blocktype_multiblock .sub_bar {
-	border-top: 1px solid #ccc;
+	border-top: 1px solid $primary-border;
 }
 
 .blocktype_multiblock .block:first-of-type .sub_bar {

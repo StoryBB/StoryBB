@@ -119,6 +119,7 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// SEO stuff
 			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],
+			['large_text', 'meta_description'],
 		'',
 			// Number formatting, timezones.
 			['select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()],
@@ -1355,7 +1356,7 @@ function EditCustomProfiles()
 				'regex' => substr($row['mask'], 0, 5) == 'regex' ? substr($row['mask'], 5) : '',
 				'enclose' => $row['enclose'],
 				'placement' => $row['placement'],
-				'in_character' => $row['in_character'],
+				'in_character' => (int) $row['in_character'],
 			];
 		}
 		$smcFunc['db']->free_result($request);
