@@ -75,6 +75,16 @@
    		width: inherit !important;
    		min-width: 30em;
 	}
+
+	#characters_menu {
+		left: 0;
+	}
+	.navigation-item {
+		#alerts_menu {
+			left: auto;
+			right: 0;
+		}
+	}
 }
 
 .navigation-item > a {

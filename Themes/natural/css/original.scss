@@ -763,7 +763,7 @@ a.button_submit {
 }
 
 /* User information. */
-@media screen and (max-width: 399px) {
+@media screen and (max-width: 575px) {
 	#profile_menu_top, #characters_menu_top {
 		width: 70px;
 		text-align: center;
@@ -789,7 +789,7 @@ a.button_submit {
 		content: 'IC \25BC';
 	}
 }
-@media screen and (min-width: 400px) {
+@media screen and (min-width: 576px) {
 	#profile_menu_top::after, #characters_menu_top::after {
 		content: ' \25BC';
 	}
