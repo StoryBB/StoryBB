@@ -85,6 +85,7 @@ class Robot
 			'w3c-mobileok' => 'w3c_validator_mobile',
 			'w3c_unicorn' => 'w3c_unicorn',
 			'w3c_validator' => 'w3c_validator',
+			'who.is bot' => 'who.is_bot',
 			'xenu link sleuth' => 'xenulinksleuth',
 			'yacybot' => 'yacy',
 			'yahoo! slurp' => 'yahoo',
@@ -307,6 +308,10 @@ class Robot
 			'webhose' => [
 				'title' => 'Webhose.io (Omgilibot)',
 				'link' => 'https://blog.webhose.io/2017/12/28/what-is-the-omgili-bot-and-why-is-it-crawling-your-website/',
+			],
+			'who.is_bot' => [
+				'title' => 'Who.is Bot',
+				'link' => 'https://who.is/',
 			],
 			'xenulinksleuth' => [
 				'title' => 'Xenu\'s Link Sleuth',
