@@ -126,9 +126,9 @@
 			</dl>
 
 {{! Are there any custom profile fields for standard? }}
-{{#if context.print_custom_fields.bottom_poster}}
+{{#if context.print_custom_fields.standard}}
 			<dl class="settings">
-				{{#each context.print_cusotm_fields.standard}}
+				{{#each context.print_custom_fields.standard}}
 					{{#if output_html}}
 						<dt>{{name}}</dt>
 						<dd>{{output_html}}</dd>
