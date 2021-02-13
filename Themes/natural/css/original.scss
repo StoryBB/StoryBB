@@ -1846,6 +1846,114 @@ div#pollmoderation {
 	width: 100%;
 }
 
+@media screen and (max-width: 767px) {
+	#forumposts .post_wrapper, #quickReplyOptions .post_wrapper {
+		display: block;
+
+		.poster {
+			width: 100%;
+
+			h4 {
+				.on, .off {
+					display: none;
+				}
+
+				a {
+					position: absolute;
+					left: 70px; /* 50px for the avatar + 10px padding either side. */
+				}
+			}
+
+			.user_info {
+				li.avatar {
+					margin: 0 0 10px 0;
+					display: inline-block;
+
+					a {
+						width: 50px;
+						height: 50px;
+						text-align: center;
+						display: inline-block;
+
+						img {
+							max-width: 50px;
+							max-height: 50px;
+						}
+					}
+				}
+
+				li.icons {
+					display: none;
+				}
+
+				li.membergroup {
+					display: block;
+					position: absolute;
+					left: 70px;
+					top: 30px;
+				}
+
+				li.postcount {
+					display: none;
+				}
+
+				li.profile {
+					display: none;
+				}
+
+				li.im_icons {
+					display: none;
+				}
+
+				li.custom {
+					display: none;
+				}
+			}
+
+			.user_info_arrow {
+				border: 10px solid transparent;
+				left: 28px;
+				bottom: 0;
+				right: auto;
+			}
+		}
+
+		.postarea {
+			width: 100%;
+		}
+	}
+
+	#quickReplyOptions .post_wrapper {
+		h4 {
+			position: absolute;
+			left: 70px;
+		}
+
+		li.avatar {
+			width: 50px;
+			height: 50px;
+			text-align: center;
+			display: inline-block;
+
+			img {
+				max-width: 50px;
+				max-height: 50px;
+			}
+		}
+
+	}
+
+	#forumposts, #quickReplyOptions {
+		.windowbg:nth-of-type(odd) .poster .user_info_arrow {
+			border-bottom-color: $primary-list-bg;
+		}
+
+		.windowbg:nth-of-type(even) .poster .user_info_arrow {
+			border-bottom-color: $secondary-list-bg;
+		}
+	}
+}
+
 .moderatorbar {
 	clear: right;
 }
