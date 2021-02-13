@@ -43,6 +43,7 @@ class Robot
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
 			'duckduckbot' => 'duckduckgo',
+			'duckduckgo-favicon' => 'duckduckgo',
 			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
 			'facebot' => 'facebook',
