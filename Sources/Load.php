@@ -376,6 +376,8 @@ function loadUserSettings()
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => [],
 		'policy_acceptance' => isset($user_settings['policy_acceptance']) ? $user_settings['policy_acceptance'] : 0,
+		'ic_avatar' => $user_settings['ic_avatar'] ?? set_avatar_data(['generic' => true]),
+		'ooc_avatar' => $user_settings['ooc_avatar'] ?? set_avatar_data(['generic' => true]),
 	];
 
 	// We now need to apply immersive mode, potentially.
@@ -1674,6 +1676,18 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	$settings = $themeData[0];
+
+	// We may have user avatars to fix.
+	foreach (['ic_avatar', 'ooc_avatar'] as $av)
+	{
+		if (isset($user_info[$av]))
+		{
+			foreach ($user_info[$av] as $k => $v)
+			{
+				$user_info[$av][$k] = str_replace('{IMAGES_URL}', $settings['images_url'], $v);
+			}
+		}
+	}
 	$container = Container::instance();
 	$prefs_manager = $container->instantiate('StoryBB\\User\\PreferenceManager');
 	$options = $prefs_manager->get_preferences_for_user($user_info['id'] ? (int) $user_info['id'] : 0);
@@ -2938,7 +2952,7 @@ function set_avatar_data($data = [])
 
 	// Right... no avatar... use our default image.
 	else
-		$image = $settings['images_url'] . '/default.png';
+		$image = (isset($settings['images_url']) ? $settings['images_url'] : '{IMAGES_URL}') . '/default.png';
 
 	call_integration_hook('integrate_set_avatar_data', [&$image, &$data]);
 

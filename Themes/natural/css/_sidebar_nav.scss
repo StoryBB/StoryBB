@@ -1,31 +1,97 @@
 /** The main sidebar / navigation. */
+#sidebar-bars {
+	width: 70px;
+	position: fixed;
+	top: 0;
+	z-index: 100;
+	font-size: 30px;
+	line-height: 70px;
+	background: $sidebar-bg;
+	color: $sidebar-fg;
+	text-align: center;
+}
+
+@media screen and (min-width: 100px) {
+	#sidebar-bars {
+		display: block;
+	}
+	#sidebar {
+		display: none;
+		position: absolute;
+	}
+	#top_section {
+		left:70px;
+	}
+
+	.top_menu {
+		left: -70px;
+		top: 70px;
+		max-width: 320px;
+		min-width: 100px;
+	}
+	#characters_menu {
+		left: -140px;
+	}
+	.navigation-item #alerts_menu {
+		left: -213px;
+		right: auto;
+		max-width: 320px;
+	}
+}
+
 #sidebar {
 	width: 70px;
 	position: fixed;
 	background: $sidebar-bg;
-	top: 0;
+	top: 70px;
 	bottom: 0;
 	z-index: 100;
 }
-#sidebar > div > a, #btn-search > a {
+
+#sidebar.visible-sidebar {
+	display: block;
+	width: 293px;
+	bottom: auto;
+
+	.navigation-item {
+		display: inline-block;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	#sidebar-bars {
+		display: none;
+	}
+	#sidebar {
+		display: block;
+		top: 0;
+	}
+	#wrapper {
+		padding-left:70px;
+	}
+	.top_menu {
+		left: initial;
+    	top: inherit;
+   		width: inherit !important;
+   		min-width: 30em;
+	}
+}
+
+.navigation-item > a {
 	font-size: 30px;
 	line-height: 70px;
 	color: $sidebar-fg;
 }
-#sidebar > div {
+.navigation-item {
 	text-align: center;
 	position: relative;
+	width: 70px;
 }
-#sidebar > div.open, #btn-search.open {
+.navigation-item.open, #btn-search.open {
 	background: $sidebar-bg-open;
 }
-#sidebar > div:hover, #btn-search:hover {
+.navigation-item:hover, #btn-search:hover {
 	background: $sidebar-bg-hover;
-}
-
-#btn-search {
-	width: 70px;
-	text-align: center;
 }
 
 #search_menu {
@@ -33,12 +99,18 @@
 	right: 0px;
 }
 
-#alerts_menu, #pm_menu {
+#alerts_menu {
+	top: 70px;
+	left: auto;
+	right: 0;
+}
+
+#pm_menu {
 	top: 0px;
 	left: 70px;
 }
 
-#sidebar > div .amt {
+.navigation-item .amt {
 	background: $sidebar-amt-bg;
 	font-size: 13px;
 	line-height: 1em;
@@ -46,7 +118,7 @@
 	color: $sidebar-amt-fg;
 }
 
-#sidebar > div > a > .amt {
+.navigation-item > a > .amt {
 	position: absolute;
 	top: 45px;
 	right: 5px;
@@ -58,7 +130,7 @@
 	margin-top: 2px;
 }
 
-#sidebar > div > .top_menu {
+.navigation-item > .top_menu {
 	top: 0px;
 	left: 70px;
 	text-align: left;
@@ -68,13 +140,13 @@
 	width: auto;
 }
 
-#sidebar > div .btn-subitems li {
+.navigation-item .btn-subitems li {
 	text-align: left;
 	line-height: 25px;
 	padding-left: 10px;
 }
 
-#sidebar > div .btn-subitems li a {
+.navigation-item .btn-subitems li a {
 	display: block;
 	white-space: nowrap;
 	margin-right: 3em;

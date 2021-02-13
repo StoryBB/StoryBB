@@ -234,18 +234,20 @@ function smc_PopupMenu(oOptions)
 	this.opt.menus = {};
 }
 
-smc_PopupMenu.prototype.add = function (sItem, sUrl, loaded)
+smc_PopupMenu.prototype.add = function (sItem, sUrl, loaded, allowOnResponsive)
 {
 	var $menu = $('#' + sItem + '_menu'), $item = $('#' + sItem + '_menu_top');
 	if ($item.length == 0)
 		return;
 
-	this.opt.menus[sItem] = {open: false, loaded: !!loaded, sUrl: sUrl, itemObj: $item, menuObj: $menu };
+	this.opt.menus[sItem] = {open: false, loaded: !!loaded, sUrl: sUrl, itemObj: $item, menuObj: $menu, allowOnResponsive: !!allowOnResponsive };
 
 	$item.click({obj: this}, function (e) {
-		e.preventDefault();
+		if (e.data.obj.opt.menus[sItem].allowOnResponsive || screen.width >= 768) {
+			e.preventDefault();
 
-		e.data.obj.toggle(sItem);
+			e.data.obj.toggle(sItem);
+		}
 	});
 }
 
@@ -1363,6 +1365,10 @@ $(function()
 		{
 			$(item).css('display', 'none');
 		});
+	});
+
+	$('#sidebar-bars').on('click', function() {
+		$('#sidebar').toggleClass('visible-sidebar');
 	});
 
 	// Generic confirmation message.

@@ -1273,20 +1273,8 @@ function setupThemeContext($forceload = false)
 		if (allowedTo('moderate_forum'))
 			$context['unapproved_members'] = !empty($modSettings['unapprovedMembers']) ? $modSettings['unapprovedMembers'] : 0;
 
-		$context['user']['avatar'] = [];
-
-		// Uploaded avatar?
-		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
-			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $modSettings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
-		// Full URL?
-		elseif (strpos($user_info['avatar']['url'], 'http://') === 0 || strpos($user_info['avatar']['url'], 'https://') === 0)
-			$context['user']['avatar']['href'] = $user_info['avatar']['url'];
-		// No avatar at all? Fine, we have a big fat default avatar ;)
-		else
-			$context['user']['avatar']['href'] = $settings['images_url'] . '/default.png';
-
-		if (!empty($context['user']['avatar']))
-			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '" alt="" class="avatar">';
+		$context['user']['avatar'] = set_avatar_data(['filename' => $user_info['avatar']['filename'], 'avatar' => $user_info['avatar']['url']]);
+		// echo '<div style="margin-left:100px">'; var_dump($user_info); echo '</div>';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = [
@@ -1853,9 +1841,9 @@ function setupMenuContext()
 	{
 		addInlineJavaScript('
 	var user_menus = new smc_PopupMenu();
-	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup");
-	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'");
-	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup");', true);
+	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup", false, true);
+	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'", false, true);
+	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup", false, true);', true);
 		if ($context['allow_search'])
 		{
 			addInlineJavaScript('
@@ -1890,6 +1878,10 @@ function setupMenuContext()
 			'url' => $scripturl,
 			'icon' => 'fas fa-home fa-fw',
 		],
+		'search' => [
+			'url' => $scripturl . '?action=search',
+			'icon' => 'fas fa-search fa-fq',
+		],
 	];
 
 	if ($context['user']['is_logged'])
@@ -1900,6 +1892,7 @@ function setupMenuContext()
 				'icon' => 'far fa-bell fa-fw',
 				'popupmenu' => true,
 				'amt' => $context['user']['alerts'],
+				'position' => 'top',
 			],
 			'pm' => [
 				'url' => $scripturl . '?action=pm',
@@ -2107,6 +2100,12 @@ function setupMenuContext()
 					$context['sidebar'][$key]['amt'] += $subitem['amt'];
 				}
 			}
+		}
+
+		// If it doesn't define a position, assign it left.
+		if (!isset($item['position']))
+		{
+			$context['sidebar'][$key]['position'] = 'left';
 		}
 	}
 
