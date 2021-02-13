@@ -2,9 +2,38 @@
 
 /* Wide screens
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
+footer li.debug {
+	float: left;
+}
+@media screen and (min-width: 100px) {
+	footer li.debug::after {
+		content: " (-576px)";
+	}
+}
+@media screen and (min-width: 576px) {
+	footer li.debug::after {
+		content: " (576-767px)";
+	}
+}
+@media screen and (min-width: 768px) {
+	footer li.debug::after {
+		content: " (768-991px)";
+	}
+}
+@media screen and (min-width: 992px) {
+	footer li.debug::after {
+		content: " (992-1199px)";
+	}
+}
+@media screen and (min-width: 1200px) {
+	footer li.debug::after {
+		content: " (1200-1800px)";
+	}
+}
 @media screen and (min-width: 1800px) {
-	
+	footer li.debug::after {
+		content: " (1800+px)";
+	}
 }
 
 /* Mobile devices, windowed browsers and the like

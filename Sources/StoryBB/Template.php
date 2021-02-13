@@ -316,7 +316,7 @@ class Template
 	 */
 	public static function render_page(string $content)
 	{
-		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options;
+		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options, $db_show_debug;
 
 		$context['session_flash'] = session_flash_retrieve();
 
@@ -369,6 +369,7 @@ class Template
 			'options' => $options,
 			'user_info' => $user_info,
 			'copyright' => sprintf('<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB %1$s &copy; %2$s, StoryBB project</a>', App::SOFTWARE_VERSION, App::SOFTWARE_YEAR),
+			'debug' => $db_show_debug === true,
 		]);
 	}
 
