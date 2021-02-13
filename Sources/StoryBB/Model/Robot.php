@@ -71,6 +71,7 @@ class Robot
 			'scoutjet' => 'scoutjet',
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
+			'serendeputybot' => 'serendeputy',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
 			'speedy spider' => 'entireweb',
@@ -242,6 +243,10 @@ class Robot
 			'semrush' => [
 				'title' => 'SemrushBot',
 				'link' => 'https://semrush.com/bot/',
+			],
+			'serendeputy' => [
+				'title' => 'Serendeputy',
+				'link' => 'http://serendeputy.com/about/serendeputy-bot',
 			],
 			'slack' => [
 				'title' => 'Slack',
