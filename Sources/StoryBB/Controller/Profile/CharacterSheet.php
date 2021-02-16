@@ -109,12 +109,6 @@ class CharacterSheet extends AbstractProfileController
 			$context['character']['sheet_details']['sheet_text'] = '';
 		}
 
-		$context['linktree'][] = [
-			'name' => $txt['char_sheet'],
-			'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;char=' . $context['character']['id_character'],
-		];
-
-		$context['page_title'] = $txt['char_sheet'] . ' - ' . $context['character']['character_name'];
 		$context['sub_template'] = 'profile_character_sheet';
 
 		$context['sheet_buttons'] = [];
@@ -526,7 +520,6 @@ class CharacterSheet extends AbstractProfileController
 			krsort($context['sheet_comments']);
 		}
 
-		$context['page_title'] = $txt['char_sheet'] . ' - ' . $context['character']['character_name'];
 		$context['sub_template'] = 'profile_character_sheet_edit';
 	}
 

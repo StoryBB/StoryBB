@@ -164,4 +164,57 @@ class Navigation
 
 		return $tabs;
 	}
+
+	public function append_linktree(array &$linktree, array $base_params): array
+	{
+		$appended = [];
+
+		foreach ($this->tabs as $tab)
+		{
+			if (!$tab->active)
+			{
+				continue;
+			}
+
+			if ($tab->label)
+			{
+				$linktree[] = [
+					'name' => $tab->label,
+				];
+
+				$appended[] = $tab->label;
+			}
+
+			foreach ($tab->sections as $section)
+			{
+				if (!$section->active)
+				{
+					continue;
+				}
+
+				if ($section->label && $section->label !== $linktree[count($linktree)-1]['name'])
+				{
+					$linktree[] = [
+						'name' => $section->label,
+					];
+					$appended[] = $section->label;
+				}
+
+				foreach ($section->items as $item)
+				{
+					if ($item->active)
+					{
+						$linktree[] = [
+							'name' => $item->label,
+							'url' => $item->get_url($base_params),
+						];
+						$appended[] = $item->label;
+						break;
+					}
+				}
+			}
+		}
+
+		return $appended;
+	}
 }

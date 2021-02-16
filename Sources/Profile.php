@@ -450,10 +450,26 @@ function Profile()
 		$context['user']['is_owner'] ? [] : ['moderate_forum']
 	));
 
-	$navigation->dispatch(array_merge($_REQUEST, ['u' => $memID]));
-	$context['navigation'] = $navigation->export(['action' => 'profile']);
+	$params = array_merge($_REQUEST, ['u' => $memID]);
+	$result = $navigation->set_visible_menu_item($params);
 
-	// echo '<pre style="margin-left:100px">'; print_r($navigation); echo '</pre>';
+	if ($result)
+	{
+		$context['linktree'][] = [
+			'name' => sprintf($txt['profile_of_username'], $context['member']['name']),
+		];
+
+		$appended = $navigation->append_linktree($context['linktree'], ['action' => 'profile']);
+	}
+
+	$context['page_title'] = sprintf($txt['profile_of_username'], $context['member']['name']);
+	if (!empty($appended))
+	{
+		$context['page_title'] .= ' - ' . implode(': ', $appended);
+	}
+
+	$navigation->dispatch($params);
+	$context['navigation'] = $navigation->export(['action' => 'profile']);
 }
 
 /**
