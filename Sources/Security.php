@@ -137,6 +137,12 @@ function is_not_guest($message = '', bool $redirect = false)
 		$context['robot_no_index'] = true;
 	}
 
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+	$form = $container->instantiate('StoryBB\\Form\\General\\Login', $urlgenerator->generate('login_login'));
+
+	$context['form'] = $form->render();
+
 	// Use the kick_guest sub template...
 	$context['kick_message'] = $message;
 	$context['page_title'] = $txt['login'];
