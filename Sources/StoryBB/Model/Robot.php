@@ -55,6 +55,7 @@ class Robot
 			'google favicon' => 'google',
 			'gsitecrawler' => 'gsitecrawler',
 			'ia_archiver' => 'alexa',
+			'ioncrawl' => 'ioncrawl',
 			'jigsaw' => 'w3c_css',
 			'kalooga' => 'kalooga',
 			'magpie-crawler' => 'brandwatch',
@@ -67,7 +68,9 @@ class Robot
 			'ning/1' => 'w3c_suite',
 			'omgili' => 'webhose',
 			'pingdom.com_bot' => 'pingdom',
+			'pinterestbot' => 'pinterest',
 			'proximic' => 'proximic',
+			'python-requests' => 'python-requests',
 			'scoutjet' => 'scoutjet',
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
@@ -209,6 +212,9 @@ class Robot
 				'title' => 'GSiteCrawler',
 				'link' => 'http://www.gsitecrawler.com/',
 			],
+			'ioncrawl' => [
+				'title' => 'IonCrawl',
+			],
 			'kalooga' => [
 				'title' => 'Kalooga',
 				'link' => 'https://kalooga.com/',
@@ -229,9 +235,16 @@ class Robot
 				'title' => 'Pingdom',
 				'link' => 'https://www.pingdom.com/',
 			],
+			'pinterest' => [
+				'title' => 'Pinterest',
+				'link' => 'https://help.pinterest.com/en-gb/business/article/pinterest-crawler',
+			],
 			'proximic' => [
 				'title' => 'Proximic',
 				'link' => 'http://www.proximic.com/info/spider.php',
+			],
+			'python-requests' => [
+				'title' => 'Python bot (using requests)',
 			],
 			'scrubtheweb' => [
 				'title' => 'ScrubTheWeb',
