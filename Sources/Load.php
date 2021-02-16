@@ -357,7 +357,7 @@ function loadUserSettings()
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
-		'ip2' => $_SERVER['BAN_CHECK_IP'],
+		'ip2' => $_SERVER['BAN_CHECK_IP'] ?? $_SERVER['REMOTE_ADDR'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
 		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
 		'avatar' => [

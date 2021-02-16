@@ -1046,7 +1046,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 
 	// Remember this URL in case someone doesn't like sending HTTP_REFERER.
-	if (strpos($_SERVER['REQUEST_URL'], 'action=dlattach') === false)
+	if (isset($_SERVER['REQUEST_URL']) && strpos($_SERVER['REQUEST_URL'], 'action=dlattach') === false)
 		$_SESSION['old_url'] = $_SERVER['REQUEST_URL'];
 
 	// For session check verification.... don't switch browsers...
