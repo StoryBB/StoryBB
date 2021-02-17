@@ -69,7 +69,7 @@ function Contact()
 				loadLanguage('Errors');
 				foreach ($context['require_verification'] as $error)
 				{
-					$context['contact']['errors'][] = $txt['error_' . $error];
+					$context['contact']['errors'][] = isset($txt['error_' . $error]) ? $txt['error_' . $error] : $error;
 				}
 			}
 		}

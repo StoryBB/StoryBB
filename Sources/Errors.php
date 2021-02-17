@@ -13,6 +13,7 @@
  */
 
 use StoryBB\StringLibrary;
+use StoryBB\Template;
 
 /**
  * Log an error, if the error logging is enabled.
@@ -309,6 +310,8 @@ function setup_fatal_error_context($error_message, $error_code = null)
 	// Maybe they came from dlattach or similar?
 	if (STORYBB != 'BACKGROUND' && empty($context['theme_loaded']))
 		loadTheme();
+
+	Template::remove_layer('sidebar_navigation');
 
 	// Don't bother indexing errors mate...
 	$context['robot_no_index'] = true;

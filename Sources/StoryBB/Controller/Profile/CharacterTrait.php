@@ -38,15 +38,6 @@ trait CharacterTrait
 			$context['character']['retire_eligible'] = false; // Can't retire if you're logged in as them
 		}
 
-		$context['linktree'][] = [
-			'name' => $txt['chars_menu_title'],
-			'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . '#user_char_list',
-		];
-		$context['linktree'][] = [
-			'name' => $context['character']['character_name'],
-			'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=profile;char=' . $char_id,
-		];
-
 		return $char_id;
 	}
 

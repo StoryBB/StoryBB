@@ -29,12 +29,6 @@ class CharacterTopics extends AbstractProfileController
 		$context['start'] = (int) $_REQUEST['start'];
 		$context['sub_template'] = 'profile_character_posts';
 
-		// Set the page title
-		$context['linktree'][] = [
-			'name' => $txt['showTopics_char'],
-			'url' => $scripturl . '?action=profile;area=character_topics;char=' . $context['character']['id_character'] . ';u=' . $context['id_member'],
-		];
-		$context['page_title'] = $txt['showTopics'] . ' - ' . $context['character']['character_name'];
 		$context['is_topics'] = true;
 
 		// Is the load average too high to allow searching just now?

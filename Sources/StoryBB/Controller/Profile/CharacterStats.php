@@ -24,7 +24,6 @@ class CharacterStats extends AbstractProfileController
 
 		$this->init_character();
 
-		$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
 		$context['sub_template'] = 'profile_character_stats';
 
 		Template::add_helper([
@@ -42,11 +41,6 @@ class CharacterStats extends AbstractProfileController
 		check_load_avg('userstats');
 
 		$context['num_posts'] = comma_format($context['character']['posts']);
-
-		$context['linktree'][] = [
-			'name' => $txt['char_stats'],
-			'url' => $scripturl . '?action=profile;area=character_stats;char=' . $context['character']['id_character'] . ';u=' . $context['id_member'],
-		];
 
 		// Number of topics started.
 		$result = $smcFunc['db']->query('', '
