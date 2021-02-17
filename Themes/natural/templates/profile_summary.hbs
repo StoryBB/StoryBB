@@ -74,10 +74,10 @@
 {{/if}}
 
 			{{! Link to see their posts }}
-			<a href="{{scripturl}}?action=profile;area=showposts;u={{context.id_member}}" class="infolinks">{{{txt.showPosts}}}</a>
+			<a href="{{scripturl}}?action=profile;area=posts;u={{context.id_member}}" class="infolinks">{{{txt.showPosts}}}</a>
 
 			{{! Link to the user's statistics}}
-			<a href="{{scripturl}}?action=profile;area=statistics;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a>
+			<a href="{{scripturl}}?action=profile;area=stats;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a>
 
 {{! Are there any custom profile fields for bottom? }}
 {{#if context.print_custom_fields.bottom_poster}}
