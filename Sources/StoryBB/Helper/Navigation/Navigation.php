@@ -192,7 +192,7 @@ class Navigation
 					continue;
 				}
 
-				if ($section->label && $section->label !== $linktree[count($linktree)-1]['name'])
+				if ($section->label && $section->label !== $linktree[count($linktree) - 1]['name'])
 				{
 					$linktree[] = [
 						'name' => $section->label,
