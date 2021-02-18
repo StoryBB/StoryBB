@@ -47,7 +47,6 @@ function MessageIndex()
 			if (!empty($context['can_' . $action]))
 				return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
 		},
-		'child_boards' => 'child_boards'
 	]);
 
 	if (!$user_info['is_guest'])
