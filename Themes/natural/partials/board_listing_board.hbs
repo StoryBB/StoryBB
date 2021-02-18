@@ -1,0 +1,84 @@
+{{! Display a board on the board/message index }}
+
+		<div id="board_{{id}}" class="up_contain {{#if css_class}}{{{css_class}}}{{/if}} board-display">
+			<div class="board_icon">
+				<a href="{{#if (or is_redirect context.user.is_guest)}}{{href}}{{else}}{{scripturl}}?action=unread;board={{id}}.0;children{{/if}}" class="board_{{board_class}}"{{#if board_tooltip}} title="{{board_tooltip}}"{{/if}}></a>
+			</div>
+			<div class="info">
+				<a class="subject mobile_subject" href="{{href}}" id="b{{id}}">
+					{{{name}}}
+				</a>
+
+{{! Does board have outstanding posts for approval? }}
+		{{#if (and can_approve_posts (or unapproved_posts unapproved_topics))}}
+				<a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{id}};{{session_url}}" title="{{textTemplate txt.unapproved_posts unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
+		{{/if}}
+
+				<div class="board_stats_inline">
+		{{#if is_redirect}}
+					<div class="board_stats_redirects">{{comma posts}} {{txt.redirects}}</div>
+		{{else}}
+					<div class="board_stats_posts">{{comma posts}} {{txt.posts}}</div>
+					<div class="board_stats_topics">{{comma topics}} {{txt.board_topics}}</div>
+		{{/if}}
+				</div>
+				<p class="board_description">{{description}}</p>
+
+		{{#if (or moderators moderator_groups)}}
+				<p class="moderators">
+					{{txt.moderators}}: {{{join link_moderators ', '}}}
+				</p>
+		{{/if}}
+
+		{{#if children}}
+				<ul id="board_{{this.id}}_children" class="children columns_{{settings.sub_boards_columns}}">
+			{{#each children}}
+					<li class="{{#if is_redirect}}board_redirect{{else}}{{#if new}}board_new{{else}}board_no_new{{/if}}{{/if}}">
+				{{#if is_redirect}}
+						<span class="more_sub_redirect"></span>
+						<a href="{{{href}}}" title="{{comma posts}} {{../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{{name}}}</a>
+				{{else}}
+					{{#if new}}
+						<a href="{{../scripturl}}?action=unread;board={{id}}" title="{{{../txt.new_posts}}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})">
+							<span class="{{#if this.new}}more_sub_new{{else}}more_sun_no_new{{/if}}"></span>
+						</a>
+					{{/if}}
+						<a href="{{{href}}}"{{#if new}} class="board_new_posts"{{/if}} title="{{#if new}}{{{../txt.new_posts}}}{{else}}{{{../txt.old_posts}}}{{/if}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})">{{{name}}}</a>
+					{{#if new}}
+						<a href="{{../scripturl}}?action=unread;board={{id}}" class="new_posts" title="{{{../txt.new_posts}}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})"></a>
+					{{/if}}
+				{{/if}}
+
+				{{#if (and can_approve_posts (or unapproved_posts unapproved_topics))}}
+						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if (gt unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{id}};{{session_url}}" title="{{textTemplate ../txt.unapproved_posts unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
+				{{/if}}
+					</li>
+			{{/each}}
+				</ul>
+		{{/if}}
+
+			</div>
+			<div class="board_stats">
+		{{#if is_redirect}}
+				<div class="stats redirect">{{comma posts}} {{txt.redirects}}</div>
+		{{else}}
+				<div class="stats posts">{{comma posts}} {{txt.posts}}</div>
+				<div class="stats topics">{{comma topics}} {{txt.board_topics}}</div>
+		{{/if}}
+			</div>
+			<div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
+
+		{{#if last_post.id}}
+				<div class="last_poster">
+					{{{this.last_post.member.avatar.image}}}
+				</div>
+				<p>
+
+					<span><a href="{{{last_post.href}}}">{{#each last_post.prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{last_post.subject}}}</a></span><br>
+					<span>{{{last_post.time}}} &bull; {{{last_post.member.link}}}</span>
+				</p>
+		{{/if}}
+		<!-- {{{json last_post}}} -->
+
+			</div>
+		</div>

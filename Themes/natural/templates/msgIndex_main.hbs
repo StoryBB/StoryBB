@@ -38,52 +38,7 @@
 		</div>
 
 	{{#each context.boards}}
-		<div id="board_{{id}}" class="up_contain">
-			<div class="board_icon">
-				<a href="{{#if (or is_redirect ../context.user.is_guest)}}{{href}}{{else}}{{../scripturl}}?action=unread;board={{id}}.0;children{{/if}}" class="board_{{board_class}}"{{#if board_tooltip}} title="{{board_tooltip}}"{{/if}}></a>
-			</div>
-			<div class="info">
-				<a class="subject mobile_subject" href="{{href}}" id="b{{id}}">
-					{{name}}
-					<p class="board_description mobile_display">{{description}}</p>
-				</a>
-
-		{{#if (and can_approve_posts (or unapproved_posts unapproved_topics))}}
-				<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if unapproved_topics}}topics{{else}}posts{{/if}};brd={{id}};{{session_url}}" title="{{textTemplate 'unapproved_posts' unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
-		{{/if}}
-
-				<p class="board_description">{{description}}</p>
-
-		{{#if (or moderators moderator_groups)}}
-				<p class="moderators">
-					{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{join link_moderators ', '}}}
-				</p>
-		{{/if}}
-
-			</div>
-			<div class="board_stats centertext">
-				<p>{{comma posts}} {{#if is_redirect}}{{../txt.redirects}}{{else}}{{../txt.posts}}{{/if}}<br>
-				{{#unless is_redirect}}{{comma topics}} {{../txt.board_topics}}{{/unless}}
-				</p>
-			</div>
-			<div class="lastpost lpr_border">
-
-		{{#if last_post.id}}
-				<div class="last_poster">
-					{{{this.last_post.member.avatar.image}}}
-				</div>
-				<p>{{{last_post.last_post_message}}}</p>
-		{{/if}}
-
-			</div>
-
-		{{#if children}}
-			<div id="board_{{id}}_children" class="children">
-				<p><strong>{{../txt.sub_boards}}</strong>: {{child_boards .}}</p>
-			</div>
-		{{/if}}
-
-		</div>
+		{{> board_listing_board context=../context txt=../txt scripturl=../scripturl settings=../settingss}}
 	{{/each}}
 	</div><!-- #board_{{context.current_board}}_childboards -->
 {{/if}}

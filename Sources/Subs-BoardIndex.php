@@ -181,11 +181,11 @@ function getBoardIndex($boardIndexOptions)
 				'description' => $row_board['description'],
 				'short_description' => shorten_subject(strip_tags($row_board['description']), 128),
 				'new' => empty($row_board['is_read']) && $row_board['poster_name'] != '',
-				'topics' => $row_board['num_topics'],
-				'posts' => $row_board['num_posts'],
-				'is_redirect' => $row_board['is_redirect'],
-				'unapproved_topics' => $row_board['unapproved_topics'],
-				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
+				'topics' => (int) $row_board['num_topics'],
+				'posts' => (int) $row_board['num_posts'],
+				'is_redirect' => !empty($row_board['is_redirect']),
+				'unapproved_topics' => (int) $row_board['unapproved_topics'],
+				'unapproved_posts' => (int) $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
 				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
@@ -275,17 +275,11 @@ function getBoardIndex($boardIndexOptions)
 		{
 			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
-			/* The board's and children's 'last_post's have:
-			time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
-			link, href, subject, start (where they should go for the first unread post.),
-			and member. (which has id, name, link, href, username in it.) */
-			$this_last_post['last_post_message'] = sprintf($txt['last_post_message'], $this_last_post['member']['link'], $this_last_post['link'], $this_last_post['time']);
 		}
 		else
 		{
 			$this_last_post['href'] = '';
 			$this_last_post['link'] = $txt['not_applicable'];
-			$this_last_post['last_post_message'] = '';
 		}
 
 		// Set the last post in the parent board.
