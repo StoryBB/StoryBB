@@ -693,6 +693,27 @@ class MySQL implements DatabaseAdapter
 	}
 
 	/**
+	 * Simple get-all-the-rows-of-query function.
+	 *
+	 * @param string $db_string The raw query.
+	 * @param array $db_values Values to insert into the query.
+	 * @return array Returns an array of results.
+	 */
+	public function get_all_rows(string $db_string, array $db_values = []): array
+	{
+		$rows = [];
+
+		$request = $this->query('', $db_string, $db_values);
+		while ($row = $this->fetch_assoc($request))
+		{
+			$rows[] = $row;
+		}
+		$this->free_result($request);
+
+		return $rows;
+	}
+
+	/**
 	 * Eescape and quote a string, e.g. in preparation for execution.
 	 *
 	 * @param string $db_string The database string
