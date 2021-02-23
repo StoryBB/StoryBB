@@ -217,7 +217,6 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 
 	if (!isset($_REQUEST['xml']))
 	{
-		$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 		$context['sub_template'] = 'personal_message_send';
 		loadJavaScriptFile('PersonalMessage.js', ['defer' => false], 'sbb_pms');
 		loadJavaScriptFile('suggest.js', ['defer' => false], 'sbb_suggest');
