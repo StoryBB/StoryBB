@@ -14,6 +14,7 @@
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
 use StoryBB\Model\Bookmark;
+use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
 /**
@@ -175,6 +176,8 @@ function Display()
 		fatal_lang_error('not_a_topic', false, 404);
 	$context['topicinfo'] = $smcFunc['db']->fetch_assoc($request);
 	$smcFunc['db']->free_result($request);
+
+	$context['topicinfo']['prefixes'] = TopicPrefix::get_prefixes_for_topic((int) $topic);
 
 	// Is this a moved or merged topic that we are redirecting to?
 	if (!empty($context['topicinfo']['id_redirect_topic']))

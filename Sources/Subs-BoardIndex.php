@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Model\TopicPrefix;
+
 /**
  * Fetches a list of boards and (optional) categories including
  * statistical information, child boards and moderators.
@@ -74,6 +76,7 @@ function getBoardIndex($boardIndexOptions)
 	else
 		$this_category = [];
 	$boards = [];
+	$topics = [];
 
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = $smcFunc['db']->fetch_assoc($result_boards))
@@ -181,11 +184,11 @@ function getBoardIndex($boardIndexOptions)
 				'description' => $row_board['description'],
 				'short_description' => shorten_subject(strip_tags($row_board['description']), 128),
 				'new' => empty($row_board['is_read']) && $row_board['poster_name'] != '',
-				'topics' => $row_board['num_topics'],
-				'posts' => $row_board['num_posts'],
-				'is_redirect' => $row_board['is_redirect'],
-				'unapproved_topics' => $row_board['unapproved_topics'],
-				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
+				'topics' => (int) $row_board['num_topics'],
+				'posts' => (int) $row_board['num_posts'],
+				'is_redirect' => !empty($row_board['is_redirect']),
+				'unapproved_topics' => (int) $row_board['unapproved_topics'],
+				'unapproved_posts' => (int) $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
 				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
@@ -264,6 +267,8 @@ function getBoardIndex($boardIndexOptions)
 			'topic' => $row_board['id_topic']
 		];
 
+		$topics[] = $row_board['id_topic'];
+
 		$this_last_post['member']['avatar'] = set_avatar_data([
 			'avatar' => $row_board['avatar'],
 			'email' => $row_board['email_address'],
@@ -275,17 +280,11 @@ function getBoardIndex($boardIndexOptions)
 		{
 			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
-			/* The board's and children's 'last_post's have:
-			time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
-			link, href, subject, start (where they should go for the first unread post.),
-			and member. (which has id, name, link, href, username in it.) */
-			$this_last_post['last_post_message'] = sprintf($txt['last_post_message'], $this_last_post['member']['link'], $this_last_post['link'], $this_last_post['time']);
 		}
 		else
 		{
 			$this_last_post['href'] = '';
 			$this_last_post['link'] = $txt['not_applicable'];
-			$this_last_post['last_post_message'] = '';
 		}
 
 		// Set the last post in the parent board.
@@ -311,6 +310,37 @@ function getBoardIndex($boardIndexOptions)
 			];
 	}
 	$smcFunc['db']->free_result($result_boards);
+
+	$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+	// echo '<div style="margin-left:100px"><pre>';
+	if ($boardIndexOptions['include_categories'])
+	{
+		// print_r($categories);
+		foreach ($categories as $category_id => $this_boards)
+		{
+			foreach ($this_boards['boards'] as $board_id => $this_board)
+			{
+				$categories[$category_id]['boards'][$board_id]['last_post']['prefixes'] = [];
+				if (!empty($this_board['last_post']['topic']) && isset($prefixes[$this_board['last_post']['topic']]))
+				{
+					$categories[$category_id]['boards'][$board_id]['last_post']['prefixes'] = $prefixes[$this_board['last_post']['topic']];
+				}
+			}
+		}
+	}
+	else
+	{
+		foreach ($this_category as $board_id => $this_board)
+		{
+			$this_category[$board_id]['last_post']['prefixes'] = [];
+			if (!empty($this_board['last_post']['topic']) && isset($prefixes[$this_board['last_post']['topic']]))
+			{
+				$this_category[$board_id]['last_post']['prefixes'] = $prefixes[$this_board['last_post']['topic']];
+			}
+		}
+		//var_dump($this_category);
+	}
+	// echo '</pre></div>';
 
 	// Fetch the board's moderators and moderator groups
 	$boards = array_unique($boards);

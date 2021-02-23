@@ -1,0 +1,29 @@
+/** Topic listing */
+
+@media screen and (max-width: 767px) {
+	#messageindex {
+		.first_poster {
+			display: none;
+		}
+
+		.info.info_block {
+			padding: 10px;
+			width: 100%;
+		}
+		.lastpost {
+			padding: 0 10px 10px 10px;
+			width: 100%;
+		}
+	} 
+}
+
+@media screen and (max-width: 991px) {
+	#messageindex {
+		.board_stats {
+			display: none;
+		}
+		.last_poster {
+			display: none;
+		}
+	}
+}

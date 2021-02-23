@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
 /**
@@ -47,7 +48,6 @@ function MessageIndex()
 			if (!empty($context['can_' . $action]))
 				return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
 		},
-		'child_boards' => 'child_boards'
 	]);
 
 	if (!$user_info['is_guest'])
@@ -66,6 +66,60 @@ function MessageIndex()
 	$context['description'] = $board_info['description'];
 	if (!empty($board_info['description']))
 		$context['meta_description'] = strip_tags($board_info['description']);
+
+	// Is there a filter set? Is it valid?
+	$prefix_filter = isset($_REQUEST['prefix']) ? (int) $_REQUEST['prefix'] : 0;
+	if (!empty($prefix_filter))
+	{
+		$matching_prefix = TopicPrefix::get_prefixes(['prefixes' => [$prefix_filter]]);
+		if (!empty($matching_prefix))
+		{
+			foreach ($matching_prefix as $prefix)
+			{
+				if ($prefix['id_prefix'] == $prefix_filter)
+				{
+					$context['prefix_filter'] = $prefix;
+				}
+			}
+		}
+	}
+
+	// If we have a prefix filter, we need to recalculate the numbers we're dealing with for pagination purposes.
+	if (!empty($context['prefix_filter']))
+	{
+		$request = $smcFunc['db']->query('', '
+			SELECT t.approved, COUNT(t.approved) AS topic_count
+			FROM {db_prefix}topics AS t
+			INNER JOIN {db_prefix}topic_prefix_boards AS tpb ON (tpb.id_prefix = {int:prefix} AND t.id_board = tpb.id_board)
+			WHERE t.id_board = {int:board}
+			' . (allowedTo('approve_posts') ? '' : ' AND (t.approved = 1' . (!$user_info['is_guest'] ? ' OR t.id_member_started = {int:user}' : '') . ')') . '
+			GROUP BY approved',
+			[
+				'prefix' => $context['prefix_filter']['id_prefix'],
+				'board' => $board_info['id'],
+				'user' => $user_info['id'],
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			if ($row['approved'] == 1)
+			{
+				$board_info['num_topics'] = $row['topic_count'];
+			}
+			elseif ($row['approved'] == 0)
+			{
+				if (allowedTo('approve_posts'))
+				{
+					$board_info['unapproved_topics'] = $row['topic_count'];
+				}
+				else
+				{
+					$board_info['unapproved_user_topics'] = $row['topic_count'];
+				}
+			}
+		}
+		$smcFunc['db']->free_result($request);
+	}
 
 	// How many topics do we have in total?
 	$board_info['total_topics'] = allowedTo('approve_posts') ? $board_info['num_topics'] + $board_info['unapproved_topics'] : $board_info['num_topics'] + $board_info['unapproved_user_topics'];
@@ -278,7 +332,7 @@ function MessageIndex()
 	call_integration_hook('integrate_pre_messageindex', [&$sort_methods]);
 
 	foreach ($sort_methods as $key => $val)
-		$context['topics_headers'][$key] = '<a href="' . $scripturl . '?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $key . ($context['sort_by'] == $key && $context['sort_direction'] == 'up' ? ';desc' : '') . '">' . $txt[$key] . ($context['sort_by'] == $key ? '<span class="sort sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
+		$context['topics_headers'][$key] = '<a href="' . $scripturl . '?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $key . ($context['sort_by'] == $key && $context['sort_direction'] == 'up' ? ';desc' : '') . (isset($context['prefix_filter']) ? ';prefix=' . $context['prefix_filter']['id_prefix'] : '') . '">' . $txt[$key] . ($context['sort_by'] == $key ? '<span class="sort sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
 
 	// Calculate the fastest way to get the topics.
 	$start = (int) $_REQUEST['start'];
@@ -310,6 +364,12 @@ function MessageIndex()
 		];
 		$message_pre_index_tables = [];
 		$message_pre_index_wheres = [];
+
+		if (!empty($context['prefix_filter']))
+		{
+			$message_pre_index_parameters['prefix'] = $context['prefix_filter']['id_prefix'];
+			$message_pre_index_tables[] = 'INNER JOIN {db_prefix}topic_prefix_topics AS tpt ON (tpt.id_prefix = {int:prefix} AND tpt.id_topic = t.id_topic)';
+		}
 		call_integration_hook('integrate_message_pre_index', [&$message_pre_index_tables, &$message_pre_index_parameters, &$message_pre_index_wheres]);
 
 		$request = $smcFunc['db']->query('', '
@@ -350,6 +410,12 @@ function MessageIndex()
 		$message_index_selects = [];
 		$message_index_tables = [];
 		$message_index_wheres = [];
+
+		if (!empty($context['prefix_filter']))
+		{
+			$message_index_parameters['prefix'] = $context['prefix_filter']['id_prefix'];
+			$message_index_tables[] = 'INNER JOIN {db_prefix}topic_prefix_topics AS tpt ON (tpt.id_prefix = {int:prefix} AND tpt.id_topic = t.id_topic)';
+		}
 		call_integration_hook('integrate_message_index', [&$message_index_selects, &$message_index_tables, &$message_index_parameters, &$message_index_wheres, &$topic_ids]);
 
 		$enableParticipation = empty($user_info['is_guest']);
@@ -594,6 +660,12 @@ function MessageIndex()
 
 		// Can we use quick moderation checkboxes?
 		$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
+
+		$prefixes = TopicPrefix::get_prefixes_for_topic_list(array_keys($context['topics']));
+		foreach ($prefixes as $prefix_topic => $prefixes)
+		{
+			$context['topics'][$prefix_topic]['prefixes'] = $prefixes;
+		}
 	}
 
 	if (!empty($context['can_quick_mod']))

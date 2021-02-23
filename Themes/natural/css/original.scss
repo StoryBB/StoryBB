@@ -654,8 +654,8 @@ a.button_submit {
 	text-decoration: none;
 }
 
-/* Level 1 active button. */
-.dropmenu li a.active, #top_info li a.active {
+/* Level 1 active button. @deprecated? */
+.dropmenu li a.active {
 	background: #ffa500;
 	color: #fff;
 	font-weight: bold;
@@ -1537,10 +1537,6 @@ h3 .collapse {
 p.moderators {
 	font-size: 0.9em;
 	font-weight: bold;
-}
-
-span.postby {
-	display: block;
 }
 
 /* 18# Topic lists (Messageindex, etc)
@@ -2525,7 +2521,7 @@ span.pm_label {
 }
 
 .activity_stats li div.bar div {
-	background: #ffa500;
+	background: $primary-accent;
 }
 
 .activity_stats li div.bar span {
@@ -3524,6 +3520,35 @@ div#manage_boards dl dd textarea[name=desc] {
 				padding: 0;
 			}
 		}
+	}
+
+	&.admin-prefix {
+		padding: 20px 0;
+		position: relative;
+		
+		.prefix-preview, .prefix-options {
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.prefix-options {
+			position: absolute;
+			right: 15px;
+
+			.buttonlist {
+				margin: 0;
+				padding: 0;
+			}
+		}
+	}
+}
+
+#admin_content .admin-prefix-columns {
+	columns: 2;
+
+	label {
+	    display: block;
+	    padding: 7px;
 	}
 }
 

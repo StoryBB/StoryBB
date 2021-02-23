@@ -224,6 +224,11 @@ class Post
 			updateStats('topic', true);
 			updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
 
+			if (!empty($topicOptions['prefixes']))
+			{
+				TopicPrefix::set_prefix_topic($topicOptions['id'], $topicOptions['prefixes']);
+			}
+
 			// What if we want to export new topics out to a CMS?
 			call_integration_hook('integrate_create_topic', [&$msgOptions, &$topicOptions, &$posterOptions]);
 		}
@@ -530,6 +535,12 @@ class Post
 			WHERE id_msg = {int:id_msg}',
 			$update_parameters
 		);
+
+		// Update the topic prefixes if that's set. It _should_ only be set on editing first post.
+		if (isset($topicOptions['prefixes']))
+		{
+			TopicPrefix::set_prefix_topic($topicOptions['id'], $topicOptions['prefixes']);
+		}
 
 		// Lock and or sticky the post.
 		if ($topicOptions['sticky_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)

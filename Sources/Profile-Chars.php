@@ -215,9 +215,10 @@ function CharacterSheetList()
 	$context['characters'] = [];
 	$request = $smcFunc['db']->query('', '
 		SELECT chars.id_character, chars.id_member, chars.character_name,
-			chars.date_created, chars.last_active, chars.avatar, chars.posts,
-			chars.main_char_group, chars.char_groups, chars.retired
+			chars.date_created, chars.last_active, a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar,
+			chars.posts, chars.main_char_group, chars.char_groups, chars.retired
 		FROM {db_prefix}characters AS chars
+		LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
 		WHERE chars.char_sheet != 0
 			AND main_char_group = {int:group}
 		ORDER BY {raw:sort}',
@@ -228,6 +229,10 @@ function CharacterSheetList()
 	);
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
+		$row['character_avatar'] = set_avatar_data([
+			'filename' => $row['filename'],
+			'avatar' => $row['avatar'],
+		]);
 		$row['group_list'] = array_merge((array) $row['main_char_group'], explode(',', $row['char_groups']));
 		$row['groups'] = get_labels_and_badges($row['group_list']);
 		$row['date_created_format'] = timeformat($row['date_created']);

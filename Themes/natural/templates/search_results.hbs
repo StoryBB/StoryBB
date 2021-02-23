@@ -56,7 +56,7 @@
 					<span class="floatright">
 						<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 					</span>
-					<span class="main_icons filter"></span>&nbsp;{{{txt.mlist_search_results}}}:&nbsp;{{{context.search_params.search}}}
+					<span class="main_icons filter"></span>&nbsp;{{{txt.search_results}}}:&nbsp;{{{context.search_params.search}}}
 				</h3>
 			</div>
 
@@ -69,13 +69,13 @@
 	{{/if}}
 
 	{{#each context.search_results}}
-			<div class="{{../css_class}}">
+			<div class="{{css_class}}">
 				<div class="flow_auto">
 
 		{{#each matches}}
 					<div class="topic_details floatleft" style="width:94%">
 						<div class="counter">{{counter}}</div>
-						<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.msg{{id}}#msg{{id}}">{{{subject_highlighted}}}</a></h5>
+						<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.msg{{id}}#msg{{id}}">{{#each ../prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject_highlighted}}}</a></h5>
 						<span class="smalltext">&#171;&nbsp;{{{../../txt.by}}}&nbsp;<strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;{{{time}}}&nbsp;&#187;</span>
 					</div>
 					<div class="floatright">
@@ -125,7 +125,7 @@
 				<span class="floatright">
 					<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 				</span>
-				<span class="main_icons filter"></span>&nbsp;{{{txt.mlist_search_results}}}:&nbsp;{{{context.search_params.search}}}
+				<span class="main_icons filter"></span>&nbsp;{{{txt.search_results}}}:&nbsp;{{{context.search_params.search}}}
 			</h3>
 		</div>
 
@@ -142,7 +142,7 @@
 		<div class="{{{../css_class}}}">
 			<div class="counter">{{counter}}</div>
 			<div class="topic_details">
-				<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.{{start}};topicseen#msg{{id}}">{{{subject_highlighted}}}</a></h5>
+				<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.{{start}};topicseen#msg{{id}}">{{#each ../prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject_highlighted}}}</a></h5>
 				<span class="smalltext">&#171;&nbsp;{{{../../txt.message}}} {{{../../txt.by}}} <strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;<em>{{{time}}}</em>&nbsp;&#187;</span>
 			</div>
 			<div class="list_posts">{{{body_highlighted}}}</div>

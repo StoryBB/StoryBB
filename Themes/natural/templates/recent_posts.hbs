@@ -14,7 +14,7 @@
 		<div class="{{css_class}}">
 			<div class="counter">{{counter}}</div>
 			<div class="topic_details">
-				<h5>{{{board.link}}} / {{{link}}}</h5>
+				<h5>{{{board.link}}} / <a href="{{{href}}}" rel="nofollow">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a></h5>
 				<span class="smalltext">{{../txt.last_poster}} <strong>{{{poster.link}}}</strong> - {{{time}}}</span>
 			</div>
 			<div class="list_posts">{{{message}}}</div>

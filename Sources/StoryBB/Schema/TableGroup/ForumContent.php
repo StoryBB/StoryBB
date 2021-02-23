@@ -110,6 +110,64 @@ class ForumContent
 					Index::key(['likes']),
 				]
 			),
+			Table::make('topic_prefixes',
+				[
+					'id_prefix' => Column::smallint()->auto_increment(),
+					'name' => Column::varchar(50),
+					'css_class' => Column::varchar(100),
+					'sort_order' => Column::smallint(),
+					'selectable' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_prefix']),
+				]
+			),
+			Table::make('topic_prefix_boards',
+				[
+					'id_prefixboard' => Column::int()->auto_increment(),
+					'id_prefix' => Column::smallint(),
+					'id_board' => Column::mediumint(),
+				],
+				[
+					Index::primary(['id_prefixboard']),
+					Index::key(['id_prefix', 'id_board']),
+					Index::key(['id_board', 'id_prefix']),
+				],
+				[
+					Constraint::from('topic_prefix_boards.id_prefix')->to('topic_prefixes.id_prefix'),
+					Constraint::from('topic_prefix_boards.id_topic')->to('boards.id_board'),
+				]
+			),
+			Table::make('topic_prefix_groups',
+				[
+					'id_prefix' => Column::smallint(),
+					'id_group' => Column::smallint()->signed(),
+					'allow_deny' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_prefix', 'id_group']),
+				],
+				[
+					Constraint::from('topic_prefix_groups.id_prefix')->to('topic_prefixes.id_prefix'),
+					Constraint::from('topic_prefix_groups.id_group')->to('membergroups.id_group'),
+				]
+			),
+			Table::make('topic_prefix_topics',
+				[
+					'id_prefixtopic' => Column::int()->auto_increment(),
+					'id_prefix' => Column::smallint(),
+					'id_topic' => Column::mediumint(),
+				],
+				[
+					Index::primary(['id_prefixtopic']),
+					Index::key(['id_prefix', 'id_topic']),
+					Index::key(['id_topic', 'id_prefix']),
+				],
+				[
+					Constraint::from('topic_prefix_topics.id_prefix')->to('topic_prefixes.id_prefix'),
+					Constraint::from('topic_prefix_topics.id_topic')->to('topics.id_topic'),
+				]
+			),
 			Table::make('topics',
 				[
 					'id_topic' => Column::mediumint()->auto_increment(),

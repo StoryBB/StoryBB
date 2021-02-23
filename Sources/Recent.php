@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
+use StoryBB\Model\TopicPrefix;
 
 /**
  * Get the latest post made on the system
@@ -345,6 +346,7 @@ function RecentPosts()
 	$counter = $_REQUEST['start'] + 1;
 	$context['posts'] = [];
 	$board_ids = ['own' => [], 'any' => []];
+	$topics = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor everything.
@@ -395,13 +397,31 @@ function RecentPosts()
 			'can_delete' => false,
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
 			'css_class' => 'windowbg',
+			'prefixes' => [],
 		];
+
+		$topics[$row['id_topic']] = $row['id_topic'];
 
 		if ($user_info['id'] == $row['id_first_member'])
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
 		$board_ids['any'][$row['id_board']][] = $row['id_msg'];
 	}
 	$smcFunc['db']->free_result($request);
+
+	if (!empty($topics))
+	{
+		$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+		if (!empty($prefixes))
+		{
+			foreach ($context['posts'] as $id_msg => $msg)
+			{
+				if (isset($prefixes[$msg['topic']]))
+				{
+					$context['posts'][$id_msg]['prefixes'] = $prefixes[$msg['topic']];
+				}
+			}
+		}
+	}
 
 	// There might be - and are - different permissions between any and own.
 	$permissions = [
@@ -1080,7 +1100,8 @@ function UnreadTopics()
 				'name' => $row['bname'],
 				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
-			]
+			],
+			'prefixes' => [],
 		];
 
 		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
@@ -1120,6 +1141,15 @@ function UnreadTopics()
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
 		}
 		$smcFunc['db']->free_result($result);
+
+		$prefixes = TopicPrefix::get_prefixes_for_topic_list($topic_ids);
+		foreach ($prefixes as $id_topic => $topic_prefixes)
+		{
+			if (isset($context['topics'][$id_topic]))
+			{
+				$context['topics'][$id_topic]['prefixes'] = $topic_prefixes;
+			}
+		}
 	}
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
@@ -1713,7 +1743,8 @@ function UnreadReplies()
 				'name' => $row['bname'],
 				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
-			]
+			],
+			'prefixes' => [],
 		];
 
 		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
@@ -1753,6 +1784,18 @@ function UnreadReplies()
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
 		}
 		$smcFunc['db']->free_result($result);
+	}
+
+	if (!empty($topic_ids))
+	{
+		$prefixes = TopicPrefix::get_prefixes_for_topic_list($topic_ids);
+		foreach ($prefixes as $id_topic => $topic_prefixes)
+		{
+			if (isset($context['topics'][$id_topic]))
+			{
+				$context['topics'][$id_topic]['prefixes'] = $topic_prefixes;
+			}
+		}
 	}
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);

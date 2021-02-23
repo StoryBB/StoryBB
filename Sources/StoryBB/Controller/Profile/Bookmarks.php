@@ -53,7 +53,20 @@ class Bookmarks extends AbstractProfileController
 					'data' => [
 						'function' => function($topic) use ($txt)
 						{
-							$link = $topic['link'];
+							if (!empty($topic['prefixes']))
+							{
+								$link = '<a href="' . $topic['href'] . '">';
+								foreach ($topic['prefixes'] as $prefix)
+								{
+									$link .= '<span class="' . $prefix['css_class'] . '">' . $prefix['name'] . '</span>';
+								}
+								$link .= $topic['subject'];
+								$link .= '</a>';
+							}
+							else
+							{
+								$link = $topic['link'];
+							}
 
 							if ($topic['new'])
 							{

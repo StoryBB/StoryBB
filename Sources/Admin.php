@@ -141,6 +141,12 @@ function AdminMain()
 						'drafts' => [$txt['manage_drafts']],
 					],
 				],
+				'topicprefixes' => [
+					'label' => $txt['topic_prefixes'],
+					'file' => 'ManagePrefixes.php',
+					'function' => 'ManagePrefixes',
+					'permission' => ['admin_forum'],
+				],
 				'managesearch' => [
 					'label' => $txt['manage_search'],
 					'file' => 'ManageSearch.php',

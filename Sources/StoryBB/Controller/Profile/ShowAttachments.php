@@ -45,7 +45,7 @@ class ShowAttachments extends AbstractProfileController
 			'width' => '100%',
 			'items_per_page' => $modSettings['defaultMaxListItems'],
 			'no_items_label' => $txt['show_attachments_none'],
-			'base_href' => $scripturl . '?action=profile;area=showposts;sa=attach;u=' . $memID,
+			'base_href' => $scripturl . '?action=profile;area=attachments;u=' . $memID,
 			'default_sort_col' => 'filename',
 			'get_items' => [
 				'function' => function($start, $items_per_page, $sort, $boardsAllowed, $memID) use ($smcFunc, $board, $modSettings, $context)

@@ -11,12 +11,12 @@
 	<div id="preview_section" {{#unless context.preview_message}} style="display: none;"{{/unless}}>
 		<div class="cat_bar">
 			<h3 class="catbg">
-				<span id="preview_subject">{{context.preview_subject}}</span>
+				<span id="preview_subject">{{{context.preview_subject}}}</span>
 			</h3>
 		</div>
 		<div class="windowbg noup">
 			<div class="post" id="preview_body">
-				{{#if context.preview_message}}{{context.preview_message}}{{else}}<br>{{/if}}
+				{{#if context.preview_message}}{{{context.preview_message}}}{{else}}<br>{{/if}}
 			</div>
 		</div>
 		<br class="clear">
@@ -160,6 +160,8 @@
 				for (var i = 0, n = checkboxFields.length; i < n; i++)
 					if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
 						x[x.length] = checkboxFields[i] + '=' + document.forms.postmodify.elements[checkboxFields[i]].value;
+
+				x[x.length] = sbb_session_var + '=' + sbb_session_id;
 
 				sendXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=pm;sa=send;preview;xml', x.join('&'), onDocSent);
 
