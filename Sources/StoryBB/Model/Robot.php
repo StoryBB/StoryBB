@@ -50,6 +50,7 @@ class Robot
 			'feedly' => 'feedly',
 			'feedvalidator' => 'w3c-feedvalidator',
 			'gigabot' => 'gigablast',
+			'go http package' => 'go',
 			'google-sa' => 'googlesearchappliance',
 			'googlebot' => 'google',
 			'google favicon' => 'google',
@@ -66,7 +67,9 @@ class Robot
 			'msnbot' => 'bing',
 			'netvibes' => 'netvibes',
 			'ning/1' => 'w3c_suite',
+			'node-fetch' => 'node-fetch',
 			'omgili' => 'webhose',
+			'petalbot' => 'aspiegel',
 			'pingdom.com_bot' => 'pingdom',
 			'pinterestbot' => 'pinterest',
 			'proximic' => 'proximic',
@@ -140,6 +143,10 @@ class Robot
 				'title' => 'Internet Archive',
 				'link' => 'http://www.archive.org/details/archive.org_bot',
 			],
+			'aspiegel' => [
+				'title' => 'Aspiegel (PetalBot)',
+				'link' => 'https://aspiegel.com/petalbot',
+			],
 			'baidu' => [
 				'title' => 'Baidu',
 				'link' => 'http://help.baidu.com/question?prod_id=99&class=0&id=3001',
@@ -196,6 +203,10 @@ class Robot
 				'title' => 'GigaBlast',
 				'link' => 'https://gigablast.com/',
 			],
+			'go' => [
+				'title' => 'Go http client',
+				'link' => 'https://golang.org/pkg/net/http/',
+			],
 			'google' => [
 				'title' => 'Google',
 				'link' => 'https://support.google.com/webmasters/answer/182072',
@@ -230,6 +241,10 @@ class Robot
 			'netvibes' => [
 				'title' => 'Netvibes',
 				'link' => 'https://www.netvibes.com/en',
+			],
+			'node-fetch' => [
+				'title' => 'node-fetch',
+				'link' => 'https://github.com/node-fetch/node-fetch',
 			],
 			'pingdom' => [
 				'title' => 'Pingdom',
