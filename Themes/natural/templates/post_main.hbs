@@ -616,6 +616,16 @@
 		{{/if}}
 		var oEditorID = "{{context.post_box_name}}";
 		var oEditorObject = oEditorHandle_{{context.post_box_name}};
+
+	{{#if context.prefix_editing}}
+		$('#prefix_selector').select2({
+			placeholder: {{{json txt.select_topic_prefix}}},
+			templateSelection: function(state) {
+				var css = $(state.element).data('css-class');
+				return $('<span class="' + css + '">' + state.text + '</span>');
+			}
+		});
+	{{/if}}
 	</script>
 
 {{#if context.previous_posts}}
@@ -719,6 +729,5 @@
 				setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsEscape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '"></dd><p id="pollMoreOptions"></p>'}}');
 			};
 	{{/if}}
-
 	</script>
 {{/if}}

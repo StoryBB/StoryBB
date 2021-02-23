@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Model\TopicPrefix;
+
 /**
  * Fetches a list of boards and (optional) categories including
  * statistical information, child boards and moderators.
@@ -74,6 +76,7 @@ function getBoardIndex($boardIndexOptions)
 	else
 		$this_category = [];
 	$boards = [];
+	$topics = [];
 
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = $smcFunc['db']->fetch_assoc($result_boards))
@@ -264,6 +267,8 @@ function getBoardIndex($boardIndexOptions)
 			'topic' => $row_board['id_topic']
 		];
 
+		$topics[] = $row_board['id_topic'];
+
 		$this_last_post['member']['avatar'] = set_avatar_data([
 			'avatar' => $row_board['avatar'],
 			'email' => $row_board['email_address'],
@@ -305,6 +310,37 @@ function getBoardIndex($boardIndexOptions)
 			];
 	}
 	$smcFunc['db']->free_result($result_boards);
+
+	$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+	// echo '<div style="margin-left:100px"><pre>';
+	if ($boardIndexOptions['include_categories'])
+	{
+		// print_r($categories);
+		foreach ($categories as $category_id => $this_boards)
+		{
+			foreach ($this_boards['boards'] as $board_id => $this_board)
+			{
+				$categories[$category_id]['boards'][$board_id]['last_post']['prefixes'] = [];
+				if (!empty($this_board['last_post']['topic']) && isset($prefixes[$this_board['last_post']['topic']]))
+				{
+					$categories[$category_id]['boards'][$board_id]['last_post']['prefixes'] = $prefixes[$this_board['last_post']['topic']];
+				}
+			}
+		}
+	}
+	else
+	{
+		foreach ($this_category as $board_id => $this_board)
+		{
+			$this_category[$board_id]['last_post']['prefixes'] = [];
+			if (!empty($this_board['last_post']['topic']) && isset($prefixes[$this_board['last_post']['topic']]))
+			{
+				$this_category[$board_id]['last_post']['prefixes'] = $prefixes[$this_board['last_post']['topic']];
+			}
+		}
+		//var_dump($this_category);
+	}
+	// echo '</pre></div>';
 
 	// Fetch the board's moderators and moderator groups
 	$boards = array_unique($boards);

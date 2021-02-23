@@ -127,12 +127,14 @@ class Bookmark
 			]
 		);
 		$bookmarks = [];
+		$topics = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			censorText($row['subject']);
 
 			$bookmarks[] = [
 				'id' => $row['id_topic'],
+
 				'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (empty($row['started_ooc']) && !empty($row['started_char']) ? ';area=characters;char=' . $row['started_char'] : '') . '">' . $row['real_name_col'] . '</a>',
 				'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . (empty($row['updated_ooc']) && !empty($row['updated_char']) ? ';area=characters;char=' . $row['updated_char'] : '') . '">' . $row['last_real_name'] . '</a>',
 				'subject' => $row['subject'],
@@ -146,9 +148,23 @@ class Bookmark
 				'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 				'notify_pref' => isset($prefs['topic_notify_' . $row['id_topic']]) ? $prefs['topic_notify_' . $row['id_topic']] : (!empty($prefs['topic_notify']) ? $prefs['topic_notify'] : 0),
 				'unwatched' => $row['unwatched'],
+				'prefixes' => [],
 			];
+			$topics[] = $row['id_topic'];
 		}
 		$smcFunc['db']->free_result($request);
+
+		if (!empty($topics))
+		{
+			$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+			foreach ($bookmarks as $key => $bookmark)
+			{
+				if (isset($prefixes[$bookmark['id']]))
+				{
+					$bookmarks[$key]['prefixes'] = $prefixes[$bookmark['id']];
+				}
+			}
+		}
 
 		return $bookmarks;
 	}

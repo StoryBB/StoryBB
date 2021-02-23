@@ -204,6 +204,7 @@ $txt['password_reminder'] = 'Password reminder';
 $txt['topic_started'] = 'Topic started by';
 $txt['title'] = 'Title';
 $txt['post_by'] = 'Post by';
+$txt['prefix_filter'] = 'Prefix filter:';
 $txt['memberlist_searchable'] = 'Searchable list of all registered members.';
 $txt['welcome_newest_member'] = 'Please welcome %1$s, our newest member.';
 $txt['admin_center'] = 'Administration Center';

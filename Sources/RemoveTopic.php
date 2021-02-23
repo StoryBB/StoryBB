@@ -16,6 +16,8 @@
 
 */
 
+use StoryBB\Model\TopicPrefix;
+
 /**
  * Completely remove an entire topic.
  * Redirects to the board when completed.
@@ -534,6 +536,9 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		]
 	);
+
+	TopicPrefix::delete_topics($topics);
+
 	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}topics
 		WHERE id_topic IN ({array_int:topics})',

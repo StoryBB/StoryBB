@@ -12,6 +12,8 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Model\TopicPrefix;
+
 class WatchedTopics extends AbstractProfileController
 {
 	protected function get_token_name()
@@ -82,9 +84,12 @@ class WatchedTopics extends AbstractProfileController
 						]
 					);
 					$notification_topics = [];
+					$topic_ids = [];
 					while ($row = $smcFunc['db']->fetch_assoc($request))
 					{
 						censorText($row['subject']);
+
+						$topic_ids[$row['id_topic']] = $row['id_topic'];
 
 						$notification_topics[] = [
 							'id' => $row['id_topic'],
@@ -101,9 +106,22 @@ class WatchedTopics extends AbstractProfileController
 							'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 							'notify_pref' => isset($prefs['topic_notify_' . $row['id_topic']]) ? $prefs['topic_notify_' . $row['id_topic']] : (!empty($prefs['topic_notify']) ? $prefs['topic_notify'] : 0),
 							'unwatched' => $row['unwatched'],
+							'prefixes' => [],
 						];
 					}
 					$smcFunc['db']->free_result($request);
+
+					if (!empty($topic_ids))
+					{
+						$prefixes = TopicPrefix::get_prefixes_for_topic_list($topic_ids);
+						foreach ($notification_topics as $key => $notification)
+						{
+							if (isset($prefixes[$notification['id']]))
+							{
+								$notification_topics[$key]['prefixes'] = $prefixes[$notification['id']];
+							}
+						}
+					}
 
 					return $notification_topics;
 				},
@@ -145,7 +163,20 @@ class WatchedTopics extends AbstractProfileController
 					'data' => [
 						'function' => function($topic) use ($txt)
 						{
-							$link = $topic['link'];
+							if (!empty($topic['prefixes']))
+							{
+								$link = '<a href="' . $topic['href'] . '">';
+								foreach ($topic['prefixes'] as $prefix)
+								{
+									$link .= '<span class="' . $prefix['css_class'] . '">' . $prefix['name'] . '</span>';
+								}
+								$link .= $topic['subject'];
+								$link .= '</a>';
+							}
+							else
+							{
+								$link = $topic['link'];
+							}
 
 							if ($topic['new'])
 								$link .= ' <a href="' . $topic['new_href'] . '" class="new_posts">' . $txt['new'] . '</a>';

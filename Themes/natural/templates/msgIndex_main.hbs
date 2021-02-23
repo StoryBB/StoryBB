@@ -85,6 +85,11 @@
 			</div>
 
 			<div id="topic_container">
+	{{#if context.prefix_filter}}
+				<div class="information">
+					{{txt.prefix_filter}}&nbsp; <span class="{{{context.prefix_filter.css_class}}}">{{{context.prefix_filter.name}}}</span> <a href="{{scripturl}}?board={{context.current_board}}.0"><span class="main_icons delete"></span></a>
+				</div>
+	{{/if}}
 	{{#if context.unapproved_posts_message}}
 				<div class="information approvetopic">
 					<span class="alert">!</span> {{{context.unapproved_posts_message}}}
@@ -116,6 +121,10 @@
 									<a href="{{new_href}}" id="newicon{{first_post.id}}" class="new_posts" title="{{../txt.new_posts}}"></a>
 		{{/if}}
 									<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
+
+										{{#each prefixes}}
+											<a href="{{../../scripturl}}?board={{../../context.current_board}}.0;prefix={{id_prefix}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
+										{{/each}}
 										<span id="msg_{{first_post.id}}">
 											{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{../txt.awaiting_approval}})</em>{{/unless}}
 										</span>

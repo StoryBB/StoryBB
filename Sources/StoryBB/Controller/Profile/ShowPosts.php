@@ -13,6 +13,7 @@
 namespace StoryBB\Controller\Profile;
 
 use StoryBB\Helper\Parser;
+use StoryBB\Model\TopicPrefix;
 
 class ShowPosts extends AbstractProfileController
 {
@@ -172,11 +173,14 @@ class ShowPosts extends AbstractProfileController
 		$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 		$context['posts'] = [];
 		$board_ids = ['own' => [], 'any' => []];
+		$topic_ids = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Censor....
 			censorText($row['body']);
 			censorText($row['subject']);
+
+			$topic_ids[$row['id_topic']] = $row['id_topic'];
 
 			// Do the code.
 			$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
@@ -205,6 +209,7 @@ class ShowPosts extends AbstractProfileController
 				'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
 				'approved' => $row['approved'],
 				'css_class' => $row['approved'] ? 'windowbg' : 'approvebg',
+				'prefixes' => [],
 			];
 
 			if ($user_info['id'] == $row['id_member_started'])
@@ -212,6 +217,18 @@ class ShowPosts extends AbstractProfileController
 			$board_ids['any'][$row['id_board']][] = $counter;
 		}
 		$smcFunc['db']->free_result($request);
+
+		if (!empty($topic_ids))
+		{
+			$prefixes = TopicPrefix::get_prefixes_for_topic_list($topic_ids);
+			foreach ($context['posts'] as $key => $post)
+			{
+				if (isset($prefixes[$post['topic']]))
+				{
+					$context['posts'][$key]['prefixes'] = $prefixes[$post['topic']];
+				}
+			}
+		}
 
 		// All posts were retrieved in reverse order, get them right again.
 		if ($reverse)

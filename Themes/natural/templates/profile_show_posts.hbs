@@ -12,7 +12,7 @@
 		<div class="{{css_class}}">
 			<div class="counter">{{{counter}}}</div>
 			<div class="topic_details">
-				<h5><strong><a href="{{../scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / <a href="{{../scripturl}}?topic={{topic}}.{{start}}#msg{{id}}">{{{subject}}}</a></strong></h5>
+				<h5><strong><a href="{{../scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / <a href="{{../scripturl}}?topic={{topic}}.{{start}}#msg{{id}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a></strong></h5>
 				<span class="smalltext">{{{time}}}</span>
 			</div>
 			<div class="list_posts">

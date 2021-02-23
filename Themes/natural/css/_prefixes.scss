@@ -1,0 +1,131 @@
+/** Prefixes **/
+
+.prefix {
+	display: inline-block;
+	font-size: 0.9em;
+	font-weight: 300;
+	margin-right: 0.3em;
+	padding: 2px 0.4em;
+	text-decoration: none;
+
+	&.prefix-primary {
+		background: $primary-accent;
+		color: $primary-accent-contrast;
+	}
+
+	&.prefix-secondary {
+		background: $secondary-accent;
+		color: $secondary-accent-contrast;
+	}
+
+	&.prefix-tertiary {
+		background: $tertiary-accent;
+		color: $tertiary-accent-contrast;
+	}
+
+	&.prefix-gold {
+		background: Gold;
+		color: black;
+	}
+
+	&.prefix-darkorange {
+		background: DarkOrange;
+		color: black;
+	}
+
+	&.prefix-orangered {
+		background: OrangeRed;
+		color: white;
+	}
+
+	&.prefix-firebrick {
+		background: FireBrick;
+		color: white;
+	}
+
+	&.prefix-darkred {
+		background: DarkRed;
+		color: white;
+	}
+
+	&.prefix-deeppink {
+		background: DeepPink;
+		color: white;
+	}
+
+	&.prefix-mediumvioletred {
+		background: MediumVioletRed;
+		color: white;
+	}
+
+	&.prefix-mediumorchid {
+		background: MediumOrchid;
+		color: white;
+	}
+
+	&.prefix-mediumslateblue {
+		background: MediumSlateBlue;
+		color: white;
+	}
+
+	&.prefix-indigo {
+		background: Indigo;
+		color: white;
+	}
+
+	&.prefix-navy {
+		background: Navy;
+		color: white;
+	}
+
+	&.prefix-royalblue {
+		background: RoyalBlue;
+		color: white;
+	}
+
+	&.prefix-lightskyblue {
+		background: LightSkyBlue;
+		color: black;
+	}
+
+	&.prefix-aquamarine {
+		background: Aquamarine;
+		color: black;
+	}
+
+	&.prefix-mediumspringgreen {
+		background: MediumSpringGreen;
+		color: black;
+	}
+
+	&.prefix-seagreen {
+		background: SeaGreen;
+		color: white;
+	}
+
+	&.prefix-limegreen {
+		background: LimeGreen;
+		color: black;
+	}
+
+	&.prefix-goldenrod {
+		background: GoldenRod;
+		color: black;
+	}
+
+	&.prefix-darkgoldenrod {
+		background: DarkGoldenRod;
+		color: white;
+	}
+
+	&.prefix-saddlebrown {
+		background: SaddleBrown;
+		color: white;
+	}
+}
+
+/* Make the selector look less weird on the posting form. */
+dd.pf_subject .select2-container .select2-selection__choice {
+	background: none;
+	border: none;
+}

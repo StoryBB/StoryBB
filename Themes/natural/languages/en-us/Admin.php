@@ -721,3 +721,17 @@ $txt['affiliate_url_missing'] = 'Affiliate URL missing.';
 $txt['enable_affiliate'] = 'Enable affiliate';
 $txt['disable_affiliate'] = 'Disable affiliate';
 $txt['save_new_order'] = 'Save new order';
+
+$txt['topic_prefixes'] = 'Topic Prefixes';
+$txt['no_topic_prefixes'] = 'No topic prefixes have been defined.';
+$txt['add_prefix'] = 'Add Prefix';
+$txt['edit_prefix'] = 'Edit Prefix';
+$txt['prefix_name'] = 'Prefix name';
+$txt['prefix_style'] = 'Prefix style';
+$txt['prefix_selectable'] = 'Prefix is selectable';
+$txt['prefix_selectable_note'] = 'If not selectable, topics tagged with this prefix will stay tagged, but it won\'t be available if a topic is newly added or edited.';
+$txt['prefix'] = 'Prefix';
+$txt['prefix_groups'] = 'Groups that can use this prefix';
+$txt['prefix_boards'] = 'Boards the prefix should be active in';
+$txt['no_prefix_name'] = 'No prefix name given.';
+$txt['invalid_prefix_style'] = 'A valid prefix style was not selected.';

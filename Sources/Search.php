@@ -13,6 +13,7 @@
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
 /**
@@ -1646,6 +1647,8 @@ function PlushSearch2()
 				$participants[$row['id_topic']] = true;
 			$smcFunc['db']->free_result($result);
 		}
+
+		$context['topic_prefixes'] = TopicPrefix::get_prefixes_for_topic_list(array_keys($participants));
 	}
 
 	// Now that we know how many results to expect we can start calculating the page numbers.
@@ -1857,7 +1860,8 @@ function prepareSearchContext($reset = false)
 			'name' => $message['cat_name'],
 			'href' => $scripturl . '#c' . $message['id_cat'],
 			'link' => '<a href="' . $scripturl . '#c' . $message['id_cat'] . '">' . $message['cat_name'] . '</a>'
-		]
+		],
+		'prefixes' => $context['topic_prefixes'][$message['id_topic']] ?? [],
 	]);
 
 	$body_highlighted = $message['body'];

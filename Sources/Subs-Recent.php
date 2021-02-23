@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
+use StoryBB\Model\TopicPrefix;
 
 /**
  * Get the latest posts of a forum.
@@ -50,6 +51,7 @@ function getLastPosts($latestPostOptions)
 		]
 	);
 	$posts = [];
+	$topics = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		// Censor the subject and post for the preview ;).
@@ -82,10 +84,28 @@ function getLastPosts($latestPostOptions)
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'raw_timestamp' => $row['poster_time'],
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'],
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>'
+			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
+			'prefixes' => [],
 		];
+
+		$topics[] = $row['id_topic'];
 	}
 	$smcFunc['db']->free_result($request);
+
+	if (!empty($topics))
+	{
+		$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+		if (!empty($prefixes))
+		{
+			foreach ($posts as $key => $post)
+			{
+				if (isset($prefixes[$post['topic']]))
+				{
+					$posts[$key]['prefixes'] = $prefixes[$post['topic']];
+				}
+			}
+		}
+	}
 
 	return $posts;
 }

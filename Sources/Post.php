@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
 /**
@@ -65,6 +66,11 @@ function Post($post_errors = [])
 		$context['preview_message'] = '';
 		$context['preview_subject'] = '';
 	}
+	else
+	{
+		loadJavaScriptFile('select2/select2.min.js', ['minimize' => false, 'default_theme' => true], 'select2');
+		loadCSSFile('select2.min.css', ['minimize' => false, 'default_theme' => true], 'select2');
+	}
 
 	// No message is complete without a topic.
 	if (empty($topic) && !empty($_REQUEST['msg']))
@@ -84,6 +90,7 @@ function Post($post_errors = [])
 	}
 
 	// Check if it's locked. It isn't locked if no topic is specified.
+	$context['prefix_editing'] = false;
 	if (!empty($topic))
 	{
 		$request = $smcFunc['db']->query('', '
@@ -144,6 +151,11 @@ function Post($post_errors = [])
 		else
 		{
 			$context['becomes_approved'] = true;
+
+			if ($_REQUEST['msg'] == $id_first_msg)
+			{
+				$context['prefix_editing'] = true;
+			}
 		}
 
 		$context['can_lock'] = allowedTo('lock_any') || ($user_info['id'] == $id_member_poster && allowedTo('lock_own'));
@@ -179,6 +191,50 @@ function Post($post_errors = [])
 		$context['already_locked'] = 0;
 		$context['notify'] = !empty($context['notify']);
 		$context['sticky'] = !empty($_REQUEST['sticky']);
+
+		$context['prefix_editing'] = true;
+	}
+
+	$context['prefixes'] = [];
+	if ($context['prefix_editing'])
+	{
+		$context['prefixes'] = TopicPrefix::get_prefixes(['groups' => $user_info['groups'], 'boards' => [$board], 'selectable' => true]);
+	}
+	if (empty($context['prefixes']))
+	{
+		$context['prefix_editing'] = false;
+	}
+
+	// If we came from Post2 we might already have prefixes defined. Or we might not, so if not, preload them into the array.
+	if ($context['prefix_editing'])
+	{
+		if (!empty($context['selected_prefixes']) && !empty($context['prefixes']))
+		{
+			foreach ($context['prefixes'] as $key => $prefix)
+			{
+				if (isset($context['selected_prefixes'][$prefix['id_prefix']]))
+				{
+					$context['prefixes'][$key]['selected'] = true;
+				}
+			}
+		}
+		elseif (!empty($topic))
+		{
+			// We're updating a topic, load the existing prefixes.
+			$topic_prefixes = TopicPrefix::get_prefixes_for_topic((int) $topic);
+			$prefix_ids = [];
+			foreach ($topic_prefixes as $prefix)
+			{
+				$prefix_ids[$prefix['id_prefix']] = $prefix['id_prefix'];
+			}
+			foreach ($context['prefixes'] as $key => $prefix)
+			{
+				if (isset($prefix_ids[$prefix['id_prefix']]))
+				{
+					$context['prefixes'][$key]['selected'] = true;
+				}
+			}
+		}
 	}
 
 	// @todo These won't work if you're posting an event!
@@ -1113,6 +1169,17 @@ function Post($post_errors = [])
 		'dd' => '<input type="text" name="subject" value="' . $context['subject'] . '" size="80" maxlength="80" required>',
 	];
 
+	if ($context['prefix_editing'])
+	{
+		$prefix_select = '<select name="prefix[]" id="prefix_selector" multiple>';
+		foreach ($context['prefixes'] as $prefix)
+		{
+			$prefix_select .= '<option value="' . $prefix['id_prefix'] . '"' . (!empty($prefix['selected']) ? ' selected' : '') . ' data-css-class="' . $prefix['css_class'] . '">' . $prefix['name'] . '</option>';
+		}
+		$prefix_select .= '</select>';
+		$context['posting_fields']['subject']['dd'] = $prefix_select . $context['posting_fields']['subject']['dd'];
+	}
+
 	// Finally, load the template.
 	if (!isset($_REQUEST['xml']))
 	{
@@ -1239,6 +1306,7 @@ function Post2()
 		processAttachments();
 	}
 
+	$context['prefix_editing'] = false;
 	// If this isn't a new topic load the topic info that we need.
 	if (!empty($topic))
 	{
@@ -1367,6 +1435,8 @@ function Post2()
 	// Posting a new topic.
 	elseif (empty($topic))
 	{
+		$context['prefix_editing'] = true;
+
 		// Now don't be silly, new topics will get their own id_msg soon enough.
 		unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 
@@ -1406,6 +1476,11 @@ function Post2()
 	elseif (isset($_REQUEST['msg']) && !empty($topic))
 	{
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
+
+		if ($_REQUEST['msg'] == $topic_info['id_first_msg'])
+		{
+			$context['prefix_editing'] = true;
+		}
 
 		$request = $smcFunc['db']->query('', '
 			SELECT id_member, poster_name, poster_email, poster_time, approved
@@ -1507,6 +1582,42 @@ function Post2()
 		{
 			$_POST['guestname'] = $row['poster_name'];
 			$_POST['email'] = $row['poster_email'];
+		}
+	}
+
+	$context['prefixes'] = [];
+	if ($context['prefix_editing'])
+	{
+		$context['prefixes'] = TopicPrefix::get_prefixes(['groups' => $user_info['groups'], 'boards' => [$board], 'selectable' => true]);
+	}
+	if (empty($context['prefixes']))
+	{
+		$context['prefix_editing'] = false;
+	}
+
+	if ($context['prefix_editing'])
+	{
+		$saving_prefixes = [];
+		$context['selected_prefixes'] = [];
+
+		if (isset($_POST['prefix']) && is_array($_POST['prefix']))
+		{
+			foreach ($_POST['prefix'] as $prefix_id)
+			{
+				$prefix_id = (int) $prefix_id;
+				if ($prefix_id > 0)
+				{
+					$context['selected_prefixes'][$prefix_id] = $prefix_id;
+				}
+			}
+			foreach ($context['prefixes'] as $key => $prefix)
+			{
+				if (isset($context['selected_prefixes'][$prefix['id_prefix']]))
+				{
+					$context['prefixes'][$key]['selected'] = true;
+					$saving_prefixes[$prefix['id_prefix']] = $prefix['id_prefix'];
+				}
+			}
 		}
 	}
 
@@ -1842,6 +1953,11 @@ function Post2()
 		'mark_as_read' => true,
 		'is_approved' => empty($topic) || !empty($board_info['cur_topic_approved']),
 	];
+
+	if (isset($context['selected_prefixes']) && isset($saving_prefixes))
+	{
+		$topicOptions['prefixes'] = $saving_prefixes;
+	}
 
 	$character_id = $user_info['id_character'];
 	if (!empty($user_info['id']) && isset($_POST['character_id']))

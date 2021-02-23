@@ -13,6 +13,7 @@
 namespace StoryBB\Controller\Profile;
 
 use StoryBB\Helper\Parser;
+use StoryBB\Model\TopicPrefix;
 
 class CharacterPosts extends AbstractProfileController
 {
@@ -141,11 +142,14 @@ class CharacterPosts extends AbstractProfileController
 		$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 		$context['posts'] = [];
 		$board_ids = ['own' => [], 'any' => []];
+		$topic_ids = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			// Censor....
 			censorText($row['body']);
 			censorText($row['subject']);
+
+			$topic_ids[$row['id_topic']] = $row['id_topic'];
 
 			// Do the code.
 			$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
@@ -181,6 +185,18 @@ class CharacterPosts extends AbstractProfileController
 			$board_ids['any'][$row['id_board']][] = $counter;
 		}
 		$smcFunc['db']->free_result($request);
+
+		if (!empty($topic_ids))
+		{
+			$prefixes = TopicPrefix::get_prefixes_for_topic_list($topic_ids);
+			foreach ($context['posts'] as $key => $post)
+			{
+				if (isset($prefixes[$post['topic']]))
+				{
+					$context['posts'][$key]['prefixes'] = $prefixes[$post['topic']];
+				}
+			}
+		}
 
 		// All posts were retrieved in reverse order, get them right again.
 		if ($reverse)

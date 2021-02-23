@@ -12,6 +12,8 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Model\TopicPrefix;
+
 class IgnoredTopics extends AbstractProfileController
 {
 	public function display_action()
@@ -87,6 +89,16 @@ class IgnoredTopics extends AbstractProfileController
 						while ($row = $smcFunc['db']->fetch_assoc($request))
 							$topicsInfo[] = $row;
 						$smcFunc['db']->free_result($request);
+
+						$prefixes = TopicPrefix::get_prefixes_for_topic_list($topics);
+						foreach ($topicsInfo as $key => $ignored_topic)
+						{
+							$topicsInfo[$key]['prefixes'] = [];
+							if (isset($prefixes[$ignored_topic['id_topic']]))
+							{
+								$topicsInfo[$key]['prefixes'] = $prefixes[$ignored_topic['id_topic']];
+							}
+						}
 					}
 
 					return $topicsInfo;
@@ -128,13 +140,18 @@ class IgnoredTopics extends AbstractProfileController
 						'style' => 'width: 30%;',
 					],
 					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>',
-							'params' => [
-								'id_topic' => false,
-								'subject' => false,
-							],
-						],
+						'function' => function($topic) use ($txt, $scripturl)
+						{
+							$link = '<a href="' . $scripturl . '?topic=' . $topic['id_topic'] . '.0">';
+							foreach ($topic['prefixes'] as $prefix)
+							{
+								$link .= '<span class="' . $prefix['css_class'] . '">' . $prefix['name'] . '</span>';
+							}
+							$link .= $topic['subject'];
+							$link .= '</a>';
+
+							return $link;
+						},
 					],
 					'sort' => [
 						'default' => 'm.subject',

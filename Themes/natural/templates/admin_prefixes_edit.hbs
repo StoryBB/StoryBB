@@ -1,0 +1,116 @@
+		<form method="post" action="{{scripturl}}?action=admin;area=topicprefixes;sa=save_prefix" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{context.page_title}}}</h3>
+			</div>
+{{#if context.errors}}
+			<div class="errorbox">
+				<ul id="list_errors">
+
+	{{! Cycle through each error and display an error message. }}
+	{{#each context.errors}}
+					<li>{{{.}}}</li>
+	{{/each}}
+				</ul>
+			</div>
+{{/if}}
+
+			<div class="windowbg">
+				<dl class="settings">
+					<dt>{{{txt.prefix_name}}}:</dt>
+					<dd><input type="text" name="prefix_name" value="{{{context.prefix.name}}}" required></dd>
+					<dt>{{{txt.prefix_style}}}</dt>
+					<dd>
+						<div class="admin-prefix-columns">
+{{#each context.prefix_styles}}
+							<label>
+								<input type="radio" name="prefix_style" value="{{{.}}}"{{#if (eq . ../context.prefix.css_class)}} checked{{/if}}> <span class="{{{.}}}">{{{../txt.prefix}}}</span>
+							</label>
+{{/each}}
+						</div>
+					</dd>
+					<dt>
+						{{{txt.prefix_selectable}}}
+						<div class="smalltext">{{{txt.prefix_selectable_note}}}</div>
+					</dt>
+					<dd><input type="checkbox" name="selectable" value="1"{{#if context.prefix.selectable}} checked{{/if}}></dd>
+				</dl>
+
+				<dl class="settings">
+					<dt>{{{txt.prefix_groups}}}</dt>
+					<dd>
+						<dl>
+							<dt>
+								<span class="perms"><strong>{{{txt.permissions_option_on}}}</strong></span>
+								<span class="perms"><strong>{{{txt.permissions_option_off}}}</strong></span>
+								<span class="perms red"><strong>{{{txt.permissions_option_deny}}}</strong></span>
+							</dt>
+							<dd>
+							</dd>
+{{#each context.prefix.groups.account}}
+							<dt>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="a"{{#if (eq access 'a')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="x"{{#if (eq access 'x')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+								<span class="perms"><input type="radio" name="access[{{@key}}]" value="d"{{#if (eq access 'd')}} checked{{/if}}{{#if frozen}} disabled{{/if}}></span>
+							</dt>
+							<dd>
+								<span>{{{name}}}</span>
+							</dd>
+{{/each}}
+						</dl>
+					</dd>
+				</dl>
+
+				<dl class="settings">
+					<dt>{{{txt.prefix_boards}}}</dt>
+					<dd>
+{{#each context.prefix.board_categories}}
+						<div class="board-category">
+							<label>
+								<input type="checkbox">
+								<strong>{{{name}}}</strong>
+							</label>
+	{{#each boards}}
+							<div class="board">
+								<label>
+									<input type="checkbox" name="board[{{id_board}}]" value="1"{{#if active}} checked{{/if}}>
+
+									{{#if (gt child_level 0)}}
+										{{repeat '&nbsp;' child_level}}
+									{{/if}}
+
+									{{{name}}}
+								</label>
+							</div>
+	{{/each}}
+						</div>
+						<br>
+{{/each}}
+						<label id="check_all_boards"><input type="checkbox"> <em>{{{txt.check_all}}}</em></label>
+					</dd>
+				</dl>
+
+				{{session_form}}
+				<input type="hidden" name="prefix" value="{{{context.prefix.id_prefix}}}">
+				<div class="buttonlist righttext">
+					<button type="submit" class="active button" name="save" value="save">{{{txt.save}}}</button>
+					{{#if context.prefix.id_prefix}}
+					<button type="submit" name="delete" value="delete" class="you_sure button">{{{txt.delete}}}</button>
+					{{/if}}
+				</div>
+			</div>
+		</form>
+
+		<script>
+		$('.board-category > label > input').change(function () {
+			var checked = $(this).prop('checked');
+			$(this).closest('.board-category').find('.board input').each(function() {
+				$(this).prop('checked', checked);
+			});
+		});
+		$('#check_all_boards').change(function() {
+			var checked = $(this).find('input').prop('checked');
+			$(this).closest('dl').find('.board-category input').each(function() {
+				$(this).prop('checked', checked);
+			});
+		});
+		</script>
