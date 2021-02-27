@@ -197,11 +197,12 @@ $txt['maintain_sub_topics'] = 'Topics';
 $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully.';
 $txt['maintain_no_errors'] = 'Congratulations, no errors were found. Thanks for checking.';
 
-$txt['maintain_tasks'] = 'Scheduled Tasks';
+$txt['maintain_tasks'] = 'System Tasks';
 $txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB. <strong>Note:</strong> All times given below are <em>server time</em> and do not take any time offsets setup within StoryBB into account.';
-$txt['scheduled_task_list'] = 'Task List';
+$txt['scheduled_task_list'] = 'Scheduled Task List';
 
-$txt['scheduled_log'] = 'Task Log';
+$txt['scheduled_log'] = 'Scheduled Task Log';
+$txt['adhoc_task_log'] = 'Adhoc Task Log';
 $txt['scheduled_log_desc'] = 'This log shows all the scheduled tasks that have been run on your forum. (All times given are <em>server time</em>.)';
 $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';

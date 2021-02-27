@@ -32,6 +32,7 @@ function ManageScheduledTasks()
 		'taskedit' => 'EditTask',
 		'tasklog' => 'TaskLog',
 		'tasks' => 'ScheduledTasks',
+		'adhoc' => 'AdhocLogs',
 	];
 
 	// We need to find what's the action.
@@ -51,6 +52,9 @@ function ManageScheduledTasks()
 			],
 			'tasklog' => [
 				'description' => $txt['scheduled_log_desc'],
+			],
+			'adhoc' => [
+				'description' => '',
 			],
 		],
 	];
@@ -588,4 +592,111 @@ function list_getNumTaskLogEntries()
 	$smcFunc['db']->free_result($request);
 
 	return $num_entries;
+}
+
+function AdhocLogs()
+{
+	global $scripturl, $context, $txt, $smcFunc, $sourcedir;
+
+	// Lets load the language just incase we are outside the Scheduled area.
+	loadLanguage('ManageScheduledTasks');
+
+	// Empty the log?
+	if (!empty($_POST['removeAll']))
+	{
+		checkSession();
+		validateToken('admin-tl');
+
+		$smcFunc['db']->truncate_table('log_scheduled_tasks');
+	}
+
+	// Setup the list.
+	$listOptions = [
+		'id' => 'adhoc_task_log',
+		'items_per_page' => 30,
+		'title' => $txt['adhoc_task_log'],
+		'no_items_label' => $txt['scheduled_log_empty'],
+		'base_href' => $scripturl . '?action=admin;area=scheduledtasks;sa=adhoc',
+		'default_sort_col' => 'date',
+		'get_items' => [
+			'function' => function($start, $items_per_page, $sort) use ($smcFunc, $txt)
+			{
+				$request = $smcFunc['db']->query('', '
+					SELECT at.id_task, at.task_class, at.task_data, at.claimed_time
+					FROM {db_prefix}adhoc_tasks AS at
+					ORDER BY {raw:sort}
+					LIMIT {int:start}, {int:items}',
+					[
+						'sort' => $sort,
+						'start' => $start,
+						'items' => $items_per_page,
+					]
+				);
+				$log_entries = [];
+				while ($row = $smcFunc['db']->fetch_assoc($request))
+				{
+					$log_entries[] = $row;
+				}
+				$smcFunc['db']->free_result($request);
+
+				return $log_entries;
+			},
+		],
+		'get_count' => [
+			'function' => function() use ($smcFunc) {
+				$request = $smcFunc['db']->query('', '
+					SELECT COUNT(*)
+					FROM {db_prefix}adhoc_tasks'
+				);
+				list ($num_entries) = $smcFunc['db']->fetch_row($request);
+				$smcFunc['db']->free_result($request);
+
+				return $num_entries;
+			},
+		],
+		'columns' => [
+			'name' => [
+				'header' => [
+					'value' => $txt['scheduled_tasks_name'],
+				],
+				'data' => [
+					'db' => 'task_class'
+				],
+			],
+			'data' => [
+				'header' => [
+					'value' => '',
+				],
+				'data' => [
+					'db' => 'task_data',
+				],
+			],
+			'date' => [
+				'header' => [
+					'value' => $txt['scheduled_log_time_run'],
+				],
+				'data' => [
+					'function' => function($rowData)
+					{
+						return timeformat($rowData['time_run'], true);
+					},
+				],
+				'sort' => [
+					'default' => 'at.claimed_time DESC',
+					'reverse' => 'at.claimed_time',
+				],
+			],
+		],
+	];
+
+	createToken('admin-tl');
+
+	require_once($sourcedir . '/Subs-List.php');
+	createList($listOptions);
+
+	$context['sub_template'] = 'generic_list_page';
+	$context['default_list'] = 'adhoc_task_log';
+
+	// Make it all look tify.
+	$context['page_title'] = $txt['adhoc_task_log'];
 }

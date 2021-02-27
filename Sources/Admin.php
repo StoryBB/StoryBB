@@ -356,6 +356,7 @@ function AdminMain()
 					'subsections' => [
 						'tasks' => [$txt['scheduled_task_list'], 'admin_forum'],
 						'tasklog' => [$txt['scheduled_log'], 'admin_forum'],
+						'adhoc' => [$txt['adhoc_task_log'], 'admin_forum'],
 					],
 				],
 				'mailqueue' => [

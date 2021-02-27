@@ -211,7 +211,19 @@ function Profile()
 	{
 		$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
 
-		$section = $characters->add_section(new NavSection('create_character', ''));
+		$section = $characters->add_section(new NavSection('meta_character', ''));
+
+		if (count($context['member']['characters']) > 1)
+		{
+			// If we have more than one, we have something beyond just the OOC...
+			$section->add_item(new NavItem(
+				'topic_tracker',
+				$txt['profile_topic_tracker'],
+				['area' => 'topic_tracker', 'u' => $memID],
+				'StoryBB\\Controller\\Profile\\TopicTracker',
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+			));
+		}
 		$section->add_item(new NavItem(
 			'create_character',
 			$txt['char_create'],

@@ -156,7 +156,7 @@ function ViewErrorLog()
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db']->escape_wildcard_string($row['message']));
-		if ($search_message == $filter['value']['sql'])
+		if (isset($filter['value']['sql']) && $search_message == $filter['value']['sql'])
 			$search_message = $smcFunc['db']->escape_wildcard_string($row['message']);
 		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), ["\r" => '', '<br>' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;']), ["\n" => '<br>']);
 

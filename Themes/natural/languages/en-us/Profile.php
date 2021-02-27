@@ -18,6 +18,7 @@ $txt['profile_report_user'] = 'Report User';
 $txt['profile_show_drafts'] = 'Show Drafts';
 
 $txt['profiletab_characters'] = 'Characters';
+$txt['profile_topic_tracker'] = 'Topic Tracker';
 
 $txt['profiletab_notification_settings'] = 'Notification Settings';
 $txt['profile_bookmarks'] = 'Bookmarks';
@@ -68,6 +69,8 @@ $txt['bookmarks_ic'] = 'Bookmarks in In Character Boards';
 $txt['no_topics_bookmarked'] = 'No topics bookmarked.';
 $txt['bookmarked_topic'] = 'Bookmarked Topic';
 $txt['remove_bookmarks'] = 'Remove Bookmarks';
+
+$txt['topic_tracker_no_topics'] = 'This character has not participated in any topics yet.';
 
 $txt['no_profile_edit'] = 'You are not allowed to change this person\'s profile.';
 $txt['signature'] = 'Signature';
@@ -622,6 +625,8 @@ $txt['date_created'] = 'Date Created:';
 $txt['switch_chars'] = 'switch';
 $txt['change_theme'] = 'change';
 $txt['char_theme'] = 'Theme';
+$txt['char_sheet_warning'] = 'You can put in the character sheet now if you want - but you don\'t have to. You can create the character and do the sheet in bits. Just remember to save it when you\'re done editing for now - we do recommend saving several times along the way. When you\'re ready to submit it, there will be a \'Send For Approval\' button to send it to the administrators.';
+$txt['character_create_session_timeout'] = 'The session timed out while trying to submit your character. You should be able to try again and save.';
 
 $txt['avatar_link'] = 'Avatar link:';
 $txt['avatar_preview'] = 'Avatar preview:';

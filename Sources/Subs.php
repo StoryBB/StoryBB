@@ -359,9 +359,10 @@ function updateMemberData($members, $data)
 	if (isset($data['real_name']))
 	{
 		$smcFunc['db']->query('', '
-			UPDATE {db_prefix}characters
-			SET character_name = {string:p_real_name}
-			WHERE is_main = 1
+			UPDATE {db_prefix}characters AS chars, {db_prefix}members AS mem
+			SET chars.character_name = {string:p_real_name}
+			WHERE chars.is_main = 1
+				AND chars.id_member = mem.id_member
 				AND ' . $condition,
 			$parameters
 		);
