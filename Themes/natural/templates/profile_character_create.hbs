@@ -4,17 +4,17 @@
 	</div>
 
 	<div id="profileview" class="roundframe flow_auto">
-		<div class="errorbox" id="profile_error"{{#unless context.form_error}} style="display:none"{{/unless}}>
-			<span>{{{txt.char_editing_error}}}</span>
-			<ul id="list_errors">
-				{{#each context.form_errors}}
-					<li>{{{.}}}</li>
-				{{/each}}
-			</ul>
-		</div>
 		<div id="basicinfo"></div>
 		<div id="detailedinfo">
 			<form id="creator" action="{{scripturl}}?action=profile;u={{context.id_member}};area=character_create" method="POST" accept-charset="UTF-8">
+				<div class="errorbox" id="profile_error"{{#unless context.form_errors}} style="display:none"{{/unless}}>
+					<span>{{{txt.char_editing_error}}}</span>
+					<ul id="list_errors">
+						{{#each context.form_errors}}
+							<li>{{{.}}}</li>
+						{{/each}}
+					</ul>
+				</div>
 				<dl>
 					<dt>{{{txt.char_name}}}</dt>
 					<dd>

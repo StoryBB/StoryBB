@@ -626,6 +626,7 @@ $txt['switch_chars'] = 'switch';
 $txt['change_theme'] = 'change';
 $txt['char_theme'] = 'Theme';
 $txt['char_sheet_warning'] = 'You can put in the character sheet now if you want - but you don\'t have to. You can create the character and do the sheet in bits. Just remember to save it when you\'re done editing for now - we do recommend saving several times along the way. When you\'re ready to submit it, there will be a \'Send For Approval\' button to send it to the administrators.';
+$txt['character_create_session_timeout'] = 'The session timed out while trying to submit your character. You should be able to try again and save.';
 
 $txt['avatar_link'] = 'Avatar link:';
 $txt['avatar_preview'] = 'Avatar preview:';

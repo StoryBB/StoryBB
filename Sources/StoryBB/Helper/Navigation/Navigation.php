@@ -95,7 +95,15 @@ class Navigation
 			$instance = $result->instantiate($this, $params);
 			if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST' && is_callable([$instance, 'post_action']))
 			{
-				checkSession();
+				$do_session_check = true;
+				if (method_exists($instance, 'do_standard_session_check'))
+				{
+					$do_session_check = $instance->do_standard_session_check();
+				}
+				if ($do_session_check)
+				{
+					checkSession();
+				}
 				$instance->post_action();
 			}
 			else

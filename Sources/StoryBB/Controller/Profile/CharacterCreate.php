@@ -19,6 +19,11 @@ class CharacterCreate extends AbstractProfileController
 {
 	use CharacterTrait;
 
+	public function do_standard_session_check()
+	{
+		return false;
+	}
+
 	public function display_action()
 	{
 		global $context, $smcFunc, $txt, $sourcedir;
@@ -92,8 +97,16 @@ class CharacterCreate extends AbstractProfileController
 		preparsecode($message);
 		$context['character']['sheet'] = $message;
 
+		$session = checkSession('post', '', false);
+		if ($session !== '')
+		{
+			$context['form_errors'][] = $txt['character_create_session_timeout'];
+		}
+
 		if ($context['character']['character_name'] == '')
+		{
 			$context['form_errors'][] = $txt['char_error_character_must_have_name'];
+		}
 		else
 		{
 			// Check if the name already exists.
@@ -112,43 +125,43 @@ class CharacterCreate extends AbstractProfileController
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
 		}
 
-		if (empty($context['form_errors']))
+		if (!empty($context['form_errors']))
 		{
-			// So no errors, we can save this new character, yay!
-			$smcFunc['db']->insert('insert',
-				'{db_prefix}characters',
-				['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
-					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
-					'date_created' => 'int', 'last_active' => 'int',
-					'is_main' => 'int', 'main_char_group' => 'int', 'char_groups' => 'string',
-					'char_sheet' => 'int', 'retired' => 'int'],
-				[$context['id_member'], $context['character']['character_name'], '',
-					'', 0, 0,
-					time(), time(),
-					0, 0, '',
-					0, 0],
-				['id_character']
-			);
-			$context['character']['id_character'] = $smcFunc['db']->inserted_id();
-			trackStats(['chars' => '+']);
-
-			makeCustomFieldChanges($context['id_member'], $context['character']['id_character'], 'char');
-
-			if (!empty($context['character']['sheet']))
-			{
-				// Also gotta insert this.
-				$smcFunc['db']->insert('insert',
-					'{db_prefix}character_sheet_versions',
-					['sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
-						'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'],
-					[$context['character']['sheet'], $context['character']['id_character'], $context['id_member'],
-						time(), 0, 0, 0],
-					['id_version']
-				);
-			}
-			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
+			return $this->display_action();
 		}
 
-		return $this->display_action();
+		// So no errors, we can save this new character, yay!
+		$smcFunc['db']->insert('insert',
+			'{db_prefix}characters',
+			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
+				'date_created' => 'int', 'last_active' => 'int',
+				'is_main' => 'int', 'main_char_group' => 'int', 'char_groups' => 'string',
+				'char_sheet' => 'int', 'retired' => 'int'],
+			[$context['id_member'], $context['character']['character_name'], '',
+				'', 0, 0,
+				time(), time(),
+				0, 0, '',
+				0, 0],
+			['id_character']
+		);
+		$context['character']['id_character'] = $smcFunc['db']->inserted_id();
+		trackStats(['chars' => '+']);
+
+		makeCustomFieldChanges($context['id_member'], $context['character']['id_character'], 'char');
+
+		if (!empty($context['character']['sheet']))
+		{
+			// Also gotta insert this.
+			$smcFunc['db']->insert('insert',
+				'{db_prefix}character_sheet_versions',
+				['sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
+					'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'],
+				[$context['character']['sheet'], $context['character']['id_character'], $context['id_member'],
+					time(), 0, 0, 0],
+				['id_version']
+			);
+		}
+		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 	}
 }
