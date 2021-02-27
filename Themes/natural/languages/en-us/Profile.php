@@ -18,6 +18,7 @@ $txt['profile_report_user'] = 'Report User';
 $txt['profile_show_drafts'] = 'Show Drafts';
 
 $txt['profiletab_characters'] = 'Characters';
+$txt['profile_topic_tracker'] = 'Topic Tracker';
 
 $txt['profiletab_notification_settings'] = 'Notification Settings';
 $txt['profile_bookmarks'] = 'Bookmarks';
@@ -68,6 +69,8 @@ $txt['bookmarks_ic'] = 'Bookmarks in In Character Boards';
 $txt['no_topics_bookmarked'] = 'No topics bookmarked.';
 $txt['bookmarked_topic'] = 'Bookmarked Topic';
 $txt['remove_bookmarks'] = 'Remove Bookmarks';
+
+$txt['topic_tracker_no_topics'] = 'This character has not participated in any topics yet.';
 
 $txt['no_profile_edit'] = 'You are not allowed to change this person\'s profile.';
 $txt['signature'] = 'Signature';

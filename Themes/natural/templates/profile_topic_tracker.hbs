@@ -1,0 +1,47 @@
+		{{! Displaying character topics in a holistic way.}}
+		<div id="topic_container">
+{{#each context.member.characters}}
+	{{#if (eq_coerce is_main '0')}}
+			<div class="title_bar">
+				<h3 class="titlebg">{{{character_name}}}</h3>
+			</div>
+		{{#if topics}}
+			{{#each topics}}
+			<div class="windowbg">
+				<div class="info info_block">
+					<div class="first_poster">
+						<img class="avatar" src="{{{starter_avatar.href}}}">
+					</div>
+					<div class="msg_container">
+						<div class="message_index_title">
+							<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+							{{#if new}}
+							&nbsp;<a href="{{{new_href}}}" class="new_posts"></a>
+							{{/if}}
+						</div>
+						<div>
+							{{{../../txt.started_by}}} {{{poster_link}}}									
+						</div>
+					</div>
+
+				</div>
+
+				<div class="lastpost">
+					<div class="last_poster">
+						<img class="avatar" src="{{{updated_avatar.href}}}">
+					</div>
+					<p><a href="{{{new_href}}}">{{{updated}}}</a><br>
+					{{{../../txt.by}}} {{{poster_updated_link}}}</p>
+				</div> 
+			</div>
+
+			{{/each}}
+		{{else}}
+			<div class="roundframe centertext">
+				{{{../txt.topic_tracker_no_topics}}}
+			</div>
+		{{/if}}
+			<br>
+	{{/if}}
+{{/each}}
+		</div>
