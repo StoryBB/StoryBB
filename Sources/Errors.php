@@ -322,8 +322,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 
 	$context['error_code'] = isset($error_code) ? 'id="' . $error_code . '" ' : '';
 
-	if (empty($context['page_title']))
-		$context['page_title'] = $context['error_title'];
+	$context['page_title'] = $context['error_title'];
 
 	$context['sub_template'] = 'error_fatal';
 
