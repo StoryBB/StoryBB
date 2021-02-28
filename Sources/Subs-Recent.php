@@ -30,7 +30,7 @@ function getLastPosts($latestPostOptions)
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg,
 			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, t.id_board, b.name AS board_name,
-			SUBSTRING(m.body, 1, 385) AS body, m.smileys_enabled
+			SUBSTRING(m.body, 1, 385) AS body, m.smileys_enabled, chars.is_main, chars.id_character
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -75,7 +75,7 @@ function getLastPosts($latestPostOptions)
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (empty($row['is_main']) && !empty($row['id_character']) ? ';area=characters;char=' . $row['id_character'] : '') . '">' . $row['poster_name'] . '</a>'
 			],
 			'subject' => $row['subject'],
 			'short_subject' => shorten_subject($row['subject'], 24),
