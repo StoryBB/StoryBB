@@ -27,6 +27,7 @@ $txt['who_no_online_robots'] = 'There are currently no robots online.';
 $txt['who_no_online_guests'] = 'There are currently no guests online.';
 $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
+$txt['who_user_received_error'] = 'User received error message: %1$s';
 
 $txt['whorobot_login'] = 'Viewing the login page.';
 $txt['whorobot_signup'] = 'Viewing the registration page.';

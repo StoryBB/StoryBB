@@ -306,6 +306,7 @@ function determineActions($urls, $preferred_prefix = false)
 	$board_ids = [];
 
 	$data = [];
+	$errors = [];
 	foreach ($url_list as $k => $url)
 	{
 		// Get the request parameters..
@@ -348,6 +349,17 @@ function determineActions($urls, $preferred_prefix = false)
 			if (!empty($url[2]) && isset($txt['whorobot_' . $actions['action']]))
 			{
 				$data[$k] = $txt['whorobot_' . $actions['action']];
+			}
+			elseif ($actions['action'] == '.xml')
+			{
+				if (isset($actions['sa']) && isset($txt['whoall_' . $actions['action'] . '_' . $actions['sa']]))
+				{
+					$data[$k] = $preferred_prefix && isset($txt[$preferred_prefix . $actions['action'] . '_' . $actions['sa']]) ? $txt[$preferred_prefix . $actions['action'] . '_' . $actions['sa']] : $txt['whoall_' . $actions['action'] . '_' . $actions['sa']];
+				}
+				else
+				{
+					$data[$k] = ($preferred_prefix && isset($txt[$preferred_prefix . $actions['action']]) ? $txt[$preferred_prefix . $actions['action']] : $txt['whoall_' . $actions['action']]) . (isset($actions['sa']) ? ' (' . StringLibrary::escape($actions['sa']) . ')' : '');
+				}
 			}
 			// Viewing/editing a profile.
 			elseif ($actions['action'] == 'profile')
@@ -428,15 +440,10 @@ function determineActions($urls, $preferred_prefix = false)
 
 		if (isset($actions['error']))
 		{
-			if (isset($txt[$actions['error']]))
-				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['error']] : vsprintf($txt[$actions['error']], $actions['who_error_params']));
-			elseif ($actions['error'] == 'guest_login')
-				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
-			else
-				$error_message = str_replace('"', '&quot;', $actions['error']);
-
-			if (!empty($error_message))
-				$data[$k] .= ' <span class="main_icons error" title="' . $error_message . '"></span>';
+			$errors[$k] = [
+				'error' => $actions['error'],
+				'who_error_params' => $actions['who_error_params'] ?? [],
+			];
 		}
 
 		// Maybe the action is integrated into another system?
@@ -531,13 +538,32 @@ function determineActions($urls, $preferred_prefix = false)
 
 			// Set their action on each - session/text to sprintf.
 			foreach ($profile_ids[$row['id_member']] as $k => $session_text)
+			{
 				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
+			}
 		}
 		$smcFunc['db']->free_result($result);
 	}
 
 	foreach ($data as $k => $v)
+	{
 		$data[$k] = str_replace('{scripturl}', $scripturl, $v);
+
+		if (isset($errors[$k]))
+		{
+			loadLanguage('Errors');
+			$actions = $errors[$k];
+			if (isset($txt[$errors[$k]['error']]))
+				$error_message = str_replace('"', '&quot;', empty($actions['who_error_params']) ? $txt[$actions['error']] : vsprintf($txt[$actions['error']], $actions['who_error_params']));
+			elseif ($actions['error'] == 'guest_login')
+				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
+			else
+				$error_message = str_replace('"', '&quot;', $actions['error']);
+
+			if (!empty($error_message))
+				$data[$k] .= ' <span class="main_icons error" title="' . sprintf($txt['who_user_received_error'], $error_message) . '"></span>';
+		}
+	}
 
 	call_integration_hook('whos_online_after', [&$urls, &$data]);
 
