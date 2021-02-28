@@ -26,8 +26,10 @@
 
 	<link rel="help" href="{{buildlink 'help'}}">
 	<link rel="contents" href="{{scripturl}}">
-	<link rel="alternate" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
-	<link rel="alternate" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">
+{{#if (eq_coerce modSettings.xmlnews_enable 1)}}
+	<link rel="alternate" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml&amp;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
+	<link rel="alternate" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml&amp;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">
+{{/if}}
 	
 	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
 	{{#if context.links.prev}}<link rel="prev" href="{{context.links.prev}}">{{/if}}

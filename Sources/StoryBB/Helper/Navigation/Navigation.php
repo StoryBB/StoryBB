@@ -113,7 +113,7 @@ class Navigation
 			return;
 		}
 
-		fatal_lang_error('no_access', false, 404);
+		fatal_lang_error('no_access', false, [], 404);
 	}
 
 	public function export(array $base_params): array
