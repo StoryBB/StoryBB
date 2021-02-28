@@ -34,6 +34,7 @@ $txt['whorobot_reminder'] = 'Viewing the reminder page.';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
+$txt['whoall_contact'] = 'Posting on the contact form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_help'] = 'Viewing the <a href="{scripturl}?action=help">help page</a>.';
@@ -56,6 +57,12 @@ $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
 $txt['whoall_unreadreplies'] = 'Viewing unread replies since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 $txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>.';
+
+$txt['whoall_.xml'] = 'Viewing an RSS feed';
+$txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';
+$txt['whoall_.xml_news'] = 'Viewing the recent topics RSS feed.';
+$txt['whoall_.xml_members'] = 'Viewing the new members RSS feed.';
+$txt['whoall_.xml_profile'] = 'Viewing the profile RSS feed.';
 
 $txt['whoall_collapse_collapse'] = 'Collapsing a category.';
 $txt['whoall_collapse_expand'] = 'Expanding a category.';
