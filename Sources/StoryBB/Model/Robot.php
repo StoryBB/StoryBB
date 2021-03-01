@@ -40,6 +40,7 @@ class Robot
 			'bingbot' => 'bing',
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
+			'bw/1' => 'builtwith',
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
 			'duckduckbot' => 'duckduckgo',
@@ -170,6 +171,10 @@ class Robot
 			'brandwatch' => [
 				'title' => 'Brandwatch',
 				'link' => 'https://www.brandwatch.com/legal/magpie-crawler/',
+			],
+			'builtwith' => [
+				'title' => 'BuiltWith',
+				'link' => 'https://builtwith.com/biup',
 			],
 			'deadlinkchecker' => [
 				'title' => 'Dead Link Checker',
