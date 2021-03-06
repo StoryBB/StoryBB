@@ -51,6 +51,8 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 
 		$this->prune_login_history();
 
+		$this->prune_minified_css();
+
 		// Log we've done it...
 		return true;
 	}
@@ -137,5 +139,40 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 			[
 				'oldLogins' => time() - (!empty($modSettings['loginHistoryDays']) ? 60 * 60 * 24 * $modSettings['loginHistoryDays'] : 2592000),
 		]);
+	}
+
+	/**
+	 * Clean up any legacy versions of CSS files.
+	 */
+	protected function prune_minified_css()
+	{
+		global $smcFunc, $cachedir;
+
+		// First get the versions we know we should have.
+		$known_versions = [];
+
+		$request = $smcFunc['db']->query('', '
+			SELECT id_theme, value
+			FROM {db_prefix}themes
+			WHERE id_member = 0
+				AND variable = {literal:compile_time}');
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$known_versions[$row['id_theme']] = $row['value'];
+		}
+		$smcFunc['db']->free_result($request);
+
+		foreach (glob($cachedir . '/css/*.css') as $file)
+		{
+			if (preg_match('/\D(\d+)_(\d+)\.css$/i', $file, $match))
+			{
+				if (isset($known_versions[$match[1]]) && $known_versions[$match[1]] == $match[2])
+				{
+					continue;
+				}
+			}
+
+			@unlink($file);
+		}
 	}
 }
