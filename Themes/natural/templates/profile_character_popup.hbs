@@ -54,8 +54,11 @@
 			</ul>
 		</div>
 		<br>
-		<div class="clear centertext">
+		<div class="clear centertext buttonlist">
 			<a class="button" href="{{scripturl}}?action=profile;u={{user_info.id}};area=character_create">{{{txt.char_create}}}</a>
+{{#if context.display_topic_tracker}}
+			<a class="button" href="{{scripturl}}?action=profile;area=topic_tracker;u={{user_info.id}}">{{{txt.profile_topic_tracker}}}</a>
+{{/if}}
 		</div>
 		<script>
 		$(".chars_container .switch span.button").on("click", function() {
