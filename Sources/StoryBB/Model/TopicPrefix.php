@@ -131,7 +131,7 @@ class TopicPrefix
 	{
 		global $smcFunc;
 
-		$select = ['tp.id_prefix', 'tp.name', 'tp.css_class'];
+		$select = ['tp.id_prefix', 'tp.name', 'tp.css_class', 'tp.selectable'];
 		$joins = ['{db_prefix}topic_prefixes AS tp'];
 		$sql = [];
 		$params = [];
