@@ -95,7 +95,7 @@ function ModifyFeatureSettings()
  */
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context;
+	global $txt, $scripturl, $context, $cachedir;
 
 	$config_vars = [
 			// Basic stuff, titles, permissions...
@@ -190,6 +190,17 @@ function ModifyBasicSettings($return_config = false)
 		if (isset($_POST['analytics_google_id']))
 		{
 			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
+		}
+
+		if (empty($_POST['minimize_css']))
+		{
+			if (file_exists($cachedir . '/css'))
+			{
+				foreach (glob($cachedir . '/css/*.css') as $file)
+				{
+					@unlink($file);
+				}
+			}
 		}
 
 		settings_integration_hook('integrate_save_basic_settings');
