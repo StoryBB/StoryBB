@@ -115,7 +115,8 @@ function ModifyBasicSettings($return_config = false)
 			['select', 'todayMod', [$txt['today_disabled'], $txt['today_only'], $txt['yesterday_today']]],
 		'',
 			// css and js minification.
-			['check', 'minimize_files'],
+			['check', 'minimize_css'],
+			['check', 'minimize_js'],
 		'',
 			// SEO stuff
 			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],

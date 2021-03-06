@@ -206,7 +206,7 @@ class Css implements Routable, MaintenanceAccessible
 		}
 
 		$site_settings = $this->sitesettings();
-		if ($site_settings->minimize_files)
+		if ($site_settings->minimize_css)
 		{	
 			file_put_contents($cachedir . '/css/' . $filename . '.css', $result);
 
