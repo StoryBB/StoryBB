@@ -29,6 +29,8 @@ $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 $txt['who_user_received_error'] = 'User received error message: %1$s';
 
+$txt['who_page'] = 'Viewing <a href="{scripturl}?action=pages;page=%1$s">%2$s</a>.';
+
 $txt['whorobot_login'] = 'Viewing the login page.';
 $txt['whorobot_signup'] = 'Viewing the registration page.';
 $txt['whorobot_reminder'] = 'Viewing the reminder page.';
