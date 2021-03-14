@@ -676,9 +676,9 @@ function AdhocLogs()
 					'value' => $txt['scheduled_log_time_run'],
 				],
 				'data' => [
-					'function' => function($rowData)
+					'function' => function($rowData) use ($txt)
 					{
-						return timeformat($rowData['time_run'], true);
+						return !empty($rowData['claimed_time']) ? timeformat($rowData['claimed_time'], true) : $txt['not_applicable'];
 					},
 				],
 				'sort' => [

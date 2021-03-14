@@ -37,7 +37,7 @@ class Cache
 			self::$cacheAPI = false;
 
 		// What accelerator we are going to try.
-		$tryAccelerator = !empty($overrideCache) ? $overrideCache : !empty($cache_accelerator) ? $cache_accelerator : 'File';
+		$tryAccelerator = !empty($overrideCache) ? $overrideCache : (!empty($cache_accelerator) ? $cache_accelerator : 'File');
 		$tryAccelerator = ucfirst(strtolower($tryAccelerator));
 
 		// Do some basic tests.
