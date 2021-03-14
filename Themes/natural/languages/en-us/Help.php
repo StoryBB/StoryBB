@@ -33,10 +33,6 @@ $helptxt['user_limit'] = 'This setting limits the amount of points a moderator m
 			can be used to limit what a moderator can do in a small period of time. This can be disabled by setting it to a value of zero. Note that
 			any members with administrator permissions are not affected by this value.';
 
-$helptxt['error_log'] = '<strong>Error Log</strong><br>
-	The error log tracks every serious error encountered by users of your forum. It lists all of these errors by date, which can be sorted
-	by clicking the black arrow next to each date. Additionally you can filter the errors by clicking the picture next to each error statistic. This
-	allows you to filter, for example, by member. When a filter is active the only results that will be displayed will be those that match that filter.';
 $helptxt['theme_settings'] = '<strong>Theme Settings</strong><br>
 	The settings page allows you to change settings specific to a theme. These settings include options such as the themes directory and URL information but
 	also options that affect the layout of a theme on your forum. Most themes will have a variety of user configurable settings, allowing you to adapt a theme
