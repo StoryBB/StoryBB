@@ -15,6 +15,7 @@ namespace StoryBB\Controller\Profile;
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Model\Character;
 
