@@ -532,7 +532,7 @@ class Parser
 				[
 					'tag' => 'member',
 					'type' => 'unparsed_equals',
-					'before' => '<a href="' . $scripturl . '?action=profile;u=$1" class="mention" data-mention="$1">@',
+					'before' => '<a href="' . $scripturl . '?action=profile;area=summary;u=$1" class="mention" data-mention="$1">@',
 					'after' => '</a>',
 				],
 				[

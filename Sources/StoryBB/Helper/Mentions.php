@@ -121,7 +121,7 @@ class Mentions
 		foreach ($members as $member)
 		{
 			if ($member['is_main'])
-				$body = str_ireplace(static::$char . $member['character_name'], '[member=' . $member['id_character'] . ']' . $member['character_name'] . '[/member]', $body);
+				$body = str_ireplace(static::$char . $member['character_name'], '[member=' . $member['id_member'] . ']' . $member['character_name'] . '[/member]', $body);
 			else
 				$body = str_ireplace(static::$char . $member['character_name'], '[character=' . $member['id_character'] . ']' . $member['character_name'] . '[/character]', $body);
 		}
