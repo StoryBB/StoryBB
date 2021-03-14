@@ -22,6 +22,18 @@ use StoryBB\StringLibrary;
  */
 function truncateArray($arr, $max_length=1900)
 {
+	foreach ($arr as $key => $value)
+	{
+		if (is_array($value))
+		{
+			$new_value = [];
+			foreach ($value as $value_key => $value_value)
+			{
+				$new_value[] = $key . '[' . $value_key . ']=' . $value_value;
+			}
+			$arr[$key] = implode(';', $new_value);
+		}
+	}
 	$curr_length = array_sum(array_map("strlen", $arr));
 	if ($curr_length <= $max_length)
 		return $arr;

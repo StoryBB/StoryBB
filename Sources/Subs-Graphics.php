@@ -604,9 +604,9 @@ if (!function_exists('imagecreatefrombmp'))
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
 				{
-					$b = ord($scan_line{$j++});
-					$g = ord($scan_line{$j++});
-					$r = ord($scan_line{$j++});
+					$b = ord($scan_line[$j++]);
+					$g = ord($scan_line[$j++]);
+					$r = ord($scan_line[$j++]);
 					$j++;
 
 					$color = imagecolorexact($dst_img, $r, $g, $b);
@@ -627,9 +627,9 @@ if (!function_exists('imagecreatefrombmp'))
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
 				{
-					$b = ord($scan_line{$j++});
-					$g = ord($scan_line{$j++});
-					$r = ord($scan_line{$j++});
+					$b = ord($scan_line[$j++]);
+					$g = ord($scan_line[$j++]);
+					$r = ord($scan_line[$j++]);
 
 					$color = imagecolorexact($dst_img, $r, $g, $b);
 					if ($color == -1)
@@ -649,8 +649,8 @@ if (!function_exists('imagecreatefrombmp'))
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
 				{
-					$b1 = ord($scan_line{$j++});
-					$b2 = ord($scan_line{$j++});
+					$b1 = ord($scan_line[$j++]);
+					$b2 = ord($scan_line[$j++]);
 
 					$word = $b2 * 256 + $b1;
 
@@ -676,14 +676,14 @@ if (!function_exists('imagecreatefrombmp'))
 			{
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
-					imagesetpixel($dst_img, $x, $y, $palette[ord($scan_line{$j++})]);
+					imagesetpixel($dst_img, $x, $y, $palette[ord($scan_line[$j++])]);
 			}
 			elseif ($info['bits'] == 4)
 			{
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
 				{
-					$byte = ord($scan_line{$j++});
+					$byte = ord($scan_line[$j++]);
 
 					imagesetpixel($dst_img, $x, $y, $palette[(int) ($byte / 16)]);
 					if (++$x < $info['width'])
@@ -695,7 +695,7 @@ if (!function_exists('imagecreatefrombmp'))
 				$x = 0;
 				for ($j = 0; $j < $scan_line_size; $x++)
 				{
-					$byte = ord($scan_line{$j++});
+					$byte = ord($scan_line[$j++]);
 
 					imagesetpixel($dst_img, $x, $y, $palette[(($byte) & 128) != 0]);
 					for ($shift = 1; $shift < 8; $shift++) {

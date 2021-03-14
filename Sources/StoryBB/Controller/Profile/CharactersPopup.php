@@ -30,9 +30,15 @@ class CharactersPopup extends AbstractProfileController
 		$context['sub_template'] = 'profile_character_popup';
 
 		$context['current_characters'] = $cur_profile['characters'];
+		$context['display_topic_tracker'] = false;
 
 		foreach ($context['current_characters'] as $id_character => $character)
 		{
+			if (!$character['is_main'])
+			{
+				$context['display_topic_tracker'] = true;
+			}
+
 			if (!$character['is_main'] && !$character['retired'])
 			{
 				$context['current_characters'][$id_character]['sheet_url'] = $scripturl . '?action=profile;area=character_sheet;u=' . $context['user']['id'] . ';char=' . $id_character;

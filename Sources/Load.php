@@ -328,7 +328,7 @@ function loadUserSettings()
 		{
 			$robot = new \StoryBB\Model\Robot;
 			$_SESSION['robot_check'] = time();
-			$_SESSION['robot_name'] = $robot->identify_robot_from_user_agent($_SERVER['HTTP_USER_AGENT']);
+			$_SESSION['robot_name'] = $robot->identify_robot_from_user_agent($_SERVER['HTTP_USER_AGENT'] ?? '');
 		}
 		$user_info['possibly_robot'] = !empty($_SESSION['robot_name']);
 

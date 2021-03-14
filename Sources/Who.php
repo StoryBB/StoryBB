@@ -304,6 +304,7 @@ function determineActions($urls, $preferred_prefix = false)
 	$topic_ids = [];
 	$profile_ids = [];
 	$board_ids = [];
+	$page_ids = [];
 
 	$data = [];
 	$errors = [];
@@ -370,6 +371,15 @@ function determineActions($urls, $preferred_prefix = false)
 
 				$data[$k] = $txt['who_hidden'];
 				$profile_ids[(int) $actions['u']][$k] = $actions['u'] == $url[1] ? $txt['who_viewownprofile'] : $txt['who_viewprofile'];
+			}
+			// Viewable if they can see the page in question.
+			elseif ($actions['action'] == 'pages')
+			{
+				$data[$k] = $txt['who_hidden'];
+				if (!empty($actions['page']))
+				{
+					$page_ids[$actions['page']][$k] = $txt['who_page'];
+				}
 			}
 			elseif (($actions['action'] == 'post' || $actions['action'] == 'post2') && empty($actions['topic']) && isset($actions['board']))
 			{
@@ -514,6 +524,49 @@ function determineActions($urls, $preferred_prefix = false)
 				$data[$k] = sprintf($session_text, $row['id_board'], $row['name']);
 		}
 		$smcFunc['db']->free_result($result);
+	}
+
+	if (!empty($page_ids))
+	{
+		$request = $smcFunc['db']->query('', '
+			SELECT p.id_page, p.page_name, p.page_title, COALESCE(pa.allow_deny, -1) AS allow_deny
+			FROM {db_prefix}page AS p
+			LEFT JOIN {db_prefix}page_access AS pa ON (p.id_page = pa.id_page AND pa.id_group IN ({array_int:groups}))
+			WHERE p.page_name IN ({array_string:page_name})',
+			[
+				'page_name' => array_keys($page_ids),
+				'groups' => array_values($user_info['groups']),
+			]
+		);
+
+		$pages = [];
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$row['allow_deny'] = (int) $row['allow_deny'];
+			if (!isset($pages[$row['id_page']]))
+			{
+				$pages[$row['id_page']] = $row;
+			}
+			// Possible values: 1 (deny), 0 (allow), -1 (disallow); higher values override lower ones.
+			if ($row['allow_deny'] > $pages[$row['id_page']]['allow_deny'])
+			{
+				$pages[$row['id_page']]['allow_deny'] = $row['allow_deny'];
+			}
+		}
+		$smcFunc['db']->free_result($request);
+
+		foreach ($pages as $page)
+		{
+			if ($page['allow_deny'] != 0 && !$user_info['is_admin'])
+			{
+				continue;
+			}
+
+			foreach ($page_ids[$page['page_name']] as $k => $page_text)
+			{
+				$data[$k] = sprintf($page_text, $page['page_name'], $page['page_title']);
+			}
+		}
 	}
 
 	// Load member names for the profile. (is_not_guest permission for viewing their own profile)
