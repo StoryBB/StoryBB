@@ -594,7 +594,7 @@ $txt['unread_replies'] = 'Updated Topics';
 
 $txt['who_title'] = 'Who\'s Online';
 $txt['who_and'] = ' and ';
-$txt['who_viewing_topic'] = ' are viewing this topic.';
+$txt['who_viewing_topic'] = '%1$s and %2$s are viewing this topic.';
 $txt['who_viewing_board'] = ' are viewing this board.';
 $txt['who_member'] = 'Member';
 
@@ -611,6 +611,10 @@ $txt['num_guests'] = [
 	1 => '1 guest',
 	'x' => '%1$s guests',
 ];
+$txt['num_members_online'] = [
+	1 => '1 member',
+	'x' => '%1$s members',
+];
 $txt['num_users_online'] = [
 	1 => '1 user',
 	'x' => '%1$s users',
@@ -621,7 +625,11 @@ $txt['num_robots'] = [
 ];
 $txt['num_hidden'] = [
 	1 => '(1 hidden)',
-	'x' => '%1$s hidden',
+	'x' => '(%1$s hidden)',
+];
+$txt['plus_num_hidden'] = [
+	1 => '(+1 hidden)',
+	'x' => '(+%1$s hidden)',
 ];
 $txt['user'] = 'User';
 $txt['users'] = 'Users';

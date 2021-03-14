@@ -1322,7 +1322,22 @@ function Display()
 	$context['viewing'] = '';
 	if (!empty($settings['display_who_viewing']))
 	{
-		$context['viewing'] = $settings['display_who_viewing'] == 1 ? count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'] : empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+		if ($settings['display_who_viewing'] == 1)
+		{
+			$context['viewing_members'] = numeric_context('num_members_online', count($context['view_members']));
+		}
+		else
+		{
+			$context['viewing_members'] = implode(', ', $context['view_members_list']);
+		}
+		if (!empty($context['view_num_hidden']) && $context['can_moderate_forum'])
+		{
+			$context['viewing_members'] .= ' ' . numeric_context('plus_num_hidden', $context['view_num_hidden']);
+		}
+
+		$context['viewing_guests'] = numeric_context('num_guests', $context['view_num_guests']);
+
+		$context['viewing'] = sprintf($txt['who_viewing_topic'], $context['viewing_members'], $context['viewing_guests']);
 	}
 	$context['messages'] = [];
 	$context['ignoredMsgs'] = [];
