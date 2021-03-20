@@ -29,10 +29,6 @@ $txt['starts'] = 'Starts';
 $txt['ends'] = 'Ends';
 $txt['none'] = 'None';
 
-$txt['minutes_label'] = 'Minutes';
-$txt['hours_label'] = 'Hours';
-$txt['years_title'] = 'Years';
-
 $txt['time_am'] = 'am';
 $txt['time_pm'] = 'pm';
 
@@ -368,10 +364,6 @@ $txt['database_error'] = 'Database Error';
 $txt['try_again'] = 'Please try again. If you come back to this error screen, report the error to an administrator.';
 $txt['file'] = 'File';
 $txt['line'] = 'Line';
-
-$txt['template_parse_error'] = 'Template Parse Error!';
-$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-$txt['template_parse_errmsg'] = 'Unfortunately more information is not available at this time as to exactly what is wrong.';
 
 $txt['today'] = '<strong>Today</strong> at ';
 $txt['yesterday'] = '<strong>Yesterday</strong> at ';
