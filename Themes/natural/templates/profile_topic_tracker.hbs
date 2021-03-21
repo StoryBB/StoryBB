@@ -9,6 +9,9 @@
 			{{#each topics}}
 			<div class="windowbg">
 				<div class="info info_block">
+					<div class="icons floatright">
+						{{#if locked}}<span class="main_icons lock" title="{{../../txt.locked_topic}}"></span>{{/if}}
+					</div>
 					<div class="first_poster">
 						<img class="avatar" src="{{{starter_avatar.href}}}">
 					</div>

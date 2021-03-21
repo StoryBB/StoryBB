@@ -89,7 +89,7 @@ class TopicTracker
 		$topic_data = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name,
+				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
@@ -131,6 +131,7 @@ class TopicTracker
 				'topic_href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
+				'locked' => !empty($row['locked']),
 				'updated' => timeformat($row['poster_time']),
 				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 				'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
