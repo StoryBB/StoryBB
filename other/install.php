@@ -447,10 +447,6 @@ function Welcome()
 	if (isset($error))
 		$incontext['error'] = $txt[$error];
 
-	// Mod_security blocks everything that smells funny. Let StoryBB handle security.
-	if (!fixModSecurity() && !isset($_GET['overmodsecurity']))
-		$incontext['error'] = $txt['error_mod_security'] . '<br><br><a href="' . $installurl . '?overmodsecurity=true">' . $txt['error_message_click'] . '</a> ' . $txt['error_message_bad_try_again'];
-
 	// Check for https stream support.
 	$supported_streams = stream_get_wrappers();
 	if (!in_array('https', $supported_streams))
@@ -477,10 +473,6 @@ function CheckFilesWritable()
 		'Settings.php',
 		'Settings_bak.php',
 	];
-
-	// With mod_security installed, we could attempt to fix it with .htaccess.
-	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
-		$writable_files[] = file_exists(dirname(__FILE__) . '/.htaccess') ? '.htaccess' : '.';
 
 	$failed_files = [];
 
@@ -1635,58 +1627,6 @@ function updateSettingsFile($vars)
 		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
 
 	return true;
-}
-
-/**
- * Attempts to configure the server to disable mod_security (something StoryBB doesn't need)
- */
-function fixModSecurity()
-{
-	$htaccess_addition = '
-<IfModule mod_security.c>
-	# Turn off mod_security filtering.  StoryBB is a big boy, it doesn\'t need its hands held.
-	SecFilterEngine Off
-
-	# The below probably isn\'t needed, but better safe than sorry.
-	SecFilterScanPOST Off
-</IfModule>';
-
-	if (!function_exists('apache_get_modules') || !in_array('mod_security', apache_get_modules()))
-		return true;
-	elseif (file_exists(dirname(__FILE__) . '/.htaccess') && is_writable(dirname(__FILE__) . '/.htaccess'))
-	{
-		$current_htaccess = implode('', file(dirname(__FILE__) . '/.htaccess'));
-
-		// Only change something if mod_security hasn't been addressed yet.
-		if (strpos($current_htaccess, '<IfModule mod_security.c>') === false)
-		{
-			if ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'a'))
-			{
-				fwrite($ht_handle, $htaccess_addition);
-				fclose($ht_handle);
-				return true;
-			}
-			else
-				return false;
-		}
-		else
-			return true;
-	}
-	elseif (file_exists(dirname(__FILE__) . '/.htaccess'))
-		return strpos(implode('', file(dirname(__FILE__) . '/.htaccess')), '<IfModule mod_security.c>') !== false;
-	elseif (is_writable(dirname(__FILE__)))
-	{
-		if ($ht_handle = fopen(dirname(__FILE__) . '/.htaccess', 'w'))
-		{
-			fwrite($ht_handle, $htaccess_addition);
-			fclose($ht_handle);
-			return true;
-		}
-		else
-			return false;
-	}
-	else
-		return false;
 }
 
 /**

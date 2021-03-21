@@ -485,6 +485,11 @@ function loadEssentialThemeData()
 {
 	global $settings, $modSettings, $smcFunc, $context, $sourcedir, $txt;
 
+	if (!isset($modSettings['forum_name']))
+	{
+		reloadSettings();
+	}
+
 	// Get all the default theme variables.
 	$result = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
