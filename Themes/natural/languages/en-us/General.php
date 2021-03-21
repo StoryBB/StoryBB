@@ -209,6 +209,7 @@ $txt['notify_deactivate'] = 'Would you like to deactivate notification on this t
 
 $txt['recent_posts'] = 'Recent Posts';
 $txt['online_in_discord'] = 'Online in Discord';
+$txt['join_discord'] = 'Join us on Discord';
 
 $txt['location'] = 'Location';
 $txt['date_registered'] = 'Date Registered';
