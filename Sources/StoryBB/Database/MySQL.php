@@ -940,7 +940,7 @@ class MySQL implements DatabaseAdapter
 	 * @param int returnmode 0 = nothing(default), 1 = last row id, 2 = all rows id as array
 	 * @return mixed value of the first key, behavior based on returnmode. null if no data.
 	 */
-	public function insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
+	public function insert($method, $table, $columns, $data, $keys, $returnmode = 0, bool $safe_mode = false)
 	{
 		$return_var = null;
 
