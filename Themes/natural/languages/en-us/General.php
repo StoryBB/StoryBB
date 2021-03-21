@@ -185,7 +185,6 @@ $txt['are_sure_remove_topic'] = 'Are you sure you want to remove this topic?';
 $txt['yes'] = 'Yes';
 $txt['no'] = 'No';
 
-$txt['search_end_results'] = 'End of results';
 $txt['search_on'] = 'on';
 
 $txt['search'] = 'Search';
