@@ -62,6 +62,7 @@ class Robot
 			'jigsaw' => 'w3c_css',
 			'kalooga' => 'kalooga',
 			'magpie-crawler' => 'brandwatch',
+			'mail.ru' => 'mail.ru',
 			'mediapartners-google' => 'googleadsense',
 			'megaindex' => 'megaindex',
 			'mj12bot' => 'majestic12',
@@ -239,6 +240,10 @@ class Robot
 			'kalooga' => [
 				'title' => 'Kalooga',
 				'link' => 'https://kalooga.com/',
+			],
+			'mail.ru' => [
+				'title' => 'Mail.RU',
+				'link' => 'http://go.mail.ru/help/robots',
 			],
 			'majestic12' => [
 				'title' => 'Majestic12',
