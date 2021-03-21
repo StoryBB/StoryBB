@@ -1,11 +1,17 @@
 Options +FollowSymLinks
 
+# Handle the various rewrites we care about.
+<IfModule mod_rewrite.c>
 RewriteEngine on
-RewriteBase /
 
+# If your site isn't in the root, e.g. you're in domain.com/folder/ you might need to add this to match the /folder/ part.
+# RewriteBase /
+
+# Perform the rest of the rewrites for the site.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
 
 # Turn off mod_security as far as possible.
 <IfModule mod_security.c>
