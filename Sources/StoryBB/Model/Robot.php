@@ -37,6 +37,7 @@ class Robot
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
 			'baiduspider' => 'baidu',
+			'barkrowler' => 'babbar',
 			'bingbot' => 'bing',
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
@@ -147,6 +148,10 @@ class Robot
 			'aspiegel' => [
 				'title' => 'Aspiegel (PetalBot)',
 				'link' => 'https://aspiegel.com/petalbot',
+			],
+			'babbar' => [
+				'title' => 'Babbar',
+				'link' => 'https://www.babbar.tech/crawler',
 			],
 			'baidu' => [
 				'title' => 'Baidu',
