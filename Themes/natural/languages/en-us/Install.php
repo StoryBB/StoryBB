@@ -90,7 +90,6 @@ $txt['default_angel_smiley'] = 'Angel';
 
 $txt['error_message_click'] = 'Click here';
 $txt['error_message_try_again'] = 'to try this step again.';
-$txt['error_message_bad_try_again'] = 'to try installing anyway, but note that this is <em>strongly</em> discouraged.';
 
 $txt['install_settings'] = 'Forum Settings';
 $txt['install_settings_info'] = 'This page requires you to define a few key settings for your forum. StoryBB has automatically detected key settings for you.';
@@ -196,8 +195,6 @@ $txt['error_user_settings_query'] = 'A database error occurred while trying to c
 $txt['error_subs_missing'] = 'Unable to find the Sources/Subs.php file. Please make sure it was uploaded properly, and then try again.';
 $txt['error_db_alter_priv'] = 'The database account you specified does not have permission to ALTER, CREATE, and/or DROP tables in the database; this is necessary for StoryBB to function properly.';
 $txt['error_versions_do_not_match'] = 'The installer has detected another version of StoryBB already installed with the specified information. If you are trying to upgrade, you should use the upgrader, not the installer.<br><br>Otherwise, you may wish to use different information, or create a backup and then delete the data currently in the database.';
-$txt['error_mod_security'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.';
-$txt['error_mod_security_no_write'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br>You may wish to use your ftp client to chmod .htaccess in the forum directory to be writable (777), and then refresh this page.';
 $txt['error_valid_admin_email_needed'] = 'You have not entered a valid email address for your administrator account.';
 $txt['error_valid_server_email_needed'] = 'You have not entered a valid webmaster email address.';
 $txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https://storybb.org">StoryBB website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
