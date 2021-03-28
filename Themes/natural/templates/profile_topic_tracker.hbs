@@ -1,50 +1,123 @@
 		{{! Displaying character topics in a holistic way.}}
+		<div class="windowbg" id="topic_filter" style="display:none">
+			<div class="half_content">
+				<label><input type="checkbox" name="locked"> {{{txt.topic_tracker_locked_topics}}}</label><br>
+				<label><input type="checkbox" name="unread" checked> {{{txt.topic_tracker_unread_topics}}}</label><br>
+				<label><input type="checkbox" name="nounread" checked> {{{txt.topic_tracker_read_topics}}}</label><br>
+			</div>
+			<div class="half_content">
+				<strong>{{{txt.topic_tracker_last_post}}}</strong><br>
+{{#each context.time_ago_options}}
+				<label><input type="checkbox" name="lp-{{@key}}" checked> {{{this.label}}}</label><br>
+{{/each}}
+			</fieldset>
+		</div>
 		<div id="topic_container">
 {{#each context.member.characters}}
 	{{#if (eq_coerce is_main '0')}}
-			<div class="title_bar">
-				<h3 class="titlebg">{{{character_name}}}</h3>
-			</div>
+			<div class="character">
+				<div class="title_bar">
+					<h3 class="titlebg">{{{character_name}}}</h3>
+				</div>
 		{{#if topics}}
 			{{#each topics}}
-			<div class="windowbg">
-				<div class="info info_block">
-					<div class="icons floatright">
-						{{#if locked}}<span class="main_icons lock" title="{{../../txt.locked_topic}}"></span>{{/if}}
-					</div>
-					<div class="first_poster">
-						<img class="avatar" src="{{{starter_avatar.href}}}">
-					</div>
-					<div class="msg_container">
-						<div class="message_index_title">
-							<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
-							{{#if new}}
-							&nbsp;<a href="{{{new_href}}}" class="new_posts"></a>
-							{{/if}}
+				<div class="windowbg{{classes}}">
+					<div class="info info_block">
+						<div class="icons floatright">
+							{{#if locked}}<span class="main_icons lock" title="{{../../txt.locked_topic}}"></span>{{/if}}
 						</div>
-						<div>
-							{{{../../txt.started_by}}} {{{poster_link}}}									
+						<div class="first_poster">
+							<img class="avatar" src="{{{starter_avatar.href}}}">
 						</div>
+						<div class="msg_container">
+							<div class="message_index_title">
+								<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+								{{#if new}}
+								&nbsp;<a href="{{{new_href}}}" class="new_posts"></a>
+								{{/if}}
+							</div>
+							<div>
+								{{{../../txt.started_by}}} {{{poster_link}}}									
+							</div>
+						</div>
+
 					</div>
 
+					<div class="lastpost">
+						<div class="last_poster">
+							<img class="avatar" src="{{{updated_avatar.href}}}">
+						</div>
+						<p><a href="{{{new_href}}}">{{{updated}}}</a><br>
+						{{{../../txt.by}}} {{{poster_updated_link}}}</p>
+					</div> 
 				</div>
-
-				<div class="lastpost">
-					<div class="last_poster">
-						<img class="avatar" src="{{{updated_avatar.href}}}">
-					</div>
-					<p><a href="{{{new_href}}}">{{{updated}}}</a><br>
-					{{{../../txt.by}}} {{{poster_updated_link}}}</p>
-				</div> 
-			</div>
 
 			{{/each}}
 		{{else}}
-			<div class="roundframe centertext">
-				{{{../txt.topic_tracker_no_topics}}}
-			</div>
+				<div class="roundframe centertext">
+					{{{../txt.topic_tracker_no_topics}}}
+				</div>
 		{{/if}}
+			</div>
 			<br>
 	{{/if}}
 {{/each}}
 		</div>
+
+<script>
+	function topic_filter() {
+		var no_replies = {{{json txt.topic_tracker_no_topics}}};
+
+		var filters = {
+			locked: $('#topic_filter input[name="locked"]').prop('checked'),
+			unread: $('#topic_filter input[name="unread"]').prop('checked'),
+			nounread: $('#topic_filter input[name="nounread"]').prop('checked')
+		};
+		var time_ago_filters = {{{json context.time_ago_options}}};
+		for (key in time_ago_filters) {
+			if (time_ago_filters.hasOwnProperty(key)) {
+				filters['lp-' + key] = $('#topic_filter input[name="lp-' + key + '"]').prop('checked');
+			}
+		}
+
+		try {
+			window.localStorage.setItem('topic_tracker_filter', JSON.stringify(filters));
+		} catch (e) {
+			// Do nothing - this can fail e.g. Mobile Safari in private browsing.
+		}
+
+		$('#topic_container .character').each(function () {
+			$(this).find('div.roundframe.centertext').remove();
+
+			$(this).find('.windowbg').show();
+			for (key in filters) {
+				if (filters.hasOwnProperty(key)) {
+					if (!filters[key]) {
+						$(this).find('.' + key).hide();
+					}
+				}
+			}
+
+			if ($(this).find('.windowbg:visible').length == 0) {
+				$(this).append('<div class="roundframe centertext">' + no_replies + '</div>');
+			}
+		});
+	}
+
+	try {
+		var filters = window.localStorage.getItem('topic_tracker_filter');
+		if (filters && (filters = JSON.parse(filters))) {
+			for (key in filters) {
+				if (filters.hasOwnProperty(key)) {
+					$('#topic_filter input[name="' + key + '"]').prop('checked', filters[key]);
+				}
+			}
+		}
+	} catch (e) {
+		// If this fails, it doesn't matter, we'll just use whatever defaults there are.
+	}
+
+	$('#topic_filter').show();
+	$('#topic_filter input').on('click', topic_filter);
+	topic_filter();
+</script>

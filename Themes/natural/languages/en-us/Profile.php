@@ -70,7 +70,18 @@ $txt['no_topics_bookmarked'] = 'No topics bookmarked.';
 $txt['bookmarked_topic'] = 'Bookmarked Topic';
 $txt['remove_bookmarks'] = 'Remove Bookmarks';
 
-$txt['topic_tracker_no_topics'] = 'This character has not participated in any topics yet.';
+$txt['topic_tracker_no_topics'] = 'This character has not participated in matching topics.';
+$txt['topic_tracker_locked_topics'] = 'Include locked topics';
+$txt['topic_tracker_unread_topics'] = 'Include topics with new posts';
+$txt['topic_tracker_read_topics'] = 'Include topics with no new posts';
+
+$txt['topic_tracker_last_post'] = 'Last post in:';
+$txt['topic_tracker_last_post_1week'] = 'the last week';
+$txt['topic_tracker_last_post_1month'] = '1 week to 1 month ago';
+$txt['topic_tracker_last_post_3months'] = '1 - 3 months ago';
+$txt['topic_tracker_last_post_6months'] = '3 - 6 months ago';
+$txt['topic_tracker_last_post_1year'] = '6 months - 1 year ago';
+$txt['topic_tracker_last_post_morethan1year'] = 'more than a year ago';
 
 $txt['no_profile_edit'] = 'You are not allowed to change this person\'s profile.';
 $txt['signature'] = 'Signature';

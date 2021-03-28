@@ -22,6 +22,15 @@ class TopicTracker
 
 		$context['sub_template'] = 'profile_topic_tracker';
 
+		$context['time_ago_options'] = [
+			'1week' => ['timestamp' => strtotime('-1 week'), 'label' => $txt['topic_tracker_last_post_1week']],
+			'1month' => ['timestamp' => strtotime('-1 month'), 'label' => $txt['topic_tracker_last_post_1month']],
+			'3months' => ['timestamp' => strtotime('-3 months'), 'label' => $txt['topic_tracker_last_post_3months']],
+			'6months' => ['timestamp' => strtotime('-6 months'), 'label' => $txt['topic_tracker_last_post_6months']],
+			'1year' => ['timestamp' => strtotime('-1 year'), 'label' => $txt['topic_tracker_last_post_1year']],
+			'morethan1year' => ['timestamp' => 1, 'label' => $txt['topic_tracker_last_post_morethan1year']],
+		];
+
 		$character_ids = [];
 
 		foreach ($context['member']['characters'] as $character)
@@ -118,8 +127,30 @@ class TopicTracker
 				'in_character' => 1,
 			]
 		);
+
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
+			$classes = '';
+			if (!empty($row['locked']))
+			{
+				$classes .= ' locked';
+			}
+
+			foreach ($context['time_ago_options'] as $class => $time)
+			{
+				if ($row['poster_time'] > $time['timestamp'])
+				{
+					$classes .= ' lp-' . $class;
+					break;
+				}
+			}
+
+			if ($row['new_from'] <= $row['id_msg_modified']) {
+				$classes .= ' unread';
+			} else {
+				$classes .= ' nounread';
+			}
+
 			censorText($row['subject']);
 			$topic_data[$row['id_topic']] = [
 				'board' => [
@@ -146,6 +177,7 @@ class TopicTracker
 					'avatar' => $row['last_member_avatar'],
 					'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
 				]),
+				'classes' => $classes,
 			];
 		}
 		$smcFunc['db']->free_result($request);
