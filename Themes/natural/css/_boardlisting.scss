@@ -8,13 +8,14 @@
 		flex: 0;
 	}
 	.info {
-		flex: 5 1 auto;
+		flex: 5 1;
 	}
 	.board_stats {
-		flex: 1 0 160px;
+		flex: 1 0 100px;
+		text-align: center;
 	}
 	.lastpost {
-		flex: 3 1 25%;
+		flex: 3 1;
 	}
 }
 
@@ -32,6 +33,7 @@
 
 .lastpost {
 	font-size: 0.9em;
+	white-space: nowrap;
 }
 
 .lastpost p {
@@ -40,29 +42,40 @@
 	margin-right: 10px;
 }
 
-@media screen and (min-width: 768px) and (max-width: 992px) {
+@media screen and (min-width: 992px) {
 	.board-display {
 		.lastpost {
-			flex: 3;
+			min-width: 300px;
 		}
 	}
 }
 
-@media screen and (max-width: 576px) {
-	.board-display .lastpost {
-		flex-basis: 50%;
-		padding: 10px;
-
-		.last_poster {
-			display: none;
+@media screen and (min-width: 768px) and (max-width: 991px) {
+	.board-display {
+		.lastpost {
+			flex: 3;
+			min-width: 280px;
+			white-space: nowrap;
 		}
 	}
 }
 
 @media screen and (max-width: 767px) {
 	.board-display {
+		.lastpost {
+			flex: 3 1 100%;
+			padding: 10px;
+		}
 		.board_description {
 			display: none;
+		}
+	}
+}
+
+@media screen and (max-width: 575px) {
+	.board-display {
+		.last_poster {
+			display: none !important;
 		}
 	}
 }
