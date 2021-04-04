@@ -44,6 +44,11 @@ function Pages()
 
 	$context['page']['page_content'] = Parser::parse_bbc($context['page']['page_content'], true, 'page-' . $page_name);
 
+	if (!empty($context['page']['page_content']))
+	{
+		$context['meta_description'] = shorten_subject(strip_tags(preg_replace('/<br ?\/?>/i', "\n", $context['page']['page_content'])), 500);
+	}
+
 	if (!empty($context['page']['field_name']))
 	{
 		$context['page']['custom_fields'] = [];
