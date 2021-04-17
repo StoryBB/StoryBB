@@ -83,6 +83,18 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (isset($_POST['board']) && !isset($_GET['board']))
 		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
 
+	// For cron cases we don't really care what the URL is, much more interesting to have the task class.
+	if ($error_type == 'cron')
+	{
+		foreach (debug_backtrace() as $step)
+		{
+			if (isset($step['class']) && (is_subclass_of($step['class'], '\\StoryBB\\Task\\Adhoc')))
+			{
+				$query_string = $step['class'];
+			}
+		}
+	}
+
 	// What types of categories do we have?
 	$known_error_types = [
 		'general',

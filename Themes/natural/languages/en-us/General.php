@@ -159,17 +159,6 @@ $txt['post_awaiting_approval'] = 'Note: This message is awaiting approval by a m
 $txt['there_are_unapproved_topics'] = 'There are %1$s topics and %2$s posts awaiting approval in this board. Click <a href="%3$s">here</a> to view them all.';
 $txt['send_message'] = 'Send message';
 
-$txt['msg_alert'] = [
-	0 => 'you don\'t have any messages',
-	1 => 'you have <a href="{url}">1 message</a>',
-	'x' => 'you have <a href="{url}">%1$s messages</a>',
-];
-$txt['msg_alert_new'] = [
-	0 => 'none are new',
-	1 => '1 is new',
-	'x' => '%1$s are new',
-];
-
 $txt['new_alert'] = 'New Alert';
 $txt['remove_message'] = 'Remove this post';
 $txt['remove_message_question'] = 'Remove this post?';
@@ -296,6 +285,9 @@ $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
 
+$txt['ooc_character_topics'] = 'Out of character topics';
+$txt['ic_character_topics'] = 'In character topics';
+
 $txt['go_caps'] = 'GO';
 
 $txt['print'] = 'Print';
@@ -381,9 +373,6 @@ $txt['one_week'] = '1 Week';
 $txt['two_weeks'] = '2 Weeks';
 $txt['one_month'] = '1 Month';
 $txt['two_months'] = '2 Months';
-$txt['forever'] = 'Forever';
-$txt['quick_login_dec'] = 'Login with username, password and session length';
-$txt['one_hour'] = '1 Hour';
 $txt['moved'] = 'MOVED';
 $txt['move_why'] = 'Please enter a brief description as to<br>why this topic is being moved.';
 $txt['board'] = 'Board';

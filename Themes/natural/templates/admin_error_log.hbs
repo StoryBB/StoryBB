@@ -68,7 +68,11 @@
 					</div>
 					<div style="float: left; width: 100%; padding: 4px 0; line-height: 1.6em; border-top: 1px solid #e3e3e3;">
 						<a style="display: table-cell; padding: 4px; width: 20px; vertical-align: top;" href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=url;value={{this.url.href}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_url}}" class="main_icons filter"></a>
+	{{#if this.url.showhtml}}
 						<a style="display: table-cell;" href="{{this.url.html}}">{{this.url.html}}</a>
+	{{else}}
+						<span style="display: table-cell">{{this.url.raw}}</span>
+	{{/if}}
 					</div>
 
 	{{#if this.file}}
