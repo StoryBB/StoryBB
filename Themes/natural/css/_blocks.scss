@@ -113,6 +113,10 @@
 }
 
 .blocktype_discordserver {
+	.discord_server_info {
+		margin-bottom: 10px;
+	}
+
 	.online_discord {
 		display: inline-block;
 		vertical-align: middle;
@@ -123,5 +127,10 @@
 			vertical-align: middle;
 			margin-right: 4px;
 		}
+	}
+
+	a.button {
+		margin-left: 10px;
+		font-weight: normal;
 	}
 }

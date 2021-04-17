@@ -34,6 +34,7 @@ class Robot
 			'adsbot-google' => 'googleadsense',
 			'alexabot' => 'alexacertify',
 			'apis-google' => 'google',
+			'applebot' => 'applebot',
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
 			'baiduspider' => 'baidu',
@@ -46,6 +47,7 @@ class Robot
 			'discordapp' => 'discord',
 			'duckduckbot' => 'duckduckgo',
 			'duckduckgo-favicon' => 'duckduckgo',
+			'expanse' => 'expanse',
 			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
 			'facebot' => 'facebook',
@@ -62,6 +64,7 @@ class Robot
 			'jigsaw' => 'w3c_css',
 			'kalooga' => 'kalooga',
 			'magpie-crawler' => 'brandwatch',
+			'mail.ru' => 'mail.ru',
 			'mediapartners-google' => 'googleadsense',
 			'megaindex' => 'megaindex',
 			'mj12bot' => 'majestic12',
@@ -80,6 +83,7 @@ class Robot
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
 			'serendeputybot' => 'serendeputy',
+			'seznambot' => 'seznambot',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
 			'speedy spider' => 'entireweb',
@@ -141,6 +145,10 @@ class Robot
 				'title' => 'Alexa Certification Crawler',
 				'link' => 'https://support.alexa.com/hc/en-us/articles/200462340-Certification-Crawler-Information',
 			],
+			'applebot' => [
+				'title' => 'Applebot',
+				'link' => 'http://www.apple.com/go/applebot',
+			],
 			'archive.org' => [
 				'title' => 'Internet Archive',
 				'link' => 'http://www.archive.org/details/archive.org_bot',
@@ -193,6 +201,10 @@ class Robot
 				'title' => 'DuckDuckGo',
 				'link' => 'http://duckduckgo.com/duckduckbot.html',
 			],
+			'expanse' => [
+				'title' => 'Expanse Inc',
+				'link' => 'https://expanse.co',
+			],
 			'entireweb' => [
 				'title' => 'EntireWeb',
 				'link' => 'https://www.entireweb.com/',
@@ -240,6 +252,10 @@ class Robot
 				'title' => 'Kalooga',
 				'link' => 'https://kalooga.com/',
 			],
+			'mail.ru' => [
+				'title' => 'Mail.RU',
+				'link' => 'http://go.mail.ru/help/robots',
+			],
 			'majestic12' => [
 				'title' => 'Majestic12',
 				'link' => 'https://www.majestic12.co.uk/projects/dsearch/mj12bot.php',
@@ -286,6 +302,10 @@ class Robot
 			'serendeputy' => [
 				'title' => 'Serendeputy',
 				'link' => 'http://serendeputy.com/about/serendeputy-bot',
+			],
+			'seznambot' => [
+				'title' => 'SeznamBot',
+				'link' => 'http://napoveda.seznam.cz/en/seznambot-intro/',
 			],
 			'slack' => [
 				'title' => 'Slack',

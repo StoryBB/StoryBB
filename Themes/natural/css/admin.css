@@ -602,10 +602,6 @@ h3.grid_header {
 #error_log {
 	margin: 4px 0;
 }
-#error_log tr:first-child td {
-	background: #fff;
-	padding: 8px;
-}
 
 /* Styles for the Report generation */
 #report_buttons {

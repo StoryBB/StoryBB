@@ -157,10 +157,6 @@ function ModifyBasicSettings($return_config = false)
 			['check', 'xmlnews_attachments', 'subtext' => $txt['xmlnews_attachments_note']],
 	];
 
-	// Add some javascript at the bottom...
-	addInlineJavaScript('
-	document.getElementById("xmlnews_maxlen").disabled = !document.getElementById("xmlnews_enable").checked;', true);
-
 	// Get all the time zones.
 	if (function_exists('timezone_identifiers_list') && function_exists('date_default_timezone_set'))
 	{
@@ -176,6 +172,10 @@ function ModifyBasicSettings($return_config = false)
 
 	if ($return_config)
 		return [$txt['mods_cat_features'], $config_vars];
+
+	// Add some javascript at the bottom...
+	addInlineJavaScript('
+	document.getElementById("xmlnews_maxlen").disabled = !document.getElementById("xmlnews_enable").checked;', true);
 
 	// Saving?
 	if (isset($_GET['save']))

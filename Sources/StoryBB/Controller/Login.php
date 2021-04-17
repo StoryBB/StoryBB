@@ -165,8 +165,7 @@ class Login implements Routable, MaintenanceAccessible
 			{
 				$persist = $container->instantiate('StoryBB\\Session\\Persistence');
 				$key = $persist->create_for_user($user['id_member']);
-				$token = $user['id_member'] . ':' . base64_encode($key);
-				$redirect->headers->setCookie(Cookie::create(App::get_global_config_item('cookiename') . '_persist', $token, strtotime('+1 month')));
+				$redirect->headers->setCookie($persist->create_cookie($user['id_member'], $key));
 			}
 
 			$this->session()->migrate(true, 3600);

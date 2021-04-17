@@ -185,7 +185,6 @@ $txt['are_sure_remove_topic'] = 'Are you sure you want to remove this topic?';
 $txt['yes'] = 'Yes';
 $txt['no'] = 'No';
 
-$txt['search_end_results'] = 'End of results';
 $txt['search_on'] = 'on';
 
 $txt['search'] = 'Search';
@@ -210,6 +209,7 @@ $txt['notify_deactivate'] = 'Would you like to deactivate notification on this t
 
 $txt['recent_posts'] = 'Recent Posts';
 $txt['online_in_discord'] = 'Online in Discord';
+$txt['join_discord'] = 'Join us on Discord';
 
 $txt['location'] = 'Location';
 $txt['date_registered'] = 'Date Registered';

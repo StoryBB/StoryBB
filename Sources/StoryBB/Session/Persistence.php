@@ -12,13 +12,18 @@
 
 namespace StoryBB\Session;
 
+use StoryBB\App;
 use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Dependency\Database;
+use StoryBB\Dependency\SiteSettings;
+use StoryBB\Helper\Cookie as CookieHelper;
 use StoryBB\Helper\Random;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class Persistence
 {
 	use Database;
+	use SiteSettings;
 
 	const TOKEN_LENGTH = 32;
 
@@ -122,5 +127,43 @@ class Persistence
 				'hash' => $hash,
 			]
 		);
+	}
+
+	public function create_cookie(int $userid, string $key): Cookie
+	{
+		$boardurl = App::get_global_config_item('boardurl');
+
+		$site_settings = $this->sitesettings();
+		$cookie_url = CookieHelper::url_parts(!empty($site_settings->localCookies), !empty($site_settings->globalCookies));
+
+		$name = App::get_global_config_item('cookiename') . '_persist';
+		$value = $userid . ':' . base64_encode($key);
+		$expire = strtotime('+1 month');
+		$path = $cookie_url[1];
+		$domain = $cookie_url[0];
+		$secure = stripos(parse_url($boardurl, PHP_URL_SCHEME), 'https') === 0;
+		$httpOnly = true;
+		$raw = false;
+		$sameSite = Cookie::SAMESITE_LAX;
+		return Cookie::create($name, $value, $expire, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
+	}
+
+	public function remove_cookie(): Cookie
+	{
+		$boardurl = App::get_global_config_item('boardurl');
+
+		$site_settings = $this->sitesettings();
+		$cookie_url = CookieHelper::url_parts(!empty($site_settings->localCookies), !empty($site_settings->globalCookies));
+
+		$name = App::get_global_config_item('cookiename') . '_persist';
+		$value = '';
+		$expire = strtotime('-1 year');
+		$path = $cookie_url[1];
+		$domain = $cookie_url[0];
+		$secure = stripos(parse_url($boardurl, PHP_URL_SCHEME), 'https') === 0;
+		$httpOnly = true;
+		$raw = false;
+		$sameSite = Cookie::SAMESITE_LAX;
+		return Cookie::create($name, $value, $expire, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
 	}
 }

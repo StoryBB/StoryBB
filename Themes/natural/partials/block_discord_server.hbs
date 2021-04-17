@@ -1,9 +1,17 @@
-<strong>{{txt.online}}:</strong> {{{online_string}}}
+<div class="discord_server discord_server_info">
+	<strong>{{txt.online}}:</strong> {{{online_string}}}
+
+	{{#if invite_link}}
+		<a href="{{{invite_link}}}" class="button">
+			<i class="fab fa-discord"></i> &nbsp; {{{txt.join_discord}}}
+		</a>
+	{{/if}}
+</div>
 
 {{#if online}}
-	<br><br>
-
+<div class="discord_server discord_server_online">
 	{{#each online}}
 		<div class="online_discord">{{#if avatar}}<img src="{{avatar}}" alt="">{{/if}} {{name}}</div>
 	{{/each}}
+</div>
 {{/if}}

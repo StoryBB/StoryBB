@@ -37,14 +37,13 @@
 {{/if}}
 
 {{#if member.custom_fields.below_avatar}}
-				<div class="custom_fields_above_member">
+				<li class="custom_fields_below_avatar">
 					<ul class="nolist">
 					{{#each member.custom_fields.below_avatar}}
 						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
 					</ul>
-				</div>
-				{{! @todo: div inside an ul? }}
+				</li>
 {{/if}}
 
 {{#if (not member.is_guest)}}
@@ -53,6 +52,16 @@
 
 {{#if member.group}}
 				<li class="membergroup">{{member.group}}</li>
+{{/if}}
+
+{{#if member.custom_fields.after_membergroup}}
+				<li class="custom_fields_after_membergroup">
+					<ul class="nolist">
+					{{#each member.custom_fields.after_membergroup}}
+						<li class="custom {{col_name}}">{{{value}}}</li>
+					{{/each}}
+					</ul>
+				</li>
 {{/if}}
 
 {{#if (not member.is_guest)}}

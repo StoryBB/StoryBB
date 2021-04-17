@@ -513,7 +513,7 @@ function Display()
 	// Set the topic's information for the template.
 	$context['subject'] = $context['topicinfo']['subject'];
 	$context['num_views'] = comma_format($context['topicinfo']['num_views']);
-	$context['num_views_text'] = numeric_context('read_times', $context['num_views']);
+	$context['num_views_text'] = numeric_context('read_times', $context['topicinfo']['num_views']);
 	$context['mark_unread_time'] = !empty($virtual_msg) ? $virtual_msg : $context['topicinfo']['new_from'];
 
 	if ($context['user']['is_guest'])

@@ -98,6 +98,7 @@ class DiscordServer extends AbstractBlock implements Block
 		}
 
 		$this->content = $this->render('block_discord_server', [
+			'invite_link' => !empty($server_response['instant_invite']) ? $server_response['instant_invite'] : false,
 			'online_string' => numeric_context('num_users_online', $server_response['presence_count']),
 			'online' => $online,
 			'txt' => $txt,
