@@ -136,6 +136,16 @@ class TopicTracker
 				$classes .= ' locked';
 			}
 
+			if ($row['id_member_updated'] == $context['member']['id'])
+			{
+				$classes .= ' lastme';
+			}
+			else
+			{
+				$classes .= ' lastnotme';
+			}
+			$classes .= ' lastupdated' . $row['id_member_updated'] . '-' . $context['member']['id'];
+
 			foreach ($context['time_ago_options'] as $class => $time)
 			{
 				if ($row['poster_time'] > $time['timestamp'])
@@ -145,9 +155,12 @@ class TopicTracker
 				}
 			}
 
-			if ($row['new_from'] <= $row['id_msg_modified']) {
+			if ($row['new_from'] <= $row['id_msg_modified'])
+			{
 				$classes .= ' unread';
-			} else {
+			}
+			else
+			{
 				$classes .= ' nounread';
 			}
 
