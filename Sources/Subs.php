@@ -1406,6 +1406,30 @@ function template_header()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
+	// Add any more things from the response header.
+	$container = Container::instance();
+	$response_headers = $container->get('response_headers');
+	if (!empty($response_headers))
+	{
+		foreach ($response_headers->all() as $header => $value)
+		{
+			if ($header == 'date' || $header == 'cache-control')
+			{
+				continue;
+			}
+
+			if ($header == 'set-cookie')
+			{
+				foreach ($response_headers->getCookies() as $cookie)
+				{
+					header($header . ':' . $cookie);
+				}
+				continue;
+			}
+			header($header . ':' . $value, true);
+		}
+	}
+
 	$show_warnings = empty($context['layout_loaded']) || $context['layout_loaded'] == 'default';
 	$show_warnings &= allowedTo('admin_forum');
 	$show_warnings &= empty($user_info['is_guest']);

@@ -21,6 +21,7 @@ use StoryBB\Helper\Cookie;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -144,6 +145,10 @@ class App
 			'db' => $container->get('database'),
 		];
 
+		$container->inject('response_headers', function() {
+			return new ResponseHeaderBag([]);
+		});
+
 		$container->inject('sitesettings', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\SiteSettings');
 		});
@@ -160,6 +165,8 @@ class App
 				'cookie_httponly' => true,
 				'cookie_domain' => $cookie_url[0],
 				'cookie_path' => $cookie_url[1],
+				'cookie_secure' => stripos(parse_url(App::get_global_config_item('boardurl'), PHP_URL_SCHEME), 'https') === 0,
+				'cookie_samesite' => 'Lax',
 			];
 
 			if (!empty($site_settings->databaseSession_loose))
@@ -179,6 +186,8 @@ class App
 			$session->setName($cookiename);
 			$session->start();
 
+			$response_headers = $container->get('response_headers');
+
 			if (!$session->has('userid'))
 			{
 				$persist_cookie = App::get_global_config_item('cookiename') . '_persist';
@@ -186,16 +195,20 @@ class App
 				if ($request->cookies->has($persist_cookie))
 				{
 					$persistence = $container->instantiate('StoryBB\\Session\\Persistence');
-					$userid = $persistence->validate_persist_token($request->cookies->get($persist_cookie));
+					$token = $request->cookies->get($persist_cookie);
+					$userid = $persistence->validate_persist_token($token);
 					if ($userid)
 					{
 						$session->set('userid', $userid);
-						// @todo we should extend the persist_cookie but we don't have a global response headers bag to put that into yet...
+
+						list ($userid, $hash) = explode(':', $token, 2);
+						$hash = @base64_decode($hash);
+						$response_headers->setCookie($persistence->create_cookie((int) $userid, $hash));
 					}
 					else
 					{
 						$session->set('userid', 0);
-						// @todo we should remove the persist_cookie as it didn't match, but we don't have a global response headers bag to put that into yet...
+						$response_headers->setCookie($persistence->remove_cookie());
 					}
 				}
 				else
@@ -414,6 +427,28 @@ class App
 				$log = $parameters;
 				unset ($log['_controller']);
 				$container->get('session')->set('last_url', ['route' => $log]);
+			}
+
+			$response_headers = $container->get('response_headers');
+			if (!empty($response_headers))
+			{
+				foreach ($response_headers->all() as $header => $value)
+				{
+					if ($header == 'date' || $header == 'cache-control')
+					{
+						continue;
+					}
+
+					if ($header == 'set-cookie')
+					{
+						foreach ($response_headers->getCookies() as $cookie)
+						{
+							$result->headers->setCookie($cookie);
+						}
+						continue;
+					}
+					$result->headers->set($header, $value);
+				}
 			}
 			return $result;
 		}
