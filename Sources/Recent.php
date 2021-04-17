@@ -1413,7 +1413,7 @@ function UnreadReplies()
 				ml.poster_time AS last_poster_time, COALESCE(charss.character_name, mems.real_name, ms.poster_name) AS first_poster_name,
 				COALESCE(charsl.character_name, meml.real_name, ml.poster_name) AS last_poster_name,
 				charss.id_character AS first_character_id, charsl.id_character AS last_character_id, ml.subject AS last_subject,
-				t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time,
+				t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time, b.in_character,
 				COALESCE(lt.id_msg, lmr.id_msg, -1) + 1 AS new_from, SUBSTRING(ml.body, 1, 385) AS last_body,
 				SUBSTRING(ms.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, ms.smileys_enabled AS first_smileys, t.id_first_msg, t.id_last_msg';
 
@@ -1619,7 +1619,7 @@ function UnreadReplies()
 			LEFT JOIN {db_prefix}characters AS charss ON (charss.id_character = ms.id_character)
 			LEFT JOIN {db_prefix}characters AS charsl ON (charsl.id_character = ml.id_character)
 		WHERE t.id_topic IN ({array_int:topic_list})
-		ORDER BY {raw:sort}' . ($ascending ? '' : ' DESC') . '
+		ORDER BY b.in_character, {raw:sort}' . ($ascending ? '' : ' DESC') . '
 		LIMIT {int:limit}',
 		[
 			'current_member' => $user_info['id'],
@@ -1632,6 +1632,7 @@ function UnreadReplies()
 	$context['topics'] = [];
 	$topic_ids = [];
 	$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0;
+	$last_in_character = -1;
 
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
@@ -1759,6 +1760,19 @@ function UnreadReplies()
 			],
 			'prefixes' => [],
 		];
+
+		if ($last_in_character != $row['in_character'])
+		{
+			$last_in_character = $row['in_character'];
+			if (!$row['in_character'])
+			{
+				$context['topics'][$row['id_topic']]['ooc_divider'] = true;
+			}
+			else
+			{
+				$context['topics'][$row['id_topic']]['ic_divider'] = true;
+			}
+		}
 
 		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
 			'avatar' => $row['avatar'],
