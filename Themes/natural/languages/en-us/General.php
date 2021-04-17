@@ -296,6 +296,9 @@ $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
 
+$txt['ooc_character_topics'] = 'Out of character topics';
+$txt['ic_character_topics'] = 'In character topics';
+
 $txt['go_caps'] = 'GO';
 
 $txt['print'] = 'Print';

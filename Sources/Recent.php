@@ -703,7 +703,7 @@ function UnreadTopics()
 				ml.poster_time AS last_poster_time, COALESCE(charss.character_name, mems.real_name, ms.poster_name) AS first_poster_name,
 				COALESCE(charsl.character_name, meml.real_name, ml.poster_name) AS last_poster_name,
 				charss.id_character AS first_character_id, charsl.id_character AS last_character_id, ml.subject AS last_subject,
-				t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time,
+				t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time, b.in_character,
 				COALESCE(lt.id_msg, lmr.id_msg, -1) + 1 AS new_from, SUBSTRING(ml.body, 1, 385) AS last_body,
 				SUBSTRING(ms.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, ms.smileys_enabled AS first_smileys, t.id_first_msg, t.id_last_msg';
 
@@ -800,7 +800,6 @@ function UnreadTopics()
 				'db_error_skip' => true,
 			])
 		) !== false;
-		var_dump($have_temp_table);
 	}
 	else
 		$have_temp_table = false;
@@ -876,7 +875,7 @@ function UnreadTopics()
 				AND t.id_last_msg >= {int:min_message}
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
 				AND ms.approved = {int:is_approved}
-			ORDER BY {raw:sort}
+			ORDER BY b.in_character, {raw:sort}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
@@ -960,7 +959,7 @@ function UnreadTopics()
 				AND t.id_last_msg >= {int:min_message}
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < ml.id_msg
 				AND ms.approved = {int:is_approved}
-			ORDER BY {raw:order}
+			ORDER BY b.in_character, {raw:order}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
@@ -976,6 +975,7 @@ function UnreadTopics()
 	$context['topics'] = [];
 	$topic_ids = [];
 	$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0;
+	$last_in_character = -1;
 
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
@@ -1103,6 +1103,19 @@ function UnreadTopics()
 			],
 			'prefixes' => [],
 		];
+
+		if ($last_in_character != $row['in_character'])
+		{
+			$last_in_character = $row['in_character'];
+			if (!$row['in_character'])
+			{
+				$context['topics'][$row['id_topic']]['ooc_divider'] = true;
+			}
+			else
+			{
+				$context['topics'][$row['id_topic']]['ic_divider'] = true;
+			}
+		}
 
 		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
 			'avatar' => $row['avatar'],

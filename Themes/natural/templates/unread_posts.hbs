@@ -33,6 +33,16 @@
 				<div id="topic_container">
 
 	{{#each context.topics}}
+		{{#if this.ooc_divider}}
+					<div class="sub_bar">
+						<div class="subbg">{{{../txt.ooc_character_topics}}}</div>
+					</div>
+		{{/if}}
+		{{#if this.ic_divider}}
+					<div class="sub_bar">
+						<div class="subbg">{{{../txt.ic_character_topics}}}</div>
+					</div>
+		{{/if}}
 					<div class="{{{css_class}}}">
 						<div class="info">
 							{{! Now we handle the icons }}
