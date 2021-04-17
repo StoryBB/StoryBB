@@ -169,6 +169,8 @@ function ViewErrorLog()
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
 			'url' => [
+				'raw' => $row['url'],
+				'showhtml' => !empty($row['url']) && strpos($row['url'], '\\') === false,
 				'html' => StringLibrary::escape(strpos($row['url'], 'cron.php') === false ? (substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url'] : $row['url']),
 				'href' => base64_encode($smcFunc['db']->escape_wildcard_string($row['url']))
 			],
@@ -311,7 +313,7 @@ function ViewErrorLog()
 	// And this is pretty basic ;).
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
-	$context['sub_template'] = 'error_log';
+	$context['sub_template'] = 'admin_error_log';
 
 	createToken('admin-el');
 }
