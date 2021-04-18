@@ -451,7 +451,9 @@ function DisplayStats()
 		if ($max_num < $members[$row_members['id_member']])
 			$max_num = $members[$row_members['id_member']];
 	}
-	ksort($context['stats_blocks']['starters']);
+	uasort($context['stats_blocks']['starters']['data'], function($a, $b) {
+		return $b['num'] <=> $a['num'];
+	});
 	$smcFunc['db']->free_result($members_result);
 
 	foreach ($context['stats_blocks']['starters']['data'] as $i => $topic)
