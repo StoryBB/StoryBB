@@ -57,6 +57,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\ServerEnvironment;
 use StoryBB\StringLibrary;
 
 /**
@@ -135,7 +136,7 @@ function ModifyGeneralSettings($return_config = false)
 
 	// If no cert, force_ssl must remain 0
 	require_once($sourcedir . '/Subs.php');
-	if (!ssl_cert_found($boardurl) && empty($modSettings['force_ssl']))
+	if (!ServerEnvironment::ssl_cert_found($boardurl) && empty($modSettings['force_ssl']))
 		$disable_force_ssl = true;
 	else
 		$disable_force_ssl = false;

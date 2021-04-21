@@ -18,7 +18,7 @@ use StoryBB\StringLibrary;
  */
 function CharacterList()
 {
-	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings;
+	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings, $user_info;
 	global $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
 	$_GET['char'] = isset($_GET['char']) ? (int) $_GET['char'] : 0;
@@ -160,7 +160,11 @@ function CharacterList()
 				'avatar' => $row['avatar'],
 			]);
 
-			$row['date_created_format'] = timeformat($row['date_created']);
+			$timestamp = $row['date_created'] + ($user_info['time_offset'] + $modSettings['time_offset']);
+			$year = date('Y', $timestamp);
+			$month = date('m', $timestamp);
+			$day = date('d', $timestamp);
+			$row['date_created_format'] = dateformat((int) $year, (int) $month, (int) $day);
 
 			$row['character_link'] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'];
 
