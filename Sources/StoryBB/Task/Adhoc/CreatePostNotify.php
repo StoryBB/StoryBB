@@ -86,6 +86,12 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 		$smcFunc['db']->free_result($request);
 
+		// If this is an edit notification make sure we don't include the author in it if the author is editing their own post.
+		if ($type == 'edit' && !empty($msgOptions['edit_by_self']))
+		{
+			$members = array_diff($members, [$posterOptions['id']]);
+		}
+
 		if (empty($members))
 			return true;
 
@@ -221,7 +227,6 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		// Insert the alerts if any
 		if (!empty($alert_rows))
 		{
-			header('X-Debug: ' . json_encode($alert_rows));
 			$smcFunc['db']->insert('',
 				'{db_prefix}user_alerts',
 				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int', 'chars_dest' => 'int',
