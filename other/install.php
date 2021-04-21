@@ -16,6 +16,7 @@ use StoryBB\Schema\Schema;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception\InvalidAdapterException;
 use StoryBB\Helper\Cookie;
+use StoryBB\Helper\ServerEnvironment;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -882,13 +883,13 @@ function ForumSettings()
 	// If redirect in effect, force ssl ON
 	require_once(__DIR__ . '/Sources/Subs.php');
 
-	if (https_redirect_active($incontext['detected_url'])) {
+	if (ServerEnvironment::https_redirect_active($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
 		$incontext['ssl_chkbx_checked'] = true;
 		$_POST['force_ssl'] = true;
 	}
 	// If no cert, make sure ssl stays OFF
-	if (!ssl_cert_found($incontext['detected_url'])) {
+	if (!ServerEnvironment::ssl_cert_found($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
 		$incontext['ssl_chkbx_checked'] = false;
 	}
