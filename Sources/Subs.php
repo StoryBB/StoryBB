@@ -739,8 +739,14 @@ function numeric_context(string $string, $number, bool $commaise = true): string
  */
 function timeformat($log_time, $show_today = true, $offset_type = false, $process_safe = false)
 {
-	global $user_info, $txt, $modSettings;
+	global $user_info, $txt, $modSettings, $sourcedir;
 	static $non_twelve_hour, $locale_cache;
+
+	if (!isset($txt['today']))
+	{
+		require_once($sourcedir . '/ScheduledTasks.php');
+		loadEssentialThemeData();
+	}
 
 	// Offset the time.
 	if (!$offset_type)
