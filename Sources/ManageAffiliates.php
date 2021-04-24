@@ -25,6 +25,7 @@ function ManageAffiliates()
 		'add_tier' => 'AffiliateTierAdd',
 		'edit_tier' => 'AffiliateTierEdit',
 		'save_tier' => 'AffiliateTierSave',
+		'move_tier' => 'AffiliateTierMove',
 		'add_affiliate' => 'AffiliateAdd',
 		'edit_affiliate' => 'AffiliateEdit',
 		'save_affiliate' => 'AffiliateSave',
@@ -38,11 +39,14 @@ function ManageAffiliates()
 
 function AffiliateTiers()
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context, $smcFunc, $scripturl;
 
 	$context['page_title'] = $txt['affiliates'];
 
 	$context['tiers'] = [];
+
+	$first_tier = true;
+	$last_tier = false;
 
 	$request = $smcFunc['db']->query('', '
 		SELECT id_tier, tier_name, sort_order, image_width, image_height
@@ -54,8 +58,25 @@ function AffiliateTiers()
 		$context['tiers'][$row['id_tier']] = $row;
 
 		addInlineCss('form.affiliate_tier_' . $row['id_tier'] . ' img { max-width: ' . $row['image_width'] . 'px; max-height: ' . $row['image_height'] . 'px }');
+
+		if ($first_tier)
+		{
+			$first_tier = false;
+		}
+		else
+		{
+			$context['tiers'][$row['id_tier']]['move']['up'] = $scripturl . '?action=admin;area=affiliates;sa=move_tier;op=up;tier=' . $row['id_tier'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+		}
+
+		$context['tiers'][$row['id_tier']]['move']['down'] = $scripturl . '?action=admin;area=affiliates;sa=move_tier;op=down;tier=' . $row['id_tier'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+		$last_tier = $row['id_tier'];
 	}
 	$smcFunc['db']->free_result($request);
+
+	if ($last_tier)
+	{
+		unset($context['tiers'][$last_tier]['move']['down']);
+	}
 
 	$container = Container::instance();
 	$urlgenerator = $container->get('urlgenerator');
@@ -227,6 +248,78 @@ function AffiliateTierSave()
 	}
 
 	session_flash('success', $txt['settings_saved']);
+	redirectexit('action=admin;area=affiliates');
+}
+
+function AffiliateTierMove()
+{
+	global $smcFunc;
+
+	checkSession('get');
+
+	$tier = isset($_GET['tier']) ? (int) $_GET['tier'] : 0;
+
+	$operation = $_GET['op'] ?? '';
+	if ($operation != 'up' && $operation != 'down')
+	{
+		redirectexit('action=admin;area=affiliates');
+	}
+
+	// Load the current set up.
+	$current_order = [];
+	$request = $smcFunc['db']->query('', '
+		SELECT id_tier
+		FROM {db_prefix}affiliate_tier
+		ORDER BY sort_order');
+	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
+		$current_order[] = $row['id_tier'];
+	}
+	$smcFunc['db']->free_result($request);
+
+	$position = array_search($tier, $current_order);
+	if ($position === false)
+	{
+		redirectexit('action=admin;area=affiliates');
+	}
+
+	$change = false;
+
+	if ($operation == 'up')
+	{
+		if ($current_order[0] != $tier) {
+			$temp = $current_order[$position - 1];
+			$current_order[$position - 1] = $current_order[$position];
+			$current_order[$position] = $temp;
+			$change = true;
+		}
+	}
+	elseif ($operation == 'down')
+	{
+		if ($current_order[count($current_order) - 1] != $tier) {
+			$temp = $current_order[$position + 1];
+			$current_order[$position + 1] = $current_order[$position];
+			$current_order[$position] = $temp;
+			$change = true;
+		}
+	}
+
+	if ($change)
+	{
+		foreach ($current_order as $sort_order => $id_tier)
+		{
+			$smcFunc['db']->query('', '
+				UPDATE {db_prefix}affiliate_tier
+				SET sort_order = {int:sort_order}
+				WHERE id_tier = {int:id_tier}',
+				[
+					'sort_order' => $sort_order + 1,
+					'id_tier' => $id_tier,
+				]
+			);
+		}
+	}
+
 	redirectexit('action=admin;area=affiliates');
 }
 

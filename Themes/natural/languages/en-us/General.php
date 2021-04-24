@@ -625,9 +625,6 @@ $txt['most_online_today'] = 'Most Online Today';
 $txt['response_prefix'] = 'Re: ';
 $txt['current_icon'] = 'Current Icon';
 
-$txt['smileys_none'] = 'No Smileys';
-$txt['smileys_forum_board_default'] = 'Forum/Board Default';
-
 $txt['search_results'] = 'Search Results';
 $txt['search_no_results'] = 'Sorry, no matches were found';
 

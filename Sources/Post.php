@@ -1988,6 +1988,8 @@ function Post2()
 			$msgOptions['modify_reason'] = $_POST['modify_reason'];
 		}
 
+		$msgOptions['edit_by_self'] = $user_info['id'] == $row['id_member'];
+
 		// This will save some time...
 		if (empty($approve_has_changed))
 			unset($msgOptions['approved']);

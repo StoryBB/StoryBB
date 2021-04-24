@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
 /**

@@ -736,3 +736,6 @@ $txt['prefix_groups'] = 'Groups that can use this prefix';
 $txt['prefix_boards'] = 'Boards the prefix should be active in';
 $txt['no_prefix_name'] = 'No prefix name given.';
 $txt['invalid_prefix_style'] = 'A valid prefix style was not selected.';
+
+$txt['move_up'] = 'Move up';
+$txt['move_down'] = 'Move down';
