@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 
 class EditHistory extends AbstractProfileController
@@ -109,7 +110,7 @@ class EditHistory extends AbstractProfileController
 
 						$edits[] = [
 							'id' => $row['id_action'],
-							'ip' => inet_dtop($row['ip']),
+							'ip' => IP::format($row['ip']),
 							'id_member' => !empty($extra['applicator']) ? $extra['applicator'] : 0,
 							'member_link' => $txt['trackEdit_deleted_member'],
 							'action' => $row['action'],

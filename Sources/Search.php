@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
 use StoryBB\Model\TopicPrefix;
@@ -1730,7 +1731,7 @@ function prepareSearchContext($reset = false)
 		$memberContext[$message['id_member']]['link'] = $message['poster_name'];
 		$memberContext[$message['id_member']]['email'] = $message['poster_email'];
 	}
-	$memberContext[$message['id_member']]['ip'] = inet_dtop($message['poster_ip']);
+	$memberContext[$message['id_member']]['ip'] = IP::format($message['poster_ip']);
 
 	// Do the censor thang...
 	censorText($message['body']);

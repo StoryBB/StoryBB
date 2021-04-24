@@ -483,7 +483,7 @@ class MySQL implements DatabaseAdapter
 
 		if (filter_var($error_array[2], FILTER_VALIDATE_IP) !== false)
 		{
-			$error_array[2] = bin2hex(inet_pton($error_array[2]));
+			$error_array[2] = sprintf('unhex(\'%1$s\')', IP::pack_hex($error_array[2]));
 		}
 		else
 		{
@@ -875,7 +875,11 @@ class MySQL implements DatabaseAdapter
 					elseif (IP::is_valid($replacement))
 					{
 						// We don't use the native support of mysql > 5.6.2
-						return sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($replacement)), 32, "0", STR_PAD_LEFT));
+						return sprintf('unhex(\'%1$s\')', IP::pack_hex($replacement));
+					}
+					else
+					{
+						$this->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 					}
 					break;
 
@@ -895,11 +899,11 @@ class MySQL implements DatabaseAdapter
 							}
 							elseif (!IP::is_valid($value))
 							{
-								$this->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+								$this->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 							}
 							else
 							{
-								$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
+								$replacement[$key] = sprintf('unhex(\'%1$s\')', IP::pack_hex($value));
 							}
 						}
 

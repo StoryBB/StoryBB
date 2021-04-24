@@ -163,7 +163,7 @@ function ViewErrorLog()
 		$context['errors'][$row['id_error']] = [
 			'member' => [
 				'id' => $row['id_member'],
-				'ip' => inet_dtop($row['ip']),
+				'ip' => IP::format($row['ip']),
 				'session' => $row['session']
 			],
 			'time' => timeformat($row['log_time']),

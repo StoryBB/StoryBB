@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Helper\IP;
+
 class Profile
 {
 	/**
@@ -71,7 +73,7 @@ class Profile
 		$error_messages = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 			$error_messages[] = [
-				'ip' => inet_dtop($row['ip']),
+				'ip' => IP::format($row['ip']),
 				'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
 				'message' => strtr($row['message'], ['&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '']),
 				'url' => $row['url'],

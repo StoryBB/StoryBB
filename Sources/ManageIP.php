@@ -71,7 +71,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	$messages = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 		$messages[] = [
-			'ip' => inet_dtop($row['poster_ip']),
+			'ip' => IP::format($row['poster_ip']),
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
 			'board' => [
 				'id' => $row['id_board'],
@@ -152,7 +152,7 @@ function TrackIP()
 	);
 	$context['ips'] = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$context['ips'][inet_dtop($row['member_ip'])][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
+		$context['ips'][IP::format($row['member_ip'])][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
 	$smcFunc['db']->free_result($request);
 
 	ksort($context['ips']);

@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 
 class AccountActivity extends AbstractProfileController
@@ -152,8 +153,8 @@ class AccountActivity extends AbstractProfileController
 		$context['ips'] = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$context['ips'][] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . inet_dtop($row['poster_ip']) . ';u=' . $memID . '">' . inet_dtop($row['poster_ip']) . '</a>';
-			$ips[] = inet_dtop($row['poster_ip']);
+			$context['ips'][] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . IP::format($row['poster_ip']) . ';u=' . $memID . '">' . IP::format($row['poster_ip']) . '</a>';
+			$ips[] = IP::format($row['poster_ip']);
 		}
 		$smcFunc['db']->free_result($request);
 
@@ -174,8 +175,8 @@ class AccountActivity extends AbstractProfileController
 			{
 				continue;
 			}
-			$context['error_ips'][] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . inet_dtop($row['ip']) . ';u=' . $memID . '">' . inet_dtop($row['ip']) . '</a>';
-			$ips[] = inet_dtop($row['ip']);
+			$context['error_ips'][] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . IP::format($row['ip']) . ';u=' . $memID . '">' . IP::format($row['ip']) . '</a>';
+			$ips[] = IP::format($row['ip']);
 		}
 		$smcFunc['db']->free_result($request);
 

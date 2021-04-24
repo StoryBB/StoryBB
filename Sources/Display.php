@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
 use StoryBB\Model\Bookmark;
@@ -1493,7 +1494,7 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['show_email'] |= ($message['id_member'] == $user_info['id']);
 	}
 
-	$memberContext[$message['id_member']]['ip'] = inet_dtop($message['poster_ip']);
+	$memberContext[$message['id_member']]['ip'] = IP::format($message['poster_ip']);
 	$memberContext[$message['id_member']]['show_profile_buttons'] = !empty($modSettings['show_profile_buttons']) && (!empty($memberContext[$message['id_member']]['can_view_profile']) || $memberContext[$message['id_member']]['show_email'] || $context['can_send_pm']);
 
 	// Do the censor thang.

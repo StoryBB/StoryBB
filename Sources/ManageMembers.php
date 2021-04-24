@@ -932,7 +932,7 @@ function MembersAwaitingActivation()
 				'data' => [
 					'function' => function($rowData)
 					{
-						return IP::get_host(inet_dtop($rowData['member_ip']));
+						return IP::get_host(IP::format($rowData['member_ip']));
 					},
 					'class' => 'smalltext',
 				],
