@@ -10,7 +10,17 @@
 			<br>
 	{{#each context.tiers}}
 				<div class="title_bar">
-					<h3 class="title_bg">{{{tier_name}}}</h3>
+					<h3 class="title_bg">
+						{{{tier_name}}}
+						<span class="floatright">
+							{{#if move.up}}
+								<a href="{{{move.up}}}"><span class="toggle_up" title="{{{../txt.move_up}}}"></span></a>
+							{{/if}}
+							{{#if move.down}}
+								<a href="{{{move.down}}}"><span class="toggle_down" title="{{{../txt.move_down}}}"></span></a>
+							{{/if}}
+						</span>
+					</h3>
 				</div>
 
 				<form action="{{../scripturl}}?action=admin;area=affiliates;sa=update_tier" method="post" class="affiliate_tier affiliate_tier_{{id_tier}}">
