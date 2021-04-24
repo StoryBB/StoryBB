@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 
 class LoginHistory extends AbstractProfileController
@@ -49,8 +50,8 @@ class LoginHistory extends AbstractProfileController
 					while ($row = $smcFunc['db']->fetch_assoc($request))
 						$logins[] = [
 							'time' => timeformat($row['time']),
-							'ip' => inet_dtop($row['ip']),
-							'ip2' => inet_dtop($row['ip2']),
+							'ip' => IP::format($row['ip']),
+							'ip2' => IP::format($row['ip2']),
 						];
 					$smcFunc['db']->free_result($request);
 

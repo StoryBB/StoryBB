@@ -204,13 +204,63 @@ class IP
 	 */
 	public function from_range($low, $high)
 	{
-		$low = inet_dtop($low);
-		$high = inet_dtop($high);
+		$low = static::format($low);
+		$high = static::format($high);
 
 		if ($low == '255.255.255.255') return 'unknown';
 		if ($low == $high)
 			return $low;
 		else
 			return $low . '-' . $high;
+	}
+
+	/**
+	 * Given an IP address (either IPv4 or IPv6) pack it into a hexstring that can be used with database logging.
+	 *
+	 * @param string $ip The raw IP address
+	 * @return string The packed hex string (32 characters; 2 characters per byte)
+	 */
+	public static function pack_hex(string $ip): string
+	{
+		if (empty($ip) || !static::is_valid($ip))
+		{
+			return '';
+		}
+
+		$packed = inet_pton($ip);
+		// If IPv4, repackage as ::FFFF:IPv4 as per RFC4291.
+		if (strlen($packed) == 4)
+		{
+			return bin2hex("\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff" . $packed);
+		}
+
+		return str_pad(bin2hex($packed), 32, "0", STR_PAD_LEFT);
+	}
+
+	/**
+	 * Given a binary packed IP address, convert it to its human readable form.
+	 *
+	 * @param string $ip Binary-packed string
+	 * @return string The IP address formatted, or empty string if not valid
+	 */
+	public static function format(?string $ip): string
+	{
+		if (empty($ip))
+		{
+			return '';
+		}
+
+		// Is this an IPv4 address? It should have 12 bytes all null if it is. (Last 4 bytes then represents the IPv4) 
+		if (strpos($ip, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00") === 0)
+		{
+			$ip = substr($ip, -4);
+		}
+		// Is this a IPv4-over-6 IP address?
+		elseif (strpos($ip, "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff") === 0)
+		{
+			$ip = substr($ip, -4);
+		}
+
+		return (string) inet_ntop($ip);
 	}
 }

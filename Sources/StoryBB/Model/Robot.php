@@ -45,6 +45,7 @@ class Robot
 			'bw/1' => 'builtwith',
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
+			'dotbot' => 'moz.com_dotbot',
 			'duckduckbot' => 'duckduckgo',
 			'duckduckgo-favicon' => 'duckduckgo',
 			'expanse' => 'expanse',
@@ -79,6 +80,7 @@ class Robot
 			'pinterestbot' => 'pinterest',
 			'proximic' => 'proximic',
 			'python-requests' => 'python-requests',
+			'rogerbot' => 'moz.com_rogerbot',
 			'scoutjet' => 'scoutjet',
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
@@ -263,6 +265,14 @@ class Robot
 			'megaindex' => [
 				'title' => 'MegaIndex',
 				'link' => 'https://megaindex.com/crawler',
+			],
+			'moz.com_dotbot' => [
+				'title' => 'Moz.com (Dotbot)',
+				'link' => 'https://opensiteexplorer.org/dotbot',
+			],
+			'moz.com_rogerbot' => [
+				'title' => 'Moz.com (Rogerbot)',
+				'link' => 'https://moz.com/help/moz-procedures/crawlers/rogerbot',
 			],
 			'netvibes' => [
 				'title' => 'Netvibes',

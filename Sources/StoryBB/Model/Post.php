@@ -230,7 +230,7 @@ class Post
 			}
 
 			// What if we want to export new topics out to a CMS?
-			call_integration_hook('integrate_create_topic', [&$msgOptions, &$topicOptions, &$posterOptions]);
+			(new Observable\Topic\Created($msgOptions, $topicOptions, $posterOptions))->execute();
 		}
 		// The topic already exists, it only needs a little updating.
 		else

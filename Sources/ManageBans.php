@@ -526,7 +526,7 @@ function BanEdit()
 				if ($smcFunc['db']->num_rows($request) > 0)
 				{
 					list ($context['ban_suggestions']['member']['id'], $context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email']) = $smcFunc['db']->fetch_row($request);
-					$context['ban_suggestions']['main_ip'] = inet_dtop($context['ban_suggestions']['main_ip']);
+					$context['ban_suggestions']['main_ip'] = IP::format($context['ban_suggestions']['main_ip']);
 				}
 				$smcFunc['db']->free_result($request);
 
@@ -563,7 +563,7 @@ function BanEdit()
 				if ($smcFunc['db']->num_rows($request) > 0)
 				{
 					list ($context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email']) = $smcFunc['db']->fetch_row($request);
-					$context['ban_suggestions']['main_ip'] = inet_dtop($context['ban_suggestions']['main_ip']);
+					$context['ban_suggestions']['main_ip'] = IP::format($context['ban_suggestions']['main_ip']);
 				}
 				$smcFunc['db']->free_result($request);
 
@@ -765,7 +765,7 @@ function banLoadAdditionalIPsMember($member_id)
 		]
 	);
 	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$message_ips[] = inet_dtop($row['poster_ip']);
+		$message_ips[] = IP::format($row['poster_ip']);
 	$smcFunc['db']->free_result($request);
 
 	return $message_ips;
@@ -793,7 +793,7 @@ function banLoadAdditionalIPsError($member_id)
 		]
 	);
 	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$error_ips[] = inet_dtop($row['ip']);
+		$error_ips[] = IP::format($row['ip']);
 	$smcFunc['db']->free_result($request);
 
 	return $error_ips;
@@ -2126,7 +2126,7 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 	$log_entries = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
-		$row['ip'] = $row['ip'] === null ? $dash : inet_dtop($row['ip']);
+		$row['ip'] = $row['ip'] === null ? $dash : IP::format($row['ip']);
 		$log_entries[] = $row;
 	}
 	$smcFunc['db']->free_result($request);
@@ -2354,7 +2354,7 @@ function getMemberData($id)
 	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		list ($suggestions['member']['id'], $suggestions['member']['name'], $suggestions['main_ip'], $suggestions['email']) = $smcFunc['db']->fetch_row($request);
-		$suggestions['main_ip'] = inet_dtop($suggestions['main_ip']);
+		$suggestions['main_ip'] = IP::format($suggestions['main_ip']);
 	}
 	$smcFunc['db']->free_result($request);
 

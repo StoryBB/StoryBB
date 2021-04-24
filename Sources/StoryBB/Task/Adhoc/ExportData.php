@@ -11,6 +11,7 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\IP;
 use StoryBB\Task;
 use StoryBB\Task\Adhoc\Exception\NotCompleteException;
 use ZipArchive;
@@ -252,8 +253,8 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$row = $smcFunc['db']->fetch_assoc($request);
 			$smcFunc['db']->free_result($request);
 
-			$row['member_ip'] = inet_dtop($row['member_ip']);
-			$row['member_ip2'] = inet_dtop($row['member_ip2']);
+			$row['member_ip'] = IP::format($row['member_ip']);
+			$row['member_ip2'] = IP::format($row['member_ip2']);
 			$exports[$main_char] += $row;
 		}
 

@@ -15,6 +15,7 @@ use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
@@ -1021,9 +1022,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$row['primary_group'] = $row['member_group'];
 
 			if (isset($row['member_ip']))
-				$row['member_ip'] = inet_dtop($row['member_ip']);
+				$row['member_ip'] = IP::format($row['member_ip']);
 			if (isset($row['member_ip2']))
-				$row['member_ip2'] = inet_dtop($row['member_ip2']);
+				$row['member_ip2'] = IP::format($row['member_ip2']);
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
 			$row['options'] = [];

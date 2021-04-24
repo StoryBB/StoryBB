@@ -11,6 +11,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Helper\IP;
 use StoryBB\Helper\Random;
 use StoryBB\Model\Attachment;
 use StoryBB\Model\Policy;
@@ -1634,8 +1635,8 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	$members = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
-		$row['member_ip'] = inet_dtop($row['member_ip']);
-		$row['member_ip2'] = inet_dtop($row['member_ip2']);
+		$row['member_ip'] = IP::format($row['member_ip']);
+		$row['member_ip2'] = IP::format($row['member_ip2']);
 		$members[] = $row;
 	}
 	$smcFunc['db']->free_result($request);
@@ -1723,8 +1724,8 @@ function populateDuplicateMembers(&$members)
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		//$duplicate_ids[] = $row['id_member'];
-		$row['member_ip'] = inet_dtop($row['member_ip']);
-		$row['member_ip2'] = inet_dtop($row['member_ip2']);
+		$row['member_ip'] = IP::format($row['member_ip']);
+		$row['member_ip2'] = IP::format($row['member_ip2']);
 
 		$member_context = [
 			'id' => $row['id_member'],
@@ -1760,7 +1761,7 @@ function populateDuplicateMembers(&$members)
 	$had_ips = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
-		$row['poster_ip'] = inet_dtop($row['poster_ip']);
+		$row['poster_ip'] = IP::format($row['poster_ip']);
 
 		// Don't collect lots of the same.
 		if (isset($had_ips[$row['poster_ip']]) && in_array($row['id_member'], $had_ips[$row['poster_ip']]))

@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
 /**
@@ -152,7 +153,7 @@ function Who()
 		$context['members'][$row['session']] = [
 			'id' => $row['id_member'],
 			'id_character' => $row['id_character'],
-			'ip' => allowedTo('moderate_forum') ? inet_dtop($row['ip']) : '',
+			'ip' => allowedTo('moderate_forum') ? IP::format($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), [$txt['today'] => '', $txt['yesterday'] => '']),
 			'timestamp' => forum_time(true, $row['log_time']),

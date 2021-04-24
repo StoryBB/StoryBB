@@ -2484,37 +2484,6 @@ function fixchar__callback($matches)
 }
 
 /**
- * Converts a normal notation IP address into packed binary format.
- *
- * @param string $ip_address An IP address in IPv4, IPv6 or decimal notation
- * @return string|false The IP address in binary or false
- */
-function inet_ptod($ip_address)
-{
-	if (!IP::is_valid($ip_address))
-		return $ip_address;
-
-	$bin = inet_pton($ip_address);
-	return $bin;
-}
-
-/**
- * Convert a packed binary IP address to display format.
- *
- * @param string $bin An IP address in IPv4, IPv6
- * @return string|false The IP address in presentation format or false on error
- */
-function inet_dtop($bin)
-{
-	if(empty($bin))
-		return '';
-
-	$ip_address = inet_ntop($bin);
-
-	return $ip_address;
-}
-
-/**
  * Tries different modes to make file/dirs writable. Wrapper function for chmod()
 
  * @param string $file The file/dir full path.
