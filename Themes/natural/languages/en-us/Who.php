@@ -37,6 +37,7 @@ $txt['whorobot_reminder'] = 'Viewing the reminder page.';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
+$txt['whoall_characters'] = 'Viewing the character list.';
 $txt['whoall_contact'] = 'Posting on the contact form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
