@@ -75,6 +75,7 @@ class Robot
 			'ning/1' => 'w3c_suite',
 			'node-fetch' => 'node-fetch',
 			'omgili' => 'webhose',
+			'paperlibot' => 'paperlibot',
 			'petalbot' => 'aspiegel',
 			'pingdom.com_bot' => 'pingdom',
 			'pinterestbot' => 'pinterest',
@@ -281,6 +282,10 @@ class Robot
 			'node-fetch' => [
 				'title' => 'node-fetch',
 				'link' => 'https://github.com/node-fetch/node-fetch',
+			],
+			'paperlibot' => [
+				'title' => 'PaperLiBot',
+				'link' => 'https://support.paper.li/hc/en-us/articles/360006695637-PaperLiBot',
 			],
 			'pingdom' => [
 				'title' => 'Pingdom',
