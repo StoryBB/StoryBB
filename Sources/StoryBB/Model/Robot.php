@@ -83,9 +83,11 @@ class Robot
 			'python-requests' => 'python-requests',
 			'rogerbot' => 'moz.com_rogerbot',
 			'scoutjet' => 'scoutjet',
+			'scrapy' => 'scrapy',
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
 			'serendeputybot' => 'serendeputy',
+			'serpstatbot' => 'serpstatbot',
 			'seznambot' => 'seznambot',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
@@ -302,6 +304,10 @@ class Robot
 			'python-requests' => [
 				'title' => 'Python bot (using requests)',
 			],
+			'scrapy' => [
+				'title' => 'Scrapy',
+				'link' => 'https://scrapy.org/',
+			],
 			'scrubtheweb' => [
 				'title' => 'ScrubTheWeb',
 				'link' => 'https://scrubtheweb.com/',
@@ -317,6 +323,10 @@ class Robot
 			'serendeputy' => [
 				'title' => 'Serendeputy',
 				'link' => 'http://serendeputy.com/about/serendeputy-bot',
+			],
+			'serpstatbot' => [
+				'title' => 'SerpStatBot',
+				'link' => 'https://serpstatbot.com/',
 			],
 			'seznambot' => [
 				'title' => 'SeznamBot',
