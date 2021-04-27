@@ -154,7 +154,6 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			['check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'],
 			['int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10],
-			['check', 'xmlnews_attachments', 'subtext' => $txt['xmlnews_attachments_note']],
 	];
 
 	// Get all the time zones.
