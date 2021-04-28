@@ -148,7 +148,7 @@ function DisplayStats()
 	];
 	$context['latest_member'] = &$context['common_stats']['latest_member'];
 
-	$date = strftime('%Y-%m-%d', forum_time(false));
+	$date = dateformat_ymd(forum_time(false));
 
 	// Members online so far today.
 	$result = $smcFunc['db']->query('', '

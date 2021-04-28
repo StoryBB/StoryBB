@@ -164,7 +164,7 @@ class ProfileFields
 			],
 			'date_registered' => [
 				'type' => 'date',
-				'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
+				'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : dateformat_ymd($cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
 				'label' => $txt['date_registered'],
 				'log_change' => true,
 				'permission' => 'moderate_forum',
@@ -174,10 +174,11 @@ class ProfileFields
 					if (($value = strtotime($value)) === false)
 					{
 						$value = $cur_profile['date_registered'];
-						return $txt['invalid_registration'] . ' ' . strftime('%d %b %Y ' . (strpos($user_info['time_format'], '%H') !== false ? '%I:%M:%S %p' : '%H:%M:%S'), forum_time(false));
+						$format = strpos($user_info['time_format'], '%H') !== false ? 'd M Y h\:i\Ls a' : 'd M Y H\:i\:s';
+						return $txt['invalid_registration'] . ' ' . ((new \DateTime('@' . forum_time(false)))->format($format));
 					}
 					// As long as it doesn't equal "N/A"...
-					elseif ($value != $txt['not_applicable'] && $value != strtotime(strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600)))
+					elseif ($value != $txt['not_applicable'] && $value != strtotime(dateformat_ymd($cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600)))
 						$value = $value - ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
 					else
 						$value = $cur_profile['date_registered'];

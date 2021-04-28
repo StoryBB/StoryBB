@@ -352,7 +352,7 @@ function trackStats($stats = [])
 
 	$setStringUpdate = '';
 	$insert_keys = [];
-	$date = strftime('%Y-%m-%d', forum_time(false));
+	$date = dateformat_ymd(forum_time(false));
 	$update_parameters = [
 		'current_date' => $date,
 	];

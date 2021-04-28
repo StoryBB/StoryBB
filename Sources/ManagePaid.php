@@ -1207,28 +1207,30 @@ function ModifyUserSubscription()
 	// Default attributes.
 	if ($context['action_type'] == 'add')
 	{
+		$timestamp = new \DateTime;
 		$context['sub'] = [
 			'id' => 0,
 			'start' => [
-				'year' => (int) strftime('%Y', time()),
-				'month' => (int) strftime('%m', time()),
-				'day' => (int) strftime('%d', time()),
-				'hour' => (int) strftime('%H', time()),
-				'min' => (int) strftime('%M', time()) < 10 ? '0' . (int) strftime('%M', time()) : (int) strftime('%M', time()),
+				'year' => $timestamp->format('Y'),
+				'month' => $timestamp->format('n'),
+				'day' => $timestamp->format('j'),
+				'hour' => $timestamp->format('G'),
+				'min' => $timestamp->format('i'),
 				'last_day' => 0,
 			],
 			'end' => [
-				'year' => (int) strftime('%Y', time()),
-				'month' => (int) strftime('%m', time()),
-				'day' => (int) strftime('%d', time()),
-				'hour' => (int) strftime('%H', time()),
-				'min' => (int) strftime('%M', time()) < 10 ? '0' . (int) strftime('%M', time()) : (int) strftime('%M', time()),
+				'year' => $timestamp->format('Y'),
+				'month' => $timestamp->format('n'),
+				'day' => $timestamp->format('j'),
+				'hour' => $timestamp->format('G'),
+				'min' => $timestamp->format('i'),
 				'last_day' => 0,
 			],
 			'status' => 1,
 		];
-		$context['sub']['start']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['start']['month'] == 12 ? 1 : $context['sub']['start']['month'] + 1, 0, $context['sub']['start']['month'] == 12 ? $context['sub']['start']['year'] + 1 : $context['sub']['start']['year']));
-		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
+		$timestamp->modify('last day of this month');
+		$context['sub']['start']['last_day'] = $timestamp->format('j');
+		$context['sub']['end']['last_day'] = $timestamp->format('j');
 
 		if (isset($_GET['uid']))
 		{
@@ -1331,30 +1333,35 @@ function ModifyUserSubscription()
 			}
 		}
 
+		$start_time = new \DateTime('@' . $row['start_time']);
+		$end_time = new \DateTime('@' . $row['end_time']);
+
 		$context['sub_id'] = $row['id_subscribe'];
 		$context['sub'] = [
 			'id' => 0,
 			'start' => [
-				'year' => (int) strftime('%Y', $row['start_time']),
-				'month' => (int) strftime('%m', $row['start_time']),
-				'day' => (int) strftime('%d', $row['start_time']),
-				'hour' => (int) strftime('%H', $row['start_time']),
-				'min' => (int) strftime('%M', $row['start_time']) < 10 ? '0' . (int) strftime('%M', $row['start_time']) : (int) strftime('%M', $row['start_time']),
+				'year' => $start_time->format('Y'),
+				'month' => $start_time->format('n'),
+				'day' => $start_time->format('j'),
+				'hour' => $start_time->format('G'),
+				'min' => $start_time->format('i'),
 				'last_day' => 0,
 			],
 			'end' => [
-				'year' => (int) strftime('%Y', $row['end_time']),
-				'month' => (int) strftime('%m', $row['end_time']),
-				'day' => (int) strftime('%d', $row['end_time']),
-				'hour' => (int) strftime('%H', $row['end_time']),
-				'min' => (int) strftime('%M', $row['end_time']) < 10 ? '0' . (int) strftime('%M', $row['end_time']) : (int) strftime('%M', $row['end_time']),
+				'year' => $end_time->format('Y'),
+				'month' => $end_time->format('n'),
+				'day' => $end_time->format('j'),
+				'hour' => $end_time->format('G'),
+				'min' => $end_time->format('i'),
 				'last_day' => 0,
 			],
 			'status' => $row['status'],
 			'username' => $row['username'],
 		];
-		$context['sub']['start']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['start']['month'] == 12 ? 1 : $context['sub']['start']['month'] + 1, 0, $context['sub']['start']['month'] == 12 ? $context['sub']['start']['year'] + 1 : $context['sub']['start']['year']));
-		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
+
+		$start_time->modify('last day of this month');
+		$context['sub']['start']['last_day'] = $start_time->modify('last day of this month')->format('j');
+		$context['sub']['end']['last_day'] = $end_time->modify('last day of this month');
 	}
 
 	Autocomplete::init('member', '#new_subscriber');
