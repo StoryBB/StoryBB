@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xml:lang="{{{context.feed.language}}}" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>{{cdata context.feed.title}}</title>
+		<description>{{cdata context.feed.description}}</description>
+		<link>{{{context.feed.source}}}</link>
+		<pubDate>{{{context.feed.most_recent_content.rss}}}</pubDate>
+		<lastBuildDate>{{{context.feed.generated_time.rss}}}</lastBuildDate>
+		{{#if context.feed.icon}}
+		<image>
+			<url>{{{context.feed.icon}}}</url>
+			<title>{{{context.feed.title}}}</title>
+			<link>{{{context.feed.source}}}</link>
+		</image>
+		{{/if}}
+
+		{{#if context.feed.rights}}<copyright>{{cdata context.feed.rights}}</copyright>{{/if}}
+		<language>{{{context.feed.language}}}</language>
+
+		<atom:link rel="self" type="application/rss+xml" href="{{{context.feed.url}}}" />
+
+		{{#each context.feed.items}}
+			<item>
+				<title>{{cdata this.title}}</title>
+				<description>{{cdata this.description}}</description>
+				<link>{{{this.content_link}}}</link>
+				{{#if this.author.email}}<author>{{{this.author.email}}} ({{cdata this.author.name}})</author>{{/if}}
+				{{#if this.categories}}<category>{{{join this.categories ', '}}}</category>{{/if}}
+				<guid isPermaLink="false">{{{this.id}}}</guid>
+				<pubDate>{{{this.published_time.rss}}}</pubDate>
+			</item>
+		{{/each}}
+	</channel>
+</rss>

@@ -451,8 +451,6 @@ $txt['news_settings_submit'] = 'Save';
 $txt['xmlnews_enable'] = 'Enable XML/RSS news';
 $txt['xmlnews_maxlen'] = 'Maximum message length';
 $txt['xmlnews_maxlen_note'] = '(0 to disable, bad idea.)';
-$txt['xmlnews_attachments'] = 'Enclose attachments in XML/RSS feeds';
-$txt['xmlnews_attachments_note'] = 'Note: Some feed formats will only enclose one attachment per post.';
 $txt['censor_clickadd'] = 'Add another word';
 
 $txt['layout_controls'] = 'Forum';

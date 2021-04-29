@@ -729,7 +729,7 @@ function numeric_context(string $string, $number, bool $commaise = true): string
  * - applies all necessary time offsets to the timestamp, unless offset_type is set.
  * - if todayMod is set and show_today was not not specified or true, an
  *   alternate format string is used to show the date with something to show it is "today" or "yesterday".
- * - performs localization (more than just strftime would do alone.)
+ * - performs localization
  *
  * @param int $log_time A timestamp
  * @param bool $show_today Whether to show "Today"/"Yesterday" or just a date
@@ -740,7 +740,6 @@ function numeric_context(string $string, $number, bool $commaise = true): string
 function timeformat($log_time, $show_today = true, $offset_type = false, $process_safe = false)
 {
 	global $user_info, $txt, $modSettings, $sourcedir;
-	static $non_twelve_hour, $locale_cache;
 
 	if (!isset($txt['today']))
 	{
@@ -791,45 +790,45 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
 
 	$str = !is_bool($show_today) ? $show_today : $user_info['time_format'];
 
-	if (!isset($locale_cache))
+	$timeobj = new DateTime('@' . $time);
+
+	// Do-it-yourself time localization since we don't depend on intl library. First param is $txt[] entry, second is the format string to extract from DateTime.
+	$tokens = [
+		'%a' => ['days_short', 'w'],
+		'%A' => ['days', 'w'],
+		'%b' => ['months_short', 'n'],
+		'%B' => ['months', 'n'],
+	];
+
+	foreach ($tokens as $token => $details)
 	{
-		$locale_cache = setlocale(LC_TIME, $txt['lang_locale']);
+		[$text_label, $format_string] = $details;
+		if (strpos($str, $token) !== false)
+		{
+			$str = str_replace($token, $txt[$text_label][$timeobj->format($format_string)], $str);
+		}
 	}
 
-	if ($locale_cache !== false)
+	if (strpos($str, '%p') !== false)
 	{
-		// Check if another process changed the locale
-		if ($process_safe === true && setlocale(LC_TIME, '0') != $locale_cache)
-		{
-			setlocale(LC_TIME, $txt['lang_locale']);
-		}
-
-		if (!isset($non_twelve_hour))
-		{
-			$non_twelve_hour = trim(strftime('%p')) === '';
-		}
-		if ($non_twelve_hour && strpos($str, '%p') !== false)
-		{
-			$str = str_replace('%p', (strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
-		}
-
-		foreach (['%a', '%A', '%b', '%B'] as $token)
-			if (strpos($str, $token) !== false)
-				$str = str_replace($token, strftime($token, $time), $str);
-	}
-	else
-	{
-		// Do-it-yourself time localization.  Fun.
-		foreach (['%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months'] as $token => $text_label)
-			if (strpos($str, $token) !== false)
-				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
-
-		if (strpos($str, '%p') !== false)
-			$str = str_replace('%p', (strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
+		$str = str_replace('%p', ((int) $timeobj->format('H') < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
 	}
 
-	// Format the time and then restore any literal percent characters
-	return strftime($str, $time);
+	// Format whatever is left.
+	$replaces = [
+		'%d' => $timeobj->format('d'),
+		'%#d' => $timeobj->format('j'),
+		'%e' => $timeobj->format('j'),
+		'%y' => $timeobj->format('y'),
+		'%Y' => $timeobj->format('Y'),
+		'%I' => $timeobj->format('h'),
+		'%H' => $timeobj->format('H'),
+		'%M' => $timeobj->format('i'),
+		'%S' => $timeobj->format('s'),
+		'%R' => $timeobj->format('H\:i'),
+		'%T' => $timeobj->format('H\:i\:s'),
+	];
+	return strtr($str, $replaces);
 }
 
 /**
@@ -872,6 +871,17 @@ function dateformat(int $year, int $month, int $day, string $format = ''): strin
 	];
 
 	return strtr($format, $replaces);
+}
+
+/**
+ * Formats a timestamp into yyyy-mm-dd format.
+ *
+ * @param int $timestamp The timestamp to format.
+ * @return string The formatted timestamp.
+ */
+function dateformat_ymd(int $timestamp): string
+{
+	return (new DateTime('@' . $timestamp))->format('Y-m-d');
 }
 
 /**

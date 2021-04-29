@@ -581,10 +581,6 @@ $txt['who_member'] = 'Member';
 
 $txt['affiliates_title'] = 'Affiliates';
 
-// Current footer strings, no longer used
-$txt['rss'] = 'RSS';
-$txt['atom'] = 'Atom';
-
 $txt['guest'] = 'Guest';
 $txt['guests'] = 'Guests';
 
