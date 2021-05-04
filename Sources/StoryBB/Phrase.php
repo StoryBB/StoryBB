@@ -34,7 +34,7 @@ class Phrase
 		{
 			case 1:
 				$lang = $language;
-				$langsection = 'index';
+				$langsection = 'General';
 				$string = $split[0];
 				break;
 
