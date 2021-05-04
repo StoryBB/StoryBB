@@ -48,7 +48,7 @@
 									{{/if}}
 								</span>
 	{{#if ip}}
-								(<a href="{{../scripturl}}?action=admin;area=logs;sa=ip;{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
+								(<a href="{{../scripturl}}?action=admin;area=logs;sa=ip{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
 	{{/if}}
 							</td>
 							<td class="time">{{time}}</td>
