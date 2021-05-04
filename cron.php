@@ -20,6 +20,7 @@
 use StoryBB\App;
 use StoryBB\Cli\App as CliApp;
 use StoryBB\Container;
+use StoryBB\Database\DatabaseAdapter;
 
 define('STORYBB', 'BACKGROUND');
 define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
@@ -118,14 +119,16 @@ obExit_cron();
 exit;
 
 /**
- * The heart of this cron handler...
- * @return bool|array False if there's nothing to do or an array of info about the task
+ * The heart of this cron handler.
+ *
+ * @param DatabaseAdapter $db The database adapter.
+ * @return null|array Null if there's nothing to do or an array of info about the task
  */
-function fetch_task($db)
+function fetch_task(DatabaseAdapter $db): ?array
 {
 	// Check we haven't run over our time limit.
 	if (microtime(true) - TIME_START > MAX_CRON_TIME)
-		return false;
+		return null;
 
 	// Try to find a task. Specifically, try to find one that hasn't been claimed previously, or failing that,
 	// a task that was claimed but failed for whatever reason and failed long enough ago. We should not care
@@ -173,7 +176,7 @@ function fetch_task($db)
 	{
 		// No dice. Clean up and go home.
 		$db->free_result($request);
-		return false;
+		return null;
 	}
 }
 
@@ -182,7 +185,7 @@ function fetch_task($db)
  * @param array $task_details An array of info about the task
  * @return bool|void True if the task is invalid; otherwise calls the function to execute the task
  */
-function perform_task($task_details)
+function perform_task(array $task_details)
 {
 	global $sourcedir, $boarddir;
 
@@ -220,7 +223,7 @@ function perform_task($task_details)
  * Cleans up the request variables
  * @return void
  */
-function cleanRequest_cron()
+function cleanRequest_cron(): void
 {
 	global $scripturl, $boardurl;
 
@@ -264,7 +267,7 @@ function sbb_error_handler_cron($error_level, $error_string, $file, $line)
 /**
  * The exit function
  */
-function obExit_cron()
+function obExit_cron(): void
 {
 	if (FROM_CLI)
 		die(0);
