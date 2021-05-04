@@ -20,9 +20,19 @@ use StoryBB\Hook\Hookable;
  */
 abstract class Mutatable extends Hookable
 {
+	/**
+	 * @var array $vars Storage of the data being passed between hooked functions.
+	 */
 	protected $vars = [];
 
-	final public function &__get($property)
+	/**
+	 * Getter for variables carried by this hook.
+	 *
+	 * @param string $property The setting intended to be set with this object
+	 * @return mixed This is a getter with potentially any return value
+	 * @throws InvalidArgumentException if trying to access a key that is known to not exist.
+	 */
+	final public function &__get(string $property)
 	{
 		if (!isset($this->vars[$property]))
 		{
@@ -32,7 +42,15 @@ abstract class Mutatable extends Hookable
 		return $this->vars[$property];
 	}
 
-	final public function __set($property, $value)
+	/**
+	 * Setter for variables carried by this hook.
+	 *
+	 * @param string $property The setting intended to be set with this object
+	 * @param mixed $value The value to be set to it
+	 * @return void This is a setter with no return value
+	 * @throws InvalidArgumentException if trying to access a key that is known to not exist.
+	 */
+	final public function __set(string $property, $value): void
 	{
 		if (!isset($this->vars[$property]))
 		{
