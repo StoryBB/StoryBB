@@ -44,7 +44,13 @@ trait Validatable
 		return $errors;
 	}
 
-	public function add_validation_rule($rule)
+	/**
+	 * Add a validation rule to the current element.
+	 *
+	 * @param Validational $rule A validation rule object
+	 * @return Inputtable This object, returned for the purposes of chaining.
+	 */
+	public function add_validation_rule(Validational $rule)
 	{
 		$this->validation_rules[] = $rule;
 		return $this;

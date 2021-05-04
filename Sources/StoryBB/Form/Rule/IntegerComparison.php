@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A base interface for form elements to implement.
+ * Validates a given integer is comparable successfully to another integer.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -13,23 +13,48 @@
 namespace StoryBB\Form\Rule;
 
 use StoryBB\Form\Rule\Exception as RuleException;
+use StoryBB\Form\Rule\Validational;
 
-class IntegerComparison
+/**
+ * Validates a given integer is comparable successfully to another integer.
+ */
+class IntegerComparison implements Validational
 {
+	/**
+	 * @var string $operator The operator to use for the comparison.
+	 */
 	private $operator;
+
+	/**
+	 * @var int $value The integer value to compare against.
+	 */
 	private $value;
 
+	/**
+	 * Constructor, accepts the details of the comparison that can be made for this rule.
+	 *
+	 * @param string $operator The comparison operator for this validation rule.
+	 * @param int $value The value for this validation rule.
+	 * @throws RuleException if the comparison is not a valid operator.
+	 */
 	public function __construct(string $operator, int $value)
 	{
 		if (!in_array($operator, ['<=', '<', '=', '!=', '>', '>=']))
 		{
-			throw new Exception('Invalid comparison operator');
+			throw new RuleException('Invalid comparison operator');
 		}
 
 		$this->operator = $operator;
 		$this->value = $value;
 	}
 
+	/**
+	 * Performs the comparison for validation purposes.
+	 *
+	 * @param mixed $value The raw value as submitted by the user
+	 * @return void
+	 * @throws RuleException if the comparison doesn't work out (e.g. the rule is int < 5 but the supplied value is 10)
+	 */
 	public function validate($value)
 	{
 		if ($this->operator == '<' && $value >= $this->value)
