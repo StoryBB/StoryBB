@@ -66,11 +66,13 @@ class Robot
 			'kalooga' => 'kalooga',
 			'magpie-crawler' => 'brandwatch',
 			'mail.ru' => 'mail.ru',
+			'mbcrawler' => 'monitorbacklinks',
 			'mediapartners-google' => 'googleadsense',
 			'megaindex' => 'megaindex',
 			'mj12bot' => 'majestic12',
 			'msnbot-media' => 'bingmedia',
 			'msnbot' => 'bing',
+			'netsystemsresearch' => 'netsystemsresearch',
 			'netvibes' => 'netvibes',
 			'ning/1' => 'w3c_suite',
 			'node-fetch' => 'node-fetch',
@@ -269,6 +271,10 @@ class Robot
 				'title' => 'MegaIndex',
 				'link' => 'https://megaindex.com/crawler',
 			],
+			'monitorbacklinks' => [
+				'title' => 'MonitorBacklinks',
+				'link' => 'https://monitorbacklinks.com/',
+			],
 			'moz.com_dotbot' => [
 				'title' => 'Moz.com (Dotbot)',
 				'link' => 'https://opensiteexplorer.org/dotbot',
@@ -276,6 +282,10 @@ class Robot
 			'moz.com_rogerbot' => [
 				'title' => 'Moz.com (Rogerbot)',
 				'link' => 'https://moz.com/help/moz-procedures/crawlers/rogerbot',
+			],
+			'netsystemsresearch' => [
+				'title' => 'NetSystemsResearch',
+				'link' => 'http://netsystemsresearch.com/',
 			],
 			'netvibes' => [
 				'title' => 'Netvibes',

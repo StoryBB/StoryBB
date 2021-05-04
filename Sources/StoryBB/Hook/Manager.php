@@ -22,13 +22,27 @@ class Manager
 {
 	protected static $hooks = [];
 
-	public static function register(string $hook, int $priority, $function)
+	/**
+	 * Add a hook to the list of things to be called in the current execution context.
+	 *
+	 * @param string $hook The hook class to register for (e.g. StoryBB\Hook\Observable\Post\Created)
+	 * @param int $priority Relative priority of this hook; lower number runs earlier
+	 * @param mixed $function A callable that can be called at the time the hook executes
+	 * @return void
+	 */
+	public static function register(string $hook, int $priority, $function): void
 	{
 		static::$hooks[$hook][$priority][] = $function;
 		ksort(static::$hooks[$hook]);
 	}
 
-	public static function execute(Hookable $hook)
+	/**
+	 * For a given hook, look up all the functions referencing it and call them.
+	 *
+	 * @param Hookable $hook The data carrier for the hook.
+	 * @return void
+	 */
+	public static function execute(Hookable $hook): void
 	{
 		global $context, $db_show_debug;
 

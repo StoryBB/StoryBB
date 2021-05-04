@@ -18,6 +18,7 @@ use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Controller\Unloggable;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Helper\Cookie;
+use StoryBB\Phrase;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -309,18 +310,7 @@ class App
 			$latte->setLoader($loader);
 
 			$latte->addFilter('translate', function ($string) {
-				global $txt;
-				$split = explode(':', $string, 2);
-				switch (count($split))
-				{
-					case 1:
-						loadLanguage('General');
-						return $txt[$split[0]] ?? '[[' . $split[0] . ']]';
-
-					case 2:
-						loadLanguage($split[0]);
-						return $txt[$split[1]] ?? '[[' . $split[1] . ']]';
-				}
+				return new Phrase($string);
 			});
 			$latte->addFilter('slugify', function ($string) {
 				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);

@@ -39,16 +39,16 @@ class LegacyRenderResponse extends Response
 		require_once($sourcedir . '/Logging.php');
 		require_once($sourcedir . '/Security.php');
 
+		$scripturl = $boardurl . '/index.php';
+		$context['current_action'] = 'legacyrenderresponse';
+		$context['sub_template'] = 'legacycontent';
+
 		reloadSettings();
 		frameOptionsHeader();
 		loadUserSettings();
 		loadBoard();
 		loadPermissions();
 		loadTheme();
-
-		$scripturl = $boardurl . '/index.php';
-		$context['current_action'] = 'legacyrenderresponse';
-		$context['sub_template'] = 'legacycontent';
 
 		$context['legacycontent'] = $templater->renderToString($template, $rendercontext);
 		obExit(null, null, false);

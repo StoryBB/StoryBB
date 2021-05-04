@@ -18,6 +18,7 @@ use StoryBB\Dependency\Session;
 use StoryBB\Dependency\Templater;
 use StoryBB\Helper\Random;
 use StoryBB\Form\Rule\Exception as RuleException;
+use StoryBB\Phrase;
 
 abstract class Base
 {
@@ -122,7 +123,7 @@ abstract class Base
 			$stored_sessionvar = array_keys($this->hidden['session'])[0];
 			if (!isset($data[$stored_sessionvar]) || $data[$stored_sessionvar] !== $this->hidden['session'][$stored_sessionvar])
 			{
-				$this->errors['_form'][] = 'Errors:session_timeout';
+				$this->errors['_form'][] = new Phrase('Errors:session_timeout');
 			}
 		}
 
@@ -132,7 +133,7 @@ abstract class Base
 			[$token, $expiry] = $this->get_form_token();
 			if (empty($data['csrftoken']) || $data['csrftoken'] !== $token || $expiry < time())
 			{
-				$this->errors['_form'][] = 'Errors:token_verify_fail';
+				$this->errors['_form'][] = new Phrase('Errors:token_verify_fail');
 				$this->create_form_token();
 			}
 		}

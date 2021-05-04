@@ -19,11 +19,21 @@ use StoryBB\Hook\Manager;
  */
 abstract class Hookable
 {
-	final public function execute()
+	/**
+	 * Calls the execution of the hook that concretes this abstract class.
+	 *
+	 * @return void
+	 */
+	final public function execute(): void
 	{
 		Manager::execute($this);
 	}
 
+	/**
+	 * Exports the name of the concrete class of this hook.
+	 *
+	 * @return string The fully qualified class name for this hook.
+	 */
 	final public function __toString(): string
 	{
 		return static::class;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A base interface for form elements to implement.
+ * Defines that this element is choosable from a set list.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -16,12 +16,22 @@ use StoryBB\Form\Element\Inputtable;
 use StoryBB\Form\Element\Traits;
 use StoryBB\Form\Rule;
 
+/**
+ * Defines that this element is choosable from a set list.
+ */
 trait Chooseable
 {
 	use Traits\Validatable;
 
+	/** @var array $choices The keys/values for this element. */
 	protected $choices = [];
 
+	/**
+	 * Set the choices that are choosable in this element.
+	 *
+	 * @param array $choices The choices that are valid for this element (key/value pairs)
+	 * @return Inputtable The original element, returned for chaining.
+	 */
 	public function choices(array $choices): Inputtable
 	{
 		$this->choices = $choices;

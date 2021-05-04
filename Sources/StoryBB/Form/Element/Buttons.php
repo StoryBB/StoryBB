@@ -21,6 +21,13 @@ class Buttons extends Traits\Base implements Inputtable
 	use Traits\Labelable;
 	use Traits\Chooseable;
 
+	/**
+	 * Take the current element, and return the formatted HTML.
+	 *
+	 * @param Latte\Engine $templater The form template render engine
+	 * @param array $rawdata The submitted raw data for the format
+	 * @return string The final HTML for this element
+	 */
 	public function render(Engine $templater, array $rawdata): string
 	{
 		$rendercontext = [

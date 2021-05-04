@@ -15,6 +15,6 @@ namespace StoryBB\Form\Rule;
 /**
  * Exception for all database queries.
  */
-class Exception extends \StoryBB\Exception
+class Exception extends \StoryBB\Form\Exception
 {
 }
