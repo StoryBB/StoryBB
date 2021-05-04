@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A base interface for form elements to implement.
+ * Defines the login form.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -19,12 +19,20 @@ use StoryBB\Form\Element\Text;
 use StoryBB\Form\Element\Buttons;
 use StoryBB\Form\Rule\ValidUsername;
 
+/**
+ * Defines the login form.
+ */
 class Login extends Base
 {
-	// Login tokens should be valid for 20 minutes at a time.
+	/** @var int CSRF_TOKEN_EXPIRY Login tokens should be valid for 20 minutes at a time. */
 	const CSRF_TOKEN_EXPIRY = 1200;
 
-	public function define_form()
+	/**
+	 * Defines the general form elements.
+	 *
+	 * @return void
+	 */
+	public function define_form(): void
 	{
 		$general = $this->add_section('general')->label('General:login');
 

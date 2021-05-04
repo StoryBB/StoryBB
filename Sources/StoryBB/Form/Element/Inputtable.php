@@ -12,6 +12,9 @@
 
 namespace StoryBB\Form\Element;
 
+/**
+ * A base interface for form elements to implement.
+ */
 interface Inputtable
 {
 

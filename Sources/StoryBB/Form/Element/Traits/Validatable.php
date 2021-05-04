@@ -13,12 +13,20 @@
 namespace StoryBB\Form\Element\Traits;
 
 use StoryBB\Form\Rule\Exception as RuleException;
+use StoryBB\Form\Rule\Validational;
 
 trait Validatable
 {
+	/** @var array $validation_rules An array of validation rules attached to this element. */
 	protected $validation_rules = [];
 
-	public function validate($data): array
+	/**
+	 * Apply validation to this form data.
+	 *
+	 * @param array $data The raw form data
+	 * @return array An array of error messages generated, if any
+	 */
+	public function validate(array $data): array
 	{
 		$errors = [];
 		foreach ($this->validation_rules as $rule)

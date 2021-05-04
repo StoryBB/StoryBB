@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A base interface for form elements to implement.
+ * Represents a textbox in a form.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -16,11 +16,21 @@ use Latte\Engine;
 use StoryBB\Form\Element\Inputtable;
 use StoryBB\Form\Element\Traits;
 
+/**
+ * Represents a textbox in a form.
+ */
 class Text extends Traits\Base implements Inputtable
 {
 	use Traits\Labelable;
 	use Traits\Requirable;
 
+	/**
+	 * Take the current element, and return the formatted HTML.
+	 *
+	 * @param Latte\Engine $templater The form template render engine
+	 * @param array $rawdata The submitted raw data for the format
+	 * @return string The final HTML for this element
+	 */
 	public function render(Engine $templater, array $rawdata): string
 	{
 		$rendercontext = [
