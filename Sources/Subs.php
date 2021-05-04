@@ -2153,7 +2153,12 @@ function setupMenuContext()
 	$context['footer_links'] = Policy::get_footer_policies();
 }
 
-function get_sidebar_page_items()
+/**
+ * Returns the list of pages for the current user in a format suitable for the sidebar.
+ *
+ * @return array An array of items for the sidebar.
+ */
+function get_sidebar_page_items(): array
 {
 	global $smcFunc, $user_info;
 
