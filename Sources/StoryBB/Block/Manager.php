@@ -12,11 +12,16 @@
 
 namespace StoryBB\Block;
 
+use RuntimeException;
+
 /**
  * Manages blocks.
  */
 class Manager
 {
+	protected static $show_blocks = true;
+	protected static $rendered = false;
+
 	public static function load_current_blocks()
 	{
 		global $smcFunc, $user_info, $context;
@@ -92,6 +97,13 @@ class Manager
 			return '';
 		}
 
+		static::$rendered = true;
+
+		if (!static::$show_blocks)
+		{
+			return '';
+		}
+
 		$block_context = [
 			'region' => $region,
 			'instances' => [],
@@ -152,9 +164,25 @@ class Manager
 		]));
 	}
 
-	public static function get_blocktype(Block $instance)
+	public static function get_blocktype(Block $instance): string
 	{
 		$classname = get_class($instance);
 		return strtolower(substr(strrchr($classname, '\\'), 1));
+	}
+
+	/**
+	 * Sets whether blocks should be shown/hidden on this page (on by default)
+	 *
+	 * @param bool $visible True to show blocks on the current page, false to hide all blocks.
+	 * @throws RuntimeException if blocks have already been rendered prior to this change being called
+	 */
+	public static function set_overall_block_visibility(bool $visible): void
+	{
+		if (static::$rendered)
+		{
+			throw new RuntimeException('Cannot alter overall block visibility as blocks have already been rendered.');
+		}
+
+		static::$show_blocks = $visible;
 	}
 }
