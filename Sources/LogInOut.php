@@ -222,7 +222,7 @@ function DoLogin()
 	unset($_SESSION['language'], $_SESSION['id_theme']);
 
 	// You've logged in, haven't you?
-	$update = ['member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']];
+	$update = ['member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'] ?? $user_info['ip']];
 	$update['last_login'] = time();
 	updateMemberData($user_info['id'], $update);
 
