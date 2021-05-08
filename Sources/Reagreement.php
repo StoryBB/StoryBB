@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Model\Policy;
+use StoryBB\Block\Manager;
 
 /**
  * Identifies if the requested URL/action is allowed to be visited if the user
@@ -76,6 +77,8 @@ function Reagreement()
 		$_SESSION['reagreement_return'] = $_GET;
 	}
 
+	Manager::set_overall_block_visibility(false);
+
 	loadLanguage('Login');
 
 	$policies = Policy::get_unagreed_policies();
@@ -108,7 +111,14 @@ function Reagreement()
 			$url = [];
 			foreach ($_SESSION['reagreement_return'] as $k => $v)
 			{
-				$url[] = $k . '=' . $v;
+				if ($v !== '')
+				{
+					$url[] = $k . '=' . $v;
+				}
+				else
+				{
+					$url[] = $k;
+				}
 			}
 			unset ($_SESSION['reagreement_return']);
 			redirectexit(implode(';', $url));
