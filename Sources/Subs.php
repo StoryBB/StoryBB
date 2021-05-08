@@ -1291,7 +1291,6 @@ function setupThemeContext($forceload = false)
 			$context['unapproved_members'] = !empty($modSettings['unapprovedMembers']) ? $modSettings['unapprovedMembers'] : 0;
 
 		$context['user']['avatar'] = set_avatar_data(['filename' => $user_info['avatar']['filename'], 'avatar' => $user_info['avatar']['url']]);
-		// echo '<div style="margin-left:100px">'; var_dump($user_info); echo '</div>';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = [
