@@ -49,6 +49,10 @@ class Phrase
 		}
 
 		// Dirty hack to get just the parts we care about.
+		if ($txt === null)
+		{
+			$txt = [];
+		}
 		$oldTxt = $txt;
 		$txt = [];
 
@@ -63,7 +67,7 @@ class Phrase
 			static::$cache[$lang][$langsection] = $txt;
 		}
 
-		$txt = $oldTxt;
+		$txt = $oldTxt + static::$cache[$lang][$langsection];
 
 		return static::$cache[$lang][$langsection][$string] ?? '[[' . $lang . ':' . $langsection . ':' . $string . ']]';
 	}

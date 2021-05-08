@@ -117,18 +117,6 @@
 						<legend>{{{txt.permissions_with_selection}}}</legend>
 						<dl class="settings">
 							<dt>
-								{{> helpicon help='permissions_quickgroups'}} {{{txt.permissions_apply_pre_defined}}}
-							</dt>
-							<dd>
-								<select name="predefined">
-									<option value="">({{{txt.permissions_select_pre_defined}}})</option>
-									<option value="restrict">{{{txt.permitgroups_restrict}}}</option>
-									<option value="standard">{{{txt.permitgroups_standard}}}</option>
-									<option value="moderator">{{{txt.permitgroups_moderator}}}</option>
-									<option value="maintenance">{{{txt.permitgroups_maintenance}}}</option>
-								</select>
-							</dd>
-							<dt>
 								{{{txt.permissions_like_group}}}:
 							</dt>
 							<dd>
@@ -184,12 +172,12 @@
 				<script>
 					function checkSubmit()
 					{
-						if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
+						if (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != "")
 						{
 							alert({{{json txt.permissions_only_one_option}}});
 							return false;
 						}
-						if (document.forms.permissionForm.predefined.value == "" && document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
+						if (document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
 						{
 							alert({{{json txt.permissions_no_action}}});
 							return false;

@@ -95,7 +95,7 @@ class WatchedBoards extends AbstractProfileController
 							$link = $board['link'];
 
 							if ($board['new'])
-								$link .= ' <a href="' . $board['href'] . '" class="new_posts">' . $txt['new'] . '</a>';
+								$link .= '&nbsp; <a href="' . $board['href'] . '" class="new_posts"></a>';
 
 							return $link;
 						},
@@ -162,7 +162,7 @@ class WatchedBoards extends AbstractProfileController
 
 	public function post_action()
 	{
-		global $sourcedir, $txt, $context, $cur_profile;
+		global $sourcedir, $txt, $context, $cur_profile, $smcFunc;
 
 		$memID = $this->params['u'];
 		require_once($sourcedir . '/Subs-Notify.php');
