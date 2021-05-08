@@ -63,8 +63,6 @@ $txt['permissions_set_permissions'] = 'Set permissions';
 
 $txt['permissions_advanced_options'] = 'Advanced Options';
 $txt['permissions_with_selection'] = 'With selection';
-$txt['permissions_apply_pre_defined'] = 'Apply pre-defined permission set';
-$txt['permissions_select_pre_defined'] = 'Select a pre-defined profile';
 $txt['permissions_copy_from_board'] = 'Copy permissions from this board';
 $txt['permissions_select_board'] = 'Select a board';
 $txt['permissions_like_group'] = 'Set permissions like this group';

@@ -263,12 +263,6 @@ $txt['membergroups_guests'] = 'Guests';
 $txt['membergroups_add_group'] = 'Add group';
 $txt['membergroups_permissions'] = 'Permissions';
 
-$txt['permitgroups_restrict'] = 'Restrictive';
-$txt['permitgroups_standard'] = 'Standard';
-$txt['permitgroups_moderator'] = 'Moderator';
-$txt['permitgroups_maintenance'] = 'Maintenance';
-$txt['permitgroups_inherit'] = 'Inherit';
-
 $txt['confirm_delete_attachments_all'] = 'Are you sure you want to delete all attachments?';
 $txt['confirm_delete_attachments'] = 'Are you sure you want to delete the selected attachments?';
 $txt['attachment_manager_browse_files'] = 'Browse Files';

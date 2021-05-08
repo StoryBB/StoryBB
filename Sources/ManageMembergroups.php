@@ -312,7 +312,7 @@ function MembergroupIndex()
  * This function handles adding a membergroup and setting some initial properties.
  * Called by ?action=admin;area=membergroups;sa=add.
  * It requires the manage_membergroups permission.
- * Allows to use a predefined permission profile or copy one from another group.
+ * Allows to copy one from another group.
  * Redirects to action=admin;area=membergroups;sa=edit;group=x.
  *
  * @uses the new_group sub template of ManageMembergroups.
@@ -362,14 +362,8 @@ function AddMembergroup()
 
 		(new Observable\Group\Created($id_group))->execute();
 
-		if ($_POST['perm_type'] == 'predefined')
-		{
-			// Set default permission level.
-			require_once($sourcedir . '/ManagePermissions.php');
-			setPermissionLevel($_POST['level'], $id_group, 'null');
-		}
 		// Copy or inherit the permissions!
-		elseif ($_POST['perm_type'] == 'copy' || $_POST['perm_type'] == 'inherit')
+		if ($_POST['perm_type'] == 'copy' || $_POST['perm_type'] == 'inherit')
 		{
 			$copy_id = $_POST['perm_type'] == 'copy' ? (int) $_POST['copyperm'] : (int) $_POST['inheritperm'];
 
