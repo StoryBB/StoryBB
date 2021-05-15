@@ -39,7 +39,7 @@ require_once('Sources/StoryBB/Helper/FTP.php');
 $databases = [
 	'mysql' => [
 		'name' => 'MySQL',
-		'version' => '5.5.3',
+		'version' => '5.6.20',
 		'version_check' => function($db)
 		{
 			return min($db->get_version(), mysqli_get_client_info());
