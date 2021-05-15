@@ -1461,7 +1461,7 @@ function DeleteInstall()
 	$smcFunc['db']->insert('ignore',
 		'{db_prefix}log_activity',
 		['date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'],
-		[strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
+		[dateformat_ymd(time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
 		['date']
 	);
 
