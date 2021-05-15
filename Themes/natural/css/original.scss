@@ -290,22 +290,25 @@ h1.forumtitle a {
 
 /* Here comes the glory... */
 .windowbg:nth-of-type(even) {
-	background: $secondary-list-bg;
+	background: $postarea-bg-even;
 }
 
 .windowbg:nth-of-type(odd) {
-	background: $primary-list-bg;
+	background: $postarea-bg-odd;
 }
 
-.windowbg .poster {
-	background: $menu-bg;
+.windowbg:nth-of-type(even) .poster {
+	background: $poster-bg-even;
+}
+.windowbg:nth-of-type(odd) .poster {
+	background: $poster-bg-odd;
 }
 
 .windowbg:nth-of-type(even) .poster .user_info_arrow {
-	border-right-color: $secondary-list-bg;
+	border-right-color: $postarea-bg-even;
 }
 .windowbg:nth-of-type(odd) .poster .user_info_arrow {
-	border-right-color: $primary-list-bg;
+	border-right-color: $postarea-bg-odd;
 }
 
 .poster .user_info_arrow {
