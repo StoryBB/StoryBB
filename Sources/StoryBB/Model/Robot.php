@@ -64,6 +64,7 @@ class Robot
 			'ioncrawl' => 'ioncrawl',
 			'jigsaw' => 'w3c_css',
 			'kalooga' => 'kalooga',
+			'ltx71' => 'ltx71',
 			'magpie-crawler' => 'brandwatch',
 			'mail.ru' => 'mail.ru',
 			'mbcrawler' => 'monitorbacklinks',
@@ -258,6 +259,10 @@ class Robot
 			'kalooga' => [
 				'title' => 'Kalooga',
 				'link' => 'https://kalooga.com/',
+			],
+			'ltx71' => [
+				'title' => 'ltx71',
+				'link' => 'http://ltx71.com/',
 			],
 			'mail.ru' => [
 				'title' => 'Mail.RU',
