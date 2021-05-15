@@ -342,6 +342,10 @@ class CharacterProfile extends AbstractProfileController
 				unset ($context['themes'][$id_theme]);
 		}
 
+		uasort($context['themes'], function($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
+
 		$context['sub_template'] = 'profile_character_theme';
 	}
 
