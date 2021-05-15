@@ -37,7 +37,7 @@ class Index
 		{
 			throw new InvalidIndexException('An index must contain columns');
 		}
-		if (!in_array($type, ['primary', 'unique', 'index']))
+		if (!in_array($type, ['primary', 'unique', 'index', 'fulltext']))
 		{
 			throw new InvalidIndexTypeException('Unsupported index type: ' . $type);
 		}
@@ -110,6 +110,11 @@ class Index
 	public static function unique(array $columns)
 	{
 		return new self(self::parse_columns($columns), 'unique', self::parse_columns($columns, true));
+	}
+
+	public static function fulltext(array $columns)
+	{
+		return new self(self::parse_columns($columns), 'fulltext', self::parse_columns($columns, true));
 	}
 
 	/**

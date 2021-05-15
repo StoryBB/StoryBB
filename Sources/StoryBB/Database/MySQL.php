@@ -1533,7 +1533,23 @@ class MySQL implements DatabaseAdapter
 					}
 					$index['name'] = implode('_', $column_names);
 				}
-				$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+
+				$index_type = $index['type'] ?? 'key';
+				switch ($index_type)
+				{
+					case 'fulltext':
+						$table_query .= "\n\t" . 'FULLTEXT ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+
+					case 'unique':
+						$table_query .= "\n\t" . 'UNIQUE ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+
+					default:
+						$table_query .= "\n\t" . 'KEY ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+				}
+				
 			}
 		}
 
@@ -1718,7 +1734,11 @@ class MySQL implements DatabaseAdapter
 
 			if (!isset($indextype[$row['Key_name']]))
 			{
-				if ($row['Non_unique'])
+				if ($row['Index_type'] == 'FULLTEXT')
+				{
+					$indexfunc[$row['Key_name']] = 'fulltext';
+				}
+				elseif ($row['Non_unique'])
 				{
 					$indexfunc[$row['Key_name']] = 'key';
 				}
