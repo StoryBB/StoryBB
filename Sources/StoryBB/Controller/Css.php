@@ -93,9 +93,9 @@ class Css implements Routable, MaintenanceAccessible
 		$site_settings = $this->sitesettings();
 
 		$available_themes = [];
-		if ($site_settings->knownThemes)
+		if ($site_settings->enableThemes)
 		{
-			$available_themes = array_map('intval', explode(',', $site_settings->knownThemes));
+			$available_themes = array_map('intval', explode(',', $site_settings->enableThemes));
 		}
 
 		// Default theme is always available if there is nothing.
