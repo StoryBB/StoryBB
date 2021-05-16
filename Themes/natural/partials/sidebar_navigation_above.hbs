@@ -1,10 +1,4 @@
-	<div class="generic_tabs">
-		<ul class="tabs">
-			{{#each context.navigation}}
-				<li{{#if active}} class="active"{{/if}}>{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}<span>{{label}}</span>{{/if}}</li>
-			{{/each}}
-		</ul>
-	</div>
+	{{> tab_bar tabs=context.navigation }}
 	<div class="generic_menu_container">
 		<div class="generic_menu_sidebar">
 			{{#each context.navigation}}
