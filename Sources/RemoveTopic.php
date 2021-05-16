@@ -476,44 +476,6 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	];
 	removeAttachments($attachmentQuery, 'messages');
 
-	// Delete possible search index entries.
-	if (!empty($modSettings['search_custom_index_config']))
-	{
-		$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
-
-		$words = [];
-		$messages = [];
-		$request = $smcFunc['db']->query('', '
-			SELECT id_msg, body
-			FROM {db_prefix}messages
-			WHERE id_topic IN ({array_int:topics})',
-			[
-				'topics' => $topics,
-			]
-		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-		{
-			if (function_exists('apache_reset_timeout'))
-				@apache_reset_timeout();
-
-			$words = array_merge($words, text2words($row['body'], $customIndexSettings['bytes_per_word'], true));
-			$messages[] = $row['id_msg'];
-		}
-		$smcFunc['db']->free_result($request);
-		$words = array_unique($words);
-
-		if (!empty($words) && !empty($messages))
-			$smcFunc['db']->query('', '
-				DELETE FROM {db_prefix}log_search_words
-				WHERE id_word IN ({array_int:word_list})
-					AND id_msg IN ({array_int:message_list})',
-				[
-					'word_list' => $words,
-					'message_list' => $messages,
-				]
-			);
-	}
-
 	// Delete anything related to the topic.
 	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}messages
@@ -586,7 +548,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			m.id_member, m.id_character, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
+			m.id_member, m.id_character, m.poster_time, m.subject,
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
 			t.id_member_started AS id_member_poster,
 			b.count_posts
@@ -941,11 +903,7 @@ function removeMessage($message, $decreasePostCount = true)
 	// Only remove posts if they're not recycled.
 	if (!$recycle)
 	{
-		// Callback for search APIs to do their thing
-		require_once($sourcedir . '/Search.php');
-		$searchAPI = findSearchAPI();
-		if ($searchAPI->supportsMethod('postRemoved'))
-			$searchAPI->postRemoved($message);
+		// @todo Callback for search APIs to do their thing
 
 		// Remove the message!
 		$smcFunc['db']->query('', '
@@ -955,22 +913,6 @@ function removeMessage($message, $decreasePostCount = true)
 				'id_msg' => $message,
 			]
 		);
-
-		if (!empty($modSettings['search_custom_index_config']))
-		{
-			$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
-			$words = text2words($row['body'], $customIndexSettings['bytes_per_word'], true);
-			if (!empty($words))
-				$smcFunc['db']->query('', '
-					DELETE FROM {db_prefix}log_search_words
-					WHERE id_word IN ({array_int:word_list})
-						AND id_msg = {int:id_msg}',
-					[
-						'word_list' => $words,
-						'id_msg' => $message,
-					]
-				);
-		}
 
 		// Delete attachment(s) if they exist.
 		require_once($sourcedir . '/ManageAttachments.php');
