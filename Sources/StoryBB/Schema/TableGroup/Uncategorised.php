@@ -844,6 +844,7 @@ class Uncategorised
 					'meta' => Column::mediumtext(),
 					'id_member' => Column::mediumint(),
 					'id_character' => Column::int(),
+					'content_time' => Column::int(),
 				],
 				[
 					Index::primary(['id_document']),
