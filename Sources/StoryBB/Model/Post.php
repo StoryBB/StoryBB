@@ -444,20 +444,17 @@ class Post
 		{
 			$messages_columns['body'] = $msgOptions['body'];
 
-			// using a custom search index, then lets get the old message so we can update our index as needed
-			if (!empty($modSettings['search_custom_index_config']))
-			{
-				$request = $smcFunc['db']->query('', '
-					SELECT body
-					FROM {db_prefix}messages
-					WHERE id_msg = {int:id_msg}',
-					[
-						'id_msg' => $msgOptions['id'],
-					]
-				);
-				list ($msgOptions['old_body']) = $smcFunc['db']->fetch_row($request);
-				$smcFunc['db']->free_result($request);
-			}
+			// Fetch the old body in case something wants to do something with it.
+			$request = $smcFunc['db']->query('', '
+				SELECT body
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:id_msg}',
+				[
+					'id_msg' => $msgOptions['id'],
+				]
+			);
+			list ($msgOptions['old_body']) = $smcFunc['db']->fetch_row($request);
+			$smcFunc['db']->free_result($request);
 		}
 		if (!empty($msgOptions['modify_time']))
 		{
@@ -486,9 +483,6 @@ class Post
 				if (isset($match[1]) && isset($match[2]) && is_array($match[1]) && is_array($match[2]))
 					foreach ($match[1] as $i => $oldID)
 						$oldmentions[$oldID] = ['id' => $oldID, 'real_name' => $match[2][$i]];
-
-				if (empty($modSettings['search_custom_index_config']))
-					unset($msgOptions['old_body']);
 			}
 
 			$mentions = Mentions::getMentionedMembers($msgOptions['body']);
@@ -505,7 +499,6 @@ class Post
 			{
 				// Queue this for notification.
 				$msgOptions['mentioned_members'] = array_diff_key($mentions, $oldmentions);
-
 
 				Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
 					'msgOptions' => $msgOptions,
