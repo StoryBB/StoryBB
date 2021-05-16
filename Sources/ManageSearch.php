@@ -255,7 +255,7 @@ function EditSearchMethod()
 function loadSearchAPIs()
 {
 	$backends = [];
-	foreach (ClassManager::get_classes_implementing('StoryBB\\Search\\Searchable') as $class)
+	foreach (ClassManager::get_classes_implementing('StoryBB\\Search\\SearchableOld') as $class)
 	{
 		$instance = new $class;
 		if (!$instance->is_supported)

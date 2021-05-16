@@ -15,7 +15,7 @@ namespace StoryBB\Search;
 /**
  * The generic search class has a number of functions, most backends should override most of these.
  */
-abstract class AbstractSearchable
+abstract class AbstractSearchableOld
 {
 	/**
 	 * @var bool Whether or not it's supported
