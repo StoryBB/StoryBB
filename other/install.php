@@ -39,7 +39,7 @@ require_once('Sources/StoryBB/Helper/FTP.php');
 $databases = [
 	'mysql' => [
 		'name' => 'MySQL',
-		'version' => '5.5.3',
+		'version' => '5.6.20',
 		'version_check' => function($db)
 		{
 			return min($db->get_version(), mysqli_get_client_info());
@@ -1461,7 +1461,7 @@ function DeleteInstall()
 	$smcFunc['db']->insert('ignore',
 		'{db_prefix}log_activity',
 		['date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'],
-		[strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
+		[dateformat_ymd(time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
 		['date']
 	);
 

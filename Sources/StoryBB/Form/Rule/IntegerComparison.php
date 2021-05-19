@@ -55,7 +55,7 @@ class IntegerComparison implements Validational
 	 * @return void
 	 * @throws RuleException if the comparison doesn't work out (e.g. the rule is int < 5 but the supplied value is 10)
 	 */
-	public function validate($value)
+	public function validate($value): void
 	{
 		if ($this->operator == '<' && $value >= $this->value)
 		{

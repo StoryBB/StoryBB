@@ -208,6 +208,11 @@ function loadUserSettings()
 	global $modSettings, $user_settings, $sourcedir;
 	global $cookiename, $user_info, $language, $context, $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
+	if (empty($_SERVER['BAN_CHECK_IP']))
+	{
+		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'] ?? '';
+	}
+
 	// Check first the integration, then the cookie, and last the session.
 	$id_member = 0;
 	(new Mutatable\Account\Authenticates($id_member))->execute();
@@ -359,7 +364,7 @@ function loadUserSettings()
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
-		'ip2' => $_SERVER['BAN_CHECK_IP'] ?? $_SERVER['REMOTE_ADDR'],
+		'ip2' => $_SERVER['BAN_CHECK_IP'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
 		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
 		'avatar' => [

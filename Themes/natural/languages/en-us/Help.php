@@ -199,7 +199,6 @@ $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page
 $helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the StoryBB software will never tell you, or anyone else, what they are.';
 $helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" rel="noopener">board management interface</a>.';
 
-$helptxt['permissions_quickgroups'] = 'These allow you to use the &quot;default&quot; permission setups -  <em>standard</em> means \'nothing special\', <em>restrictive</em> means \'like a guest\', <em>moderator</em> means \'what a moderator has\', and lastly <em>maintenance</em> means \'permissions very close to those of an administrator\'.';
 $helptxt['permissions_deny'] = 'Denying permissions can be useful when you want to take away permission from certain members. You can add a membergroup with a \'deny\'-permission to the members you wish to deny a permission.<br><br><strong>Use with care</strong>, a denied permission will stay denied no matter what other membergroups the member is in.';
 $helptxt['membergroup_guests'] = 'The Guests membergroup is for all users that are not logged in.';
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';

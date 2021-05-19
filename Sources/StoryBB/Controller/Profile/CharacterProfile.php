@@ -317,7 +317,13 @@ class CharacterProfile extends AbstractProfileController
 			]
 		);
 		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			if (!isset($context['themes'][$row['id_theme']]))
+			{
+				continue;
+			}
 			$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
+		}
 		$smcFunc['db']->free_result($request);
 
 		foreach ($context['themes'] as $id_theme => $theme)
@@ -335,6 +341,10 @@ class CharacterProfile extends AbstractProfileController
 			if (empty($context['themes'][$id_theme]['thumbnail']))
 				unset ($context['themes'][$id_theme]);
 		}
+
+		uasort($context['themes'], function($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
 
 		$context['sub_template'] = 'profile_character_theme';
 	}

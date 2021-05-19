@@ -1,0 +1,13 @@
+	<div class="generic_tabs">
+		{{#each tabs}}
+			{{#if active}}
+				<input type="checkbox" class="mobile-tab">
+				<div class="mobile-tab">{{label}}</div>
+			{{/if}}
+		{{/each}}
+		<ul class="tabs">
+			{{#each tabs}}
+				<li{{#if active}} class="active"{{/if}}>{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}<span>{{label}}</span>{{/if}}</li>
+			{{/each}}
+		</ul>
+	</div>

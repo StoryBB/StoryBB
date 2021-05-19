@@ -834,6 +834,26 @@ class Uncategorised
 					Index::key(['lngfile' => 30]),
 				]
 			),
+			Table::make('search_index',
+				[
+					'id_document' => Column::int()->auto_increment(),
+					'content_type' => Column::varchar(32),
+					'content_id' => Column::int(),
+					'title' => Column::varchar(255),
+					'content' => Column::mediumtext(),
+					'meta' => Column::mediumtext(),
+					'id_member' => Column::mediumint(),
+					'id_character' => Column::int(),
+					'content_time' => Column::int(),
+				],
+				[
+					Index::primary(['id_document']),
+					Index::key(['id_member', 'id_character']),
+					Index::unique(['content_type', 'content_id']),
+					Index::fulltext(['title', 'content', 'meta']),
+					Index::fulltext(['title', 'meta']),
+				]
+			),
 			Table::make('settings',
 				[
 					'variable' => Column::varchar(64),

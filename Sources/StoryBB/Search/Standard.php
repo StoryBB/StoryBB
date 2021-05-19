@@ -15,7 +15,7 @@ namespace StoryBB\Search;
 /**
  * Standard non full index, non custom index search
  */
-class Standard extends AbstractSearchable implements Searchable
+class Standard extends AbstractSearchableOld implements SearchableOld
 {
 	/**
 	 * Returns the name of the search index.

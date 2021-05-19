@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Reflects a type of content that can be searched.
+ * Exceptions from within the search system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -10,11 +9,11 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Search;
+namespace StoryBB\Search\Exception;
 
-interface Searchable
+/**
+ * Exceptions from within the database system.
+ */
+class InvalidAdapterException extends \StoryBB\Search\Exception
 {
-	public static function get_content_type(): string;
-
-	public static function is_available(): bool;
 }

@@ -53,22 +53,13 @@ $txt['search_method_fulltext_create'] = 'create a fulltext index';
 $txt['search_method_fulltext_cannot_create'] = 'cannot be created because the max message length is above 65,535 or table type is not MyISAM';
 $txt['search_method_index_already_exists'] = 'already created';
 $txt['search_method_fulltext_remove'] = 'remove fulltext index';
-$txt['search_method_index_partial'] = 'partially created';
-$txt['search_index_custom_resume'] = 'resume';
 // This string is used in a javascript confirmation popup; don't use entities.
 $txt['search_method_fulltext_warning'] = 'In order to be able to use fulltext search, you\\\'ll have to create a fulltext index first.';
 
 $txt['search_index'] = 'Search index';
 $txt['search_index_none'] = 'No index';
-$txt['search_index_custom'] = 'Custom index';
-$txt['search_index_sphinx'] = 'Sphinx';
-$txt['search_index_sphinx_desc'] = 'The admin panel only allows to switch between search indexes. To adjust further Sphinx settings, use the sphinx_config.php tool.';
 $txt['search_index_label'] = 'Index';
 $txt['search_index_size'] = 'Size';
-$txt['search_index_create_custom'] = 'create custom index';
-$txt['search_index_custom_remove'] = 'remove custom index';
-// This string is used in a javascript confirmation popup; don't use entities.
-$txt['search_index_custom_warning'] = 'In order to be able to use a custom index search, you\\\'ll have to create a custom index first!';
 
 $txt['search_force_index'] = 'Force the use of a search index';
 $txt['search_match_words'] = 'Match whole words only';
@@ -77,22 +68,6 @@ $txt['search_max_results_disable'] = '(0: no limit)';
 $txt['search_floodcontrol_time'] = 'Time required between searches from same user';
 $txt['search_floodcontrol_time_desc'] = '(0 for no limit, in seconds)';
 
-$txt['search_create_index'] = 'Create index';
-$txt['search_create_index_why'] = 'Why create a search index?';
-$txt['search_create_index_start'] = 'Create';
-$txt['search_predefined'] = 'Pre-defined profile';
-$txt['search_predefined_small'] = 'Small sized index';
-$txt['search_predefined_moderate'] = 'Moderate sized index';
-$txt['search_predefined_large'] = 'Large sized index';
-$txt['search_create_index_continue'] = 'Continue';
-$txt['search_create_index_not_ready'] = 'StoryBB is currently creating a search index of your messages. To avoid overloading your server, the process has been temporarily paused. It should automatically continue in a few seconds. If it doesn\'t, please click continue below.';
-$txt['search_create_index_progress'] = 'Progress';
-$txt['search_create_index_done'] = 'Custom search index successfully created.';
-$txt['search_create_index_done_link'] = 'Continue';
-$txt['search_double_index'] = 'You have currently created two indexes on the messages table. For best performance it is advisable to remove one of the two indexes.';
-
-$txt['search_error_indexed_chars'] = 'Invalid number of indexed characters. At least 3 characters are needed for a useful index.';
-$txt['search_error_max_percentage'] = 'Invalid percentage of words to be skipped. Use a value of at least 5%.';
 $txt['error_string_too_long'] = 'Search string must be less than %1$d characters long.';
 
 $txt['search_adjust_query'] = 'Adjust Search Parameters';

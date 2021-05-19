@@ -1433,34 +1433,6 @@ class MySQL implements DatabaseAdapter
 	}
 
 	/**
-	 * Highly specific function, to create the custom word index table.
-	 *
-	 * @param string $size The size of the desired index.
-	 * @deprecated
-	 */
-	public function create_word_search($size)
-	{
-		if ($size == 'small')
-			$size = 'smallint(5)';
-		elseif ($size == 'medium')
-			$size = 'mediumint(8)';
-		else
-			$size = 'int(10)';
-
-		$this->query('', '
-			CREATE TABLE {db_prefix}log_search_words (
-				id_word {raw:size} unsigned NOT NULL default {string:string_zero},
-				id_msg int(10) unsigned NOT NULL default {string:string_zero},
-				PRIMARY KEY (id_word, id_msg)
-			) ENGINE=InnoDB',
-			[
-				'string_zero' => '0',
-				'size' => $size,
-			]
-		);
-	}
-
-	/**
 	 * This function can be used to create a table without worrying about schema
 	 *  compatibilities across supported database systems.
 	 *  - If the table exists will, by default, do nothing.
@@ -1533,7 +1505,23 @@ class MySQL implements DatabaseAdapter
 					}
 					$index['name'] = implode('_', $column_names);
 				}
-				$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+
+				$index_type = $index['type'] ?? 'key';
+				switch ($index_type)
+				{
+					case 'fulltext':
+						$table_query .= "\n\t" . 'FULLTEXT ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+
+					case 'unique':
+						$table_query .= "\n\t" . 'UNIQUE ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+
+					default:
+						$table_query .= "\n\t" . 'KEY ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
+						break;
+				}
+				
 			}
 		}
 
@@ -1718,7 +1706,11 @@ class MySQL implements DatabaseAdapter
 
 			if (!isset($indextype[$row['Key_name']]))
 			{
-				if ($row['Non_unique'])
+				if ($row['Index_type'] == 'FULLTEXT')
+				{
+					$indexfunc[$row['Key_name']] = 'fulltext';
+				}
+				elseif ($row['Non_unique'])
 				{
 					$indexfunc[$row['Key_name']] = 'key';
 				}

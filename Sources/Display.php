@@ -61,68 +61,6 @@ function Display()
 	if (!empty($_REQUEST['start']) && (!is_numeric($_REQUEST['start']) || $_REQUEST['start'] % $context['messages_per_page'] != 0))
 		$context['robot_no_index'] = true;
 
-	// Find the previous or next topic.  Make a fuss if there are no more.
-	if (isset($_REQUEST['prev_next']) && ($_REQUEST['prev_next'] == 'prev' || $_REQUEST['prev_next'] == 'next'))
-	{
-		// No use in calculating the next topic if there's only one.
-		if ($board_info['num_topics'] > 1)
-		{
-			// Just prepare some variables that are used in the query.
-			$gt_lt = $_REQUEST['prev_next'] == 'prev' ? '>' : '<';
-			$order = $_REQUEST['prev_next'] == 'prev' ? '' : ' DESC';
-
-			$request = $smcFunc['db']->query('', '
-				SELECT t2.id_topic
-				FROM {db_prefix}topics AS t
-					INNER JOIN {db_prefix}topics AS t2 ON (
-					(t2.id_last_msg ' . $gt_lt . ' t.id_last_msg AND t2.is_sticky ' . $gt_lt . '= t.is_sticky) OR t2.is_sticky ' . $gt_lt . ' t.is_sticky)
-				WHERE t.id_topic = {int:current_topic}
-					AND t2.id_board = {int:current_board}' . (allowedTo('approve_posts') ? '' : '
-					AND (t2.approved = {int:is_approved} OR (t2.id_member_started != {int:id_member_started} AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky' . $order . ', t2.id_last_msg' . $order . '
-				LIMIT 1',
-				[
-					'current_board' => $board,
-					'current_member' => $user_info['id'],
-					'current_topic' => $topic,
-					'is_approved' => 1,
-					'id_member_started' => 0,
-				]
-			);
-
-			// No more left.
-			if ($smcFunc['db']->num_rows($request) == 0)
-			{
-				$smcFunc['db']->free_result($request);
-
-				// Roll over - if we're going prev, get the last - otherwise the first.
-				$request = $smcFunc['db']->query('', '
-					SELECT id_topic
-					FROM {db_prefix}topics
-					WHERE id_board = {int:current_board}' . (allowedTo('approve_posts') ? '' : '
-						AND (approved = {int:is_approved} OR (id_member_started != {int:id_member_started} AND id_member_started = {int:current_member}))') . '
-					ORDER BY is_sticky' . $order . ', id_last_msg' . $order . '
-					LIMIT 1',
-					[
-						'current_board' => $board,
-						'current_member' => $user_info['id'],
-						'is_approved' => 1,
-						'id_member_started' => 0,
-					]
-				);
-			}
-
-			// Now you can be sure $topic is the id_topic to view.
-			list ($topic) = $smcFunc['db']->fetch_row($request);
-			$smcFunc['db']->free_result($request);
-
-			$context['current_topic'] = $topic;
-		}
-
-		// Go to the newest message on this topic.
-		$_REQUEST['start'] = 'new';
-	}
-
 	// Add 1 to the number of views of this topic (except for robots).
 	if (!$user_info['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
@@ -276,38 +214,8 @@ function Display()
 			}
 		}
 
-		// Start from a certain time index, not a message.
-		if (substr($_REQUEST['start'], 0, 4) == 'from')
-		{
-			$timestamp = (int) substr($_REQUEST['start'], 4);
-			if ($timestamp === 0)
-				$_REQUEST['start'] = 0;
-			else
-			{
-				// Find the number of messages posted before said time...
-				$request = $smcFunc['db']->query('', '
-					SELECT COUNT(*)
-					FROM {db_prefix}messages
-					WHERE poster_time < {int:timestamp}
-						AND id_topic = {int:current_topic}' . ($context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
-						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
-					[
-						'current_topic' => $topic,
-						'current_member' => $user_info['id'],
-						'is_approved' => 1,
-						'timestamp' => $timestamp,
-					]
-				);
-				list ($context['start_from']) = $smcFunc['db']->fetch_row($request);
-				$smcFunc['db']->free_result($request);
-
-				// Handle view_newest_first options, and get the correct start value.
-				$_REQUEST['start'] = empty($options['view_newest_first']) ? $context['start_from'] : $context['total_visible_posts'] - $context['start_from'] - 1;
-			}
-		}
-
 		// Link to a message...
-		elseif (substr($_REQUEST['start'], 0, 3) == 'msg')
+		if (substr($_REQUEST['start'], 0, 3) == 'msg')
 		{
 			$virtual_msg = (int) substr($_REQUEST['start'], 3);
 			if (!$context['topicinfo']['unapproved_posts'] && $virtual_msg >= $context['topicinfo']['id_last_msg'])

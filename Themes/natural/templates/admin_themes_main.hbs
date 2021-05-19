@@ -47,7 +47,7 @@
 						<select name="options[theme_guests]" id="theme_guests">
 
 {{#each context.themes}}
-							<option value="{{id}}"{{#if (eq modSettings.theme_guests id)}} selected{{/if}}>{{name}}</option>
+							<option value="{{id}}"{{#if (eq_coerce ../modSettings.theme_guests id)}} selected{{/if}}>{{name}}</option>
 {{/each}}
 						</select>
 						<span class="smalltext pick_theme">

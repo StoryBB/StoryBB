@@ -1,13 +1,5 @@
 	{{! Selecting a search method }}
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3 class="catbg">{{{txt.search_method}}}</h3>
-		</div>
-		<div class="information">
-			<div class="smalltext" style="font-weight: normal;">
-				<a href="{{scripturl}}?action=helpadmin;help=search_why_use_index" onclick="return reqOverlayDiv(this.href);">{{{txt.search_create_index_why}}}</a>
-			</div>
-		</div>
 		<form id="admin_form_wrapper" action="{{scripturl}}?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.search_method}}}</h3>
@@ -30,10 +22,6 @@
 					</dd>
 {{/if}}
 				</dl>
-
-{{#if context.double_index}}
-				<div class="noticebox">{{{txt.search_double_index}}}</div>
-{{/if}}
 
 				<fieldset class="search_settings floatleft">
 					<legend>{{{txt.search_index}}}</legend>
@@ -64,27 +52,6 @@
 							</span>
 						</dd>
 {{/if}}
-
-						<dt>
-							<input type="radio" name="search_index" value="custom"{{#if (eq modSettings.search_index 'custom')}} checked{{/if}}{{#unless context.custom_index}} onclick="alert('{{{txt.search_index_custom_warning}}}'); selectRadioByName(this.form.search_method, \'1\');"{{/unless}}>
-							{{{txt.search_index_custom}}}
-						</dt>
-						<dd>
-							<span class="smalltext">
-
-{{#if context.custom_index}}
-								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>]<br>
-								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
-{{else}}
-	{{#if context.partial_custom_index}}
-								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_partial}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>] [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex;resume;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_resume}}}</a>]<br>
-								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
-	{{else}}
-								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex">{{{txt.search_index_create_custom}}}</a>]
-	{{/if}}
-{{/if}}
-							</span>
-						</dd>
 
 {{#each context.search_apis}}
 	{{#if (and label (not has_template))}}

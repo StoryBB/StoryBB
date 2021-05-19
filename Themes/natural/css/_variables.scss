@@ -44,6 +44,12 @@ $menu-fg-link: #000 !default;
 $header-bg: $primary-accent !default;
 $header-fg: $primary-accent-contrast !default;
 
+$postarea-bg-even: $primary-list-bg !default;
+$postarea-bg-odd: $secondary-list-bg !default;
+
+$poster-bg-even: $menu-bg !default;
+$poster-bg-odd: $menu-bg !default;
+
 $error-color: red !default;
 
 $warning-color: yellow !default;

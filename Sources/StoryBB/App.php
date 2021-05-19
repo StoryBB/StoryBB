@@ -20,6 +20,7 @@ use StoryBB\Database\AdapterFactory;
 use StoryBB\Helper\Cookie;
 use StoryBB\Phrase;
 use StoryBB\Routing\Exception\InvalidRouteException;
+use StoryBB\Search\AdapterFactory as SearchAdapterFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -156,6 +157,12 @@ class App
 
 		$container->inject('filesystem', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Filesystem');
+		});
+		$container->inject('search', function() use ($container) {
+			$sitesettings = $container->get('sitesettings');
+			$backend = $sitesettings->search_backend ?? 'NativeFulltext';
+
+			return $container->instantiate(SearchAdapterFactory::get_adapter_class($backend));
 		});
 		$container->inject('session', function() use ($container) {
 			global $cookiename, $sc;

@@ -18,7 +18,7 @@ use StoryBB\StringLibrary;
  * Class fulltext_search
  * Used for fulltext index searching
  */
-class Fulltext extends AbstractSearchable implements Searchable
+class Fulltext extends AbstractSearchableOld implements SearchableOld
 {
 	/**
 	 * @var array Which words are banned

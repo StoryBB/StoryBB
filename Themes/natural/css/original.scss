@@ -290,22 +290,25 @@ h1.forumtitle a {
 
 /* Here comes the glory... */
 .windowbg:nth-of-type(even) {
-	background: $secondary-list-bg;
+	background: $postarea-bg-even;
 }
 
 .windowbg:nth-of-type(odd) {
-	background: $primary-list-bg;
+	background: $postarea-bg-odd;
 }
 
-.windowbg .poster {
-	background: $menu-bg;
+.windowbg:nth-of-type(even) .poster {
+	background: $poster-bg-even;
+}
+.windowbg:nth-of-type(odd) .poster {
+	background: $poster-bg-odd;
 }
 
 .windowbg:nth-of-type(even) .poster .user_info_arrow {
-	border-right-color: $secondary-list-bg;
+	border-right-color: $postarea-bg-even;
 }
 .windowbg:nth-of-type(odd) .poster .user_info_arrow {
-	border-right-color: $primary-list-bg;
+	border-right-color: $postarea-bg-odd;
 }
 
 .poster .user_info_arrow {
@@ -721,23 +724,6 @@ a.button_submit {
 
 .generic_menu {
 	margin: 5px 0;
-}
-
-.generic_menu_container {
-	display: flex;
-	flex-direction: row;
-}
-
-.generic_menu_container #admin_content {
-	width: 100%;
-}
-
-.generic_menu_container .generic_menu_sidebar {
-	min-width: 120px;
-	max-width: 240px;
-	flex-basis: max-content;
-	flex-shrink: 0;
-	margin-right: 10px;
 }
 
 .generic_menu_sidebar li {
@@ -2398,14 +2384,42 @@ span.pm_label {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* The basic user info on the left */
-#basicinfo {
-	width: 20%;
-	float: left;
-}
 
-#detailedinfo {
-	width: 79.5%;
-	float: right;
+@media screen and (min-width: 992px) {
+	#basicinfo {
+		width: 20%;
+		float: left;
+	}
+
+	#detailedinfo {
+		width: 79.5%;
+		float: right;
+	}
+
+	#detailedinfo dl, #tracking dl {
+		clear: right;
+		overflow: auto;
+		margin: 0 0 18px 0;
+		padding: 0 0 15px 0;
+		border-bottom: 1px #ccc solid;
+	}
+
+	#detailedinfo dt, #tracking dt {
+		width: 35%;
+		float: left;
+		margin: 0 0 3px 0;
+		padding: 0;
+		font-weight: bold;
+		color: $default-color;
+		clear: both;
+	}
+
+	#detailedinfo dd, #tracking dd {
+		width: 65%;
+		float: left;
+		margin: 0 0 3px 0;
+		padding: 0;
+	}
 }
 
 #basicinfo h4 {
@@ -2457,8 +2471,6 @@ span.pm_label {
 }
 
 #detailedinfo dt, #tracking dt {
-	width: 35%;
-	float: left;
 	margin: 0 0 3px 0;
 	padding: 0;
 	font-weight: bold;
@@ -2467,9 +2479,7 @@ span.pm_label {
 }
 
 #detailedinfo dd, #tracking dd {
-	width: 65%;
-	float: left;
-	margin: 0 0 3px 0;
+	margin: 0 0 10px 0;
 	padding: 0;
 }
 

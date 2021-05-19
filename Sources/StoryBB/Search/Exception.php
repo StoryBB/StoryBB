@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reflects a type of content that can be searched.
+ * Search related excceptions.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -12,9 +12,9 @@
 
 namespace StoryBB\Search;
 
-interface Searchable
+/**
+ * Exception for all database queries.
+ */
+class Exception extends \StoryBB\Exception
 {
-	public static function get_content_type(): string;
-
-	public static function is_available(): bool;
 }
