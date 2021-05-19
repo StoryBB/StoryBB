@@ -77,7 +77,7 @@
 			<a href="{{scripturl}}?action=profile;area=posts;u={{context.id_member}}" class="infolinks">{{{txt.showPosts}}}</a>
 
 			{{! Link to the user's statistics}}
-			<a href="{{scripturl}}?action=profile;area=stats;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a>
+			<a href="{{scripturl}}?action=profile;area=stats;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a><br><br>
 
 {{! Are there any custom profile fields for bottom? }}
 {{#if context.print_custom_fields.bottom_poster}}
@@ -94,7 +94,7 @@
 		</div>
 
 		<div id="detailedinfo">
-			<dl class="settings">
+			<dl>
 
 {{#if (or context.user.is_owner context.user.is_admin)}}
 				<dt>{{{txt.username}}}</dt>
@@ -127,7 +127,7 @@
 
 {{! Are there any custom profile fields for standard? }}
 {{#if context.print_custom_fields.standard}}
-			<dl class="settings">
+			<dl>
 				{{#each context.print_custom_fields.standard}}
 					{{#if output_html}}
 						<dt>{{name}}</dt>
@@ -137,7 +137,7 @@
 			</dl>
 {{/if}}
 
-			<dl class="settings noborder">
+			<dl class="noborder">
 
 {{! Can they view/issue a warning? }}
 {{#if (and context.can_view_warning context.member.warning)}}
