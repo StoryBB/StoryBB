@@ -1,7 +1,7 @@
 /* Styles for the generic menu area. */
 .generic_tabs li {
-    display: inline-block;
-    background: $secondary-list-bg;
+	display: inline-block;
+	background: $secondary-list-bg;
 }
 
 .generic_tabs li span, .generic_tabs li a {
@@ -10,29 +10,29 @@
 }
 
 .generic_tabs li.active {
-    background: $primary-accent;
-    color: $primary-accent-contrast;
+	background: $primary-accent;
+	color: $primary-accent-contrast;
 }
 
 .generic_menu_sidebar li.active::after {
-    position: absolute;
-    right: 0;
-    border: 10px solid transparent;
-    border-left-width: 0;
-    display: block;
-    content: " ";
-    border-right-color: $secondary-list-bg;
-    margin-top: -18px;
-    margin-right: -10px;
+	position: absolute;
+	right: 0;
+	border: 10px solid transparent;
+	border-left-width: 0;
+	display: block;
+	content: " ";
+	border-right-color: $secondary-list-bg;
+	margin-top: -18px;
+	margin-right: -10px;
 }
 
 .generic_tabs li:not(.active):hover {
-    background-color: $menu-bg;
+	background-color: $menu-bg;
 }
 
 .generic_menu_sidebar ul {
-    margin-top: 10px;
-    width: 100%;
+	margin-top: 10px;
+	width: 100%;
 }
 
 .generic_menu_sidebar li {
@@ -40,14 +40,14 @@
 }
 
 .generic_menu_sidebar li.active {
-    font-weight: 600;
+	font-weight: 600;
 }
 
 .generic_menu_sidebar .heading {
-    margin-top: 10px;
-    padding-left: 10px;
-    font-size: 1.4em;
-    opacity: 0.7;
+	margin-top: 10px;
+	padding-left: 10px;
+	font-size: 1.4em;
+	opacity: 0.7;
 }
 
 .generic_menu_sidebar {
@@ -58,12 +58,148 @@
 	margin-right: 10px;
 }
 
+@media screen and (min-width: 768px) {
+	.generic_menu_container {
+		border-top: 15px solid $header-bg;
+	}
+}
+
 .generic_menu_container {
-	border-top: 15px solid $header-bg;
 	background: $menu-bg;
+
+	display: flex;
+	flex-direction: row;
+
+	#admin_content {
+		width: 100%;
+	}
+
+	.generic_menu_sidebar {
+		min-width: 120px;
+		max-width: 240px;
+		flex-basis: max-content;
+		flex-shrink: 0;
+		margin-right: 10px;
+	}
 }
 
 .generic_menu_container #admin_content {
 	background: $secondary-list-bg;
 	padding: 15px;
+}
+
+@media screen and (min-width: 768px) {
+	.generic_tabs .mobile-tab {
+		display: none;
+	}
+	.generic_menu_container .mobile-tabside {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.generic_tabs {
+		position: relative;
+
+		div.mobile-tab {
+			&:before {
+				font-family: "Font Awesome 5 Free";
+				content: "\f0c9"; // Hamburger.
+				font-weight: 900;
+				margin-right: 10px;
+			}
+			&:after {
+				font-family: "Font Awesome 5 Free";
+				content: "\f078"; // Chevron-down.
+				font-weight: 900;
+				float: right;
+			}
+			padding: 15px;
+
+			background: $primary-accent;
+			color: $primary-accent-contrast;
+		}
+
+		input.mobile-tab {
+			width: 100%;
+			height: 47px;
+			opacity: 0;
+			position: absolute;
+			cursor: pointer;
+		}
+
+		input.mobile-tab ~ ul.tabs {
+			display: none;
+		}
+
+		li {
+			display: block;
+		}
+
+		input.mobile-tab:checked ~ ul.tabs {
+			display: block;
+		}
+		input.mobile-tab:checked + div.mobile-tab {
+			&:after {
+				content: "\f077"; // Chevron-up.
+			}
+		}
+	}
+
+	.generic_menu_container {
+		display: block;
+		position: relative;
+
+		input.mobile-tabside {
+			width: 100%;
+			height: 47px;
+			opacity: 0;
+			position: absolute;
+			cursor: pointer;
+		}
+
+		div.mobile-tabside {
+			&:before {
+				font-family: "Font Awesome 5 Free";
+				content: "\f0c9"; // Hamburger.
+				font-weight: 900;
+				margin-right: 10px;
+			}
+			&:after {
+				font-family: "Font Awesome 5 Free";
+				content: "\f078"; // Chevron-down.
+				font-weight: 900;
+				float: right;
+			}
+			padding: 15px;
+
+			background: $menu-bg;
+
+			.heading:not(:empty)::after {
+				content: "\25ba";
+				padding: 0 4px;
+				font: 83.33%/150% Arial, sans-serif;
+			}
+		}
+
+		.generic_menu_sidebar {
+			display: none;
+			max-width: 100%;
+			width: 100%;
+
+			li.active::after {
+				display: none;
+			}
+		}
+
+		input.mobile-tabside:checked + div.mobile-tabside {
+			&:after {
+				content: "\f077"; // Chevron-up.
+			}
+		}
+
+		input.mobile-tabside:checked ~ .generic_menu_sidebar {
+			display: block;
+		}
+	}
 }
