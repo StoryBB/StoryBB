@@ -2016,7 +2016,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// And of course, let's load the default CSS file.
-	if (!empty($modSettings['minimize_css']) || empty($settings['compile_time']))
+	if (empty($modSettings['minimize_css']) || empty($settings['compile_time']))
 	{
 		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => time()]), ['external' => true], 'sbb_index');
 	}

@@ -16,10 +16,6 @@ h3.largetext {
 	font-size: large;
 }
 
-.xlarge_text {
-	font-size: x-large;
-}
-
 /* Some common padding styles */
 .padding {
 	padding: 8px;
@@ -208,14 +204,6 @@ h1.forumtitle a {
 	color: #9a9a9a;
 }
 
-/* The small stats */
-#index_common_stats {
-	margin: -4px 8px 6px 8px;
-	padding: 4px 0 0 0;
-	font-size: 0.9em;
-	border-top: 1px solid $primary-border;
-}
-
 /* Fix for quote on reply box */
 #post_modify {
 	border-radius: 4px;
@@ -309,6 +297,13 @@ h1.forumtitle a {
 }
 .windowbg:nth-of-type(odd) .poster .user_info_arrow {
 	border-right-color: $postarea-bg-odd;
+}
+
+.windowbg.odd {
+	background: $postarea-bg-odd;
+}
+.windowbg.even {
+	background: $postarea-bg-even;
 }
 
 .poster .user_info_arrow {
@@ -966,12 +961,12 @@ div.cat_bar {
 }
 
 .cat_bar strong {
-	color: #FFF;
+	color: $primary-accent-contrast;
 }
 
 /* Styles for rounded headers. */
 .cat_bar .desc {
-	color: #FFF;
+	color: $primary-accent-contrast;
 	font-size: 12px;
 	line-height: 1.5em;
 	font-weight: normal;
@@ -1005,13 +1000,13 @@ h3.catbg .icon {
 /* Titlebar & Subbar */
 .title_bar {
 	background: $secondary-accent-light;
-	color: #fff;
+	color: $secondary-accent-contrast;
 	border: 1px solid $primary-border;
 	padding: 8px;
 	margin: 5px 0 0 0;
 
 	a, a:visited {
-		color: #fff;
+		color: $secondary-accent-contrast;
 	}
 }
 
@@ -1027,7 +1022,7 @@ h3.catbg .icon {
 
 h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 	background: none;
-	color: #555;
+	color: $secondary-accent-contrast;
 	font-family: "Tahoma", sans-serif;
 	font-weight: bold;
 	overflow: hidden;
@@ -1036,7 +1031,7 @@ h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 
 .titlebg a, .subbg a {
 	background: none;
-	color: #555;
+	color: $secondary-accent-contrast;
 	text-decoration: none;
 }
 
@@ -1561,15 +1556,6 @@ p.moderators {
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
-}
-
-#topic_filter #topic_container .character {
-	.windowbg.odd {
-		background: $primary-list-bg;
-	}
-	.windowbg.even {
-		background: $secondary-list-bg;
-	}
 }
 
 .icons, #messageindex .board_stats p, .lastpost p, #unread .board_stats p, #unreadreplies .board_stats p {

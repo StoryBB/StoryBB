@@ -6,30 +6,24 @@
 			{{#each context.current_menu_context.sections}}
 				{{#if this.selected}}
 					{{#each this.areas}}
-						<div class="sidebar_area">
-							<div class="cat_bar">
-								<h3 class="catbg">{{{this.label}}}</h3>
-							</div>
-							<div class="windowbg noup">
-							{{#if this.subsections}}
-								<ul>
-								{{#each this.subsections}}
-									{{#unless this.disabled}}
-									<li{{#if this.selected}} class="chosen"{{/if}}>
-										<a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}">{{{this.label}}}</a>
-									</li>
-									{{/unless}}
-								{{/each}}
-								</ul>
-							{{else}}
-								<ul>
-									<li{{#if this.selected}} class="chosen"{{/if}}>
-										<a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}">{{{this.label}}}</a>
-									</li>
-								</ul>
-							{{/if}}
-							</div>
-						</div>
+						<div class="heading">{{{this.label}}}</div>
+						{{#if this.subsections}}
+							<ul>
+							{{#each this.subsections}}
+								{{#unless this.disabled}}
+								<li{{#if this.selected}} class="active"{{/if}}>
+									<a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}">{{{this.label}}}</a>
+								</li>
+								{{/unless}}
+							{{/each}}
+							</ul>
+						{{else}}
+							<ul>
+								<li{{#if this.selected}} class="active"{{/if}}>
+									<a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}">{{{this.label}}}</a>
+								</li>
+							</ul>
+						{{/if}}
 					{{/each}}
 				{{/if}}
 			{{/each}}

@@ -78,7 +78,7 @@ class Popup extends AbstractPMController
 
 				$row['replied_to_you'] = $row['id_pm'] != $row['id_pm_head'];
 				$row['time'] = timeformat($row['timestamp']);
-				$row['pm_link'] = '<a href="' . $scripturl . '?action=pm;f=inbox;pmsg=' . $row['id_pm'] . '">' . $row['subject'] . '</a>';
+				$row['pm_link'] = '<a href="' . $scripturl . '?action=pm;f=inbox;pmid=' . $row['id_pm'] . '">' . $row['subject'] . '</a>';
 				$context['unread_pms'][$row['id_pm']] = $row;
 			}
 			$smcFunc['db']->free_result($request);
