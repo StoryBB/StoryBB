@@ -1,10 +1,10 @@
 	{{! The generic menu itself }}
-	<div class="generic_menu">
-		<ul class="dropmenu dropdown_menu_{{context.cur_menu_id}}">
+	<div class="generic_tabs" id="generic_menu_{{context.cur_menu_id}}">
+		<ul class="tabs">
 
 {{#each context.current_menu_context.sections}}
-			<li{{#if this.areas}} class="subsections"{{/if}}>
-				<a class="{{#if this.selected}}active{{/if}}" href="{{this.url}}{{../context.current_menu_context.extra_parameters}}">{{{this.title}}}</a>
+			<li{{#if this.selected}} class="active"{{/if}}>
+				{{#unless this.selected}}<a href="{{this.url}}{{../context.current_menu_context.extra_parameters}}">{{{this.title}}}</a>{{else}}<span>{{{this.title}}}</span>{{/unless}}
 			</li>
 {{/each}}
 
