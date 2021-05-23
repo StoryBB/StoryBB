@@ -239,7 +239,15 @@ class Theme
 	 */
 	public static function clear_css_cache(): void
 	{
-		global $smcFunc;
+		global $smcFunc, $cachedir;
+
+		if (file_exists($cachedir . '/css'))
+		{
+			foreach (glob($cachedir . '/css/*.css') as $file)
+			{
+				unlink($file);
+			}
+		}
 
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}themes

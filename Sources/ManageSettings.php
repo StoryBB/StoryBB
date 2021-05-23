@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
+use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 
 /**
@@ -95,7 +96,7 @@ function ModifyFeatureSettings()
  */
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $cachedir;
+	global $txt, $scripturl, $context, $cachedir, $modSettings;
 
 	$config_vars = [
 			// Basic stuff, titles, permissions...
@@ -191,15 +192,13 @@ function ModifyBasicSettings($return_config = false)
 			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
 		}
 
-		if (empty($_POST['minimize_css']))
+		$new_minimize_css = !empty($_POST['minimize_css']);
+		$old_minimize_css = !empty($modSettings['minimize_css']);
+
+		if ($old_minimize_css != $new_minimize_css)
 		{
-			if (file_exists($cachedir . '/css'))
-			{
-				foreach (glob($cachedir . '/css/*.css') as $file)
-				{
-					@unlink($file);
-				}
-			}
+			// It doesn't matter whether we're turning it on or off, we want to force a reset either way.
+			Theme::clear_css_cache();
 		}
 
 		settings_integration_hook('integrate_save_basic_settings');
