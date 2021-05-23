@@ -307,6 +307,7 @@ function EditBoard()
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Subs-Post.php');
 	getBoardTree();
 
 	// For editing the profile we'll need this.
@@ -319,8 +320,6 @@ function EditBoard()
 	require_once($sourcedir . '/Subs-Members.php');
 	$groups = groupsAllowedTo('manage_boards', null);
 	$context['board_managers'] = $groups['allowed']; // We don't need *all* this in $context.
-
-	$context['category_allowed_tags_desc'] = str_replace('{allowed_tags}', implode(', ', $context['description_allowed_tags']), $txt['mboards_description_desc']);
 
 	// id_board must be a number....
 	$_REQUEST['boardid'] = isset($_REQUEST['boardid']) ? (int) $_REQUEST['boardid'] : 0;
@@ -346,7 +345,7 @@ function EditBoard()
 		$context['board'] = [
 			'is_new' => true,
 			'id' => 0,
-			'name' => $txt['mboards_new_board_name'],
+			'name' => StringLibrary::escape($txt['mboards_new_board_name'], ENT_QUOTES),
 			'description' => '',
 			'count_posts' => 1,
 			'posts' => 0,
@@ -365,11 +364,25 @@ function EditBoard()
 		// Just some easy shortcuts.
 		$curBoard = &$boards[$_REQUEST['boardid']];
 		$context['board'] = $boards[$_REQUEST['boardid']];
-		$context['board']['name'] = html_to_bbc($context['board']['name']);
-		$context['board']['description'] = html_to_bbc($context['board']['description']);
+		$context['board']['name'] = $context['board']['name'];
+		$context['board']['description'] = un_preparsecode($context['board']['description']);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
+
+	$editorOptions = [
+		'id' => 'desc',
+		'value' => $context['board']['description'],
+		'labels' => [
+			'post_button' => $txt['save'],
+		],
+		// add height and width for the editor
+		'height' => '175px',
+		'width' => '100%',
+		'preview_type' => 0,
+		'required' => false,
+	];
+	create_control_richedit($editorOptions);
 
 	// As we may have come from the permissions screen keep track of where we should go on save.
 	$context['redirect_location'] = isset($_GET['rid']) && $_GET['rid'] == 'permissions' ? 'permissions' : 'boards';
@@ -551,6 +564,7 @@ function EditBoard2()
 	validateToken('admin-be-' . $_REQUEST['boardid']);
 
 	require_once($sourcedir . '/Subs-Boards.php');
+	require_once($sourcedir . '/Subs-Post.php');
 
 	// Mode: modify aka. don't delete.
 	if (isset($_POST['edit']) || isset($_POST['add']))
@@ -603,8 +617,9 @@ function EditBoard2()
 			fatal_lang_error('too_many_groups', false);
 
 		// Do not allow HTML tags. Parse the string.
-		$boardOptions['board_name'] = Parser::parse_bbc(StringLibrary::escape($_POST['board_name']), false, '', $context['description_allowed_tags']);
-		$boardOptions['board_description'] = Parser::parse_bbc(StringLibrary::escape($_POST['desc']), false, '', $context['description_allowed_tags']);
+		$boardOptions['board_name'] = StringLibrary::escape($_POST['board_name'], ENT_QUOTES);
+		$boardOptions['board_description'] = StringLibrary::escape($_POST['desc'] ?? '', ENT_QUOTES);
+		preparsecode($boardOptions['board_description']);
 
 		if (isset($_POST['moderators']) && is_array($_POST['moderators']))
 		{

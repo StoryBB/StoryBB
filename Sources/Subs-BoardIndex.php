@@ -134,7 +134,7 @@ function getBoardIndex($boardIndexOptions)
 					'id' => $row_board['id_board'],
 					'type' => $row_board['is_redirect'] ? 'redirect' : 'board',
 					'name' => $row_board['board_name'],
-					'description' => $row_board['description'],
+					'description' => Parser::parse_bbc($row_board['description'], false, 'brd' . $row_board['id_board']),
 					'moderators' => [],
 					'moderator_groups' => [],
 					'link_moderators' => [],

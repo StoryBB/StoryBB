@@ -55,7 +55,7 @@ $txt['mboards_delete_cancel'] = 'Cancel';
 
 $txt['mboards_category'] = 'Category';
 $txt['mboards_description'] = 'Description';
-$txt['mboards_description_desc'] = 'A short description of your board. HTML is not allowed, you can use the following BBC tags: {allowed_tags}';
+$txt['mboards_description_desc'] = 'A short description of your board.';
 $txt['mboards_cat_description_desc'] = 'A short description of your category.';
 $txt['mboards_groups'] = 'Allowed Groups';
 $txt['mboards_groups_regular_members'] = 'This group contains all members that have no primary group set.';
