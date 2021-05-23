@@ -19,11 +19,21 @@ use StoryBB\Schema\Constraint;
 
 class Tasks
 {
+	/**
+	 * Returns the description of this group of tables.
+	 *
+	 * @return string The group description, untranslated.
+	 */
 	public static function group_description(): string
 	{
 		return 'Tasks';
 	}
 
+	/**
+	 * Returns the tables in this group of tables.
+	 *
+	 * @return array An array of Table objects that make up this group of tables.
+	 */
 	public static function return_tables(): array
 	{
 		return [
