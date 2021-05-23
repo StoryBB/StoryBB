@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
 use StoryBB\Model\TopicPrefix;
 
 /**
@@ -97,7 +98,7 @@ function getBoardIndex($boardIndexOptions)
 				$categories[$row_board['id_cat']] = [
 					'id' => $row_board['id_cat'],
 					'name' => $row_board['cat_name'],
-					'description' => $row_board['cat_desc'],
+					'description' => Parser::parse_bbc($row_board['cat_desc'], false, 'cat' . $row_board['id_cat']),
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && !empty($options['collapse_category_' . $row_board['id_cat']]),
 					'can_collapse' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1,
 					'href' => $scripturl . '#c' . $row_board['id_cat'],
@@ -133,7 +134,7 @@ function getBoardIndex($boardIndexOptions)
 					'id' => $row_board['id_board'],
 					'type' => $row_board['is_redirect'] ? 'redirect' : 'board',
 					'name' => $row_board['board_name'],
-					'description' => $row_board['description'],
+					'description' => Parser::parse_bbc($row_board['description'], false, 'brd' . $row_board['id_board']),
 					'moderators' => [],
 					'moderator_groups' => [],
 					'link_moderators' => [],
