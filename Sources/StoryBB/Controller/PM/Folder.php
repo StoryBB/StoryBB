@@ -187,17 +187,17 @@ class Folder extends AbstractPMController
 					' . $labelQuery . ')') . $labelJoin . ($context['sort_by'] == 'name' ? ('
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = {raw:pm_member})') : '') . '
 				WHERE ' . ($context['folder'] == 'sent' ? 'pm.id_member_from = {int:current_member}
-					AND pm.deleted_by_sender = {int:deleted_by}' : '1=1') . (empty($pmsg) ? '' : '
+					AND pm.deleted_by_sender = {int:deleted_by}' : '1=1') . (empty($context['current_pm']) ? '' : '
 					AND pm.id_pm = {int:pmsg}') . $labelQuery2 . '
 				GROUP BY pm.id_pm_head'.($_GET['sort'] != 'pm.id_pm' ? ',' . $_GET['sort'] : '') . '
-				ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($_GET['pmsg']) ? '
+				ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($context['current_pm']) ? '
 				LIMIT ' . $_GET['start'] . ', ' . $maxPerPage : ''),
 				[
 					'current_member' => $user_info['id'],
 					'deleted_by' => 0,
 					'sort' => $_GET['sort'],
 					'pm_member' => $context['folder'] == 'sent' ? 'pmr.id_member' : 'pm.id_member_from',
-					'pmsg' => isset($pmsg) ? (int) $pmsg : 0,
+					'pmsg' => $context['current_pm'] ?? 0,
 				]
 		);
 
