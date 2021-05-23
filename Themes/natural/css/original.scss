@@ -16,10 +16,6 @@ h3.largetext {
 	font-size: large;
 }
 
-.xlarge_text {
-	font-size: x-large;
-}
-
 /* Some common padding styles */
 .padding {
 	padding: 8px;
@@ -206,14 +202,6 @@ h1.forumtitle a {
 	margin: 18px 0;
 	font-size: 16pt;
 	color: #9a9a9a;
-}
-
-/* The small stats */
-#index_common_stats {
-	margin: -4px 8px 6px 8px;
-	padding: 4px 0 0 0;
-	font-size: 0.9em;
-	border-top: 1px solid $primary-border;
 }
 
 /* Fix for quote on reply box */
