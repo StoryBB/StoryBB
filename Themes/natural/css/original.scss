@@ -954,12 +954,12 @@ div.cat_bar {
 }
 
 .cat_bar strong {
-	color: #FFF;
+	color: $primary-accent-contrast;
 }
 
 /* Styles for rounded headers. */
 .cat_bar .desc {
-	color: #FFF;
+	color: $primary-accent-contrast;
 	font-size: 12px;
 	line-height: 1.5em;
 	font-weight: normal;
@@ -993,13 +993,13 @@ h3.catbg .icon {
 /* Titlebar & Subbar */
 .title_bar {
 	background: $secondary-accent-light;
-	color: #fff;
+	color: $secondary-accent-contrast;
 	border: 1px solid $primary-border;
 	padding: 8px;
 	margin: 5px 0 0 0;
 
 	a, a:visited {
-		color: #fff;
+		color: $secondary-accent-contrast;
 	}
 }
 
@@ -1015,7 +1015,7 @@ h3.catbg .icon {
 
 h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 	background: none;
-	color: #555;
+	color: $secondary-accent-contrast;
 	font-family: "Tahoma", sans-serif;
 	font-weight: bold;
 	overflow: hidden;
@@ -1024,7 +1024,7 @@ h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 
 .titlebg a, .subbg a {
 	background: none;
-	color: #555;
+	color: $secondary-accent-contrast;
 	text-decoration: none;
 }
 
