@@ -134,9 +134,8 @@ function EditCategory()
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Subs-Post.php');
 	getBoardTree();
-
-	$context['category_allowed_tags_desc'] = str_replace('{allowed_tags}', implode(', ', $context['description_allowed_tags']), $txt['mboards_cat_description_desc']);
 
 	// id_cat must be a number.... if it exists.
 	$_REQUEST['cat'] = isset($_REQUEST['cat']) ? (int) $_REQUEST['cat'] : 0;
@@ -172,8 +171,8 @@ function EditCategory()
 		$context['category'] = [
 			'id' => $_REQUEST['cat'],
 			'name' => $cat_tree[$_REQUEST['cat']]['node']['name'],
-			'editable_name' => html_to_bbc($cat_tree[$_REQUEST['cat']]['node']['name']),
-			'description' => html_to_bbc($cat_tree[$_REQUEST['cat']]['node']['description']),
+			'editable_name' => $cat_tree[$_REQUEST['cat']]['node']['name'],
+			'description' => un_preparsecode($cat_tree[$_REQUEST['cat']]['node']['description']),
 			'can_collapse' => !empty($cat_tree[$_REQUEST['cat']]['node']['can_collapse']),
 			'children' => [],
 			'is_empty' => empty($cat_tree[$_REQUEST['cat']]['children'])
@@ -182,6 +181,20 @@ function EditCategory()
 		foreach ($boardList[$_REQUEST['cat']] as $child_board)
 			$context['category']['children'][] = str_repeat('-', $boards[$child_board]['level']) . ' ' . $boards[$child_board]['name'];
 	}
+
+	$editorOptions = [
+		'id' => 'cat_desc',
+		'value' => $context['category']['description'],
+		'labels' => [
+			'post_button' => $txt['save'],
+		],
+		// add height and width for the editor
+		'height' => '175px',
+		'width' => '100%',
+		'preview_type' => 0,
+		'required' => false,
+	];
+	create_control_richedit($editorOptions);
 
 	$prevCat = 0;
 	foreach ($cat_tree as $catid => $tree)
@@ -231,6 +244,7 @@ function EditCategory2()
 	validateToken('admin-bc-' . $_REQUEST['cat']);
 
 	require_once($sourcedir . '/Subs-Categories.php');
+	require_once($sourcedir . '/Subs-Post.php');
 
 	$_POST['cat'] = (int) $_POST['cat'];
 
@@ -243,8 +257,9 @@ function EditCategory2()
 			$catOptions['move_after'] = (int) $_POST['cat_order'];
 
 		// Change "This & That" to "This &amp; That" but don't change "&cent" to "&amp;cent;"...
-		$catOptions['cat_name'] = Parser::parse_bbc(StringLibrary::escape($_POST['cat_name']), false, '', $context['description_allowed_tags']);
-		$catOptions['cat_desc'] = Parser::parse_bbc(StringLibrary::escape($_POST['cat_desc']), false, '', $context['description_allowed_tags']);
+		$catOptions['cat_name'] = StringLibrary::escape($_POST['cat_name'] ?? '', ENT_QUOTES);
+		$catOptions['cat_desc'] = StringLibrary::escape($_POST['cat_desc'] ?? '', ENT_QUOTES);
+		preparsecode($catOptions['cat_desc']);
 
 		$catOptions['is_collapsible'] = isset($_POST['collapse']);
 
