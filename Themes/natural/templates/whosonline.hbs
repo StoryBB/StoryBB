@@ -5,22 +5,14 @@
 			</div>
 			<div id="mlist">
 				<div class="pagesection">
-					<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-					<div class="selectbox righttext">{{txt.who_show1}}
-						<select name="show_top" onchange="document.forms.whoFilter.show.value = this.value; document.forms.whoFilter.submit();">
-						{{#each context.show_methods}}
-							<option value="{{@key}}"{{#if (eq @key ../context.show_by)}} selected{{/if}}>{{.}}</option>
-						{{/each}}
-						</select>
-						<noscript>
-							<input type="submit" name="submit_top" value="{{txt.go}}">
-						</noscript>
-					</div>
+					<div class="pagelinks">{{{context.page_index}}}</div>
 				</div>
+
+				{{> tab_bar tabs=context.navigation_tabs }}
 
 				<table class="table_grid">
 					<thead>
-						<tr class="title_bar">
+						<tr class="cat_bar">
 							<th scope="col" class="lefttext" style="width: 40%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=user{{#if (and (eq context.sort_direction "down") (eq context.sort_by "user"))}};asc{{/if}}" rel="nofollow">{{txt.who_user}} {{#if (eq context.sort_by "user")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
 							<th scope="col" class="lefttext time" style="width: 10%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=time{{#if (and (eq context.sort_direction "down") (eq context.sort_by "time"))}};asc{{/if}}" rel="nofollow">{{txt.who_time}} {{#if (eq context.sort_by "time")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
 							<th scope="col" class="lefttext half_table">{{txt.who_action}}</th>
@@ -70,17 +62,7 @@
 				</table>
 
 				<div class="pagesection" id="lower_pagesection">
-					<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-					<div class="selectbox righttext">{{txt.who_show1}}
-						<select name="show" onchange="document.forms.whoFilter.submit();">
-						{{#each context.show_methods}}
-							<option value="{{@key}}"{{#if (eq @key ../context.show_by)}} selected{{/if}}>{{.}}</option>
-						{{/each}}
-						</select>
-						<noscript>
-							<input type="submit" name="submit_top" value="{{txt.go}}">
-						</noscript>
-					</div>
+					<div class="pagelinks">{{{context.page_index}}}</div>
 				</div>
 			</div>
 		</form>

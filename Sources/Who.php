@@ -88,9 +88,6 @@ function Who()
 	if (!allowedTo('moderate_forum'))
 		$conditions[] = '(COALESCE(mem.show_online, 1) = 1)';
 
-	// Fallback to top filter?
-	if (isset($_REQUEST['submit_top']) && isset($_REQUEST['show_top']))
-		$_REQUEST['show'] = $_REQUEST['show_top'];
 	// Does the user wish to apply a filter?
 	if (isset($_REQUEST['show']) && isset($show_methods[$_REQUEST['show']]))
 		$context['show_by'] = $_SESSION['who_online_filter'] = $_REQUEST['show'];
@@ -99,6 +96,16 @@ function Who()
 		$context['show_by'] = $_SESSION['who_online_filter'];
 	else
 		$context['show_by'] = 'members';
+
+	$context['navigation_tabs'] = [];
+	foreach ($context['show_methods'] as $key => $label)
+	{
+		$context['navigation_tabs'][] = [
+			'label' => $label,
+			'active' => $key == $context['show_by'],
+			'url' => $key == $context['show_by'] ? '' : $scripturl . '?action=who;show=' . $key,
+		];
+	}
 
 	$conditions[] = $show_methods[$context['show_by']];
 
