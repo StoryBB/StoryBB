@@ -34,7 +34,7 @@
 									{{#unless context.can_reply_approved}}<em>{{txt.wait_for_approval}}</em>{{/unless}}
 									{{#if (and context.can_reply_approved context.require_verification)}}<br>{{/if}}
 									<input type="hidden" name="topic" value="{{context.current_topic}}">
-									<input type="hidden" name="subject" value="{{context.response_prefix}}{{context.subject}}">
+									<input type="hidden" name="subject" value="{{{context.response_prefix}}}{{{context.subject}}}">
 									<input type="hidden" name="from_qr" value="1">
 									<input type="hidden" name="notify" value="{{#if (or context.is_marked_notify options.auto_notify)}}1{{else}}0{{/if}}">
 									<input type="hidden" name="not_approved" value="{{#if (eq_coerce context.can_reply_approved 1)}}0{{else}}1{{/if}}">
