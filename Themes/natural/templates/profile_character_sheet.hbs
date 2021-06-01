@@ -5,6 +5,10 @@
 				</h3>
 			</div>
 
+{{#if context.character.arrow_bar}}
+			{{> arrow_bar arrows=context.character.arrow_bar}}
+{{/if}}
+
 {{#if context.character.sheet_details.sheet_text}}
 	{{#unless context.character.sheet_details.id_approver}}
 			<div class="noticebox">
@@ -15,9 +19,11 @@
 			</div>
 	{{/unless}}
 
+	{{#if context.sheet_buttons}}
 			{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
-
 			<div class="clear"></div>
+	{{/if}}
+
 			<div class="windowbg">
 				{{{context.character.sheet_details.sheet_text}}}
 			</div>
@@ -26,9 +32,11 @@
 				{{{txt.char_sheet_none}}}
 			</div>
 
+	{{#if context.sheet_buttons}}
 			{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
-
 			<div class="clear"></div>
+	{{/if}}
+
 {{/if}}
 
 {{#if context.show_sheet_comments}}
@@ -50,4 +58,13 @@
 					</form>
 				</div>
 			</div>
+
+	{{#each context.sheet_comments}}
+			<div class="windowbg">
+				<div>
+					<strong>{{{real_name}}}</strong> - {{{time_posted_format}}}
+				</div>
+				<div>{{{sheet_comment_parsed}}}</div>
+			</div>
+	{{/each}}
 {{/if}}

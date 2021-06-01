@@ -4,6 +4,11 @@
 					{{{txt.char_sheet}}} - {{{context.character.character_name}}}
 				</h3>
 			</div>
+
+{{#if context.character.arrow_bar}}
+			{{> arrow_bar arrows=context.character.arrow_bar}}
+{{/if}}
+
 			<div class="errorbox"{{#unless context.sheet_errors}} style="display: none"{{/unless}} id="errors">
 				<dl>
 					<dt>
@@ -49,3 +54,21 @@
 				<br class="clear">
 				{{session_form}}
 			</form>
+
+{{#if context.sheet_comments}}
+			<br>
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{{txt.char_sheet_comments}}}
+				</h3>
+			</div>
+
+	{{#each context.sheet_comments}}
+			<div class="windowbg">
+				<div>
+					<strong>{{{real_name}}}</strong> - {{{time_posted_format}}}
+				</div>
+				<div>{{{sheet_comment_parsed}}}</div>
+			</div>
+	{{/each}}
+{{/if}}

@@ -11,6 +11,7 @@
 
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Parser;
+use StoryBB\Model\Character;
 
 /**
  * Front end controller for the character sheet templates section in the admin area.
@@ -256,22 +257,23 @@ function CharacterSheets()
 			{
 				global $smcFunc;
 				$rows = [];
+
 				$request = $smcFunc['db']->query('', '
-					SELECT csv.id_character, MAX(csv.created_time) AS latest_version,
-						MAX(csv.approved_time) AS last_approval, MAX(csv.approval_state) AS approval_state
-					FROM {db_prefix}character_sheet_versions AS csv
-					GROUP BY csv.id_character
-					ORDER BY latest_version ASC',
+					SELECT csv2.id_character, csv2.created_time AS latest_version, chars.char_sheet AS last_approval,
+						csv2.approval_state
+					FROM (
+						SELECT MAX(id_version) AS max_ver, id_character
+						FROM {db_prefix}character_sheet_versions GROUP BY id_character
+					) AS csv
+					JOIN {db_prefix}character_sheet_versions AS csv2 ON (csv.max_ver = csv2.id_version)
+					JOIN {db_prefix}characters AS chars ON (csv2.id_character = chars.id_character)
+					WHERE csv2.approval_state = {int:pending}',
 					[
-						'sort' => $sort,
+						'pending' => Character::SHEET_PENDING,
 					]
 				);
 				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
-					// If it's not actually pending approval (strict mode makes this complicated), skip it.
-					if (empty($row['approval_state']))
-						continue;
-
 					$rows[$row['id_character']] = $row;
 				}
 				$smcFunc['db']->free_result($request);
