@@ -46,6 +46,11 @@ class ProfilePopup extends AbstractProfileController
 				'icon' => 'bookmark',
 			],
 			[
+				'item' => 'show_drafts',
+				'title' => $txt['popup_drafts'],
+				'icon' => 'modify_button',
+			],
+			[
 				'item' => 'posts',
 				'title' => $txt['popup_showposts'],
 				'icon' => 'posts',
