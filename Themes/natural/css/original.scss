@@ -1923,11 +1923,11 @@ div#pollmoderation {
 
 	#forumposts, #quickReplyOptions {
 		.windowbg:nth-of-type(odd) .poster .user_info_arrow {
-			border-bottom-color: $primary-list-bg;
+			border-bottom-color: $postarea-bg-odd;
 		}
 
 		.windowbg:nth-of-type(even) .poster .user_info_arrow {
-			border-bottom-color: $secondary-list-bg;
+			border-bottom-color: $postarea-bg-even;
 		}
 	}
 }
