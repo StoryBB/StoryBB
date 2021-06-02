@@ -15,6 +15,8 @@ namespace StoryBB\Controller\Profile;
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Parser;
 use StoryBB\Model\Character;
+use StoryBB\Search\Indexable;
+use StoryBB\Container;
 
 class CharacterSheet extends AbstractProfileController
 {
@@ -73,20 +75,10 @@ class CharacterSheet extends AbstractProfileController
 		// whatever, for everyone else show them the most recent approved
 		if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 		{
-			$request = $smcFunc['db']->query('', '
-				SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
-				FROM {db_prefix}character_sheet_versions
-				WHERE id_character = {int:character}
-				ORDER BY id_version DESC
-				LIMIT 1',
-				[
-					'character' => $context['character']['id_character'],
-				]
-			);
-			if ($smcFunc['db']->num_rows($request) > 0)
+			$sheet = Character::get_latest_character_sheet($context['character']['id_character']);
+			if ($sheet)
 			{
-				$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
-				$smcFunc['db']->free_result($request);
+				$context['character']['sheet_details'] = $sheet;
 			}
 		}
 		else
@@ -115,13 +107,41 @@ class CharacterSheet extends AbstractProfileController
 		$context['show_sheet_comments'] = false;
 		if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 		{
-			// Always have an edit button
-			$context['sheet_buttons']['edit'] = [
-				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;edit;char=' . $context['character']['id_character'],
-				'text' => 'char_sheet_edit',
-			];
+			// Set up a few things for readability:
+			$approval_state = $context['character']['sheet_details']['approval_state'] ?? Character::SHEET_NORMAL;
+
+			$can_approve = allowedTo('admin_forum');
+			$sheet_has_text = !empty($context['character']['sheet_details']['sheet_text']);
+			$previously_approved = !empty($context['character']['char_sheet']);
+			$currently_approved = !empty($context['character']['sheet_details']['id_approver']);
+			$waiting_for_approval = $approval_state == Character::SHEET_PENDING && (!$currently_approved);
+			$has_comments = false; // We'll sort this in a minute.
+
+			// If there is a sheet, there might be comments. But we don't care about any comments until there is a sheet to comment on.
+			if ($sheet_has_text)
+			{
+				$context['show_sheet_comments'] = true;
+
+				$last_submission = Character::get_last_submitted_timestamp($context['character']['id_character']);
+				$context['sheet_comments'] = Character::get_sheet_comments($context['character']['id_character'], $last_submission);
+
+				foreach ($context['sheet_comments'] as $comment)
+				{
+					$has_comments |= ($comment['id_author'] && ($comment['id_author'] != $context['id_member']));
+				}
+			}
+
+			// Have an edit button, but not in every single case.
+			if ($can_approve || !$waiting_for_approval || ($waiting_for_approval && $has_comments))
+			{
+				$context['sheet_buttons']['edit'] = [
+					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;edit;char=' . $context['character']['id_character'],
+					'text' => 'char_sheet_edit',
+				];
+			}
+
 			// Only have a history button if there's actually some history
-			if (!empty($context['character']['sheet_details']['sheet_text']))
+			if ($sheet_has_text)
 			{
 				$context['sheet_buttons']['history'] = [
 					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;history;char=' . $context['character']['id_character'],
@@ -129,25 +149,28 @@ class CharacterSheet extends AbstractProfileController
 				];
 				// Only have a send-for-approval button if it hasn't been approved
 				// and it hasn't yet been sent for approval either
-				if (empty($context['character']['sheet_details']['id_approver']) && empty($context['character']['sheet_details']['approval_state']))
+				if (!$waiting_for_approval && !$currently_approved && !empty($context['user']['is_owner']))
 				{
 					$context['sheet_buttons']['send_for_approval'] = [
 						'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;approval;char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 						'text' => 'char_sheet_send_for_approval',
+						'active' => true,
 					];
 				}
 			}
+
 			// Compare to last approved only if we had a previous approval and the
 			// current one isn't approved right now
-			if (empty($context['character']['sheet_details']['id_approver']) && !empty($context['character']['char_sheet']))
+			if (!$currently_approved && $previously_approved)
 			{
 				$context['sheet_buttons']['compare'] = [
 					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;compare;char=' . $context['character']['id_character'],
 					'text' => 'char_sheet_compare',
 				];
 			}
+
 			// And the infamous approve button
-			if (!empty($context['character']['sheet_details']['sheet_text']) && empty($context['character']['sheet_details']['id_approver']) && allowedTo('admin_forum'))
+			if ($sheet_has_text && !$currently_approved && $can_approve)
 			{
 				$context['sheet_buttons']['approve'] = [
 					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;approve;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
@@ -156,55 +179,13 @@ class CharacterSheet extends AbstractProfileController
 				];
 			}
 			// And if it's pending approval and we might want to kick it back?
-			if (!empty($context['character']['sheet_details']['approval_state']) && empty($context['character']['sheet_details']['id_approver']) && allowedTo('admin_forum'))
+			if ($waiting_for_approval && $can_approve)
 			{
 				$context['sheet_buttons']['reject'] = [
 					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=character_sheet;reject;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 					'text' => 'char_sheet_reject',
 					'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_reject_are_you_sure']) . ')"',
 				];
-			}
-
-			// And since this is the owner or admin, we should look at comments.
-			if (!empty($context['character']['sheet_details']['sheet_text'])) {
-				$context['show_sheet_comments'] = true;
-				$context['sheet_comments'] = [];
-				// First, find the time of the last approved case.
-				$last_approved = 0;
-				$request = $smcFunc['db']->query('', '
-					SELECT MAX(approved_time) AS last_approved
-					FROM {db_prefix}character_sheet_versions
-					WHERE id_approver != 0
-						AND id_character = {int:character}',
-						[
-							'character' => $context['character']['id_character'],
-						]
-					);
-				if ($row = $smcFunc['db']->fetch_assoc($request))
-				{
-					$last_approved = (int) $row['last_approved'];
-				}
-				$smcFunc['db']->free_result($request);
-
-				// Now get any comments for this character since the last approval.
-				$request = $smcFunc['db']->query('', '
-					SELECT csc.id_comment, csc.id_author, mem.real_name, csc.time_posted, csc.sheet_comment
-					FROM {db_prefix}character_sheet_comments AS csc
-					LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
-					WHERE id_character = {int:character}
-						AND time_posted > {int:approval}
-					ORDER BY id_comment DESC',
-					[
-						'character' => $context['character']['id_character'],
-						'approval' => $last_approved,
-					]
-				);
-				while ($row = $smcFunc['db']->fetch_assoc($request))
-				{
-					$row['sheet_comment_parsed'] = Parser::parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
-					$context['sheet_comments'][$row['id_comment']] = $row;
-				}
-				$smcFunc['db']->free_result($request);
 			}
 
 			// Make an editor box
@@ -225,6 +206,39 @@ class CharacterSheet extends AbstractProfileController
 				'required' => true,
 			];
 			create_control_richedit($editorOptions);
+
+			$context['character']['arrow_bar'] = [
+				'wip' => [
+					'label' => $previously_approved && !$currently_approved ? $txt['char_sheet_previously_approved'] : $txt['char_sheet_wip'],
+				],
+				'submitted' => [
+					'label' => $txt['char_sheet_submitted'],
+				],
+				'feedback' => [
+					'label' => $txt['char_sheet_feedback'],
+				],
+				'approved' => [
+					'label' => $txt['char_sheet_approved'],
+				],
+			];
+
+			// Now to work out which status we're in.
+			if ($currently_approved)
+			{
+				$context['character']['arrow_bar']['approved']['active'] = true;
+			}
+			elseif ($has_comments)
+			{
+				$context['character']['arrow_bar']['feedback']['active'] = true;
+			}
+			elseif ($waiting_for_approval)
+			{
+				$context['character']['arrow_bar']['submitted']['active'] = true;
+			}
+			else
+			{
+				$context['character']['arrow_bar']['wip']['active'] = true;
+			}
 		}
 	}
 
@@ -234,37 +248,21 @@ class CharacterSheet extends AbstractProfileController
 
 		$char_id = $this->init_character();
 
-		if (isset($_GET['edit']))
-		{
-			return $this->post_edit();
-		}
-
 		// First, get rid of people shouldn't have a sheet at all - the OOC characters
 		if ($context['character']['is_main'])
 		{
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 		}
 
+		if (isset($_GET['edit']))
+		{
+			return $this->post_edit();
+		}
+
 		// Fetch the current character sheet - for the owner + admin, show most recent
 		// whatever, for everyone else show them the most recent approved
 		if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 		{
-			$request = $smcFunc['db']->query('', '
-				SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
-				FROM {db_prefix}character_sheet_versions
-				WHERE id_character = {int:character}
-				ORDER BY id_version DESC
-				LIMIT 1',
-				[
-					'character' => $context['character']['id_character'],
-				]
-			);
-			if ($smcFunc['db']->num_rows($request) > 0)
-			{
-				$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
-				$smcFunc['db']->free_result($request);
-			}
-
 			if (isset($_POST['message']))
 			{
 				// We might be saving a comment on this.
@@ -284,6 +282,60 @@ class CharacterSheet extends AbstractProfileController
 						[$context['character']['id_character'], $context['user']['id'], time(), $message],
 						['id_comment']
 					);
+				}
+
+				// Now to send an alert.
+				$recipients = [];
+				$alert_rows = [];
+				if ($context['user']['is_owner'])
+				{
+					require_once($sourcedir . '/Subs-Members.php');
+					$recipients = membersAllowedTo('admin_forum');
+
+					foreach ($recipients as $id_member)
+					{
+						$alert_rows[] = [
+							'alert_time' => time(),
+							'id_member' => $id_member,
+							'id_member_started' => $context['id_member'],
+							'member_name' => $context['member']['name'],
+							'chars_src' => $context['character']['id_character'],
+							'content_type' => 'member',
+							'content_id' => 0,
+							'content_action' => 'char_sheet_comment',
+							'is_read' => 0,
+							'extra' => '',
+						];
+					}
+				}
+				else
+				{
+					$recipients = [$context['id_member']];
+
+					$alert_rows[] = [
+						'alert_time' => time(),
+						'id_member' => $context['id_member'],
+						'id_member_started' => $context['user']['id'],
+						'member_name' => $context['user']['name'],
+						'chars_src' => $context['character']['id_character'],
+						'content_type' => 'member',
+						'content_id' => 0,
+						'content_action' => 'char_sheet_comment',
+						'is_read' => 0,
+						'extra' => '',
+					];
+				}
+
+				if (!empty($alert_rows))
+				{
+					$smcFunc['db']->insert('',
+						'{db_prefix}user_alerts',
+						['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int',
+							'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
+						$alert_rows,
+						[]
+					);
+					updateMemberData($recipients, ['alerts' => '+']);
 				}
 			}
 		}
@@ -436,27 +488,22 @@ class CharacterSheet extends AbstractProfileController
 
 		// First, get rid of people shouldn't have a sheet at all - the OOC characters
 		if ($context['character']['is_main'])
+		{
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
+		}
 
 		// Then if we're looking at a character who doesn't have an approved one
 		// and the user couldn't see it... you are the weakest link, goodbye.
 		if (empty($context['character']['char_sheet']) && empty($context['user']['is_owner']) && !allowedTo('admin_forum'))
-			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
-
-		$request = $smcFunc['db']->query('', '
-			SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
-			FROM {db_prefix}character_sheet_versions
-			WHERE id_character = {int:character}
-			ORDER BY id_version DESC
-			LIMIT 1',
-			[
-				'character' => $context['character']['id_character'],
-			]
-		);
-		if ($smcFunc['db']->num_rows($request) > 0)
 		{
-			$context['character']['sheet_details'] = $smcFunc['db']->fetch_assoc($request);
-			$smcFunc['db']->free_result($request);
+			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
+		}
+
+		// Get the current character sheet, if there is one.
+		$sheet = Character::get_latest_character_sheet($context['character']['id_character']);
+		if ($sheet)
+		{
+			$context['character']['sheet_details'] = $sheet;
 		}
 
 		// Make an editor box
@@ -496,28 +543,67 @@ class CharacterSheet extends AbstractProfileController
 
 		// Now fetch the comments
 		$context['sheet_comments'] = [];
+
+		// If we have an existing vversion, fetch any comments since the version was saved.
 		if (!empty($context['character']['sheet_details']['created_time']) && empty($context['character']['sheet_details']['id_approver']))
 		{
-			$request = $smcFunc['db']->query('', '
-				SELECT id_comment, id_author, mem.real_name, time_posted, sheet_comment
-				FROM {db_prefix}character_sheet_comments AS csc
-					LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
-				WHERE id_character = {int:character}
-					AND time_posted > {int:last_approved_time}
-				ORDER BY NULL',
-				[
-					'character' => $context['character']['id_character'],
-					'last_approved_time' => $context['character']['sheet_details']['created_time'],
-				]
-			);
-			while ($row = $smcFunc['db']->fetch_assoc($request))
-			{
-				if (empty($row['real_name']))
-					$row['real_name'] = $txt['char_unknown'];
-				$context['sheet_comments'][$row['id_comment']] = $row;
-			}
-			$smcFunc['db']->free_result($request);
-			krsort($context['sheet_comments']);
+			$last_submission = Character::get_last_submitted_timestamp($context['character']['id_character']);
+			$context['sheet_comments'] = Character::get_sheet_comments($context['character']['id_character'], $last_submission);
+		}
+
+		$approval_state = $context['character']['sheet_details']['approval_state'] ?? Character::SHEET_NORMAL;
+
+		$can_approve = allowedTo('admin_forum');
+		$sheet_has_text = !empty($context['character']['sheet_details']['sheet_text']);
+		$previously_approved = !empty($context['character']['char_sheet']);
+		$currently_approved = !empty($context['character']['sheet_details']['id_approver']);
+		$waiting_for_approval = $approval_state == Character::SHEET_PENDING && (!$currently_approved);
+		$has_comments = false; // We'll sort this in a minute.
+
+		foreach ($context['sheet_comments'] as $comment)
+		{
+			$has_comments |= ($comment['id_author'] && ($comment['id_author'] != $context['id_member'] || $can_approve));
+		}
+
+		if ($waiting_for_approval && !$has_comments && !$can_approve)
+		{
+			redirectexit('action=profile;u=' . $context['id_member'] . ';area=character_sheet;char=' . $context['character']['id_character']);
+		}
+
+		$context['character']['arrow_bar'] = [
+			'wip' => [
+				'label' => $previously_approved ? $txt['char_sheet_previously_approved'] : $txt['char_sheet_wip'],
+			],
+			'submitted' => [
+				'label' => $txt['char_sheet_submitted'],
+			],
+			'feedback' => [
+				'label' => $txt['char_sheet_feedback'],
+			],
+			'approved' => [
+				'label' => $txt['char_sheet_approved'],
+			],
+		];
+
+		// Now to work out which status we're in.
+		if ($currently_approved)
+		{
+			$context['character']['arrow_bar']['approved']['active'] = true;
+			$context['character']['arrow_bar']['editing'] = [
+				'label' => $txt['char_sheet_new_revision'],
+			];
+		}
+		elseif ($has_comments)
+		{
+			$context['character']['arrow_bar']['feedback']['active'] = true;
+		}
+		elseif ($waiting_for_approval)
+		{
+			$context['character']['arrow_bar']['submitted']['active'] = true;
+		}
+		else
+		{
+			$context['character']['arrow_bar']['wip']['active'] = true;
 		}
 
 		$context['sub_template'] = 'profile_character_sheet_edit';
@@ -532,6 +618,35 @@ class CharacterSheet extends AbstractProfileController
 		// Make an editor box
 		require_once($sourcedir . '/Subs-Post.php');
 		require_once($sourcedir . '/Subs-Editor.php');
+
+		$sheet = Character::get_latest_character_sheet($context['character']['id_character']);
+		if ($sheet)
+		{
+			$context['character']['sheet_details'] = $sheet;
+		}
+
+		$last_submission = Character::get_last_submitted_timestamp($context['character']['id_character']);
+		$context['sheet_comments'] = Character::get_sheet_comments($context['character']['id_character'], $last_submission);
+
+		$approval_state = $context['character']['sheet_details']['approval_state'] ?? Character::SHEET_NORMAL;
+
+		$can_approve = allowedTo('admin_forum');
+		$sheet_has_text = !empty($context['character']['sheet_details']['sheet_text']);
+		$previously_approved = !empty($context['character']['char_sheet']);
+		$currently_approved = !empty($context['character']['sheet_details']['id_approver']);
+		$waiting_for_approval = $approval_state == Character::SHEET_PENDING && (!$currently_approved);
+		$has_comments = false;
+
+		foreach ($context['sheet_comments'] as $comment)
+		{
+			$has_comments |= ($comment['id_author'] && ($comment['id_author'] != $context['id_member'] || $can_approve));
+		}
+
+		// Admins can always edit - but non-admins can only edit if not yet waiting for approval, or if they have received feedback.
+		if (!$can_approve && $waiting_for_approval && !$has_comments)
+		{
+			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
+		}
 
 		// Then try to get some content.
 		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
@@ -563,8 +678,6 @@ class CharacterSheet extends AbstractProfileController
 					],
 					['id_version']
 				);
-				// Mark previous versions of the character sheet as not awaited approval.
-				Character::mark_sheet_unapproved($context['character']['id_character']);
 			}
 		}
 
@@ -780,7 +893,7 @@ class CharacterSheet extends AbstractProfileController
 		if (!allowedTo('admin_forum'))
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
-		Character::mark_sheet_unapproved($context['character']['id_character']);
+		Character::mark_sheet_unapproved((int) $context['character']['id_character'], Character::SHEET_REJECTED);
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=character_sheet;char=' . $context['character']['id_character']);
 	}
 }

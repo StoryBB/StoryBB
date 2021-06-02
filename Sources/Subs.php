@@ -14,6 +14,7 @@ use LightnCandy\LightnCandy;
 use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Model\Alert;
+use StoryBB\Model\Character;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -1988,25 +1989,8 @@ function setupMenuContext()
 						'title' => $txt['char_sheet_admin'],
 						'url' => $scripturl . '?action=admin;area=sheets',
 						'visible' => allowedTo('admin_forum'),
-						'amt_callback' => function() use ($smcFunc) {
-							$count = 0;
-							$request = $smcFunc['db']->query('', '
-								SELECT csv.id_character, MAX(csv.created_time) AS latest_version,
-									MAX(csv.approved_time) AS last_approval, MAX(csv.approval_state) AS approval_state
-								FROM {db_prefix}character_sheet_versions AS csv
-								GROUP BY csv.id_character
-								ORDER BY latest_version ASC'
-							);
-							while ($row = $smcFunc['db']->fetch_assoc($request))
-							{
-								// If it's actually pending approval (strict mode makes this complicated), count it.
-								if (!empty($row['approval_state']))
-								{
-									$count++;
-								}
-							}
-							$smcFunc['db']->free_result($request);
-							return $count;
+						'amt_callback' => function() {
+							return Character::count_pending_character_sheets();
 						}
 					],
 					'contactform' => [

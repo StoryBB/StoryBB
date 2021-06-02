@@ -18,7 +18,6 @@ $txt['who_unknown'] = '<em>Unknown Action</em>';
 $txt['who_user'] = 'User';
 $txt['who_time'] = 'Time';
 $txt['who_action'] = 'Action';
-$txt['who_show1'] = 'Show ';
 $txt['who_show_members_only'] = 'Members Only';
 $txt['who_show_guests_only'] = 'Guests Only';
 $txt['who_show_robots_only'] = 'Robots Only';

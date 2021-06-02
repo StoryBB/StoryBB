@@ -67,6 +67,7 @@ class Robot
 			'ltx71' => 'ltx71',
 			'magpie-crawler' => 'brandwatch',
 			'mail.ru' => 'mail.ru',
+			'mauibot' => 'mauibot',
 			'mbcrawler' => 'monitorbacklinks',
 			'mediapartners-google' => 'googleadsense',
 			'megaindex' => 'megaindex',
@@ -89,6 +90,7 @@ class Robot
 			'scrapy' => 'scrapy',
 			'scrubby' => 'scrubtheweb',
 			'semrushbot' => 'semrush',
+			'seostar' => 'seostar',
 			'serendeputybot' => 'serendeputy',
 			'serpstatbot' => 'serpstatbot',
 			'seznambot' => 'seznambot',
@@ -272,6 +274,9 @@ class Robot
 				'title' => 'Majestic12',
 				'link' => 'https://www.majestic12.co.uk/projects/dsearch/mj12bot.php',
 			],
+			'mauibot' => [
+				'title' => 'MauiBot',
+			],
 			'megaindex' => [
 				'title' => 'MegaIndex',
 				'link' => 'https://megaindex.com/crawler',
@@ -334,6 +339,10 @@ class Robot
 			'semrush' => [
 				'title' => 'SemrushBot',
 				'link' => 'https://semrush.com/bot/',
+			],
+			'seostar' => [
+				'title' => 'Seostar',
+				'link' => 'https://seostar.co/robot/',
 			],
 			'serendeputy' => [
 				'title' => 'Serendeputy',

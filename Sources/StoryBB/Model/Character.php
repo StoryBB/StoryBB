@@ -12,11 +12,17 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\Helper\Parser;
+
 /**
  * This class handles characters.
  */
 class Character
 {
+	const SHEET_NORMAL = 0;
+	const SHEET_PENDING = 1;
+	const SHEET_REJECTED = 2;
+
 	/**
 	 * Move a character physically to another account.
 	 *
@@ -198,19 +204,172 @@ class Character
 	}
 
 	/**
+	 * Get latest revision of any kind of a given character's character sheet.
+	 * 
+	 * @param int $character_id The character ID
+	 * @return ?array An array of the character sheet revision, or null if not found.
+	 */
+	public static function get_latest_character_sheet(int $character_id): ?array
+	{
+		global $smcFunc;
+
+		$request = $smcFunc['db']->query('', '
+			SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
+			FROM {db_prefix}character_sheet_versions
+			WHERE id_character = {int:character}
+			ORDER BY id_version DESC
+			LIMIT 1',
+			[
+				'character' => $character_id,
+			]
+		);
+		if ($smcFunc['db']->num_rows($request) > 0)
+		{
+			$return = $smcFunc['db']->fetch_assoc($request);
+		}
+		$smcFunc['db']->free_result($request);
+
+		return $return ?? null;
+	}
+
+	/**
+	 * Get timestamp of the last time this character's sheet was submitted for review.
+	 *
+	 * Note that an approval will modify the last timestamp for submission.
+	 *
+	 * @param int $character_id The character ID
+	 * @return int Either the timestamp of the last submission, or 0 if never submitted.
+	 */
+	public static function get_last_submitted_timestamp(int $character_id): int
+	{
+		global $smcFunc;
+
+		$last_submitted = 0;
+
+		$request = $smcFunc['db']->query('', '
+			SELECT csv.id_version, csv.created_time, csv_approved.approved_time, chars.char_sheet AS last_approved
+			FROM {db_prefix}character_sheet_versions AS csv
+			JOIN {db_prefix}characters AS chars ON (csv.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}character_sheet_versions AS csv_approved ON (chars.char_sheet = csv_approved.id_version)
+			WHERE (csv.approval_state = {int:pending} OR csv.approval_state = {int:rejected})
+				AND csv.id_character = {int:character}
+			ORDER BY id_version DESC
+			LIMIT 1',
+				[
+					'pending' => static::SHEET_PENDING,
+					'rejected' => static::SHEET_REJECTED,
+					'character' => $character_id,
+				]
+			);
+		if ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			if ($row['approved_time'] > $row['created_time'])
+			{
+				$last_submitted = (int) $row['approved_time'];
+			}
+			else
+			{
+				$last_submitted = (int) $row['created_time'];
+			}
+		}
+		$smcFunc['db']->free_result($request);
+
+		return $last_submitted;
+	}
+
+	/**
+	 * Get timestamp of the last approved version of a character sheet for a character.
+	 *
+	 * @param int $character_id The character ID
+	 * @return int The timestamp of the character sheet version, or 0 if never approved.
+	 */
+	public static function get_last_approval_timestamp(int $character_id): int
+	{
+		global $smcFunc;
+
+		$last_approved = 0;
+		$request = $smcFunc['db']->query('', '
+			SELECT MAX(approved_time) AS last_approved
+			FROM {db_prefix}character_sheet_versions
+			WHERE id_approver != 0
+				AND id_character = {int:character}',
+				[
+					'character' => $character_id,
+				]
+			);
+		if ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$last_approved = (int) $row['last_approved'];
+		}
+		$smcFunc['db']->free_result($request);
+
+		return $last_approved;
+	}
+
+	/**
+	 * Get character sheet comments.
+	 *
+	 * @param int $character_id The character ID
+	 * @param int $timestamp Comments filtered to after this timestamp
+	 * @return array An array of comment records
+	 */
+	public static function get_sheet_comments(int $character_id, int $timestamp = 0): array
+	{
+		global $smcFunc, $txt;
+
+		$return = [];
+
+		$request = $smcFunc['db']->query('', '
+			SELECT csc.id_comment, csc.id_author, mem.real_name, csc.time_posted, csc.sheet_comment
+			FROM {db_prefix}character_sheet_comments AS csc
+			LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
+			WHERE id_character = {int:character}
+				AND time_posted > {int:approval}
+			ORDER BY id_comment DESC',
+			[
+				'character' => $character_id,
+				'approval' => $timestamp,
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			if (empty($row['real_name']))
+			{
+				$row['real_name'] = $txt['char_unknown'];
+			}
+			$row['time_posted_format'] = timeformat($row['time_posted']);
+			$row['sheet_comment_parsed'] = Parser::parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
+			$return[$row['id_comment']] = $row;
+		}
+		$smcFunc['db']->free_result($request);
+
+		return $return;
+	}
+
+	/**
 	 * Mark a given character's sheet as unapproved.
 	 *
 	 * @param int $char Character ID whose character sheet should be marked as unapproved.
+	 * @param int $new_status The new status to mark the most recent revision as.
 	 */
-	public static function mark_sheet_unapproved($char)
+	public static function mark_sheet_unapproved(int $char, int $new_status = Character::SHEET_NORMAL)
 	{
 		global $smcFunc;
+
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}character_sheet_versions
-			SET approval_state = 0
-			WHERE id_character = {int:char}',
+			SET approval_state = {int:new_status}
+			WHERE id_version = (
+				SELECT id_version
+				FROM {db_prefix}character_sheet_versions
+				WHERE id_character = {int:char}
+				ORDER BY id_version DESC
+				LIMIT 1
+			)
+			LIMIT 1',
 			[
 				'char' => (int) $char,
+				'new_status' => $new_status,
 			]
 		);
 	}
@@ -296,5 +455,32 @@ class Character
 				'char' => $character_id,
 			]
 		);
+	}
+
+	/**
+	 * Returns the number of outstanding character sheets.
+	 *
+	 * @return int Number of character sheets currently pending review and not explicitly returned to users.
+	 */
+	public static function count_pending_character_sheets(): int
+	{
+		global $smcFunc;
+
+		$count = 0;
+		$request = $smcFunc['db']->query('', '
+			SELECT COUNT(csv2.id_character)
+			FROM (
+				SELECT MAX(id_version) AS max_ver, id_character
+				FROM {db_prefix}character_sheet_versions GROUP BY id_character
+			) AS csv
+			JOIN {db_prefix}character_sheet_versions AS csv2 ON (csv.max_ver = csv2.id_version)
+			WHERE csv2.approval_state = {int:pending}',
+			[
+				'pending' => static::SHEET_PENDING,
+			]
+		);
+		[$count] = $smcFunc['db']->fetch_row($request);
+		$smcFunc['db']->free_result($request);
+		return (int) $count;
 	}
 }

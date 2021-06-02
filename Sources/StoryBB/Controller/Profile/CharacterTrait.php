@@ -29,6 +29,7 @@ trait CharacterTrait
 		}
 
 		$context['character'] = $user_profile[$memID]['characters'][$char_id];
+		$context['character']['id_character'] = (int) $context['character']['id_character'];
 		$context['character']['editable'] = $context['user']['is_owner'] || allowedTo('admin_forum');
 		$context['user']['can_admin'] = allowedTo('admin_forum');
 

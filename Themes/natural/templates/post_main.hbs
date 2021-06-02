@@ -8,7 +8,7 @@
 	<div id="preview_section"{{#unless context.preview_message}} style="display: none;"{{/unless}}>
 		<div class="cat_bar">
 			<h3 class="catbg">
-				<span id="preview_subject">{{#unless context.preview_message}}&nbsp;{{else}}{{context.preview_subject}}{{/unless}}</span>
+				<span id="preview_subject">{{#unless context.preview_message}}&nbsp;{{else}}{{{context.preview_subject}}}{{/unless}}</span>
 			</h3>
 		</div>
 		<div id="preview_body" class="windowbg noup">
@@ -17,7 +17,7 @@
 	</div>
 	<br>
 	<div class="cat_bar">
-		<h3 class="catbg">{{context.page_title}}</h3>
+		<h3 class="catbg">{{{context.page_title}}}</h3>
 	</div>
 	<div id="post_area">
 		<div class="roundframe noup">

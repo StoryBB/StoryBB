@@ -1,0 +1,59 @@
+/** Arrow bar component. */
+
+.arrowbar {
+	display: block;
+	margin: 10px 0;
+}
+.arrowbar .arrow {
+	display: inline-block;
+}
+.arrowbar .arrow span::after {
+	border-top: 17px solid transparent;
+	border-bottom: 17px solid transparent;
+	border-left: 17px solid $secondary-accent;
+	display: inline-block;
+	content: "";
+	position: absolute;
+	right: -17px;
+	top: 0;
+}
+.arrowbar .arrow span {
+	padding: 10px 15px;
+	background: $secondary-accent;
+	color: $secondary-accent-contrast;
+	position: relative;
+	margin-left: 22px;
+	margin-bottom: 10px;
+	font-size: 14px;
+	line-height: 14px;
+	height: 34px;
+	display: inline-block;
+}
+.arrowbar .arrow:first-of-type span {
+	margin-left: 0;
+}
+.arrowbar .arrow:nth-of-type(n+2) span:before {
+	content: "";
+	border: 17px solid $secondary-accent;
+	border-left-color: transparent;
+	display: inline-block;
+	position: absolute;
+	left:-20px;
+	top:0;
+}
+.arrowbar .arrow:last-of-type span:after {
+	display: none;
+}
+
+.arrowbar .arrow.active {
+	span:before {
+		border-color: $tertiary-accent $tertiary-accent $tertiary-accent transparent;
+	}
+	span:after {
+		border-left-color: $tertiary-accent;
+	}
+	span {
+		background: $tertiary-accent;
+		color: $tertiary-accent-contrast;
+	}
+}

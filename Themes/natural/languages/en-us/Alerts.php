@@ -21,6 +21,7 @@ $txt['alerts_no_unread'] = 'No unread alerts.';
 
 $txt['alert_topic_reply'] = '{char_link} replied to the topic {topic_msg}';
 $txt['alert_topic_move'] = 'The topic {topic_msg} has been moved to {board_msg}';
+$txt['alert_topic_edit'] = 'The topic {topic_msg} has been edited';
 $txt['alert_topic_remove'] = 'The topic {topic_msg} has been deleted';
 $txt['alert_topic_unlock'] = 'The topic {topic_msg} has been unlocked';
 $txt['alert_topic_lock'] = 'The topic {topic_msg} has been locked';
@@ -51,6 +52,7 @@ $txt['alerts_none'] = 'You have no alerts.';
 $txt['alert_msg_quotechr'] = '{char_link} quoted {your_chr} in the post {msg_msg}';
 $txt['alert_msg_mentionchr'] = '{char_link} mentioned {your_chr} in the post {msg_msg}';
 $txt['alert_msg_likechr'] = '{member_link} liked {your_chr}\'s post {msg_msg}';
+$txt['alert_member_char_sheet_comment'] = '{member_link} left a comment about {char_link}\'s <a href="#{char_sheet_link}">character sheet</a>.';
 $txt['alert_member_char_sheet_approval'] = '{char_link}\'s <a href="#{char_sheet_link}">character sheet</a> is awaiting approval.';
 $txt['alert_member_char_sheet_approvedchr'] = '{your_chr}\'s character sheet was approved.';
 $txt['alert_member_export_complete'] = 'An export of your posts and attachments is <a href="{scripturl}{export_link}">ready for you</a>.';

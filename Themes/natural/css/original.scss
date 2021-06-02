@@ -951,8 +951,9 @@ a.button_submit {
 /* 9# Titles and categories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-div.cat_bar {
+.cat_bar {
 	background: $primary-accent;
+	color: $primary-accent-contrast;
 	padding: 0;
 }
 
@@ -960,7 +961,7 @@ div.cat_bar {
 	padding: 8px 12px 6px 12px;
 }
 
-.cat_bar strong {
+.cat_bar strong, .cat_bar a {
 	color: $primary-accent-contrast;
 }
 
@@ -1016,7 +1017,7 @@ h3.catbg .icon {
 
 .sub_bar {
 	border-bottom: 1px solid $primary-border;
-	background: none;
+	background: $primary-accent;
 	clear: both;
 }
 
@@ -1041,7 +1042,7 @@ h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 /* General table class */
 table.table_grid {
 	border-collapse: collapse;
-	margin: 1px 0 5px 0;
+	margin: 0px 0 5px 0;
 	width: 100%;
 }
 
@@ -1070,7 +1071,7 @@ table.table_grid td {
 	width: 5%;
 }
 
-.title_bar th {
+.title_bar th, .cat_bar th {
 	padding: 4px 8px;
 }
 

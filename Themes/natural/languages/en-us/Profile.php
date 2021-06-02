@@ -59,6 +59,7 @@ $txt['profile_issue_warning'] = 'Issue Warning';
 
 // Some of the things from the popup need their own descriptions
 $txt['popup_summary'] = 'My Profile';
+$txt['popup_drafts'] = 'My Drafts';
 $txt['popup_showposts'] = 'My Posts';
 $txt['popup_ignore'] = 'Ignore People';
 $txt['popup_bookmarks'] = 'My Bookmarks';
@@ -726,3 +727,10 @@ $txt['char_sheet_approved_on'] = '(approved %1$s by %2$s)';
 $txt['char_sheet_click_to_expand'] = '<a href="#" class="click_expand">show more</a>';
 $txt['char_sheet_click_to_collapse'] = '<a href="#" class="click_collapse">show less</a>';
 $txt['char_sheet_empty'] = 'No character sheet was given.';
+
+$txt['char_sheet_wip'] = 'Work in progress';
+$txt['char_sheet_submitted'] = 'Submitted';
+$txt['char_sheet_feedback'] = 'Feedback';
+$txt['char_sheet_approved'] = 'Approved';
+$txt['char_sheet_previously_approved'] = 'Previously approved';
+$txt['char_sheet_new_revision'] = 'New revision';
