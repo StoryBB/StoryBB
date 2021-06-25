@@ -17,7 +17,7 @@
 		</div>
 		<div id="topic_container">
 {{#each context.member.characters}}
-	{{#if (eq_coerce is_main '0')}}
+	{{#if (and (eq_coerce is_main '0') (eq_coerce retired '0'))}}
 			<div class="character">
 				<div class="title_bar">
 					<h3 class="titlebg">{{{character_name}}}</h3>
