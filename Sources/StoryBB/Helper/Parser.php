@@ -90,6 +90,11 @@ class Parser
 		// Sift out the bbc for a performance improvement.
 		if (empty($bbc_codes) || $message === false || !empty($parse_tags))
 		{
+			if ($txt === null)
+			{
+				loadLanguage('General');
+			}
+
 			if (!empty($modSettings['disabledBBC']))
 			{
 				$disabled = [];
@@ -539,6 +544,14 @@ class Parser
 					'tag' => 'nobbc',
 					'type' => 'unparsed_content',
 					'content' => '$1',
+				],
+				[
+					'tag' => 'ooc',
+					'before' => '<blockquote class="bbc_standard_quote bbc_ooc"><cite>' . $txt['out_of_character'] . '</cite>',
+					'after' => '</blockquote>',
+					'trim' => 'both',
+					'block_level' => true,
+					'disallow_children' => ['ooc'],
 				],
 				[
 					'tag' => 'pre',

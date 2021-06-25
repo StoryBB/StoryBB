@@ -285,6 +285,7 @@ $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
 
+$txt['out_of_character'] = 'Out Of Character';
 $txt['ooc_character_topics'] = 'Out of character topics';
 $txt['ic_character_topics'] = 'In character topics';
 
