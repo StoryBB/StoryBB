@@ -177,8 +177,24 @@ function saveProfileFields($section)
 	// Cycle through the profile fields working out what to do!
 	foreach ($profile_fields as $key => $field)
 	{
-		if (!isset($_POST[$key]) || !empty($field['is_dummy']) || (isset($_POST['preview_signature']) && $key == 'signature'))
+		if ($key == 'birthday_date')
+		{
+			if (!isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+			{
+				continue;
+			}
+		}
+		elseif ($key == 'signature')
+		{
+			if (isset($_POST['preview_signature']))
+			{
+				continue;
+			}
+		}
+		elseif (!isset($_POST[$key]) || !empty($field['is_dummy']))
+		{
 			continue;
+		}
 
 		// What gets updated?
 		$db_key = isset($field['save_key']) ? $field['save_key'] : $key;
@@ -187,6 +203,7 @@ function saveProfileFields($section)
 		if (isset($field['input_validate']))
 		{
 			$is_valid = $field['input_validate']($_POST[$key]);
+
 			// An error occurred - set it as such!
 			if ($is_valid !== true)
 			{
