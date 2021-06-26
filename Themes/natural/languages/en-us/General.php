@@ -674,6 +674,8 @@ $txt['split_reset_selection'] = 'reset selection';
 $txt['modify_cancel'] = 'Cancel';
 $txt['modify_cancel_all'] = 'Cancel All';
 $txt['mark_read_short'] = 'Mark Read';
+$txt['order_sticky_short'] = 'Re-Order Stickies';
+$txt['order_sticky'] = 'Re-Order Sticky Posts';
 
 $txt['alerts'] = 'Alerts';
 
