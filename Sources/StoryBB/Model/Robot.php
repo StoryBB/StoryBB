@@ -96,6 +96,7 @@ class Robot
 			'seznambot' => 'seznambot',
 			'slackbot' => 'slack',
 			'sogou' => 'sogou',
+			'sosospider' => 'sosospider',
 			'speedy spider' => 'entireweb',
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
@@ -363,6 +364,10 @@ class Robot
 			'sogou' => [
 				'title' => 'Sogou',
 				'link' => 'http://www.sogou.com/docs/help/webmasters.htm#07',
+			],
+			'sosospider' => [
+				'title' => 'Sosospider',
+				'link' => 'http://help.soso.com/webspider.htm',
 			],
 			'statuscake' => [
 				'title' => 'StatusCake',
