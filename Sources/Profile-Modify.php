@@ -239,11 +239,14 @@ function saveProfileFields($section)
 			$cur_profile[$key] = $_POST[$key];
 
 			// Are we logging it?
-			if (!empty($field['log_change']) && isset($old_profile[$key]))
+			$old_value = isset($old_profile[$key]) ? $old_profile[$key] : (isset($old_profile[$db_key]) ? $old_profile[$db_key] : '');
+			if (!empty($field['log_change']))
+			{
 				$context['log_changes'][$key] = [
-					'previous' => $old_profile[$key],
+					'previous' => $old_value,
 					'new' => $_POST[$key],
 				];
+			}
 		}
 
 		// Logging group changes are a bit different...

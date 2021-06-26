@@ -77,6 +77,7 @@ class ProfileFields
 				'type' => 'callback',
 				'callback_func' => 'birthday_date',
 				'permission' => 'profile_extra',
+				'log_change' => true,
 				'save_key' => 'birthdate',
 				'preload' => function() use ($cur_profile, &$context, $txt, $modSettings)
 				{

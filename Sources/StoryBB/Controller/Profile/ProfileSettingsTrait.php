@@ -68,7 +68,7 @@ trait ProfileSettingsTrait
 
 		$memID = $this->params['u'];
 
-		if (!empty($context['log_changes']) && !empty($modSettings['modlog_enabled']))
+		if (!empty($context['log_changes']) && !empty($modSettings['userlog_enabled']))
 		{
 			$log_changes = [];
 			require_once($sourcedir . '/Logging.php');
