@@ -12,6 +12,7 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 
 /**
@@ -92,7 +93,7 @@ class DiscordServer extends AbstractBlock implements Block
 		foreach ($server_response['members'] as $member)
 		{
 			$online[] = [
-				'name' => $member['username'],
+				'name' => StringLibrary::escape($member['username']),
 				'avatar' => $avatars ? $member['avatar_url'] : false,
 			];
 		}
