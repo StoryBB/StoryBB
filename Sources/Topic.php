@@ -186,9 +186,9 @@ function ReorderSticky()
 		);
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$topics[$row['id_topic']] = array(
+			$topics[$row['id_topic']] = [
 				'old' => (int) $row['is_sticky'],
-			);
+			];
 		}
 		$smcFunc['db']->free_result($request);
 
@@ -233,10 +233,10 @@ function ReorderSticky()
 					UPDATE {db_prefix}topics
 					SET is_sticky = {int:new}
 					WHERE id_topic = {int:topic}',
-					array(
+					[
 						'new' => $info['new'],
 						'topic' => $id,
-					)
+					]
 				);
 			}
 		}
