@@ -274,6 +274,8 @@ function getBoardIndex($boardIndexOptions)
 			'avatar' => $row_board['avatar'],
 			'email' => $row_board['email_address'],
 			'filename' => !empty($row_board['member_filename']) ? $row_board['member_filename'] : '',
+			'display_name' => !empty($row_board['id_character']) ? $row_board['real_name'] : '',
+			'is_guest' => empty($row_board['id_character']),
 		]);
 
 		// Provide the href and link.

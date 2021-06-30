@@ -591,7 +591,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		'range_after' => [],
 		'range_all_except_ends' => [],
 		'max_index' => (int) (($max_value - 1) / $num_per_page) * $num_per_page,
-		'max_pages' => ceil(($max_value - 1) / $num_per_page),
+		'max_pages' => ceil($max_value / $num_per_page),
 		'current_page' => $start / $num_per_page,
 		'current_page_display' => $start / $num_per_page + 1,
 		'actually_on_current_page' => !$start_invalid,

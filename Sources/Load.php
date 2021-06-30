@@ -2932,7 +2932,7 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings;
+	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings, $txt;
 
 	// Come on!
 	if (empty($data))
@@ -2965,13 +2965,23 @@ function set_avatar_data($data = [])
 
 	// At this point in time $image has to be filled... thus a check for !empty() is still needed.
 	if (!empty($image))
+	{
+
+		if (!empty($data['display_name']))
+		{
+			$display_name = sprintf($txt['avatar_of'], $data['display_name']);
+		}
+		elseif (!empty($data['is_guest']))
+		{
+			$display_name = $txt['guest'];
+		}
 		return [
 			'name' => !empty($data['avatar']) ? $data['avatar'] : '',
-			'image' => '<img class="avatar" src="' . $image . '" />',
+			'image' => '<img class="avatar" src="' . $image . '"' . (!empty($display_name) ? ' alt="' . $display_name . '"' : '') . ' />',
 			'href' => $image,
 			'url' => $image,
 		];
-
+	}
 	// Fallback to make life easier for everyone...
 	else
 		return [

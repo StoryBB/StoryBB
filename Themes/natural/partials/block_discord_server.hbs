@@ -11,7 +11,7 @@
 {{#if online}}
 <div class="discord_server discord_server_online">
 	{{#each online}}
-		<div class="online_discord">{{#if avatar}}<img src="{{avatar}}" alt="">{{/if}} {{name}}</div>
+		<div class="online_discord">{{#if avatar}}<img src="{{avatar}}" alt="{{textTemplate ../txt.avatar_of name}}">{{/if}} {{{name}}}</div>
 	{{/each}}
 </div>
 {{/if}}

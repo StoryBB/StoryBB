@@ -538,7 +538,12 @@ class CharacterSheet extends AbstractProfileController
 			e.preventDefault();
 			var tmpl = $("#char_sheet_template").val();
 			if (sheet_templates.hasOwnProperty(tmpl))
-				$("#message").data("sceditor").InsertText(sheet_templates[tmpl].body);
+			{
+				var template = sheet_templates[tmpl].body;
+				var char_name = ' . json_encode(html_entity_decode($context['character']['character_name'], ENT_QUOTES)) . ';
+				template = template.replace("{$character_name}", char_name);
+				$("#message").data("sceditor").InsertText(template);
+			}
 		});', true);
 
 		// Now fetch the comments

@@ -60,6 +60,7 @@ $txt['remove'] = 'Remove';
 $txt['start_new_topic'] = 'Start new topic';
 $txt['posting_as'] = 'Posting as %s';
 $txt['posting_as_generic'] = 'Posting as';
+$txt['avatar_of'] = 'Avatar of %1$s';
 
 $txt['login'] = 'Login';
 // Use numeric entities in the below string.
@@ -285,6 +286,7 @@ $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
 
+$txt['out_of_character'] = 'Out Of Character';
 $txt['ooc_character_topics'] = 'Out of character topics';
 $txt['ic_character_topics'] = 'In character topics';
 
@@ -674,6 +676,8 @@ $txt['split_reset_selection'] = 'reset selection';
 $txt['modify_cancel'] = 'Cancel';
 $txt['modify_cancel_all'] = 'Cancel All';
 $txt['mark_read_short'] = 'Mark Read';
+$txt['order_sticky_short'] = 'Re-Order Stickies';
+$txt['order_sticky'] = 'Re-Order Sticky Posts';
 
 $txt['alerts'] = 'Alerts';
 

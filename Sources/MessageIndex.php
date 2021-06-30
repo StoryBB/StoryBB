@@ -669,6 +669,22 @@ function MessageIndex()
 		{
 			$context['topics'][$prefix_topic]['prefixes'] = $prefixes;
 		}
+
+		$context['can_order_sticky'] = false;
+		if ($context['can_sticky'])
+		{
+			// We should check that we're on the first page and that there's something to reorder.
+			// Fortunately this is the same test - we look at what we're displaying and check for stickiness.
+			$is_sticky = 0;
+			foreach ($context['topics'] as $t => $topic)
+			{
+				if ($topic['is_sticky'])
+				{
+					$is_sticky++;
+				}
+			}
+			$context['can_order_sticky'] = $is_sticky > 1;
+		}
 	}
 
 	if (!empty($context['can_quick_mod']))
@@ -787,6 +803,11 @@ function MessageIndex()
 	if ($context['user']['is_logged'])
 	{
 		$context['normal_buttons']['markread'] = ['text' => 'mark_read_short', 'image' => 'markread.png', 'lang' => true, 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_var'] . '=' . $context['session_id']];
+	}
+
+	if ($context['can_order_sticky'])
+	{
+		$context['normal_buttons']['order'] = ['text' => 'order_sticky_short', 'image' => 'sticky.png', 'lang' => true, 'url' => $scripturl . '?action=sticky;sa=order;board=' . $context['current_board'] . '.0'];
 	}
 
 	if ($context['can_mark_notify'])

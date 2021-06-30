@@ -119,6 +119,8 @@ class AccountSettings extends AbstractProfileController
 
 			// Invalidate any cached data.
 			cache_put_data('member_data-profile-' . $memID, null, 0);
+
+			redirectexit('action=profile;area=account_settings;u=' . $memID);
 		}
 
 		// Have some errors for some reason?
@@ -127,12 +129,6 @@ class AccountSettings extends AbstractProfileController
 			// Set all the errors so the template knows what went wrong.
 			foreach ($post_errors as $error_type)
 				$context['modify_error'][$error_type] = true;
-		}
-		// If it's you then we should redirect upon save.
-		elseif (!empty($profile_vars) && $context['user']['is_owner'])
-		{
-			session_flash('success', $txt['profile_updated_own']);
-			redirectexit('action=profile;area=account_settings');
 		}
 
 		return $this->display_action();

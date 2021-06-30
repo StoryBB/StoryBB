@@ -35,7 +35,7 @@ class TopicTracker
 
 		foreach ($context['member']['characters'] as $character)
 		{
-			if (empty($character['is_main']))
+			if (empty($character['is_main']) && !$character['retired'])
 			{
 				$character_ids[] = $character['id_character'];
 			}
@@ -51,6 +51,10 @@ class TopicTracker
 		foreach ($context['member']['characters'] as $id_character => $character)
 		{
 			if (!empty($character['is_main']))
+			{
+				continue;
+			}
+			if ($character['retired'])
 			{
 				continue;
 			}

@@ -20,7 +20,10 @@ img.icon.char_avatar {
 	width: 16px;
 	height: 16px;
 	display: inline-block;
-	background: url("#{$images_url}/icons/main_icons_sprite.png") no-repeat -5px -5px;
+	background-image: url("#{$images_url}/icons/main_icons_sprite.png");
+	background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp");
+	background-repeat: no-repeat;
+	background-position: -5px -5px;
 	vertical-align: middle;
 	content: "";
 }
