@@ -17,6 +17,23 @@ input, button, select, textarea, .button {
 	}
 }
 
+body {
+	.select2-dropdown {
+		background: $default-background;
+	}
+	.select2-container--default {
+		.select2-results__option {
+			&[aria-selected="true"] {
+				color: $sidebar-fg;
+				background: $sidebar-bg;
+			}
+			&--highlighted[aria-selected] {
+				background: $sidebar-bg-hover;
+			}
+		}
+	}
+}
+
 input, button, select {
 	font-size: 0.9rem;
 }
