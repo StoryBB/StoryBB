@@ -532,6 +532,7 @@ a.button_submit {
 }
 .jump_buttons a {
 	background-image: url("#{$images_url}/icons/main_icons_sprite.png"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
+	background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 	background-position: -159px -3px;
 	border-radius: 3px;
 	border: 1px solid #bbb;
@@ -1104,7 +1105,10 @@ tr.windowbg td, .table_grid tr td {
 .errorbox::before, .noticebox::before, .infobox::before {
 	width: 16px;
 	height: 16px;
-	background: url("#{$images_url}/icons/main_icons_sprite.png") no-repeat -57px -83px;
+	background-image: url("#{$images_url}/icons/main_icons_sprite.png");
+	background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp");
+	background-repeat: no-repeat;
+	background-position: -57px -83px;
 	left: 10px;
 	content: '';
 	position: absolute;
