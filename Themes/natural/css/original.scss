@@ -3236,9 +3236,9 @@ dl.stats dd span {
 
 /* AJAX notification bar */
 #ajax_in_progress {
-	background: #fff;
-	border-bottom: 4px solid #f96f00;
-	color: #f96f00;
+	background: $content-background;
+	border-bottom: 4px solid $primary-accent;
+	color: $primary-accent;
 	text-align: center;
 	font-size: 1.6em;
 	padding: 8px;
@@ -3247,6 +3247,7 @@ dl.stats dd span {
 	position: fixed;
 	top: 0;
 	left: 0;
+	z-index: 200;
 }
 
 #ajax_in_progress a {
