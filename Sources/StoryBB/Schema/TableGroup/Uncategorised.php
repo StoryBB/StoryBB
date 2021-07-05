@@ -729,6 +729,7 @@ class Uncategorised
 					'pm_receive_from' => Column::tinyint()->default(1),
 					'timezone' => Column::varchar(80)->default('UTC'),
 					'policy_acceptance' => Column::tinyint(),
+					'currency' => Column::bigint()->signed(),
 				],
 				[
 					Index::primary(['id_member']),
