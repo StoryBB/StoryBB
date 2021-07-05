@@ -564,19 +564,20 @@ function AffiliateSave()
 		$imagesize = @getimagesize($_FILES['affiliate_image_upload']['tmp_name']);
 		if ($imagesize && isset($valid_types[$imagesize[2]]))
 		{
+			[$src_width, $src_height] = $imagesize;
 			// It's a valid image, let's see if we need to resize it any.
-			if ($imagesize[0] > $context['tier']['image_width'] || $imagesize[1] > $context['tier']['image_height'])
+			if ($src_width > $context['tier']['image_width'] || $src_height > $context['tier']['image_height'])
 			{
-				if (round($imagesize[1] * $context['tier']['image_width'] / $imagesize[0]) <= $context['tier']['image_height'])
+				if (round($imagesize[1] * $context['tier']['image_width'] / $src_width) <= $context['tier']['image_height'])
 				{
 					// Try to rescale to fit width first.
 					$dst_width = $context['tier']['image_width'];
-					$dst_height = round($imagesize[1] * $context['tier']['image_width'] / $imagesize[0]);
+					$dst_height = round($src_height * $context['tier']['image_width'] / $src_width);
 				}
 				else
 				{
 					// Rescale to fit height.
-					$dst_width = round($imagesize[0] * $context['tier']['image_height'] / $src_height);
+					$dst_width = round($src_width * $context['tier']['image_height'] / $src_height);
 					$dst_height = $context['tier']['image_height'];
 				}
 
