@@ -518,11 +518,14 @@ class Uncategorised
 					'robot_name' => Column::varchar(20),
 					'ip' => Column::varbinary(16)->nullable(),
 					'url' => Column::varchar(2048),
+					'route' => Column::varchar(255),
+					'routeparams' => Column::varchar(2048),
 				],
 				[
 					Index::primary(['session']),
 					Index::key(['log_time']),
 					Index::key(['id_member']),
+					Index::key(['route' => 16]),
 				],
 				[],
 				[
