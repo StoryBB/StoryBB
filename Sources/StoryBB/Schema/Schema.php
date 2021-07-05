@@ -29,6 +29,7 @@ class Schema
 	public static function get_all_tablegroups(): array
 	{
 		return [
+			'\\StoryBB\\Schema\\TableGroup\\Achievements',
 			'\\StoryBB\\Schema\\TableGroup\\Affiliates',
 			'\\StoryBB\\Schema\\TableGroup\\ForumContent',
 			'\\StoryBB\\Schema\\TableGroup\\PersonalMessages',
