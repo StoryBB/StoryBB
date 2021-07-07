@@ -3566,3 +3566,13 @@ div#manage_boards dl dd textarea[name=desc] {
 .hiddenelement {
 	display: none;
 }
+
+
+#character_filter label {
+	display: inline-block;
+	width: 30%;
+}
+
+.character_filter .character {
+	margin-top: 20px;
+}

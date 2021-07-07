@@ -1950,6 +1950,10 @@ function setupMenuContext()
 				'url' => $scripturl . '?action=characters',
 				'icon' => 'fas fa-users fa-fw',
 			],
+			'shipper' => [
+				'url' => $scripturl . '?action=shipper',
+				'icon' => 'fas fa-ship fa-fw',
+			],
 		];
 
 		foreach (get_sidebar_page_items() as $page)
