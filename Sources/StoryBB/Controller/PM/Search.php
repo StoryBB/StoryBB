@@ -495,11 +495,11 @@ class Search extends AbstractPMController
 
 		if (!empty($foundMessages))
 		{
-			// Now get recipients (but don't include bcc-recipients for your inbox, you're not supposed to know :P!)
+			// Now get recipients.
 			$request = $smcFunc['db']->query('', '
 				SELECT
 					pmr.id_pm, mem_to.id_member AS id_member_to, mem_to.real_name AS to_name,
-					pmr.bcc, pmr.in_inbox, pmr.is_read
+					pmr.in_inbox, pmr.is_read
 				FROM {db_prefix}pm_recipients AS pmr
 					LEFT JOIN {db_prefix}members AS mem_to ON (mem_to.id_member = pmr.id_member)
 				WHERE pmr.id_pm IN ({array_int:message_list})',
@@ -509,8 +509,7 @@ class Search extends AbstractPMController
 			);
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
-				if ($context['folder'] == 'sent' || empty($row['bcc']))
-					$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+				$recipients[$row['id_pm']]['to'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
 				if ($row['id_member_to'] == $user_info['id'] && $context['folder'] != 'sent')
 				{

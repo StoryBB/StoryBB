@@ -583,7 +583,7 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
  * Sends an personal message from the specified person to the specified people
  * ($from defaults to the user)
  *
- * @param array $recipients An array containing the arrays 'to' and 'bcc', both containing id_member's.
+ * @param array $recipients An array containing the array 'to', containing id_member's.
  * @param string $subject Should have no slashes and no html entities
  * @param string $message Should have no slashes and no html entities
  * @param bool $store_outbox Whether to store it in the sender's outbox
@@ -674,12 +674,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// Make sure there are no duplicate 'to' members.
 	$recipients['to'] = array_unique($recipients['to']);
 
-	// Only 'bcc' members that aren't already in 'to'.
-	$recipients['bcc'] = array_diff(array_unique($recipients['bcc']), $recipients['to']);
-
-	// Combine 'to' and 'bcc' recipients.
-	$all_to = array_merge($recipients['to'], $recipients['bcc']);
-
 	// Check no-one will want it deleted right away!
 	$request = $smcFunc['db']->query('', '
 		SELECT
@@ -688,7 +682,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		WHERE id_member IN ({array_int:to_members})
 			AND delete_pm = {int:delete_pm}',
 		[
-			'to_members' => $all_to,
+			'to_members' => $recipients['to'],
 			'delete_pm' => 1,
 		]
 	);
@@ -737,7 +731,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');
-	$notifyPrefs = getNotifyPrefs($all_to, ['pm_new', 'pm_reply', 'pm_notify'], true);
+	$notifyPrefs = getNotifyPrefs($recipients['to'], ['pm_new', 'pm_reply', 'pm_notify'], true);
 
 	$request = $smcFunc['db']->query('', '
 		SELECT
@@ -756,8 +750,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			'not_on_ignore_list' => 1,
 			'buddies_only' => 2,
 			'admins_only' => 3,
-			'recipients' => $all_to,
-			'count_recipients' => count($all_to),
+			'recipients' => $recipients['to'],
+			'count_recipients' => count($recipients['to']),
 			'from_id' => $from['id'],
 		]
 	);
@@ -793,7 +787,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			if ($message_limit > 0 && $message_limit <= $row['instant_messages'])
 			{
 				$log['failed'][$row['id_member']] = sprintf($txt['pm_error_data_limit_reached'], $row['real_name']);
-				unset($all_to[array_search($row['id_member'], $all_to)]);
+				unset($recipients['to'][array_search($row['id_member'], $recipients['to'])]);
 				continue;
 			}
 
@@ -801,7 +795,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			if (count(array_intersect($pmReadGroups['allowed'], $groups)) == 0 || count(array_intersect($pmReadGroups['denied'], $groups)) != 0)
 			{
 				$log['failed'][$row['id_member']] = sprintf($txt['pm_error_user_cannot_read'], $row['real_name']);
-				unset($all_to[array_search($row['id_member'], $all_to)]);
+				unset($recipients['to'][array_search($row['id_member'], $recipients['to'])]);
 				continue;
 			}
 		}
@@ -809,7 +803,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if (!empty($row['ignored']) && $row['id_member'] != $from['id'])
 		{
 			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_ignored_by_user'], $row['real_name']);
-			unset($all_to[array_search($row['id_member'], $all_to)]);
+			unset($recipients['to'][array_search($row['id_member'], $recipients['to'])]);
 			continue;
 		}
 
@@ -817,7 +811,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if ($row['is_activated'] >= 10 || ($row['is_activated'] == 4 && !$user_info['is_admin']))
 		{
 			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_user_cannot_read'], $row['real_name']);
-			unset($all_to[array_search($row['id_member'], $all_to)]);
+			unset($recipients['to'][array_search($row['id_member'], $recipients['to'])]);
 			continue;
 		}
 
@@ -834,7 +828,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	$smcFunc['db']->free_result($request);
 
 	// Only 'send' the message if there are any recipients left.
-	if (empty($all_to))
+	if (empty($recipients['to']))
 		return $log;
 
 	// Insert the message itself and then grab the last insert id.
@@ -877,17 +871,16 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 		$insertRows = [];
 		$to_list = [];
-		foreach ($all_to as $to)
+		foreach ($recipients['to'] as $to)
 		{
-			$insertRows[] = [$id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1];
-			if (!in_array($to, $recipients['bcc']))
-				$to_list[] = $to;
+			$insertRows[] = [$id_pm, $to, isset($deletes[$to]) ? 1 : 0, 1];
+			$to_list[] = $to;
 		}
 
 		$smcFunc['db']->insert('insert',
 			'{db_prefix}pm_recipients',
 			[
-				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
+				'id_pm' => 'int', 'id_member' => 'int', 'deleted' => 'int', 'is_new' => 'int'
 			],
 			$insertRows,
 			['id_pm', 'id_member']
@@ -943,11 +936,11 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	loadLanguage('General+PersonalMessage');
 
 	// Add one to their unread and read message counts.
-	foreach ($all_to as $k => $id)
+	foreach ($recipients['to'] as $k => $id)
 		if (isset($deletes[$id]))
-			unset($all_to[$k]);
-	if (!empty($all_to))
-		updateMemberData($all_to, ['instant_messages' => '+', 'unread_messages' => '+', 'new_pm' => 1]);
+			unset($recipients['to'][$k]);
+	if (!empty($recipients['to']))
+		updateMemberData($recipients['to'], ['instant_messages' => '+', 'unread_messages' => '+', 'new_pm' => 1]);
 
 	return $log;
 }

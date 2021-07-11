@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Navigation\Navigation;
 use StoryBB\Helper\Navigation\Item as NavItem;
 use StoryBB\Helper\Navigation\Section as NavSection;
@@ -21,6 +22,7 @@ use StoryBB\Helper\Parser;
 use StoryBB\Helper\PM;
 use StoryBB\Helper\Verification;
 use StoryBB\StringLibrary;
+use StoryBB\Template;
 
 function MessageMain()
 {
@@ -36,7 +38,7 @@ function MessageMain()
 	$context['can_issue_warning'] = allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1;
 
 	// Are PM drafts enabled?
-	$context['drafts_pm_save'] = !empty($modSettings['drafts_pm_enabled']) && allowedTo('pm_draft');
+	$context['drafts_pm_save'] = !empty($modSettings['drafts_pm_enabled']);
 	$context['drafts_autosave'] = !empty($context['drafts_pm_save']) && !empty($modSettings['drafts_autosave_enabled']);
 
 	// Load up the members maximum message capacity.
@@ -110,7 +112,7 @@ function MessageMain()
 		$txt['show_drafts'],
 		['sa' => 'drafts'],
 		'StoryBB\\Controller\\PM\\ShowDrafts',
-		['pm_draft']
+		['pm_send']
 	))->is_enabled(function () use ($modSettings) {
 		return !empty($modSettings['drafts_pm_enabled']);
 	}));
@@ -218,13 +220,12 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	if (!isset($_REQUEST['xml']))
 	{
 		$context['sub_template'] = 'personal_message_send';
-		loadJavaScriptFile('PersonalMessage.js', ['defer' => false], 'sbb_pms');
-		loadJavaScriptFile('suggest.js', ['defer' => false], 'sbb_suggest');
 	}
 	else
 	{
-		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
-		StoryBB\Template::set_layout('xml');
+		Template::remove_layer('sidebar_navigation');
+		Template::add_helper(['cleanXml' => 'cleanXml']);
+		Template::set_layout('xml');
 		$context['sub_template'] = 'xml_pm_preview';
 	}
 
@@ -233,30 +234,31 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	// Got some known members?
 	$context['recipients'] = [
 		'to' => [],
-		'bcc' => [],
 	];
-	if (!empty($recipient_ids['to']) || !empty($recipient_ids['bcc']))
+	if (!empty($recipient_ids['to']))
 	{
-		$allRecipients = array_merge($recipient_ids['to'], $recipient_ids['bcc']);
-
 		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})',
 			[
-				'member_list' => $allRecipients,
+				'member_list' => $recipient_ids['to'],
 			]
 		);
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$recipientType = in_array($row['id_member'], $recipient_ids['bcc']) ? 'bcc' : 'to';
-			$context['recipients'][$recipientType][] = [
+			$context['recipients']['to'][] = [
 				'id' => $row['id_member'],
 				'name' => $row['real_name'],
 			];
 		}
 		$smcFunc['db']->free_result($request);
 	}
+
+	$recipient_ids = array_map(function($x) {
+		return $x['id'];
+	}, $context['recipients']['to']);
+	Autocomplete::init('memberchar', '#to', $modSettings['max_pm_recipients'], $recipient_ids);
 
 	// Set everything up like before....
 	$context['subject'] = isset($_REQUEST['subject']) ? StringLibrary::escape($_REQUEST['subject']) : '';
@@ -269,13 +271,27 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 
 		$request = $smcFunc['db']->query('', '
 			SELECT
+				id_pm
+			FROM {db_prefix}pm_recipients
+			WHERE id_pm = {int:id_pm}
+				AND id_member = {int:current_member}
+			LIMIT 1',
+			[
+				'current_member' => $user_info['id'],
+				'id_pm' => $_REQUEST['replied_to'],
+			]
+		);
+		$isReceived = $smcFunc['db']->num_rows($request) != 0;
+
+		$request = $smcFunc['db']->query('', '
+			SELECT
 				pm.id_pm, CASE WHEN pm.id_pm_head = {int:no_id_pm_head} THEN pm.id_pm ELSE pm.id_pm_head END AS pm_head,
 				pm.body, pm.subject, pm.msgtime, mem.member_name, COALESCE(mem.id_member, 0) AS id_member,
 				COALESCE(mem.real_name, pm.from_name) AS real_name
-			FROM {db_prefix}personal_messages AS pm' . ($context['folder'] == 'sent' ? '' : '
+			FROM {db_prefix}personal_messages AS pm' . (!$isReceived ? '' : '
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = {int:replied_to})') . '
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = pm.id_member_from)
-			WHERE pm.id_pm = {int:replied_to}' . ($context['folder'] == 'sent' ? '
+			WHERE pm.id_pm = {int:replied_to}' . (!$isReceived ? '
 				AND pm.id_member_from = {int:current_member}' : '
 				AND pmr.id_member = {int:current_member}') . '
 			LIMIT 1',
@@ -374,7 +390,6 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	}
 
 	$context['to_value'] = empty($named_recipients['to']) ? '' : '&quot;' . implode('&quot;, &quot;', $named_recipients['to']) . '&quot;';
-	$context['bcc_value'] = empty($named_recipients['bcc']) ? '' : '&quot;' . implode('&quot;, &quot;', $named_recipients['bcc']) . '&quot;';
 
 	call_integration_hook('integrate_pm_error');
 

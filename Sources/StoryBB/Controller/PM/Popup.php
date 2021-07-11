@@ -29,7 +29,7 @@ class Popup extends AbstractPMController
 		Template::set_layout('raw');
 
 		$context['can_send_pm'] = allowedTo('pm_send');
-		$context['can_draft'] = allowedTo('pm_draft') && !empty($modSettings['drafts_pm_enabled']);
+		$context['can_draft'] = allowedTo('pm_send') && !empty($modSettings['drafts_pm_enabled']);
 
 		// So are we loading stuff?
 		$request = $smcFunc['db']->query('', '

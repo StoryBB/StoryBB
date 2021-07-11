@@ -1,0 +1,62 @@
+	<div class="cat_bar">
+		<h3 class="catbg">{{{context.page_title}}}</h3>
+	</div>
+
+	<form class="windowbg">
+		<fieldset id="character_filter">
+			<legend>{{{txt.character_filter}}}</legend>
+
+{{#each context.participating_characters}}
+			<label><input type="checkbox" name="character[]" value="{{@key}}" checked> {{{.}}}</label>
+{{/each}}
+
+			<hr>
+			<label><input type="checkbox" id="check_all" checked onclick="invertAll(this, this.form, 'character[]');"> {{txt.check_all}}</label>
+		</fieldset>
+	</form>
+
+		<div id="topic_container" class="character_filter">
+			<div class="roundframe centertext no_topics" style="display:none">
+				{{{txt.no_shipper_topics}}}
+			</div>
+{{#each context.ships}}
+			<div class="character"{{#each characters}} data-char-{{@key}}="{{@key}}"{{/each}}>
+				<div class="title_bar">
+					<h3 class="titlebg">{{{join characters ' / '}}}</h3>
+				</div>
+
+			{{#each topics}}
+				<div class="windowbg">
+					<div class="info info_block">
+						<div class="icons floatright">
+						</div>
+						<div class="msg_container">
+							<div class="message_index_title">
+								<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{{/each}}
+			</div>
+{{/each}}
+		</div>
+
+<script>
+	function character_filter() {
+		$('.no_topics').hide();
+		$('#topic_container .character').hide();
+
+		$('#character_filter input:not(#check_all):checked').each(function () {
+			var id_char = $(this).val();
+			$('#topic_container .character[data-char-' + id_char + ']').show();
+		});
+
+		if ($('#topic_container .character:visible').length == 0) {
+			$('.no_topics').show();
+		}
+	}
+
+	$('#character_filter input').on('click', character_filter);
+	character_filter();
+</script>

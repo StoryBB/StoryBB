@@ -845,3 +845,7 @@ $txt['post_separator_month'][1] = '1 month later';
 $txt['post_separator_month']['x'] = '%1$d months later';
 $txt['post_separator_year'][1] = '1 year later';
 $txt['post_separator_year']['x'] = '%1$d years later';
+
+$txt['shippers'] = 'Shippers';
+$txt['character_filter'] = 'Character Filter';
+$txt['no_shipper_topics'] = 'No matching topics found.';

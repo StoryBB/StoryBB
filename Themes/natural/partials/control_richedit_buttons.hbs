@@ -18,7 +18,7 @@
 {{#if (and context.drafts_pm_save context.drafts_autosave)}}
 	<span class="floatleft padding" style="display: block">
 		<span id="throbber" style="display:none">
-			<img src="{{settings.images_url}}/loading_sm.gif" alt="" class="centericon">&nbsp;
+			<i class="fas fa-spinner fa-pulse"></i>&nbsp;
 		</span>
 		<span id="draft_lastautosave"></span>
 	</span>
@@ -32,7 +32,7 @@
 			sType: 'post',
 			bPM: true,
 			iBoard: 0,
-			iFreq: '{{#if modSettings.drafts_autosave_frequency}}{{modSettings.drafts_autosave_frequency}} * 1000{{else}}60000{{/if}}'
+			iFreq: {{#if modSettings.drafts_autosave_frequency}}{{modSettings.drafts_autosave_frequency}} * 1000{{else}}60000{{/if}}
 		});
 	</script>
 {{/if}}
@@ -40,7 +40,7 @@
 {{#if (and context.drafts_save context.drafts_autosave)}}
 	<span class="floatleft padding" style="display: block">
 		<span id="throbber" style="display:none">
-			<img src="{{settings.images_url}}/loading_sm.gif" alt="" class="centericon">&nbsp;
+			<i class="fas fa-spinner fa-pulse"></i>&nbsp;
 		</span>
 		<span id="draft_lastautosave" ></span>
 	</span>

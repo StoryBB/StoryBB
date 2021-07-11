@@ -221,7 +221,7 @@ class IssueWarning extends AbstractProfileController
 						'name' => $context['forum_name_html_safe'],
 						'username' => $context['forum_name_html_safe'],
 					];
-					sendpm(['to' => [$memID], 'bcc' => []], $_POST['warn_sub'], $_POST['warn_body'], false, $from);
+					sendpm(['to' => [$memID]], $_POST['warn_sub'], $_POST['warn_body'], false, $from);
 
 					// Log the notice!
 					$id_notice = $smcFunc['db']->insert('',

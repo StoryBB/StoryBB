@@ -1083,7 +1083,7 @@ function mergeMembers($source, $dest)
 	// First we have to get all the existing recipient rows
 	$rows = [];
 	$request = $smcFunc['db']->query('', '
-		SELECT id_pm, bcc, is_read, is_new, deleted
+		SELECT id_pm, is_read, is_new, deleted
 		FROM {db_prefix}pm_recipients
 		WHERE id_member = {int:source}',
 		[
@@ -1095,7 +1095,6 @@ function mergeMembers($source, $dest)
 		$rows[] = [
 			'id_pm' => $row['id_pm'],
 			'id_member' => $dest,
-			'bcc' => $row['bcc'],
 			'is_read' => $row['is_read'],
 			'is_new' => $row['is_new'],
 			'deleted' => $row['deleted'],
@@ -1108,7 +1107,7 @@ function mergeMembers($source, $dest)
 		$smcFunc['db']->insert('ignore',
 			'{db_prefix}pm_recipients',
 			[
-				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'is_read' => 'int',
+				'id_pm' => 'int', 'id_member' => 'int', 'is_read' => 'int',
 				'is_new' => 'int', 'deleted' => 'int', 'is_inbox' => 'int',
 			],
 			$rows,

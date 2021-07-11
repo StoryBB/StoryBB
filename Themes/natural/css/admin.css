@@ -296,6 +296,9 @@ fieldset.admin_group .inactive {
 .large_admin_menu_icon.contact {
 	background-position: -47px -215px;
 }
+.large_admin_menu_icon.achievements {
+	background-position: -88px -215px;
+}
 
 /* Styles for the plugin manager. */
 .plugin-actions {

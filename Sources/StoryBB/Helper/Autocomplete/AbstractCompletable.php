@@ -43,7 +43,7 @@ abstract class AbstractCompletable
 	 */
 	protected function escape_term(string $term): string
 	{
-		$term = trim(StringLibrary::toLower($term)) . '*';
+		$term = trim('*' . StringLibrary::toLower($term)) . '*';
 		return strtr($term, [
 			'%' => '\%',
 			'_' => '\_',

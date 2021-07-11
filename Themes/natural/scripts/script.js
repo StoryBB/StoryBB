@@ -192,7 +192,7 @@ function reqWin(desktopURL, alternateWidth, alternateHeight, noScrollbars)
 function reqOverlayDiv(desktopURL, sHeader, sIcon)
 {
 	// Set up our div details
-	var sAjax_indicator = '<div class="centertext"><img src="' + sbb_images_url + '/loading_sm.gif"></div>';
+	var sAjax_indicator = '<div class="centertext"><i class="fas fa-spinner fa-pulse"></i></div>';
 	var sIcon = sbb_images_url + '/' + (typeof(sIcon) == 'string' ? sIcon : 'helptopics.png');
 	var sHeader = typeof(sHeader) == 'string' ? sHeader : help_popup_heading_text;
 

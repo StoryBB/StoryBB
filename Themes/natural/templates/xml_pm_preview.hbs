@@ -10,7 +10,6 @@
 		{{/if}}
 
 		<caption name="to" class="{{#if context.post_error.no_to}}error{{/if}}" />
-		<caption name="bbc" class="{{#if context.post_error.no_bbc}}error{{/if}}" />
 		<caption name="subject" class="{{#if context.post_error.no_subject}}error{{/if}}" />
 		<caption name="question" class="{{#if context.post_error.no_question}}error{{/if}}" />
 		{{#if (or context.post_error.no_message context.post_error.long_message)}}<post_error />{{/if}}

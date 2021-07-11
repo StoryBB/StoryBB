@@ -518,11 +518,14 @@ class Uncategorised
 					'robot_name' => Column::varchar(20),
 					'ip' => Column::varbinary(16)->nullable(),
 					'url' => Column::varchar(2048),
+					'route' => Column::varchar(255),
+					'routeparams' => Column::varchar(2048),
 				],
 				[
 					Index::primary(['session']),
 					Index::key(['log_time']),
 					Index::key(['id_member']),
+					Index::key(['route' => 16]),
 				],
 				[],
 				[
@@ -729,6 +732,7 @@ class Uncategorised
 					'pm_receive_from' => Column::tinyint()->default(1),
 					'timezone' => Column::varchar(80)->default('UTC'),
 					'policy_acceptance' => Column::tinyint(),
+					'currency' => Column::bigint()->signed(),
 				],
 				[
 					Index::primary(['id_member']),

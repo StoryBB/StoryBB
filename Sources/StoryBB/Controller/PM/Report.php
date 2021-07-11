@@ -99,7 +99,7 @@ class Report extends AbstractPMController
 
 		// Get any other recipients of the email.
 		$request = $smcFunc['db']->query('', '
-			SELECT mem_to.id_member AS id_member_to, mem_to.real_name AS to_name, pmr.bcc
+			SELECT mem_to.id_member AS id_member_to, mem_to.real_name AS to_name
 			FROM {db_prefix}pm_recipients AS pmr
 				LEFT JOIN {db_prefix}members AS mem_to ON (mem_to.id_member = pmr.id_member)
 			WHERE pmr.id_pm = {int:id_pm}
@@ -110,19 +110,11 @@ class Report extends AbstractPMController
 			]
 		);
 		$recipients = [];
-		$hidden_recipients = 0;
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			// If it's hidden still don't reveal their names - privacy after all ;)
-			if ($row['bcc'])
-				$hidden_recipients++;
-			else
-				$recipients[] = '[url=' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . ']' . $row['to_name'] . '[/url]';
+			$recipients[] = '[url=' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . ']' . $row['to_name'] . '[/url]';
 		}
 		$smcFunc['db']->free_result($request);
-
-		if ($hidden_recipients)
-			$recipients[] = sprintf($txt['pm_report_pm_hidden'], $hidden_recipients);
 
 		// Now let's get out and loop through the admins.
 		$request = $smcFunc['db']->query('', '
@@ -168,7 +160,6 @@ class Report extends AbstractPMController
 					'body' => $report_body,
 					'recipients' => [
 						'to' => [],
-						'bcc' => []
 					],
 				];
 			}

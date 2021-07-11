@@ -161,3 +161,8 @@
 	white-space: nowrap;
 	margin-right: 3em;
 }
+
+a[id]:target {
+    margin-top: -80px;
+    padding-top: 80px;
+}

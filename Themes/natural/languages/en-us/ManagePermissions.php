@@ -250,11 +250,6 @@ $txt['permissionhelp_poll_remove'] = 'This permission allows removal of polls.';
 $txt['permissionname_poll_remove_own'] = 'Own poll';
 $txt['permissionname_poll_remove_any'] = 'Any poll';
 
-$txt['permissionname_post_draft'] = 'Save drafts of new posts';
-$txt['permissionhelp_post_draft'] = 'This permission allows users to save drafts of their posts so they can complete them later.';
-$txt['permissionname_pm_draft'] = 'Save drafts of personal messages';
-$txt['permissionhelp_pm_draft'] = 'This permission allows users to save drafts of their personal messages so they can complete them later.';
-
 $txt['permissiongroup_approval'] = 'Post Moderation';
 $txt['permissionname_approve_posts'] = 'Approve items awaiting moderation';
 $txt['permissionhelp_approve_posts'] = 'This permission allows a user to approve all unapproved items on a board.';
