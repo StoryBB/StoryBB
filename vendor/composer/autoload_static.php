@@ -35,6 +35,9 @@ class ComposerStaticInit48715da6a47b890670bc489e3cbac325
             'Symfony\\Component\\Mime\\' => 23,
             'Symfony\\Component\\HttpFoundation\\' => 33,
             'Symfony\\Component\\Console\\' => 26,
+            'StoryBB\\Model\\' => 14,
+            'StoryBB\\Helper\\' => 15,
+            'StoryBB\\Database\\' => 17,
             'StoryBB\\' => 8,
             'ScssPhp\\ScssPhp\\' => 16,
         ),
@@ -109,6 +112,18 @@ class ComposerStaticInit48715da6a47b890670bc489e3cbac325
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
+        'StoryBB\\Model\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Sources/StoryBB/Model',
+        ),
+        'StoryBB\\Helper\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Sources/StoryBB/Helper',
+        ),
+        'StoryBB\\Database\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Sources/StoryBB/Database',
+        ),
         'StoryBB\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Sources/StoryBB',
@@ -153,6 +168,7 @@ class ComposerStaticInit48715da6a47b890670bc489e3cbac325
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Latte\\CompileException' => __DIR__ . '/..' . '/latte/latte/src/Latte/exceptions.php',
         'Latte\\Compiler' => __DIR__ . '/..' . '/latte/latte/src/Latte/Compiler/Compiler.php',
