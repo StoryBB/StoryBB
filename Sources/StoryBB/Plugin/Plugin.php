@@ -14,6 +14,8 @@ namespace StoryBB\Plugin;
 
 use stdClass;
 use StoryBB\StringLibrary;
+use StoryBB\Hook\Mutatable;
+use StoryBB\Hook\Observable;
 
 class Plugin
 {
@@ -84,6 +86,12 @@ class Plugin
 				if (!class_exists($hook_class))
 				{
 					$this->install_errors[] = 'missing_hook';
+					break;
+				}
+
+				if (!is_subclass_of($hook_class, Observable::class) && !is_subclass_of($hook_class, Mutatable::class))
+				{
+					$this->install_errors[] = 'invalid_hook_type';
 					break;
 				}
 
