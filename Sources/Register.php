@@ -508,6 +508,10 @@ function Register2()
 		$session->migrate(true, 3600);
 		$session->set('userid', $memberID);
 
+		$persist = $container->instantiate('StoryBB\\Session\\Persistence');
+		$key = $persist->create_for_user($memberID);
+		header('Set-Cookie: ' . $persist->create_cookie($memberID, $key));
+
 		redirectexit();
 	}
 }
