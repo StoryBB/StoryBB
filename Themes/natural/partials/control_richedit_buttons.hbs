@@ -32,7 +32,7 @@
 			sType: 'post',
 			bPM: true,
 			iBoard: 0,
-			iFreq: '{{#if modSettings.drafts_autosave_frequency}}{{modSettings.drafts_autosave_frequency}} * 1000{{else}}60000{{/if}}'
+			iFreq: {{#if modSettings.drafts_autosave_frequency}}{{modSettings.drafts_autosave_frequency}} * 1000{{else}}60000{{/if}}
 		});
 	</script>
 {{/if}}

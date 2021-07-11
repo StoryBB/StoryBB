@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\PM;
 
+use StoryBB\Helper\Autocomplete;
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
@@ -26,8 +27,7 @@ class Compose extends AbstractPMController
 		isAllowedTo('pm_send');
 
 		loadLanguage('PersonalMessage');
-		loadJavaScriptFile('PersonalMessage.js', ['defer' => false], 'sbb_pms');
-		loadJavaScriptFile('suggest.js', ['defer' => false], 'sbb_suggest');
+
 		$context['sub_template'] = 'personal_message_send';
 
 		// Extract out the spam settings - cause it's neat.
@@ -173,7 +173,6 @@ class Compose extends AbstractPMController
 
 		$context['recipients'] = [
 			'to' => [],
-			'bcc' => [],
 		];
 
 		// Sending by ID?  Replying to all?  Fetch the real_name(s).
@@ -195,12 +194,10 @@ class Compose extends AbstractPMController
 					FROM {db_prefix}pm_recipients AS pmr
 						INNER JOIN {db_prefix}members AS mem ON (mem.id_member = pmr.id_member)
 					WHERE pmr.id_pm = {int:id_pm}
-						AND pmr.id_member != {int:current_member}
-						AND pmr.bcc = {int:not_bcc}',
+						AND pmr.id_member != {int:current_member}',
 					[
 						'current_member' => $user_info['id'],
 						'id_pm' => $pmsg,
-						'not_bcc' => 0,
 					]
 				);
 				while ($row = $smcFunc['db']->fetch_assoc($request))
@@ -266,6 +263,11 @@ class Compose extends AbstractPMController
 			ShowDrafts($user_info['id'], $pm_seed, 1);
 		}
 
+		$recipient_ids = array_map(function($x) {
+			return $x['id'];
+		}, $context['recipients']['to']);
+		Autocomplete::init('memberchar', '#to', $modSettings['max_pm_recipients'], $recipient_ids);
+
 		// Needed for the WYSIWYG editor.
 		require_once($sourcedir . '/Subs-Editor.php');
 
@@ -285,8 +287,6 @@ class Compose extends AbstractPMController
 
 		// Store the ID for old compatibility.
 		$context['post_box_name'] = $editorOptions['id'];
-
-		$context['bcc_value'] = '';
 
 		$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
 		if ($context['require_verification'])
@@ -353,7 +353,6 @@ class Compose extends AbstractPMController
 
 		$_REQUEST['subject'] = isset($_REQUEST['subject']) ? trim($_REQUEST['subject']) : '';
 		$_REQUEST['to'] = empty($_POST['to']) ? (empty($_GET['to']) ? '' : $_GET['to']) : $_POST['to'];
-		$_REQUEST['bcc'] = empty($_POST['bcc']) ? (empty($_GET['bcc']) ? '' : $_GET['bcc']) : $_POST['bcc'];
 
 		// Route the input from the 'u' parameter to the 'to'-list.
 		if (!empty($_POST['u']))
@@ -363,7 +362,7 @@ class Compose extends AbstractPMController
 		$recipientList = [];
 		$namedRecipientList = [];
 		$namesNotFound = [];
-		foreach (['to', 'bcc'] as $recipientType)
+		foreach (['to'] as $recipientType)
 		{
 			// First, let's see if there's user ID's given.
 			$recipientList[$recipientType] = [];
@@ -425,10 +424,10 @@ class Compose extends AbstractPMController
 		}
 
 		// Are we changing the recipients some how?
-		$is_recipient_change = !empty($_POST['delete_recipient']) || !empty($_POST['to_submit']) || !empty($_POST['bcc_submit']);
+		$is_recipient_change = !empty($_POST['delete_recipient']) || !empty($_POST['to_submit']);
 
 		// Check if there's at least one recipient.
-		if (empty($recipientList['to']) && empty($recipientList['bcc']))
+		if (empty($recipientList['to']))
 			$post_errors[] = 'no_to';
 
 		// Make sure that we remove the members who did get it from the screen.
@@ -526,7 +525,7 @@ class Compose extends AbstractPMController
 		}
 
 		// Before we send the PM, let's make sure we don't have an abuse of numbers.
-		elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) + count($recipientList['bcc']) > $modSettings['max_pm_recipients'] && !allowedTo(['moderate_forum', 'send_mail', 'admin_forum']))
+		elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) > $modSettings['max_pm_recipients'] && !allowedTo(['moderate_forum', 'send_mail', 'admin_forum']))
 		{
 			$context['send_log'] = [
 				'sent' => [],
@@ -542,7 +541,7 @@ class Compose extends AbstractPMController
 		checkSubmitOnce('check');
 
 		// Do the actual sending of the PM.
-		if (!empty($recipientList['to']) || !empty($recipientList['bcc']))
+		if (!empty($recipientList['to']))
 			$context['send_log'] = sendpm($recipientList, $_REQUEST['subject'], $_REQUEST['message'], true, null, !empty($_REQUEST['pm_head']) ? (int) $_REQUEST['pm_head'] : 0);
 		else
 			$context['send_log'] = [
@@ -569,7 +568,6 @@ class Compose extends AbstractPMController
 		if (!empty($context['send_log']['failed']))
 			return messagePostError($post_errors, $namesNotFound, [
 				'to' => array_intersect($recipientList['to'], $context['send_log']['failed']),
-				'bcc' => array_intersect($recipientList['bcc'], $context['send_log']['failed'])
 			]);
 
 		$context['current_label_redirect'] = 'action=pm;f=inbox';

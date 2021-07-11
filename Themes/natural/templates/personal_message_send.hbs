@@ -43,7 +43,7 @@
 {{#if modSettings.drafts_pm_enabled}}
 			<div id="draft_section" class="infobox"{{#unless context.draft_saved}} style="display: none;"{{/unless}}>
 				{{textTemplate txt.draft_pm_saved (concat scripturl '?action=pm;sa=drafts')}}
-				{{#if modSettings.drafts_keep_days}}<strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
+				{{#if (gt modSettings.drafts_keep_days 0)}}<strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
 			</div>
 {{/if}}
 
@@ -52,16 +52,7 @@
 					<span{{#if (or context.post_error.no_to context.post_error.bad_to)}} class="error"{{/if}} id="caption_to">{{txt.pm_to}}:</span>
 				</dt>
 				<dd id="pm_to" class="clear_right">
-					<input type="text" name="to" id="to_control" value="{{{context.to_value}}}" size="40" style="width: 130px;">
-					<span class="smalltext" id="bcc_link_container" style="display: none;"></span>
-					<div id="to_item_list_container"></div>
-				</dd>
-				<dt class="clear_left" id="bcc_div">
-					<span{{#if (or context.post_error.no_to context.post_error.bad_bcc)}} class="error"{{/if}} id="caption_bbc">{{{txt.pm_bcc}}}:</span>
-				</dt>
-				<dd id="bcc_div2">
-					<input type="text" name="bcc" id="bcc_control" value="{{{context.bcc_value}}}" size="40" style="width: 130px;">
-					<div id="bcc_item_list_container"></div>
+					<select multiple id="to" name="recipient_to[]"></select>
 				</dd>
 				<dt class="clear_left">
 					<span{{#if context.post_error.no_subject}} class="error"{{/if}} id="caption_subject">{{{txt.subject}}}:</span>
@@ -103,7 +94,7 @@
 		</div>
 	</form>
 
-{{#if (and context.drafts_pm_save context.drafts options.drafts_show_saved_enabled)}}
+{{#if (and context.drafts_pm_save context.drafts)}}
 	<br>
 	<div id="postDraftOptionsHeader" class="cat_bar">
 		<h3 class="catbg">
@@ -141,8 +132,9 @@
 				}
 				// @todo Currently not sending poll options and option checkboxes.
 				var x = new Array();
-				var textFields = ['subject', '{{context.post_box_name}}', 'to', 'bcc'];
-				var numericFields = ['recipient_to[]', 'recipient_bcc[]'];
+				var textFields = ['subject', '{{context.post_box_name}}'];
+				var numericFields = [];
+				var multiselectFields = ['recipient_to[]'];
 				var checkboxFields = [];
 
 				for (var i = 0, n = textFields.length; i < n; i++)
@@ -160,6 +152,18 @@
 				for (var i = 0, n = checkboxFields.length; i < n; i++)
 					if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
 						x[x.length] = checkboxFields[i] + '=' + document.forms.postmodify.elements[checkboxFields[i]].value;
+				for (var i = 0, n = multiselectFields.length; i < n; i++)
+					if (multiselectFields[i] in document.forms.postmodify)
+					{
+						var opts = document.forms.postmodify.elements[multiselectFields[i]].options;
+						for (j = 0, nj = opts.length; j < nj; j++)
+						{
+							if (opts[j].selected)
+							{
+								x[x.length] = multiselectFields[i] + '=' + opts[j].value;
+							}
+						}
+					}
 
 				x[x.length] = sbb_session_var + '=' + sbb_session_id;
 
@@ -239,8 +243,8 @@
 			aSwapLinks: [
 				{
 					sId: '#postDraftExpandLink',
-					msgExpanded: {{jsEscape txt.draft_hide}},
-					msgCollapsed: {{jsEscape txt.draft_load}}
+					msgExpanded: {{{json txt.draft_hide}}},
+					msgCollapsed: {{{json txt.draft_load}}}
 				}
 			]
 		});
@@ -264,32 +268,3 @@
 	</div>
 	<br class="clear">
 {{/if}}
-
-	<script>
-		var oPersonalMessageSend = new sbb_PersonalMessageSend({
-			sSelf: 'oPersonalMessageSend',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			sToControlId: 'to_control',
-			aToRecipients: [{{#each context.recipients.to}}{
-				sItemId: {{{jsEscape id}}},
-				sItemName: {{{jsEscape name}}}
-			}{{#unless (eq @index (getNumItems ../context.recipients.to))}},{{/unless}}
-			{{/each}}
-			],
-			aBccRecipients: [{{#each context.recipients.bcc}}{
-				sItemId: {{{jsEscape id}}},
-				sItemName: {{{jsEscape name}}}
-			}{{#unless (eq @index (getNumItems ../context.recipients.bcc))}},{{/unless}}
-			{{/each}}
-			],
-			sBccControlId: 'bcc_control',
-			sBccDivId: 'bcc_div',
-			sBccDivId2: 'bcc_div2',
-			sBccLinkId: 'bcc_link',
-			sBccLinkContainerId: 'bcc_link_container',
-			bBccShowByDefault: {{#if (and context.recipients.bcc context.bcc_value)}}true{{else}}false{{/if}},
-			sShowBccLinkTemplate: {{{jsEscape (concat '<a href="#" id="bcc_link">' (get_text 'make_bcc') '</a> <a href="' scripturl '?action=helpadmin;help=pm_bcc" onclick="return reqOverlayDiv(this.href);">(?)</a>')}}}
-		});
-	</script>

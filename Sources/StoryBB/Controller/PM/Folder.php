@@ -32,7 +32,7 @@ class Folder extends AbstractPMController
 		$context['can_issue_warning'] = allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1;
 
 		// Are PM drafts enabled?
-		$context['drafts_pm_save'] = !empty($modSettings['drafts_pm_enabled']) && allowedTo('pm_draft');
+		$context['drafts_pm_save'] = !empty($modSettings['drafts_pm_enabled']) && allowedTo('pm_send');
 		$context['drafts_autosave'] = !empty($context['drafts_pm_save']) && !empty($modSettings['drafts_autosave_enabled']);
 
 		// Build the linktree for all the actions...
@@ -216,7 +216,6 @@ class Folder extends AbstractPMController
 				$pms[$row['id_pm']] = $row['id_pm'];
 				$recipients[$row['id_pm']] = [
 					'to' => [],
-					'bcc' => []
 				];
 			}
 
@@ -273,7 +272,6 @@ class Folder extends AbstractPMController
 				if (!isset($recipients[$row['id_pm']]))
 					$recipients[$row['id_pm']] = [
 						'to' => [],
-						'bcc' => []
 					];
 				$display_pms[] = $row['id_pm'];
 				$posters[$row['id_pm']] = $row['id_member_from'];
@@ -284,9 +282,9 @@ class Folder extends AbstractPMController
 			$all_pms = array_merge($pms, $display_pms);
 			$all_pms = array_unique($all_pms);
 
-			// Get recipients (don't include bcc-recipients for your inbox, you're not supposed to know :P).
+			// Get recipients.
 			$request = $smcFunc['db']->query('', '
-				SELECT pmr.id_pm, mem_to.id_member AS id_member_to, mem_to.real_name AS to_name, pmr.bcc, pmr.in_inbox, pmr.is_read
+				SELECT pmr.id_pm, mem_to.id_member AS id_member_to, mem_to.real_name AS to_name, pmr.in_inbox, pmr.is_read
 				FROM {db_prefix}pm_recipients AS pmr
 					LEFT JOIN {db_prefix}members AS mem_to ON (mem_to.id_member = pmr.id_member)
 				WHERE pmr.id_pm IN ({array_int:pm_list})',
@@ -303,12 +301,9 @@ class Folder extends AbstractPMController
 			$context['message_unread'] = [];
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 			{
-				if ($context['folder'] == 'sent' || empty($row['bcc']))
-				{
-					$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+				$recipients[$row['id_pm']]['to'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-					$context['folder'] == '';
-				}
+				$context['folder'] == '';
 
 				if ($row['id_member_to'] == $user_info['id'] && $context['folder'] != 'sent')
 				{

@@ -85,7 +85,6 @@ class PersonalMessages
 				[
 					'id_pm' => Column::int(),
 					'id_member' => Column::mediumint(),
-					'bcc' => Column::tinyint(),
 					'is_read' => Column::tinyint(),
 					'is_new' => Column::tinyint(),
 					'deleted' => Column::tinyint(),

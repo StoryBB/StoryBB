@@ -31,8 +31,15 @@ function SaveDraft(&$post_errors)
 	global $context, $user_info, $smcFunc, $modSettings, $board;
 
 	// can you be, should you be ... here?
-	if (empty($modSettings['drafts_post_enabled']) || !allowedTo('post_draft') || !isset($_POST['save_draft']) || !isset($_POST['id_draft']))
+	if (empty($modSettings['drafts_post_enabled']) || !empty($user_info['is_guest']) || !isset($_POST['save_draft']) || !isset($_POST['id_draft']))
+	{
 		return false;
+	}
+
+	if (!allowedTo(['post_new', 'post_unapproved_topics', 'post_unapproved_replies', 'post_reply']))
+	{
+		return false;
+	}
 
 	// read in what they sent us, if anything
 	$id_draft = (int) $_POST['id_draft'];
@@ -173,7 +180,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	global $context, $user_info, $smcFunc, $modSettings;
 
 	// PM survey says ... can you stay or must you go
-	if (empty($modSettings['drafts_pm_enabled']) || !allowedTo('pm_draft') || !isset($_POST['save_draft']))
+	if (empty($modSettings['drafts_pm_enabled']) || !allowedTo('pm_send') || !isset($_POST['save_draft']))
 		return false;
 
 	// read in what you sent us
@@ -195,8 +202,10 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// determine who this is being sent to
 	if (isset($_REQUEST['xml']))
 	{
-		$recipientList['to'] = isset($_POST['recipient_to']) ? explode(',', $_POST['recipient_to']) : [];
-		$recipientList['bcc'] = isset($_POST['recipient_bcc']) ? explode(',', $_POST['recipient_bcc']) : [];
+		if (!isset($recipientList['to']))
+		{
+			$recipientList['to'] = isset($_POST['recipient_to']) ? explode(',', $_POST['recipient_to']) : [];
+		}
 	}
 	elseif (!empty($draft_info['to_list']) && empty($recipientList))
 		$recipientList = sbb_json_decode($draft_info['to_list'], true);
@@ -311,7 +320,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 
 	// load in this draft from the DB
 	$request = $smcFunc['db']->query('', '
-		SELECT is_sticky, locked, smileys_enabled, body , subject,
+		SELECT is_sticky, locked, smileys_enabled, body, subject,
 			id_board, id_draft, id_reply, to_list
 		FROM {db_prefix}user_drafts
 		WHERE id_draft = {int:id_draft}' . ($check ? '
@@ -351,19 +360,44 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 		}
 		elseif ($type === 1)
 		{
-			// one of those pm drafts? then set it up like we have an error
-			$_REQUEST['subject'] = !empty($draft_info['subject']) ? stripslashes($draft_info['subject']) : '';
-			$_REQUEST['message'] = !empty($draft_info['body']) ? str_replace('<br>', "\n", un_htmlspecialchars(stripslashes($draft_info['body']))) : '';
-			$_REQUEST['replied_to'] = !empty($draft_info['id_reply']) ? $draft_info['id_reply'] : 0;
+			// Pass it back to the PM composer; it's injected quite late.
+			$context['subject'] = !empty($draft_info['subject']) ? stripslashes($draft_info['subject']) : '';
+			$context['message'] = !empty($draft_info['body']) ? str_replace('<br>', "\n", un_htmlspecialchars(stripslashes($draft_info['body']))) : '';
+			$context['quoted_message']['id'] = !empty($draft_info['id_reply']) ? $draft_info['id_reply'] : 0;
 			$context['id_pm_draft'] = !empty($draft_info['id_draft']) ? $draft_info['id_draft'] : 0;
+
+			if (!empty($context['quoted_message']['id']))
+			{
+				$request = $smcFunc['db']->query('', '
+					SELECT id_pm_head
+					FROM {db_prefix}personal_messages
+					WHERE id_pm = {int:pm}',
+					[
+						'pm' => $context['quoted_message']['id'],
+					]
+				);
+				if ($row = $smcFunc['db']->fetch_assoc($request))
+				{
+					$context['quoted_message']['pm_head'] = $row['id_pm_head'];
+				}
+				else
+				{
+					unset ($context['quoted_message']);
+				}
+				$smcFunc['db']->free_result($request);
+			}
+
 			$recipients = sbb_json_decode($draft_info['to_list'], true);
 
 			// make sure we only have integers in this array
-			$recipients['to'] = array_map('intval', $recipients['to']);
-			$recipients['bcc'] = array_map('intval', $recipients['bcc']);
+			$context['recipients']['to'] = [];
+			foreach ($recipients['to'] as $to)
+			{
+				$context['recipients']['to'][] = [
+					'id' => (int) $to,
+				];
+			}
 
-			// pretend we messed up to populate the pm message form
-			messagePostError([], [], $recipients);
 			return true;
 		}
 	}

@@ -186,14 +186,6 @@ class PreferenceManager
 				'id' => 'wysiwyg_default',
 				'label' => 'wysiwyg_default',
 			],
-			[
-				'id' => 'drafts_autosave_enabled',
-				'label' => 'drafts_autosave_enabled',
-			],
-			[
-				'id' => 'drafts_show_saved_enabled',
-				'label' => 'drafts_show_saved_enabled',
-			],
 			'theme_opt_personal_messages',
 			[
 				'id' => 'view_newest_pm_first',

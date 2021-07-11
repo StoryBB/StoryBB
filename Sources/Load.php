@@ -860,7 +860,6 @@ function loadPermissions()
 			'post_unapproved_replies_any',
 			'post_reply_own',
 			'post_reply_any',
-			'post_draft',
 			'post_attachment',
 			'modify_own',
 			'modify_any',

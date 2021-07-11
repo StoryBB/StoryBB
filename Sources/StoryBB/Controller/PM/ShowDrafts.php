@@ -137,30 +137,26 @@ class ShowDrafts extends AbstractPMController
 			// Have they provide who this will go to?
 			$recipients = [
 				'to' => [],
-				'bcc' => [],
 			];
 			$recipient_ids = (!empty($row['to_list'])) ? sbb_json_decode($row['to_list'], true) : [];
 
 			// @todo ... this is a bit ugly since it runs an extra query for every message, do we want this?
 			// at least its only for draft PM's and only the user can see them ... so not heavily used .. still
-			if (!empty($recipient_ids['to']) || !empty($recipient_ids['bcc']))
+			if (!empty($recipient_ids['to']))
 			{
 				$recipient_ids['to'] = array_map('intval', $recipient_ids['to']);
-				$recipient_ids['bcc'] = array_map('intval', $recipient_ids['bcc']);
-				$allRecipients = array_merge($recipient_ids['to'], $recipient_ids['bcc']);
 
 				$request_2 = $smcFunc['db']->query('', '
 					SELECT id_member, real_name
 					FROM {db_prefix}members
 					WHERE id_member IN ({array_int:member_list})',
 					[
-						'member_list' => $allRecipients,
+						'member_list' => $recipient_ids['to'],
 					]
 				);
 				while ($result = $smcFunc['db']->fetch_assoc($request_2))
 				{
-					$recipientType = in_array($result['id_member'], $recipient_ids['bcc']) ? 'bcc' : 'to';
-					$recipients[$recipientType][] = $result['real_name'];
+					$recipients['to'][] = $result['real_name'];
 				}
 				$smcFunc['db']->free_result($request_2);
 			}
@@ -176,7 +172,6 @@ class ShowDrafts extends AbstractPMController
 				'recipients' => $recipients,
 				'age' => floor((time() - $row['poster_time']) / 86400),
 				'remaining' => (!empty($modSettings['drafts_keep_days']) ? floor($modSettings['drafts_keep_days'] - ((time() - $row['poster_time']) / 86400)) : 0),
-				'days_ago_string' => numeric_context('days_ago', floor((time() - $row['poster_time']) / 86400)),
 			];
 		}
 		$smcFunc['db']->free_result($request);

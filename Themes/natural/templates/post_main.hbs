@@ -22,9 +22,7 @@
 	<div id="post_area">
 		<div class="roundframe noup">
 
-{{#if context.current_topic}}
-			<input type="hidden" name="topic" value="{{context.current_topic}}">
-{{/if}}
+			<input type="hidden" name="topic" value="{{#if context.current_topic}}{{context.current_topic}}{{else}}0{{/if}}">
 
 			<div class="{{#unless (or context.error_type (neq context.error_type 'serious'))}}noticebox{{else}}errorbox{{/unless}}"{{#unless context.post_error}} style="display: none"{{/unless}} id="errors">
 				<dl>
@@ -50,10 +48,10 @@
 			</p>
 {{/if}}
 
-{{#if modSettings.drafts_post_enabled}}
+{{#if context.drafts_save}}
 			<div id="draft_section" class="infobox" {{#unless context.draft_saved}} style="display: none;"{{/unless}}>
 				{{textTemplate txt.draft_saved (concat scripturl '?action=profile;u=' context.user.id ';area=drafts')}}
-				{{#if modSettings.drafts_keep_days}} <strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
+				{{#if (gt modSettings.drafts_keep_days 0)}} <strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
 			</div>
 {{/if}}
 
@@ -349,7 +347,7 @@
 
 			</div><!-- #postAdditionalOptions -->
 
-{{#if (and modSettings.draft_posts_enabled context.drafts options.drafts_show_save_enabled)}}
+{{#if (and context.drafts_save context.drafts)}}
 			<div id="postDraftOptionsHeader" class="title_bar title_top">
 				<h4 class="titlebg">
 					<span id="postDraftExpand" class="toggle_up floatright" style="display: none;"></span> <strong><a href="#" id="postDraftExpandLink">{{txt.draft_load}}</a></strong>
@@ -361,8 +359,8 @@
 					<dd><strong>{{txt.draft_saved_on}}</strong></dd>
 
 	{{#each context.drafts}}
-					<dt{{link}}</dt>
-					<dd>{{poster_time}}</dd>
+					<dt>{{{link}}}</dt>
+					<dd>{{{poster_time}}}</dd>
 	{{/each}}
 
 				</dl>

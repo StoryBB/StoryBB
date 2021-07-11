@@ -137,9 +137,8 @@ sbb_DraftAutoSave.prototype.draftPMSave = function ()
 	document.getElementById('throbber').style.display = '';
 	this.bInDraftMode = true;
 
-	// Get the to and bcc values
+	// Get the to values
 	var aTo = this.draftGetRecipient('recipient_to[]');
-	var aBcc = this.draftGetRecipient('recipient_bcc[]');
 
 	// Get the rest of the form elements that we want to save, and load them up
 	var aSections = [
@@ -147,11 +146,16 @@ sbb_DraftAutoSave.prototype.draftPMSave = function ()
 		'id_pm_draft=' + (('id_pm_draft' in document.forms.postmodify.elements) ? parseInt(document.forms.postmodify.elements['id_pm_draft'].value) : 0),
 		'subject=' + escape(document.forms.postmodify['subject'].value.php_to8bit()).replace(/\+/g, "%2B"),
 		'message=' + escape(sPostdata.php_to8bit()).replace(/\+/g, "%2B"),
-		'recipient_to=' + aTo,
-		'recipient_bcc=' + aBcc,
 		'save_draft=true',
 		sbb_session_var + '=' + sbb_session_id,
 	];
+	if (aTo.length > 0)
+	{
+		for (var i = 0, n = aTo.length; i < n; i++)
+		{
+			aSections[aSections.length] = 'recipient_to[]=' + aTo[i];
+		}
+	}
 
 	// account for wysiwyg
 	if (this.opt.sType == 'post')
@@ -189,7 +193,7 @@ sbb_DraftAutoSave.prototype.onDraftDone = function (XMLDoc)
 	document.getElementById('throbber').style.display = 'none';
 }
 
-// function to retrieve the to and bcc values from the pseudo arrays
+// function to retrieve the to values from the pseudo arrays
 sbb_DraftAutoSave.prototype.draftGetRecipient = function (sField)
 {
 	var oRecipient = document.forms.postmodify.elements[sField];
@@ -197,14 +201,13 @@ sbb_DraftAutoSave.prototype.draftGetRecipient = function (sField)
 
 	if (typeof(oRecipient) != 'undefined')
 	{
-		// just one recipient
-		if ('value' in oRecipient)
-			aRecipient.push(parseInt(oRecipient.value));
-		else
+		var opts =oRecipient.options;
+		for (i = 0, n = opts.length; i < n; i++)
 		{
-			// or many !
-			for (var i = 0, n = oRecipient.length; i < n; i++)
-				aRecipient.push(parseInt(oRecipient[i].value));
+			if (opts[i].selected)
+			{
+				aRecipient.push(parseInt(opts[i].value));
+			}
 		}
 	}
 	return aRecipient;

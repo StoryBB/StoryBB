@@ -1001,8 +1001,8 @@ function Post($post_errors = [])
 	$context['message'] = str_replace(['"', '<', '>', '&nbsp;'], ['&quot;', '&lt;', '&gt;', ' '], $form_message);
 
 	// Are post drafts enabled?
-	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft');
-	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
+	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && empty($user_info['is_guest']) && allowedTo(['post_new', 'post_unapproved_topics', 'post_unapproved_replies', 'post_reply']);
+	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']);
 
 	// Build a list of drafts that they can load in to the editor
 	if (!empty($context['drafts_save']))
