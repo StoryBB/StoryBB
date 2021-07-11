@@ -10,12 +10,25 @@
 	<div class="errorbox" style="display:none" id="profile_error"></div>
 	<div id="profileview" class="roundframe flow_auto">
 		<div id="basicinfo">
+			<ul class="user_info">
 
+				<li class="avatar">
 {{#if context.character.avatar}}
-			<img class="avatar" src="{{{context.character.avatar}}}" alt=""><br><br>
+					<img class="avatar" src="{{{context.character.avatar}}}" alt="">
 {{else}}
-			<img class="avatar" src="{{{settings.images_url}}}/default.png" alt=""><br><br>
+					<img class="avatar" src="{{{settings.images_url}}}/default.png" alt="">
 {{/if}}
+				</li>
+
+
+{{#if context.character.group_labels.badges}}
+				<li class="icons">{{{context.character.group_labels.badges}}}</li>
+{{/if}}
+
+{{#if context.character.group_labels.title}}
+				<li class="membergroup">{{context.character.group_labels.title}}</li>
+{{/if}}
+			</ul>
 
 {{#if (and context.user.is_owner (not (eq_coerce user_info.id_character context.character.id_character)))}}
 			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=char_switch;profile;char={{context.character.id_character}};{{session_url}}" class="button">{{{txt.switch_to_char}}}</a><br><br>

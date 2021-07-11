@@ -2436,7 +2436,7 @@ span.pm_label {
 	margin: 10px 0 0 0;
 }
 
-#basicinfo ul li {
+#basicinfo ul:not(.user_info) li {
 	display: block;
 	float: left;
 	margin-right: 5px;
