@@ -368,6 +368,12 @@ class App
 			$matcher = $container->get('urlmatcher');
 			$parameters = $matcher->match($container->get('requestcontext')->getPathInfo());
 
+			// @todo remove this dirty hack once everything is a proper route.
+			if (!empty($parameters['_function']))
+			{
+				return $parameters;
+			}
+
 			if (empty($parameters['_controller']))
 			{
 				throw new InvalidRouteException('No controller defined in matched route ' . ($parameters['_route'] ?? 'unknown'));
