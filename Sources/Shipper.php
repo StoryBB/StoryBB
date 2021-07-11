@@ -178,7 +178,7 @@ function permute_characters(array $characters): array
 	{
 		for ($j = $i + 1; $j < $n; $j++)
 		{
-            $pairings[] = [$characters[$i], $characters[$j]];
+			$pairings[] = [$characters[$i], $characters[$j]];
 		}
 	}
 

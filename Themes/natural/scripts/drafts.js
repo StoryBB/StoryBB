@@ -201,7 +201,7 @@ sbb_DraftAutoSave.prototype.draftGetRecipient = function (sField)
 
 	if (typeof(oRecipient) != 'undefined')
 	{
-		var opts =oRecipient.options;
+		var opts = oRecipient.options;
 		for (i = 0, n = opts.length; i < n; i++)
 		{
 			if (opts[i].selected)
