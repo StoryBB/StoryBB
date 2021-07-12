@@ -130,13 +130,15 @@ function writeLog($force = false)
 
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_online
-			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}
+			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}, route = {string:route}, routeparams = {string:routeparams}
 			WHERE session = {string:session}',
 			[
 				'log_time' => time(),
 				'ip' => $user_info['ip'],
 				'url' => $encoded_get,
 				'session' => $session_id,
+				'route' => $route,
+				'routeparams' => $routeparams,
 			]
 		);
 
