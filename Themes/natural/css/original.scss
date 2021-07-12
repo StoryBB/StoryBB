@@ -3576,3 +3576,18 @@ div#manage_boards dl dd textarea[name=desc] {
 .character_filter .character {
 	margin-top: 20px;
 }
+
+/** new character list **/
+.filterizr-filters li[data-multifilter] {
+ 	cursor: pointer;
+
+	&::before {
+		font-family: "Font Awesome 5 Free";
+		content: "\f0c8";
+		margin-right: 8px;
+	}
+
+	&.filter-active::before {
+		content: "\f14a";
+	}
+}

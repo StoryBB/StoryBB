@@ -1,0 +1,86 @@
+		{{! The main character list }}
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{{txt.chars_menu_title}}}
+			</h3>
+		</div>
+
+{{#unless context.char_list}}
+		<div class="windowbg">{{{txt.characters_none}}}</div>
+{{else}}
+		<div class="windowbg filterizr-filters">
+	{{#if context.group_filters}}
+			<ul>
+		{{#each context.group_filters}}
+				<li data-multifilter="{{{@key}}}">{{{.}}}</li>
+		{{/each}}
+			</ul>
+	{{/if}}
+			<ul>
+	{{#each context.member_filters}}
+				<li data-multifilter="{{@key}}">{{{.}}}</li>
+	{{/each}}
+			</ul>
+			<ul>
+				<li data-multifilter="1" class="filter-active">{{{txt.char_sheet}}}</li>
+			</ul>
+		</div>
+
+
+		<div class="char_list_container filter-container">
+
+	{{#each context.char_list}}
+			<div class="windowbg filtr-item" data-category="{{{filters}}}">
+				<div class="poster">
+					<h4><a href="{{{character_link}}}">{{{character_name}}}</a></h4>
+					<ul class="user_info">
+						<li class="avatar">
+							<a href="{{{character_link}}}"><img src="{{{character_avatar.url}}}" class="avatar"></a>
+						</li>
+		{{#if group_badges}}
+						<li class="icons">{{{group_badges}}}</li>
+		{{/if}}
+		{{#if group_title}}
+						<li class="membergroup">{{{group_title}}}</li>
+		{{/if}}
+
+						<li class="postcount">
+							{{{../txt.member_postcount}}}: {{{posts}}}
+						</li>
+
+						<li class="created">{{{date_created_format}}}</li>
+
+						<li class="sheet">
+		{{#if retired}}
+							{{{../txt.char_retired}}}
+		{{else}}
+			{{#if character_sheet_link}}
+							<a href="{{{character_sheet_link}}}">{{{../txt.char_sheet}}}</a>
+			{{else}}
+							<em>{{{../txt.char_sheet_none_short}}}</em>
+			{{/if}}
+		{{/if}}
+						</li>
+
+						<li class="playedby">
+							<a href="{{{played_by_link}}}">{{{played_by}}}</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+	{{/each}}
+		</div>
+
+	<script>
+	$(document).ready(function() {
+		$('.filter-container').filterizr({
+			layout: 'sameWidth',
+			filter: ['1'],
+			multifilterLogicalOperator: 'and',
+		});
+		$('.filterizr-filters ul li').on('click', function() {
+			$(this).toggleClass('filter-active');
+		})
+	});
+	</script>
+{{/unless}}
