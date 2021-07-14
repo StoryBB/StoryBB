@@ -21,6 +21,7 @@ use StoryBB\App;
 use StoryBB\Cli\App as CliApp;
 use StoryBB\Container;
 use StoryBB\Database\DatabaseAdapter;
+use StoryBB\Task\Adhoc;
 
 define('STORYBB', 'BACKGROUND');
 define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
@@ -29,9 +30,6 @@ define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 // don't run this file any more frequently than indicated here. It might turn ugly if you do.
 // But on proper cron you can always increase this value provided you don't go beyond max_limit.
 define('MAX_CRON_TIME', 10);
-// If a task fails for whatever reason it will still be marked as claimed. This is the threshold
-// by which if a task has not completed in this time, the task should become available again.
-define('MAX_CLAIM_THRESHOLD', 300);
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $language;
@@ -139,7 +137,7 @@ function fetch_task(DatabaseAdapter $db): ?array
 		WHERE claimed_time < {int:claim_limit}
 		LIMIT 1',
 		[
-			'claim_limit' => time() - MAX_CLAIM_THRESHOLD,
+			'claim_limit' => time() - Adhoc::MAX_CLAIM_THRESHOLD,
 		]
 	);
 	if ($row = $db->fetch_assoc($request))

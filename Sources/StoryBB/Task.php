@@ -12,6 +12,8 @@
 
 namespace StoryBB;
 
+use StoryBB\Task\Adhoc;
+
 /**
  * A class for managing tasks being queued for running asynchronously.
  */
@@ -29,7 +31,7 @@ class Task
 	 * @param array $data The data that the class needs
 	 * @return bool True if the class could be added
 	 */
-	public static function queue_adhoc(string $class, array $data = []): bool
+	public static function queue_adhoc(string $class, array $data = [], int $time_from_now = 0): bool
 	{
 		global $smcFunc;
 
@@ -37,9 +39,11 @@ class Task
 			return false;
 		}
 
+		$claimed_time = $time_from_now ? time() - Adhoc::MAX_CLAIM_THRESHOLD + $time_from_now : 0;
+
 		$smcFunc['db']->insert('insert', '{db_prefix}adhoc_tasks',
 			['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
-			['', $class, !empty($data) ? json_encode($data) : '', 0],
+			['', $class, !empty($data) ? json_encode($data) : '', $claimed_time],
 			['id_task']
 		);
 

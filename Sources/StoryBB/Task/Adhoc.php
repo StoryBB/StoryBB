@@ -17,6 +17,9 @@ namespace StoryBB\Task;
  */
 abstract class Adhoc
 {
+	/** @var int MAX_CLAIM_THRESHOLD If a task fails for whatever reason it will still be marked as claimed. This is the max time after which if a task was claimed, it will become available again. */
+	const MAX_CLAIM_THRESHOLD = 300;
+
 	/**
 	 * @var array Holds the details for the task
 	 */
