@@ -167,10 +167,10 @@ class TopicPrefix
 			// Apply the condition for groups only if admin (group 1) isn't in the list.
 			if (!empty($conditions['groups']) && !in_array(1, $conditions['groups']))
 			{
+				$group_by = array_merge($group_by, $select);
 				$select[] = 'MAX(tpg.allow_deny) AS allow_deny';
 				$joins[] = '{db_prefix}topic_prefix_groups tpg ON (tp.id_prefix = tpg.id_prefix)';
 				$sql[] = 'tpg.id_group IN ({array_int:groups})';
-				$group_by[] = 'tp.id_prefix';
 				$params['groups'] = $conditions['groups'];
 			}
 		}
