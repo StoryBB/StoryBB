@@ -61,6 +61,8 @@ $txt['whoall_unreadreplies'] = 'Viewing unread replies since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 $txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>.';
 
+$txt['whoroute_characters'] = 'Viewing the character list.';
+
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
 $txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';
 $txt['whoall_.xml_news'] = 'Viewing the recent topics RSS feed.';

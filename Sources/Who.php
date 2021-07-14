@@ -130,7 +130,7 @@ function Who()
 		SELECT
 			lo.log_time, lo.id_member, lo.url, lo.ip AS ip, lo.id_character, COALESCE(chars.character_name, mem.real_name) AS real_name,
 			lo.session, IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, COALESCE(mem.show_online, 1) AS show_online,
-			lo.robot_name
+			lo.robot_name, lo.route, lo.routeparams
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
@@ -171,7 +171,7 @@ function Who()
 			'user_agent' => !empty($actions['USER_AGENT']) ? $actions['USER_AGENT'] : '',
 		];
 
-		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name']];
+		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name'], $row['route'], $row['routeparams']];
 		$member_ids[] = $row['id_member'];
 	}
 	$smcFunc['db']->free_result($request);
@@ -318,6 +318,22 @@ function determineActions($urls, $preferred_prefix = false)
 	$errors = [];
 	foreach ($url_list as $k => $url)
 	{
+		// Check for new-style routes if that's a thing.
+		if (!empty($url[3]))
+		{
+			$params = json_decode($url[4], true);
+			if (empty($params))
+			{
+				$params = [];
+			}
+
+			if (isset($txt['whoroute_' . $url[3]]))
+			{
+				$data[$k] = $txt['whoroute_' . $url[3]];
+				continue;
+			}
+		}
+
 		// Get the request parameters..
 		$actions = sbb_json_decode($url[0], true);
 		if ($actions === false)
