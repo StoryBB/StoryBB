@@ -1947,7 +1947,7 @@ function setupMenuContext()
 				'icon' => 'fas fa-bookmark fa-fw',
 			],
 			'characterlist' => [
-				'url' => $scripturl . '?action=characters',
+				'url' => $urlgenerator->generate('characters'),
 				'icon' => 'fas fa-users fa-fw',
 			],
 			'shipper' => [
@@ -2051,26 +2051,6 @@ function setupMenuContext()
 				'icon' => 'fas fa-sign-out-alt fa-fw',
 			],
 		];
-
-		foreach (get_main_menu_groups() as $id => $group_name)
-		{
-			$context['sidebar']['characterlist']['subitems']['group' . $id] = [
-				'title' => $group_name,
-				'url' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
-			];
-		}
-
-		if (!empty($context['sidebar']['characterlist']['subitems']))
-		{
-			$context['sidebar']['characterlist']['subitems'] = [
-				'characterlist' => [
-					'title' => $txt['chars_menu_title'],
-					'url' => $scripturl . '?action=characters',
-				]
-			] + $context['sidebar']['characterlist']['subitems'];
-			addInlineJavaScript('
-	user_menus.add("characterlist", "", true);', true);
-		}
 	}
 	else
 	{
