@@ -3579,7 +3579,9 @@ div#manage_boards dl dd textarea[name=desc] {
 
 /** new character list **/
 .filterizr-filters li[data-multifilter] {
- 	cursor: pointer;
+	cursor: pointer;
+	display: inline-block;
+	margin: 10px;
 
 	&::before {
 		font-family: "Font Awesome 5 Free";
@@ -3589,5 +3591,15 @@ div#manage_boards dl dd textarea[name=desc] {
 
 	&.filter-active::before {
 		content: "\f14a";
+	}
+}
+
+.char_list_container.filter-container {
+	.windowbg {
+		width: 200px;
+		z-index: 10;
+	}
+	.filteredOut {
+		z-index: 5;
 	}
 }

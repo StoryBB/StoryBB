@@ -8,34 +8,45 @@
 {{#unless context.char_list}}
 		<div class="windowbg">{{{txt.characters_none}}}</div>
 {{else}}
-		<div class="windowbg filterizr-filters">
+		<form>
+			<div class="windowbg filterizr-filters">
 	{{#if context.group_filters}}
-			<ul>
+				<fieldset>
+					<legend>{{{txt.filter_on_groups}}}</legend>
+					<ul>
 		{{#each context.group_filters}}
-				<li data-multifilter="{{{@key}}}">{{{.}}}</li>
+						<li data-multifilter="{{{@key}}}">{{{.}}}</li>
 		{{/each}}
-			</ul>
+					</ul>
+				</fieldset>
 	{{/if}}
-			<ul>
+				<fieldset>
+					<legend>{{{txt.filter_on_player}}}</legend>
+					<ul>
 	{{#each context.member_filters}}
-				<li data-multifilter="{{@key}}">{{{.}}}</li>
+						<li data-multifilter="{{@key}}">{{{.}}}</li>
 	{{/each}}
-			</ul>
-			<ul>
-				<li data-multifilter="1" class="filter-active">{{{txt.char_sheet}}}</li>
-			</ul>
-		</div>
+					</ul>
+				</fieldset>
+				<fieldset>
+					<legend>{{{txt.other_filters}}}</legend>
+					<ul>
+						<li data-multifilter="1">{{{txt.char_sheet}}}</li>
+					</ul>
+				</fieldset>
+			</div>
+		</form>
 
 
 		<div class="char_list_container filter-container">
 
 	{{#each context.char_list}}
-			<div class="windowbg filtr-item" data-category="{{{filters}}}">
-				<div class="poster">
+			<div class="windowbg filtr-item even" data-category="{{{filters}}}">
+				<div>
 					<h4><a href="{{{character_link}}}">{{{character_name}}}</a></h4>
 					<ul class="user_info">
 						<li class="avatar">
-							<a href="{{{character_link}}}"><img src="{{{character_avatar.url}}}" class="avatar"></a>
+							<img src="{{{character_avatar.url}}}" class="avatar">
 						</li>
 		{{#if group_badges}}
 						<li class="icons">{{{group_badges}}}</li>
@@ -75,12 +86,13 @@
 	$(document).ready(function() {
 		$('.filter-container').filterizr({
 			layout: 'sameWidth',
-			filter: ['1'],
 			multifilterLogicalOperator: 'and',
+			gutterPixels: 20
 		});
 		$('.filterizr-filters ul li').on('click', function() {
 			$(this).toggleClass('filter-active');
 		})
+		$('.filterizr-filters ul li[data-multifilter=1]').trigger('click');
 	});
 	</script>
 {{/unless}}

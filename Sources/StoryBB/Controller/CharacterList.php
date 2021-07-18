@@ -135,7 +135,11 @@ class CharacterList implements Routable
 			$smcFunc['db']->free_result($request);
 		}
 
-		asort($context['member_filters']);
-		asort($context['group_filters']);
+		uasort($context['member_filters'], function ($a, $b) {
+			return strcasecmp($a, $b);
+		});
+		uasort($context['group_filters'], function ($a, $b) {
+			return strcasecmp($a, $b);
+		});
 	}
 }

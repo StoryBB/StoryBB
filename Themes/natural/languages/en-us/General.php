@@ -848,4 +848,7 @@ $txt['post_separator_year']['x'] = '%1$d years later';
 
 $txt['shippers'] = 'Shippers';
 $txt['character_filter'] = 'Character Filter';
+$txt['filter_on_groups'] = 'Filter by Groups';
+$txt['filter_on_player'] = 'Character Played By';
+$txt['other_filters'] = 'Other Filters';
 $txt['no_shipper_topics'] = 'No matching topics found.';
