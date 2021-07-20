@@ -2,6 +2,7 @@
 * text
 
 # Set certain files to be binary
+*.wav binary
 *.png binary
 *.jpg binary
 *.gif binary
