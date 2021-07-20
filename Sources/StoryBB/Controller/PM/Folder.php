@@ -418,7 +418,7 @@ class Folder extends AbstractPMController
 	public function get_messages($type = 'subject', $reset = false)
 	{
 		global $txt, $scripturl, $modSettings, $context, $messages_request, $memberContext, $recipients, $smcFunc;
-		global $user_info, $subjects_request;
+		global $user_info, $subjects_request, $user_profile;
 
 		// Count the current message number....
 		static $counter = null;
@@ -525,6 +525,16 @@ class Folder extends AbstractPMController
 		// Run UBBC interpreter on the message.
 		$message['body'] = Parser::parse_bbc($message['body'], true, 'pm' . $message['id_pm']);
 
+		$group_list = [0];
+		if (!empty($user_profile[$message['id_member_from']]))
+		{
+			$group_list = array_merge(
+				[$user_profile[$message['id_member_from']]['id_group']],
+				!empty($user_profile[$message['id_member_from']]['additional_groups']) ? explode(',', $user_profile[$message['id_member_from']]['additional_groups']) : []
+			);
+		}
+		$group_info = get_labels_and_badges($group_list);
+
 		// Send the array.
 		$output = [
 			'id' => $message['id_pm'],
@@ -546,6 +556,10 @@ class Folder extends AbstractPMController
 			'can_see_ip' => allowedTo('moderate_forum'),
 			'labels' => $context['message_labels'][$message['id_pm_head']] ?? [],
 		];
+
+		$output['member']['group'] = $group_info['title'];
+		$output['member']['group_color'] = $group_info['color'];
+		$output['member']['group_icons'] = $group_info['badges'];
 
 		$output['member']['custom_fields'] = [];
 		foreach ($output['member']['characters'] as $character)
