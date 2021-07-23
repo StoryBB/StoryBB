@@ -1055,11 +1055,11 @@ function QuickModeration()
 	{
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}topics
-			SET is_sticky = CASE WHEN is_sticky = {int:is_sticky} THEN 0 ELSE 1 END
+			SET is_sticky = CASE WHEN is_sticky = {int:is_not_sticky} THEN 1 ELSE 0 END
 			WHERE id_topic IN ({array_int:sticky_topic_ids})',
 			[
 				'sticky_topic_ids' => $stickyCache,
-				'is_sticky' => 1,
+				'is_not_sticky' => 0,
 			]
 		);
 
