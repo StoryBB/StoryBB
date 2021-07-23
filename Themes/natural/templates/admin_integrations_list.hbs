@@ -1,0 +1,43 @@
+		{{! Managing integrations. }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.integrations}}}</h3>
+		</div>
+
+{{#unless context.integrations}}
+			<div class="windowbg centertext">{{{txt.no_integrations}}}</div>
+{{else}}
+			<div class="windowbg">
+				<div>{{{txt.integrations_configured}}}</div>
+
+				<table class="table_grid">
+					<thead>
+						<tr class="title_bar">
+							<th colspan="2">{{{txt.integration_to}}}</th>
+							<th>{{{txt.integration_triggers}}}</th>
+							<th>{{{txt.active}}}</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+	{{#each context.integrations}}
+						<tr>
+							<td style="width:1%">{{#if integration.big_icon}}<i class="{{integration.big_icon}}"></i>{{/if}}</td>
+							<td>{{{integration.name}}}</td>
+							<td>{{{trigger_event}}}{{#if subtext}}<div class="smalltext">{{{subtext}}}</div>{{/if}}</td>
+							<td>{{#if active}}{{{../txt.yes}}}{{else}}{{../txt.no}}{{/if}}</td>
+							<td><a href="{{{edit_link}}}">{{{../txt.modify}}}</a></td>
+						</tr>
+	{{/each}}
+					</tbody>
+				</table>
+			</div>
+{{/unless}}
+
+		<div class="title_bar">
+			<h3 class="titlebg">{{{txt.add_integration}}}</h3>
+		</div>
+		<div class="buttonlist righttext">
+{{#each context.add_integrations}}
+			<a class="button" href="{{../scripturl}}?action=admin;area=integrations;sa=add_integration;integration={{@key}}">{{#if icon}}<i class="{{icon}}"></i>&nbsp; {{/if}}{{{name}}}</a>
+{{/each}}
+		</div>

@@ -14,6 +14,7 @@ namespace StoryBB\Controller\Profile;
 
 use StoryBB\StringLibrary;
 use StoryBB\Helper\Parser;
+use StoryBB\Hook\Integratable;
 use StoryBB\Model\Character;
 use StoryBB\Search\Indexable;
 use StoryBB\Container;
@@ -843,6 +844,8 @@ class CharacterSheet extends AbstractProfileController
 		if ($count > 0)
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
+		$first_approval = empty($context['character']['char_sheet']);
+
 		// OK, so this version is good to go for approval. Approve the sheet...
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}character_sheet_versions
@@ -880,6 +883,11 @@ class CharacterSheet extends AbstractProfileController
 			[]
 		);
 		updateMemberData($context['id_member'], ['alerts' => '+']);
+
+		if ($first_approval)
+		{
+			(new Integratable\Character\Approved((int) $context['id_member'], (int) $context['character']['id_character']))->execute();
+		}
 
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=character_sheet;char=' . $context['character']['id_character']);
 	}

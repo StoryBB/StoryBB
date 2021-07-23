@@ -92,6 +92,17 @@ function writeLog($force = false)
 	else
 		$encoded_get = '';
 
+	$route = '';
+	$routeparams = '[]';
+	if (!empty($context['routing']['_route']))
+	{
+		$route = $context['routing']['_route'];
+		$routeparams = $context['routing'];
+		unset($routeparams['_route'], $routeparams['_controller'], $routeparams['_function']);
+		unset($routeparams['__url_session_var'], $routeparams['__url_session_id']);
+		$routeparams = json_encode($routeparams);
+	}
+
 	// Guests use 0, members use their session ID.
 	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
@@ -119,13 +130,15 @@ function writeLog($force = false)
 
 		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_online
-			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}
+			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}, route = {string:route}, routeparams = {string:routeparams}
 			WHERE session = {string:session}',
 			[
 				'log_time' => time(),
 				'ip' => $user_info['ip'],
 				'url' => $encoded_get,
 				'session' => $session_id,
+				'route' => $route,
+				'routeparams' => $routeparams,
 			]
 		);
 
@@ -151,8 +164,8 @@ function writeLog($force = false)
 
 		$smcFunc['db']->insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
-			['session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'],
-			[$session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get],
+			['session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string', 'route' => 'string', 'routeparams' => 'string'],
+			[$session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get, $route, $routeparams],
 			['session']
 		);
 	}

@@ -1760,7 +1760,7 @@ div#pollmoderation {
 	word-break: hyphenate;
 	word-wrap: break-word;
 	flex: 0 0 auto;
-	width: 200px;
+	width: 220px;
 	position: relative;
 }
 
@@ -2436,7 +2436,7 @@ span.pm_label {
 	margin: 10px 0 0 0;
 }
 
-#basicinfo ul li {
+#basicinfo ul:not(.user_info) li {
 	display: block;
 	float: left;
 	margin-right: 5px;
@@ -3575,4 +3575,31 @@ div#manage_boards dl dd textarea[name=desc] {
 
 .character_filter .character {
 	margin-top: 20px;
+}
+
+/** new character list **/
+.filterizr-filters li[data-multifilter] {
+	cursor: pointer;
+	display: inline-block;
+	margin: 10px;
+
+	&::before {
+		font-family: "Font Awesome 5 Free";
+		content: "\f0c8";
+		margin-right: 8px;
+	}
+
+	&.filter-active::before {
+		content: "\f14a";
+	}
+}
+
+.char_list_container.filter-container {
+	.windowbg {
+		width: 200px;
+		z-index: 10;
+	}
+	.filteredOut {
+		z-index: 5;
+	}
 }

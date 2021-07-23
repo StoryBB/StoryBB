@@ -20,6 +20,7 @@ use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
 use Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper;
 use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
 use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
+use Symfony\Component\Routing\RequestContext;
 
 class App
 {
@@ -116,6 +117,12 @@ class App
 		});
 		$container->inject('urlmatcher', function() use ($container) {
 			return new CompiledUrlMatcher($container->get('compiled_matcher'), $container->get('requestcontext'));
+		});
+		$container->inject('requestcontext', function() use ($container) {
+			$boardurl = \StoryBB\App::get_global_config_item('boardurl');
+			$sitesettings = $container->get('sitesettings');
+			$baseurl = $sitesettings->drop_index_php ? $boardurl : $boardurl . '/index.php';
+			return (new RequestContext('/'))->setBaseUrl($baseurl);
 		});
 
 		return $container;

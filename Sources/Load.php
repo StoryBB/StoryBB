@@ -1106,18 +1106,10 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			$characters_loaded[$row['id_character']] = $row['id_member'];
 
-			if (!empty($row['avatar']))
-			{
-				$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
-			}
-			elseif (!empty($row['filename']))
-			{
-				$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
-			}
-			else
-				$image = $settings['images_url'] . '/default.png';
-
-			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
+			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = set_avatar_data([
+				'filename' => $row['filename'],
+				'avatar' => $row['avatar'],
+			])['href'];
 		}
 		$smcFunc['db']->free_result($request);
 
@@ -2931,11 +2923,13 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings, $txt;
+	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings, $txt, $smcFunc;
 
 	// Come on!
 	if (empty($data))
+	{
 		return [];
+	}
 
 	// Set a nice default var.
 	$image = '';

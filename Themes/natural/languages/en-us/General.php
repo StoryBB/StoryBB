@@ -848,4 +848,12 @@ $txt['post_separator_year']['x'] = '%1$d years later';
 
 $txt['shippers'] = 'Shippers';
 $txt['character_filter'] = 'Character Filter';
+$txt['filter_on_groups'] = 'Filter by Groups';
+$txt['filter_on_player'] = 'Character Played By';
+$txt['other_filters'] = 'Other Filters';
 $txt['no_shipper_topics'] = 'No matching topics found.';
+
+$txt['integration_discord_topic'] = 'New topic posted: [{$subject}]({$link})';
+$txt['integration_discord_reply'] = '[{$subject}]({$link}) has a new reply!';
+$txt['integration_discord_new_member'] = 'New member: [{$member_name}]({$profile_link})';
+$txt['integration_discord_new_character'] = 'A new character has been approved - [{$character_name}]({$character_link}) ([sheet]({$character_sheet_link}))';

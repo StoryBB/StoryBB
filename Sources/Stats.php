@@ -397,7 +397,7 @@ function DisplayStats()
 	}
 
 	// Try to cache this when possible, because it's a little unavoidably slow.
-	if (($members = cache_get_data('stats_top_starters', 360)) == null)
+	if (($members = cache_get_data('stats_top_starters', 360)) === null)
 	{
 		$request = $smcFunc['db']->query('', '
 			SELECT id_member_started, COUNT(*) AS hits
@@ -425,8 +425,7 @@ function DisplayStats()
 	$members_result = $smcFunc['db']->query('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
-		WHERE id_member IN ({array_int:member_list})
-		LIMIT 10',
+		WHERE id_member IN ({array_int:member_list})',
 		[
 			'member_list' => array_keys($members),
 		]
@@ -451,10 +450,14 @@ function DisplayStats()
 		if ($max_num < $members[$row_members['id_member']])
 			$max_num = $members[$row_members['id_member']];
 	}
+	$smcFunc['db']->free_result($members_result);
 	uasort($context['stats_blocks']['starters']['data'], function($a, $b) {
 		return $b['num'] <=> $a['num'];
 	});
-	$smcFunc['db']->free_result($members_result);
+	if (count($context['stats_blocks']['starters']['data']) > 10)
+	{
+		$context['stats_blocks']['starters']['data'] = array_slice($context['stats_blocks']['starters']['data'], 0, 10, true);
+	}
 
 	foreach ($context['stats_blocks']['starters']['data'] as $i => $topic)
 	{

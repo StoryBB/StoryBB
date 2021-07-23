@@ -5,7 +5,12 @@
         }
     },
     "autoload": {
-        "psr-4": {"StoryBB\\": "Sources/StoryBB/"}
+        "psr-4": {
+            "StoryBB\\Database\\": "Sources/StoryBB/Database",
+            "StoryBB\\Helper\\": "Sources/StoryBB/Helper",
+            "StoryBB\\Model\\": "Sources/StoryBB/Model",
+            "StoryBB\\": "Sources/StoryBB/"
+        }
     },
     "require": {
         "zordius/lightncandy": "1.2.2",

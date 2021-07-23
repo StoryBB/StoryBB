@@ -688,7 +688,6 @@ VALUES (1, 'name', '{$default_theme_name}'),
   (1, 'shortname', 'natural'),
   (1, 'meta_theme_color', '#557EA0'),
   (1, 'show_latest_member', '1'),
-  (1, 'drafts_show_saved_enabled', '1'),
   (1, 'sub_boards_columns', '2');
 
 # --------------------------------------------------------

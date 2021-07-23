@@ -71,6 +71,16 @@ reloadSettings();
 // Clean the request variables, add slashes, etc.
 cleanRequest();
 
+// @todo replace this hack at some point.
+if (!empty($result))
+{
+	$context['routing'] = $result;
+}
+else
+{
+	$context['routing'] = [];
+}
+
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
 {
@@ -113,6 +123,12 @@ function sbb_main()
 
 	// Load the current user's permissions.
 	loadPermissions();
+
+	// @todo replace this hack at some point.
+	if (!empty($context['routing']))
+	{
+		$_REQUEST['action'] = $context['routing']['_route'];
+	}
 
 	if (empty($_REQUEST['action']))
 	{
@@ -199,6 +215,13 @@ function sbb_main()
 			setcookie('cookies', '1', time() + (30 * 24 * 60 * 60));
 		}
 		redirectexit();
+	}
+
+	// @todo replace this hack at some point.
+	if (!empty($context['routing']))
+	{
+		[$class, $method] = $context['routing']['_function'];
+		return $class . '::' . $method;
 	}
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).

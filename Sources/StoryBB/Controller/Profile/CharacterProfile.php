@@ -61,6 +61,10 @@ class CharacterProfile extends AbstractProfileController
 		list ($context['character']['theme_name']) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
+		$groups = array_merge([$context['character']['main_char_group']], explode(',', $context['character']['char_groups']));
+		$groups = array_filter(array_map('intval', $groups));
+		$context['character']['group_labels'] = get_labels_and_badges($groups);
+
 		$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
 		$context['character']['date_created_format'] = timeformat($context['character']['date_created']);
 		$context['character']['last_active_format'] = timeformat($context['character']['last_active']);

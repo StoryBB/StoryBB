@@ -96,6 +96,12 @@ function AdminMain()
 					'icon' => 'contact',
 					'permission' => ['admin_forum'],
 				],
+				'integrations' => [
+					'label' => $txt['integrations'],
+					'file' => 'ManageIntegrations.php',
+					'function' => 'ManageIntegrations',
+					'permission' => ['admin_forum'],
+				],
 				'affiliates' => [
 					'label' => $txt['affiliates'],
 					'file' => 'ManageAffiliates.php',

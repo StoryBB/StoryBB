@@ -1,0 +1,12 @@
+		<div class="cat_bar">
+			<h3 class="catbg">{{{context.page_title}}}</h3>
+		</div>
+		<div class="windowbg">
+			<p class="information">{{{txt.this_integration_supports}}}</p>
+			<ul>
+{{#each context.add_integration_methods}}
+				<li><a href="{{{url}}}">{{{label}}}</a></li>
+{{/each}}
+			</ul>
+			<p><a href="{{{scripturl}}}?action=admin;area=integrations">{{{txt.back_to_integrations}}}</a></p>
+		</div>

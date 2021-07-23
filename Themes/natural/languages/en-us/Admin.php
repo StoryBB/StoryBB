@@ -731,3 +731,7 @@ $txt['invalid_prefix_style'] = 'A valid prefix style was not selected.';
 
 $txt['move_up'] = 'Move up';
 $txt['move_down'] = 'Move down';
+
+$txt['achievements'] = 'Achievements';
+
+$txt['integrations'] = 'Integrations';
