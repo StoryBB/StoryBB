@@ -320,6 +320,18 @@ class Uncategorised
 					Constraint::from('group_moderators.id_member')->to('members.id_member'),
 				]
 			),
+			Table::make('integrations',
+				[
+					'id_integration' => Column::smallint()->auto_increment(),
+					'integratable' => Column::varchar(255),
+					'integration' => Column::varchar(255),
+					'active' => Column::tinyint(),
+					'options' => Column::text(),
+				],
+				[
+					Index::primary(['id_integration']),
+				]
+			),
 			Table::make('language_delta',
 				[
 					'id_delta' => Column::int()->auto_increment(),

@@ -1,0 +1,124 @@
+		<div class="cat_bar">
+			<h3 class="catbg">{{{context.page_title}}}</h3>
+		</div>
+		<form action="{{{scripturl}}}?action=admin;area=integrations;sa=edit_integration;integration={{{context.integration.id}}}" method="post" accept-charset="UTF-8">
+{{#if context.errors}}
+			<div class="errorbox">
+				<strong>{{{txt.following_errors}}}</strong>
+				<ul>
+	{{#each context.errors}}
+					<li>{{{.}}}</li>
+	{{/each}}
+				</ul>
+			</div>
+{{/if}}
+			<div class="windowbg">
+				<dl class="settings">
+					<dt>{{{txt.integration_to}}}</dt>
+					<dd>
+						{{#if context.integration.integration.icon}}<i class="{{context.integration.integration.icon}}"></i>{{/if}}
+						{{{context.integration.integration.name}}}
+					</dd>
+					<dt>{{{txt.integration_triggers}}}</dt>
+					<dd>{{{context.integration.triggers}}}</dd>
+				</dl>
+				<hr>
+				<dl class="settings">
+{{#each context.integration.configuration}}
+	{{#if (eq type 'boolean')}}
+					<dt>
+						<label for="integration_control_{{@key}}">{{{label}}}</label>
+						{{#if sublabel}}<div class="smalltext">{{{sublabel}}}</div>{{/if}}
+					</dt>
+					<dd>
+						<input type="checkbox" value="1" id="integration_control_{{@key}}" name="{{@key}}"{{#if current}} checked{{/if}}>
+					</dd>
+	{{/if}}
+	{{#if (eq type 'url')}}
+					<dt>
+						<label for="integration_control_{{@key}}">{{{label}}}</label>
+						{{#if sublabel}}<div class="smalltext">{{{sublabel}}}</div>{{/if}}
+					</dt>
+					<dd>
+						<input type="url" class="full_width" value="{{current}}" id="integration_control_{{@key}}" name="{{@key}}">
+					</dd>
+	{{/if}}
+	{{#if (eq type 'text')}}
+					<dt>
+						<label for="integration_control_{{@key}}">{{{label}}}</label>
+						{{#if sublabel}}<div class="smalltext">{{{sublabel}}}</div>{{/if}}
+					</dt>
+					<dd>
+						<input type="text" class="full_width" value="{{current}}" id="integration_control_{{@key}}" name="{{@key}}">
+					</dd>
+	{{/if}}
+	{{#if (eq type 'color')}}
+					<dt>
+						<label for="integration_control_{{@key}}">{{{label}}}</label>
+						{{#if sublabel}}<div class="smalltext">{{{sublabel}}}</div>{{/if}}
+					</dt>
+					<dd>
+						<input type="text" value="{{current}}" id="integration_control_{{@key}}" name="{{@key}}">
+					</dd>
+	{{/if}}
+	{{#if (eq type 'boards')}}
+					<dt>
+						<label>{{{label}}}</label>
+						{{#if sublabel}}<div class="smalltext">{{{sublabel}}}</div>{{/if}}
+					</dt>
+					<dd>
+						<div class="board">
+							<label>
+								<input type="checkbox" name="boards[ic]" value="ic"{{#if board_data.ic}} checked{{/if}}>
+								{{{../txt.in_all_character_boards}}}
+							</label>
+						</div>
+						<div class="board">
+							<label>
+								<input type="checkbox" name="boards[ooc]" value="ooc"{{#if board_data.ooc}} checked{{/if}}>
+								{{{../txt.in_all_ooc_boards}}}
+							</label>
+						</div>
+						<br>
+
+		{{#each board_data.boards_categories}}
+						<div class="board-category">
+							<label>
+								<input type="checkbox">
+								<strong>{{{name}}}</strong>
+							</label>
+			{{#each boards}}
+							<div class="board">
+								<label>
+									<input type="checkbox" name="boards[{{id_board}}]" value="{{id_board}}"{{#if active}} checked{{/if}}>
+
+									{{#if (gt child_level 0)}}
+										{{repeat '&nbsp;' child_level}}
+									{{/if}}
+
+									{{{name}}}
+								</label>
+							</div>
+			{{/each}}
+						</div>
+						<br>
+		{{/each}}
+					</dd>
+	{{/if}}
+{{/each}}
+				</dl>
+				<div class="buttonlist righttext">
+					<button name="save" class="button active">{{{txt.save}}}</button>
+				</div>
+			</div>
+			{{session_form}}
+		</form>
+
+		<script>
+		$('.board-category > label > input').change(function () {
+			var checked = $(this).prop('checked');
+			$(this).closest('.board-category').find('.board input').each(function() {
+				$(this).prop('checked', checked);
+			});
+		});
+		</script>

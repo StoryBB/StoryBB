@@ -13,6 +13,7 @@
 namespace StoryBB\Model;
 
 use StoryBB\Helper\Mentions;
+use StoryBB\Hook\Integratable;
 use StoryBB\Hook\Observable;
 use StoryBB\Task;
 
@@ -229,6 +230,11 @@ class Post
 				TopicPrefix::set_prefix_topic($topicOptions['id'], $topicOptions['prefixes']);
 			}
 
+			if ($msgOptions['approved'])
+			{
+				(new Integratable\Topic\Created($msgOptions, $topicOptions, $posterOptions))->execute();
+			}
+
 			// What if we want to export new topics out to a CMS?
 			(new Observable\Topic\Created($msgOptions, $topicOptions, $posterOptions))->execute();
 		}
@@ -271,6 +277,11 @@ class Post
 
 			// One new post has been added today.
 			trackStats(['posts' => '+']);
+
+			if ($msgOptions['approved'])
+			{
+				(new Integratable\Reply\Created($msgOptions, $topicOptions, $posterOptions))->execute();
+			}
 		}
 
 		// Creating is modifying...in a way.
