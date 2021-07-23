@@ -1647,7 +1647,7 @@ function template_install_above()
 		<link rel="stylesheet" href="Themes/natural/css/install.css?alp21">
 		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/natural/css/rtl.css?alp21">' : '', '
 
-		<script src="Themes/natural/scripts/jquery-3.2.1.min.js"></script>
+		<script src="Themes/natural/scripts/jquery-3.6.0.min.js"></script>
 		<script src="Themes/natural/scripts/script.js"></script>
 	</head>
 	<body><div id="footerfix">
