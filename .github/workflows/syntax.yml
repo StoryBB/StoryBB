@@ -12,6 +12,10 @@ jobs:
         php: ['7.1', '7.2', '7.3', '7.4', '8.0']
 
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          path: plugin
       - name: Run syntax check
         run: |
           if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
@@ -25,6 +29,10 @@ jobs:
         php: ['7.2']
 
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          path: plugin
       - name: Run PHPCS
         run: |
           curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
