@@ -8,6 +8,7 @@
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>./Themes/natural/css/fontawesome-free-5.15.1-web/*</exclude-pattern>
     <exclude-pattern>Themes/natural/scripts/select2/*</exclude-pattern>
+    <exclude-pattern>./Themes/natural/scripts/jquery.filterizr.min.js</exclude-pattern>
 
     <!-- The cache folder is a hot mess, and not relevant. -->
     <exclude-pattern>./cache/*</exclude-pattern>
