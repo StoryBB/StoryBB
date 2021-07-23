@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-        with:
-          path: plugin
       - name: Run syntax check
         run: |
           if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax error, unexpected"; then exit 1; fi
@@ -31,8 +29,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-        with:
-          path: plugin
       - name: Run PHPCS
         run: |
           curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
