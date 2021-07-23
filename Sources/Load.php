@@ -2082,7 +2082,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	];
 
 	// Load the JQuery library.
-	loadJavaScriptFile('jquery-3.2.1.min.js', ['seed' => false], 'sbb_jquery');
+	loadJavaScriptFile('jquery-3.6.0.min.js', ['seed' => false], 'sbb_jquery');
 
 	// Queue our JQuery plugins!
 	loadJavaScriptFile('sbb_jquery_plugins.js', ['minimize' => true], 'sbb_jquery_plugins');
