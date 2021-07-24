@@ -481,7 +481,11 @@ class CharacterSheet extends AbstractProfileController
 
 	public function display_edit()
 	{
-		global $context, $txt, $smcFunc, $sourcedir;
+		global $context, $txt, $smcFunc, $sourcedir, $modSettings;
+
+		require_once($sourcedir . '/Subs-Post.php');
+		require_once($sourcedir . '/Subs-Editor.php');
+		require_once($sourcedir . '/Drafts.php');
 
 		loadLanguage('Admin');
 
@@ -507,14 +511,35 @@ class CharacterSheet extends AbstractProfileController
 			$context['character']['sheet_details'] = $sheet;
 		}
 
-		// Make an editor box
-		require_once($sourcedir . '/Subs-Post.php');
-		require_once($sourcedir . '/Subs-Editor.php');
+		// Attempt to load any drafts we have.
+		$drafts = LoadCharacterSheetDrafts($context['character']['id_character']);
+		if (!empty($drafts))
+		{
+			foreach ($drafts as $id_draft => $draft)
+			{
+				if (!empty($context['character']['sheet_details']['created_time']) && $context['character']['sheet_details']['created_time'] > $drafts['poster_time'])
+				{
+					// The saved version is newer than the draft, get rid of the draft.
+					DeleteDraft($draft['id_draft'], true, 2);
+					unset($drafts[$id_draft]);
+				}
+			}
+			if (!empty($drafts))
+			{
+				$draft = array_pop($drafts);
+				$context['id_draft'] = $draft['id_draft'];
+				$context['sheet_preview_raw'] = un_preparsecode($draft['body']);
+				$context['loaded_from_draft'] = true;
+			}
+		}
 
 		if (!isset($context['sheet_preview_raw']))
 		{
 			$context['sheet_preview_raw'] = !empty($context['character']['sheet_details']['sheet_text']) ? un_preparsecode($context['character']['sheet_details']['sheet_text']) : '';
 		}
+
+		$context['drafts_charsheet_save'] = !empty($modSettings['drafts_charsheet_enabled']);
+		$context['drafts_autosave'] = $context['drafts_charsheet_save'] && !empty($modSettings['drafts_autosave_enabled']);
 
 		// Now create the editor.
 		$editorOptions = [
@@ -617,13 +642,14 @@ class CharacterSheet extends AbstractProfileController
 
 	public function post_edit()
 	{
-		global $context, $txt, $smcFunc, $sourcedir;
+		global $context, $txt, $smcFunc, $sourcedir, $modSettings;
 
 		loadLanguage('Admin');
 
 		// Make an editor box
 		require_once($sourcedir . '/Subs-Post.php');
 		require_once($sourcedir . '/Subs-Editor.php');
+		require_once($sourcedir . '/Drafts.php');
 
 		$sheet = Character::get_latest_character_sheet($context['character']['id_character']);
 		if ($sheet)
@@ -660,6 +686,14 @@ class CharacterSheet extends AbstractProfileController
 
 		if (!empty($message))
 		{
+			if (!empty($modSettings['drafts_charsheet_enabled']) && isset($_POST['save_draft']))
+			{
+				$errors = [];
+				SaveCharSheetDraft($errors);
+				// If we fall through to here, something went wrong with saving.
+				fatal_error(implode('<br>', $context['form_errors']), false);
+			}
+
 			if (!empty($_POST['preview']))
 			{
 				$context['sheet_preview_raw'] = un_preparsecode($message);
@@ -684,6 +718,12 @@ class CharacterSheet extends AbstractProfileController
 					],
 					['id_version']
 				);
+
+				if (!empty($_POST['id_draft']))
+				{
+					$draft = (int) $_POST['id_draft'];
+					DeleteDraft($draft, true, 2);
+				}
 			}
 		}
 

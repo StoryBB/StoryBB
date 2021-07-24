@@ -26,7 +26,9 @@ class CharacterCreate extends AbstractProfileController
 
 	public function display_action()
 	{
-		global $context, $smcFunc, $txt, $sourcedir;
+		global $context, $smcFunc, $txt, $sourcedir, $modSettings;
+
+		require_once($sourcedir . '/Drafts.php');
 
 		loadLanguage('Admin');
 
@@ -38,6 +40,16 @@ class CharacterCreate extends AbstractProfileController
 				'character_name' => '',
 				'sheet' => '',
 			];
+
+			// Attempt to load any drafts we have.
+			$drafts = LoadCharacterSheetDrafts(0);
+			if (!empty($drafts))
+			{
+				$draft = array_pop($drafts);
+				$context['id_draft'] = $draft['id_draft'];
+				$context['character']['character_name'] = $draft['subject'];
+				$context['character']['sheet'] = $draft['body'];
+			}
 		}
 
 		if (!isset($context['form_errors']))
@@ -50,11 +62,14 @@ class CharacterCreate extends AbstractProfileController
 		require_once($sourcedir . '/Subs-Editor.php');
 
 		// Now create the editor.
+		$context['drafts_charsheet_save'] = !empty($modSettings['drafts_charsheet_enabled']);
+		$context['drafts_autosave'] = $context['drafts_charsheet_save'] && !empty($modSettings['drafts_autosave_enabled']);
+
 		$editorOptions = [
 			'id' => 'message',
 			'value' => un_preparsecode($context['character']['sheet']),
 			'labels' => [
-				'post_button' => $txt['save'],
+				'post_button' => $txt['char_create'],
 			],
 			// add height and width for the editor
 			'height' => '500px',
@@ -92,15 +107,18 @@ class CharacterCreate extends AbstractProfileController
 
 	public function post_action()
 	{
-		global $context, $smcFunc, $txt, $sourcedir;
+		global $context, $smcFunc, $txt, $sourcedir, $modSettings;
 
 		require_once($sourcedir . '/Subs-Post.php');
 		require_once($sourcedir . '/Profile-Modify.php');
+		require_once($sourcedir . '/Drafts.php');
 
 		$context['character']['character_name'] = !empty($_POST['char_name']) ? StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES) : '';
 		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 		preparsecode($message);
 		$context['character']['sheet'] = $message;
+
+		$context['form_errors'] = [];
 
 		$session = checkSession('post', '', false);
 		if ($session !== '')
@@ -128,6 +146,13 @@ class CharacterCreate extends AbstractProfileController
 
 			if ($matching_names)
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
+		}
+
+		if (!empty($modSettings['drafts_charsheet_enabled']) && isset($_POST['save_draft']))
+		{
+			SaveCharSheetDraft($context['form_errors']);
+			// If we fall through to here, something went wrong with saving.
+			fatal_error(implode('<br>', $context['form_errors']), false);
 		}
 
 		if (!empty($context['form_errors']))
@@ -167,6 +192,13 @@ class CharacterCreate extends AbstractProfileController
 				['id_version']
 			);
 		}
+
+		if (!empty($_POST['id_draft']))
+		{
+			$draft = (int) $_POST['id_draft'];
+			DeleteDraft($draft, true, 2);
+		}
+
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 	}
 }

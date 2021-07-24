@@ -27,7 +27,16 @@ sbb_DraftAutoSave.prototype.init = function ()
 		var oIframe = document.getElementsByTagName('iframe')[0];
 		var oIframeWindow = oIframe.contentWindow || oIframe.contentDocument;
 		// start the autosave timer
-		this.interval_id = window.setInterval(this.opt.sSelf + '.draft' + (this.bPM ? 'PM' : '') + 'Save();', this.opt.iFreq);
+		var js = 'draftSave';
+		if (this.bPM)
+		{
+			js = 'draftPMSave';
+		}
+		else if (this.opt.sType == 'charsheet')
+		{
+			js = 'draftCharsheetSave';
+		}
+		this.interval_id = window.setInterval(this.opt.sSelf + '.' + js + '();', this.opt.iFreq);
 
 		// Set up window focus and blur events
 		var instanceRef = this;
@@ -53,6 +62,8 @@ sbb_DraftAutoSave.prototype.draftBlur = function(oEvent, source)
 		// save what we have and turn of the autosave
 		if (this.bPM)
 			this.draftPMSave();
+		else if (this.opt.sType == 'charsheet')
+			this.draftCharsheetSave();
 		else
 			this.draftSave();
 
@@ -68,8 +79,18 @@ sbb_DraftAutoSave.prototype.draftFocus = function(oEvent, source)
 {
 	if ($('#' + this.opt.sSceditorID).data("sceditor").inSourceMode() == source)
 	{
+		var js = 'draftSave';
+		if (this.bPM)
+		{
+			js = 'draftPMSave';
+		}
+		else if (this.opt.sType == 'charsheet')
+		{
+			js = 'draftCharsheetSave';
+		}
+
 		if (this.interval_id == "")
-			this.interval_id = window.setInterval(this.opt.sSelf + '.draft' + (this.bPM ? 'PM' : '') + 'Save();', this.opt.iFreq);
+			this.interval_id = window.setInterval(this.opt.sSelf + '.' + js + '();', this.opt.iFreq);
 	}
 	return;
 }
@@ -115,6 +136,52 @@ sbb_DraftAutoSave.prototype.draftSave = function ()
 
 	// Send in document for saving and hope for the best
 	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=post2;board=" + this.opt.iBoard + ";xml", aSections.join("&"), this.onDraftDone);
+
+	// Save the latest for compare
+	this.sCheckDraft = sPostdata;
+}
+
+sbb_DraftAutoSave.prototype.draftCharsheetSave = function ()
+{
+	var sPostdata = $('#' + this.opt.sSceditorID).data("sceditor").getText(true);
+
+	// nothing to save or already posting or nothing changed?
+	if (isEmptyText(sPostdata) || sbb_formSubmitted || this.sCheckDraft == sPostdata)
+		return false;
+
+	// Still saving the last one or other?
+	if (this.bInDraftMode)
+		this.draftCancel();
+
+	if (!this.opt.iCharacter)
+	{
+		var aSections = [
+			'char_name=' + escape(document.forms.creator['char_name'].value.php_to8bit()).replace(/\+/g, "%2B"),
+			'id_draft=' + (('id_draft' in document.forms.creator.elements) ? parseInt(document.forms.creator.elements['id_draft'].value) : 0),
+			'message=' + escape(sPostdata.php_to8bit()).replace(/\+/g, "%2B"),
+			'save_draft=true',
+			sbb_session_var + '=' + sbb_session_id,
+		];
+
+		var endpoint = "action=profile;u=" + this.opt.iMember + ";area=character_create;xml";
+	}
+	else
+	{
+		var aSections = [
+			'id_draft=' + (('id_draft' in document.forms.postmodify.elements) ? parseInt(document.forms.postmodify.elements['id_draft'].value) : 0),
+			'message=' + escape(sPostdata.php_to8bit()).replace(/\+/g, "%2B"),
+			'save_draft=true',
+			sbb_session_var + '=' + sbb_session_id,
+		];
+
+		var endpoint = "action=profile;u=" + this.opt.iMember + ";area=character_sheet;char=" + this.opt.iCharacter + ";edit;xml";
+	}
+
+	// keep track of source or wysiwyg
+	aSections[aSections.length] = 'message_mode=' + $('#' + this.opt.sSceditorID).data("sceditor").inSourceMode();
+
+	// Send in document for saving and hope for the best
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + endpoint, aSections.join("&"), this.onDraftDone);
 
 	// Save the latest for compare
 	this.sCheckDraft = sPostdata;

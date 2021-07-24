@@ -424,6 +424,7 @@ function ModifyDraftSettings($return_config = false)
 		// Draft settings ...
 		['check', 'drafts_post_enabled'],
 		['check', 'drafts_pm_enabled'],
+		['check', 'drafts_charsheet_enabled'],
 		['check', 'drafts_show_saved_enabled', 'subtext' => $txt['drafts_show_saved_enabled_subnote']],
 		['int', 'drafts_keep_days', 'postinput' => $txt['days_word'], 'subtext' => $txt['drafts_keep_days_subnote']],
 		'',
