@@ -543,10 +543,6 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 
 			return true;
 		}
-		elseif ($type === 2)
-		{
-
-		}
 	}
 
 	return $draft_info;
