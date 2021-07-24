@@ -56,9 +56,10 @@
 				<br>
 				<div class="smalltext">{{{txt.you_can_add_later}}}</div>
 				<input type="hidden" name="u" value="{{context.id_member}}">
-				<div class="buttonlist righttext">
-					<button type="submit" name="create_char" value="create_char" class="active button">{{{txt.char_create}}}</button>
-				</div>
+				<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
+				<span id="post_confirm_buttons" class="buttonlist">
+					{{{richtextbuttons 'message'}}}
+				</span>
 				{{session_form}}
 			</form>
 		</div>

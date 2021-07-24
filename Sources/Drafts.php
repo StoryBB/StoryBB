@@ -296,6 +296,148 @@ function SavePMDraft(&$post_errors, $recipientList)
 }
 
 /**
+ * Saves a character sheet draft.
+ * The core draft feature must be enabled.
+ * Determines if this is a new draft or existing draft, for new/existing character.
+ * Returns errors in $post_errors for display in the template.
+ * 
+ * @param string[] $post_errors Any errors encountered trying to save this draft
+ * @return bool True
+ */
+function SaveCharSheetDraft(&$post_errors)
+{
+	global $user_info, $modSettings, $sourcedir, $txt, $context, $smcFunc;
+
+	// can you be, should you be ... here?
+	if (empty($modSettings['drafts_charsheet_enabled']) || !empty($user_info['is_guest']) || !isset($_POST['save_draft']) || !isset($_POST['id_draft']))
+	{
+		return false;
+	}
+
+	// read in what they sent us, if anything
+	$id_draft = (int) $_POST['id_draft'];
+	$draft_info = ReadDraft($id_draft, 2);
+
+	// A draft has been saved less than 5 seconds ago, let's not do the autosave again
+	if (isset($_REQUEST['xml']) && !empty($draft_info['poster_time']) && time() < $draft_info['poster_time'] + 5)
+	{
+		$context['draft_saved_on'] = $draft_info['poster_time'];
+
+		// since we were called from the autosave function, send something back
+		if (!empty($id_draft))
+		{
+			XmlDraft($id_draft);
+		}
+
+		return true;
+	}
+
+	// The body of the draft is the character sheet.
+	require_once($sourcedir . '/Subs-Post.php');
+	$draft['body'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
+	preparsecode($draft['body']);
+
+	// So which route did we come from?
+	if (!empty($context['character']['id_character']))
+	{
+		// Update to an existing character sheet.
+		// We don't allow changing the character name in this route but for simplifying other code, supply something.
+		$draft['subject'] = $context['character']['character_name'];
+		$draft['meta'] = ['id_character' => $context['character']['id_character']];
+	}
+	else
+	{
+		// New character.
+		$draft['subject'] = strtr(StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES), ["\r" => '', "\n" => '', "\t" => '']);
+		if (StringLibrary::strlen($draft['subject']) > 100)
+		{
+			$draft['subject'] = StringLibrary::substr($draft['subject'], 0, 100);
+		}
+		$draft['meta'] = ['id_character' => 0];
+	}
+
+	if (!empty($id_draft) && !empty($draft_info))
+	{
+		$smcFunc['db']->query('', '
+			UPDATE {db_prefix}user_drafts
+			SET
+				poster_time = {int:poster_time},
+				subject = {string:subject},
+				body = {string:body},
+				meta = {string:meta}
+			WHERE id_draft = {int:id_draft}',
+			[
+				'poster_time' => time(),
+				'subject' => $draft['subject'],
+				'body' => $draft['body'],
+				'meta' => json_encode($draft['meta']),
+				'id_draft' => $id_draft,
+			]
+		);
+
+		// some items to return to the form
+		$context['draft_saved'] = true;
+		$context['id_draft'] = $id_draft;
+
+		// cleanup
+		unset($_POST['save_draft']);
+	}
+	// otherwise creating a new draft
+	else
+	{
+		$id_draft = $smcFunc['db']->insert('',
+			'{db_prefix}user_drafts',
+			[
+				'id_topic' => 'int',
+				'id_board' => 'int',
+				'type' => 'int',
+				'poster_time' => 'int',
+				'id_member' => 'int',
+				'subject' => 'string-255',
+				'body' => 'string',
+				'meta' => 'string',
+			],
+			[
+				0,
+				0,
+				2,
+				time(),
+				$user_info['id'],
+				$draft['subject'],
+				$draft['body'],
+				json_encode($draft['meta']),
+			],
+			[
+				'id_draft'
+			],
+			1
+		);
+
+		// everything go as expected?
+		if (!empty($id_draft))
+		{
+			$context['draft_saved'] = true;
+			$context['id_draft'] = $id_draft;
+		}
+		else
+			$post_errors[] = 'draft_not_saved';
+
+		// cleanup
+		unset($_POST['save_draft']);
+	}
+
+	// if we were called from the autosave function, send something back
+	if (!empty($id_draft) && isset($_REQUEST['xml']) && (!in_array($txt['character_create_session_timeout'], $post_errors)))
+	{
+		$context['draft_saved_on'] = time();
+		XmlDraft($id_draft);
+	}
+
+	return true;
+}
+
+
+/**
  * Reads a draft in from the user_drafts table
  * Validates that the draft is the user''s draft
  * Optionally loads the draft in to context or superglobal for loading in to the form
@@ -321,7 +463,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 	// load in this draft from the DB
 	$request = $smcFunc['db']->query('', '
 		SELECT is_sticky, locked, smileys_enabled, body, subject,
-			id_board, id_draft, id_reply, to_list
+			id_board, id_draft, id_reply, to_list, meta
 		FROM {db_prefix}user_drafts
 		WHERE id_draft = {int:id_draft}' . ($check ? '
 			AND id_member = {int:id_member}' : '') . '
@@ -342,6 +484,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 
 	// load up the data
 	$draft_info = $smcFunc['db']->fetch_assoc($request);
+	$draft_info['meta'] = @json_decode($draft_info['meta'], true) ?? [];
 	$smcFunc['db']->free_result($request);
 
 	// Load it up for the templates as well
@@ -414,7 +557,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
  * @param boolean $check Whether or not to check that the draft belongs to the current user
  * @return boolean False if it couldn't be deleted (doesn't return anything otherwise)
  */
-function DeleteDraft($id_draft, $check = true)
+function DeleteDraft($id_draft, $check = true, $type = null)
 {
 	global $user_info, $smcFunc;
 
@@ -429,10 +572,12 @@ function DeleteDraft($id_draft, $check = true)
 	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}user_drafts
 		WHERE id_draft IN ({array_int:id_draft})' . ($check ? '
-			AND  id_member = {int:id_member}' : ''),
+			AND  id_member = {int:id_member}' : '') . ($type !== null && is_int($type) ? '
+			AND `type` = {int:type}' : ''),
 		[
 			'id_draft' => $id_draft,
 			'id_member' => empty($user_info['id']) ? -1 : $user_info['id'],
+			'type' => (int) $type,
 		]
 	);
 }
@@ -464,7 +609,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 
 	// load the drafts this user has available
 	$request = $smcFunc['db']->query('', '
-		SELECT subject, poster_time, id_board, id_topic, id_draft
+		SELECT subject, poster_time, id_board, id_topic, id_draft, meta
 		FROM {db_prefix}user_drafts
 		WHERE id_member = {int:id_member}' . ((!empty($topic) && empty($draft_type)) ? '
 			AND id_topic = {int:id_topic}' : (!empty($topic) ? '
@@ -508,6 +653,39 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 		}
 	}
 	$smcFunc['db']->free_result($request);
+}
+
+function LoadCharacterSheetDrafts($id_character = 0)
+{
+	global $smcFunc, $user_info;
+
+	$drafts = [];
+
+	$result = $smcFunc['db']->query('', '
+		SELECT id_draft, poster_time, subject, body, meta
+		FROM {db_prefix}user_drafts
+		WHERE id_member = {int:user}
+			AND type = {int:character_sheet_type}',
+		[
+			'user' => $user_info['id'],
+			'character_sheet_type' => 2,
+		]
+	);
+	while ($row = $smcFunc['db']->fetch_assoc($result))
+	{
+		$row['meta'] = @json_decode($row['meta'], true) ?? [];
+		if ($id_character == 0 && (!isset($row['meta']['id_character']) || ($row['meta']['id_character'] == 0)))
+		{
+			$drafts[$row['id_draft']] = $row;
+		}
+		elseif (!empty($row['meta']['id_character']) && $row['meta']['id_character'] == $id_character)
+		{
+			$drafts[$row['id_draft']] = $row;
+		}
+	}
+	$smcFunc['db']->free_result($result);
+
+	return $drafts;
 }
 
 /**

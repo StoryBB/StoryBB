@@ -42,7 +42,7 @@
 		<span id="throbber" style="display:none">
 			<i class="fas fa-spinner fa-pulse"></i>&nbsp;
 		</span>
-		<span id="draft_lastautosave" ></span>
+		<span id="draft_lastautosave"></span>
 	</span>
 	<script src="{{settings.default_theme_url}}/scripts/drafts.js{{modSettings.browser_cache}}"></script>
 	<script>
@@ -54,6 +54,29 @@
 			sType: 'post',
 			iBoard: '{{#if context.current_board}}{{context.current_board}}{{else}}0{{/if}}',
 			iFreq: '{{context.drafts_autosave_frequency}}'
+		});
+	</script>
+{{/if}}
+
+{{#if (and context.drafts_charsheet_save context.drafts_autosave)}}
+	<span class="floatleft padding" style="display: block">
+		<span id="throbber" style="display:none">
+			<i class="fas fa-spinner fa-pulse"></i>&nbsp;
+		</span>
+		<span id="draft_lastautosave"></span>
+	</span>
+	<script src="{{settings.default_theme_url}}/scripts/drafts.js{{modSettings.browser_cache}}"></script>
+	<script>
+		var oDraftAutoSave = new sbb_DraftAutoSave({
+			sSelf: 'oDraftAutoSave',
+			sLastNote: 'draft_lastautosave',
+			sLastID: 'id_draft',
+			sSceditorID: '{{editor_id}}',
+			sType: 'charsheet',
+			iBoard: 0,
+			iFreq: '{{context.drafts_autosave_frequency}}',
+			iMember: {{{context.id_member}}},
+			iCharacter: {{#if context.character.id_character}}{{context.character.id_character}}{{else}}0{{/if}}
 		});
 	</script>
 {{/if}}

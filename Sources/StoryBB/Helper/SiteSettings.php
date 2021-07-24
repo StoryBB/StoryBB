@@ -86,6 +86,15 @@ class SiteSettings
 			}
 		}
 
+		// Force overrides.
+		$overrides = [
+			'browser_cache' => '?100a1' . 1627150671,
+		];
+		foreach ($overrides as $key => $value)
+		{
+			$settings[$key] = $value;
+		}
+
 		return $settings;
 	}
 }

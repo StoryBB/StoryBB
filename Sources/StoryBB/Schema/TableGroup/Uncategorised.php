@@ -1006,6 +1006,7 @@ class Uncategorised
 					'locked' => Column::tinyint(),
 					'is_sticky' => Column::tinyint(),
 					'to_list' => Column::varchar(255),
+					'meta' => Column::text(),
 				],
 				[
 					Index::primary(['id_draft']),

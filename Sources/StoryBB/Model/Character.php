@@ -356,20 +356,33 @@ class Character
 	{
 		global $smcFunc;
 
-		$smcFunc['db']->query('', '
-			UPDATE {db_prefix}character_sheet_versions
-			SET approval_state = {int:new_status}
-			WHERE id_version = (
+		// First fetch the current status that we're going to unapprove.
+		$result = $smcFunc['db']->query('', '
 				SELECT id_version
 				FROM {db_prefix}character_sheet_versions
 				WHERE id_character = {int:char}
 				ORDER BY id_version DESC
-				LIMIT 1
-			)
+				LIMIT 1',
+			[
+				'char' => (int) $char,
+			]
+		);
+		$row = $smcFunc['db']->fetch_assoc($result);
+		if (empty($row))
+		{
+			return;
+		}
+		$smcFunc['db']->free_result($result);
+
+		$smcFunc['db']->query('', '
+			UPDATE {db_prefix}character_sheet_versions
+			SET approval_state = {int:new_status}
+			WHERE id_version = {int:id_version}
 			LIMIT 1',
 			[
 				'char' => (int) $char,
 				'new_status' => $new_status,
+				'id_version' => $row['id_version'],
 			]
 		);
 	}

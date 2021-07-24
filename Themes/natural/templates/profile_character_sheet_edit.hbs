@@ -46,12 +46,35 @@
 
 						<br class="clear">
 						<div class="buttonlist righttext">
+{{#if (and context.drafts_charsheet_save context.drafts_autosave)}}
+							<span class="floatleft padding" style="display: block">
+								<span id="throbber" style="display:none">
+									<i class="fas fa-spinner fa-pulse"></i>&nbsp;
+								</span>
+								<span id="draft_lastautosave"></span>
+							</span>
+							<script src="{{settings.default_theme_url}}/scripts/drafts.js{{modSettings.browser_cache}}"></script>
+							<script>
+								var oDraftAutoSave = new sbb_DraftAutoSave({
+									sSelf: 'oDraftAutoSave',
+									sLastNote: 'draft_lastautosave',
+									sLastID: 'id_draft',
+									sSceditorID: 'message',
+									sType: 'charsheet',
+									iBoard: 0,
+									iFreq: '{{context.drafts_autosave_frequency}}',
+									iMember: {{{context.id_member}}},
+									iCharacter: {{#if context.character.id_character}}{{context.character.id_character}}{{else}}0{{/if}}
+								});
+							</script>
+{{/if}}
 							<button type="submit" class="active button" value="save" onclick="return submitThisOnce(this);">{{{txt.save}}}</button>
 							<button type="submit" class="button" name="preview" value="preview" id="preview_sheet">{{{txt.preview}}}</button>
 						</div>
 					</div>
 				</div>
 				<br class="clear">
+				<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
 				{{session_form}}
 			</form>
 
