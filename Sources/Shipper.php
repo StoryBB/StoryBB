@@ -17,7 +17,12 @@ use StoryBB\Model\TopicPrefix;
  */
 function Shipper()
 {
-	global $smcFunc, $context, $txt, $scripturl;
+	global $smcFunc, $context, $txt, $scripturl, $modSettings;
+
+	if (empty($modSettings['enable_shipper']))
+	{
+		fatal_lang_error('shipper_not_enabled', false);
+	}
 
 	$topics = [];
 	$characters = [];
@@ -59,7 +64,7 @@ function Shipper()
 
 	if (empty($topics))
 	{
-		fatal_lang_error('not_found', false);
+		fatal_lang_error('no_shipper_topics', false);
 	}
 
 	// Fill in the topic IDs.
@@ -169,6 +174,7 @@ function Shipper()
 	});
 
 	$context['page_title'] = $txt['shippers'];
+	$context['meta_description'] = $txt['shipper_description'];
 	$context['sub_template'] = 'shipper';
 }
 
