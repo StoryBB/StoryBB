@@ -17,7 +17,12 @@ use StoryBB\Model\TopicPrefix;
  */
 function Shipper()
 {
-	global $smcFunc, $context, $txt, $scripturl;
+	global $smcFunc, $context, $txt, $scripturl, $modSettings;
+
+	if (empty($modSettings['enable_shipper']))
+	{
+		fatal_lang_error('shipper_not_enabled', false);
+	}
 
 	$topics = [];
 	$characters = [];

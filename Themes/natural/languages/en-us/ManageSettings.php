@@ -21,6 +21,7 @@ $txt['allow_guestAccess'] = 'Allow guests to browse the forum';
 $txt['userLanguage'] = 'Enable user-selectable language support';
 $txt['allow_hideOnline'] = 'Allow non-administrators to hide their online status';
 $txt['enable_buddylist'] = 'Enable buddy/ignore lists';
+$txt['enable_shipper'] = 'Enable shipper list';
 $txt['time_format'] = 'Default time format';
 $txt['setting_time_offset'] = 'Overall time offset';
 $txt['setting_time_offset_note'] = '(added to the member specific option)';
