@@ -169,6 +169,7 @@ function Shipper()
 	});
 
 	$context['page_title'] = $txt['shippers'];
+	$context['meta_description'] = $txt['shipper_description'];
 	$context['sub_template'] = 'shipper';
 }
 
