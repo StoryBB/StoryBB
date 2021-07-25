@@ -851,7 +851,7 @@ $txt['character_filter'] = 'Character Filter';
 $txt['filter_on_groups'] = 'Filter by Groups';
 $txt['filter_on_player'] = 'Character Played By';
 $txt['other_filters'] = 'Other Filters';
-$txt['no_shipper_topics'] = 'No matching topics found.';
+$txt['no_shipper_topics'] = 'Unfortunately there are no characters who share enough threads with each other to build a list of shippers.';
 $txt['shipper_description'] = 'This page shows all the "shippers" - any two characters that have been together in multiple threads. This list is automatically maintained.';
 
 $txt['integration_discord_topic'] = 'New topic posted: [{$subject}]({$link})';
