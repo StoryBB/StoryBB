@@ -602,12 +602,30 @@ function AdhocLogs()
 	loadLanguage('ManageScheduledTasks');
 
 	// Empty the log?
-	if (!empty($_POST['removeAll']))
+	if (isset($_POST['removeAll']))
 	{
 		checkSession();
-		validateToken('admin-tl');
+		validateToken('admin-atl');
 
-		$smcFunc['db']->truncate_table('log_scheduled_tasks');
+		$smcFunc['db']->truncate_table('adhoc_tasks');
+	}
+	elseif (isset($_POST['removeSelected']))
+	{
+		checkSession();
+		validateToken('admin-atl');
+
+		$ids = isset($_POST['adhoc']) && is_array($_POST['adhoc']) ? $_POST['adhoc'] : [];
+		$ids = array_filter(array_map('intval', $ids));
+		if (!empty($ids))
+		{
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}adhoc_tasks
+				WHERE id_task IN ({array_int:tasks})',
+				[
+					'tasks' => $ids,
+				]
+			);
+		}
 	}
 
 	// Setup the list.
@@ -686,10 +704,35 @@ function AdhocLogs()
 					'reverse' => 'at.claimed_time',
 				],
 			],
+			'action' => [
+				'header' => [
+					'value' => '',
+				],
+				'data' => [
+					'function' => function($rowData)
+					{
+						return '<input type="checkbox" name="adhoc[]" value="' . $rowData['id_task'] . '">';
+					}
+				]
+			]
+		],
+		'form' => [
+			'href' => $scripturl . '?action=admin;area=scheduledtasks;sa=adhoc',
+			'token' => 'admin-atl',
+		],
+		'additional_rows' => [
+			[
+				'position' => 'below_table_data',
+				'value' => '
+				<div class="buttonlist floatright">
+					<button type="submit" name="removeAll" data-confirm="' . $txt['adhoc_log_empty_all_tasks_confirm'] . '" class="button you_sure">' . $txt['adhoc_log_empty_all_tasks'] . '</button>
+					<button type="submit" name="removeSelected" data-confirm="' . $txt['adhoc_log_empty_selected_tasks_confirm'] . '" class="button you_sure">' . $txt['adhoc_log_empty_selected_tasks'] . '</button>
+				</div>',
+			],
 		],
 	];
 
-	createToken('admin-tl');
+	createToken('admin-atl');
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
