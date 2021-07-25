@@ -123,7 +123,8 @@ function SaveDraft(&$post_errors)
 				'smileys_enabled' => 'int',
 				'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
 				'locked' => 'int',
-				'is_sticky' => 'int'
+				'is_sticky' => 'int',
+				'meta' => 'string',
 			],
 			[
 				$topic_id,
@@ -135,7 +136,8 @@ function SaveDraft(&$post_errors)
 				$draft['smileys_enabled'],
 				$draft['body'],
 				$draft['locked'],
-				$draft['sticky']
+				$draft['sticky'],
+				'',
 			],
 			[
 				'id_draft'
@@ -261,6 +263,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 				'subject' => 'string-255',
 				'body' => 'string-65534',
 				'to_list' => 'string-255',
+				'meta' => 'string',
 			],
 			[
 				$reply_id,
@@ -270,6 +273,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 				$draft['subject'],
 				$draft['body'],
 				json_encode($recipientList),
+				'',
 			],
 			[
 				'id_draft'
