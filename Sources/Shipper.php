@@ -64,7 +64,7 @@ function Shipper()
 
 	if (empty($topics))
 	{
-		fatal_lang_error('not_found', false);
+		fatal_lang_error('no_shipper_topics', false);
 	}
 
 	// Fill in the topic IDs.
