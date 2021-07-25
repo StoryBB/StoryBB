@@ -357,6 +357,8 @@ function EditBoard()
 			'redirect' => '',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
+			'board_sort' => 'last_post_desc',
+			'board_sort_force' => 0,
 		];
 	}
 	else
@@ -368,6 +370,10 @@ function EditBoard()
 		$context['board']['description'] = un_preparsecode($context['board']['description']);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
+
+		[$default_board_sort_order, $default_board_sort_direction, $board_sort_force] = explode(';', $boards[$_REQUEST['boardid']]['board_sort']);
+		$context['board']['board_sort'] = $default_board_sort_order . '_' . ($default_board_sort_direction == 'asc' ? 'asc' : 'desc');
+		$context['board']['board_sort_force'] = !empty($board_sort_force) ? 1 : 0;
 	}
 
 	$editorOptions = [
@@ -540,6 +546,19 @@ function EditBoard()
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
 
+	$context['board_sort_options'] = [
+		'subject_asc' => $txt['board_sort_subject_asc'],
+		'subject_desc' => $txt['board_sort_subject_desc'],
+		'starter_asc' => $txt['board_sort_starter_asc'],
+		'starter_desc' => $txt['board_sort_starter_desc'],
+		'last_poster_asc' => $txt['board_sort_last_poster_asc'],
+		'last_poster_desc' => $txt['board_sort_last_poster_desc'],
+		'first_post_asc' => $txt['board_sort_first_post_asc'],
+		'first_post_desc' => $txt['board_sort_first_post_desc'],
+		'last_post_asc' => $txt['board_sort_last_post_asc'],
+		'last_post_desc' => $txt['board_sort_last_post_desc'],
+	];
+
 	// Create a special token.
 	createToken('admin-be-' . $_REQUEST['boardid']);
 	$context['token_check'] = 'admin-be-' . $_REQUEST['boardid'];
@@ -594,6 +613,23 @@ function EditBoard2()
 		$boardOptions['board_theme'] = (int) $_POST['boardtheme'];
 		$boardOptions['access_groups'] = [];
 		$boardOptions['deny_groups'] = [];
+
+		$board_sort_options = ['subject', 'starter', 'last_poster', 'first_post', 'last_post'];
+		$boardOptions['board_sort'] = '';
+		if (!empty($_POST['board_sort']))
+		{
+			foreach ($board_sort_options as $board_sort)
+			{
+				if ($_POST['board_sort'] == $board_sort . '_asc')
+				{
+					$boardOptions['board_sort'] = $board_sort . ';asc;' . (!empty($_POST['board_sort_force']) ? '1' : '0');
+				}
+				elseif ($_POST['board_sort'] == $board_sort . '_desc')
+				{
+					$boardOptions['board_sort'] = $board_sort . ';desc;' . (!empty($_POST['board_sort_force']) ? '1' : '0');
+				}
+			}
+		}
 
 		if (!empty($_POST['groups']))
 			foreach ($_POST['groups'] as $group => $action)

@@ -101,3 +101,17 @@ $txt['mboards_no_cats'] = 'There are currently no categories or boards configure
 
 $txt['board_in_character'] = 'Board is "in character"?';
 $txt['board_in_character_desc'] = 'If a board is "in character", only characters may post.';
+
+$txt['board_sort_options'] = 'What should the normal order of topics be in this board?';
+$txt['board_sort_force'] = 'Make this the only option?';
+$txt['board_sort_force_subtext'] = 'Usually users can click on the headings in the lists of topics to reorder them. If this is enabled, only the order you set here will be used.';
+$txt['board_sort_subject_asc'] = 'Topic subject, A&rarr;Z';
+$txt['board_sort_subject_desc'] = 'Topic subject, Z&rarr;A';
+$txt['board_sort_starter_asc'] = 'First poster/topic starter\'s name, A&rarr;Z';
+$txt['board_sort_starter_desc'] = 'First poster/topic starter\'s name, Z&rarr;A';
+$txt['board_sort_last_poster_asc'] = 'Last poster\'s name, A&rarr;Z';
+$txt['board_sort_last_poster_desc'] = 'Last poster\'s name, Z&rarr;A';
+$txt['board_sort_first_post_asc'] = 'First post, oldest &rarr; newest';
+$txt['board_sort_first_post_desc'] = 'First post, newest &rarr; oldest';
+$txt['board_sort_last_post_asc'] = 'Last post, oldest &rarr; newest';
+$txt['board_sort_last_post_desc'] = 'Last post, newest &rarr; oldest';

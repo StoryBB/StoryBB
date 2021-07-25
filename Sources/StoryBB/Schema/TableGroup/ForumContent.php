@@ -60,6 +60,7 @@ class ForumContent
 					'redirect' => Column::varchar(255),
 					'deny_member_groups' => Column::varchar(255),
 					'in_character' => Column::tinyint(),
+					'board_sort' => Column::varchar(25),
 				],
 				[
 					Index::primary(['id_board']),

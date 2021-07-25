@@ -315,6 +315,27 @@
 						</dd>
 					</dl>
 				</div>
+				<div id="board_sort_div">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.board_sort_options}}}</strong>
+						</dt>
+						<dd>
+							<select name="board_sort">
+{{#each context.board_sort_options}}
+								<option value="{{@key}}"{{#if (eq context.board.board_sort @key)}} selected{{/if}}>{{{.}}}</option>
+{{/each}}
+							</select>
+						</dd>
+						<dt>
+							<strong>{{{txt.board_sort_force}}}</strong>
+							<span class="smalltext">{{{txt.board_sort_force_subtext}}}</span>
+						</dt>
+						<dd>
+							<input type="checkbox" name="board_sort_force" value="1"{{#if context.board.board_sort_force}} checked{{/if}}>
+						</dd>
+					</dl>
+				</div>
 
 {{! Show any board settings added by mods using the 'integrate_edit_board' hook. }}
 {{#if context.custom_board_settings}}
@@ -374,6 +395,7 @@
 		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
 		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
 		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";
+		document.getElementById("board_sort_div").style.display = redirectEnabled ? "none" : "";
 
 {{#if (and (not context.board.topics) (not context.board.is_recycle))}}
 			document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";
