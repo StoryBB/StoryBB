@@ -552,7 +552,7 @@ function loadBoard()
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
 				COALESCE(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.in_character,
-				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
+				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.board_sort,
 				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
@@ -575,6 +575,11 @@ function loadBoard()
 			// Set the current board.
 			if (!empty($row['id_board']))
 				$board = $row['id_board'];
+
+			if (empty($row['board_sort']))
+			{
+				$row['board_sort'] = 'last_post;desc;0';
+			}
 
 			// Basic operating information. (globals... :/)
 			$board_info = [
@@ -603,6 +608,7 @@ function loadBoard()
 				'posts_count' => empty($row['count_posts']),
 				'cur_topic_approved' => empty($topic) || $row['approved'],
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
+				'board_sort' => $row['board_sort'],
 			];
 
 			// Load the membergroups allowed, and check permissions.

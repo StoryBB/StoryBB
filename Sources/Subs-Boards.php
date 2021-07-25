@@ -653,6 +653,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['in_character'] = !empty($boardOptions['in_character']) ? 1 : 0;
 	}
 
+	if (isset($boardOptions['board_sort']))
+	{
+		$boardUpdates[] = 'board_sort = {string:board_sort}';
+		$boardUpdateParameters['board_sort'] = $boardOptions['board_sort'];
+	}
+
 	$id = $board_id;
 	call_integration_hook('integrate_modify_board', [$id, $boardOptions, &$boardUpdates, &$boardUpdateParameters]);
 
@@ -846,11 +852,11 @@ function createBoard($boardOptions)
 	];
 	$board_columns = [
 		'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
-		'member_groups' => 'string', 'redirect' => 'string', 'in_character' => 'int',
+		'member_groups' => 'string', 'redirect' => 'string', 'in_character' => 'int', 'board_sort' => 'string',
 	];
 	$board_parameters = [
 		$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
-		'-1,0', '', $boardOptions['in_character'] ? 1 : 0,
+		'-1,0', '', $boardOptions['in_character'] ? 1 : 0, '',
 	];
 
 	call_integration_hook('integrate_create_board', [&$boardOptions, &$board_columns, &$board_parameters]);
@@ -1270,7 +1276,7 @@ function getBoardTree()
 		'COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name',
 		'b.description', 'b.child_level', 'b.board_order', 'b.count_posts', 'b.member_groups',
 		'b.id_theme', 'b.override_theme', 'b.id_profile', 'b.redirect', 'b.num_posts', 'b.in_character',
-		'b.num_topics', 'b.deny_member_groups', 'c.id_cat', 'c.name AS cat_name',
+		'b.num_topics', 'b.deny_member_groups', 'b.board_sort', 'c.id_cat', 'c.name AS cat_name',
 		'c.description AS cat_desc', 'c.cat_order', 'c.can_collapse',
 	];
 
@@ -1339,6 +1345,7 @@ function getBoardTree()
 				'redirect' => $row['redirect'],
 				'prev_board' => $prevBoard,
 				'in_character' => $row['in_character'],
+				'board_sort' => $row['board_sort'],
 			];
 			$prevBoard = $row['id_board'];
 			$last_board_order = $row['board_order'];

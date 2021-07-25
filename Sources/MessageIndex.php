@@ -313,12 +313,15 @@ function MessageIndex()
 		'last_post' => 't.id_last_msg'
 	];
 
+	[$default_board_sort_order, $default_board_sort_direction, $board_sort_force] = explode(';', $board_info['board_sort']);
+	$board_sort_force = !empty($board_sort_force);
+
 	// They didn't pick one, default to by last post descending.
-	if (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]))
+	if (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]) || $board_sort_force)
 	{
-		$context['sort_by'] = 'last_post';
-		$_REQUEST['sort'] = 'id_last_msg';
-		$ascending = isset($_REQUEST['asc']);
+		$context['sort_by'] = $default_board_sort_order;
+		$_REQUEST['sort'] = $sort_methods[$default_board_sort_order];
+		$ascending = $default_board_sort_direction == 'asc';
 	}
 	// Otherwise default to ascending.
 	else
@@ -334,8 +337,20 @@ function MessageIndex()
 	// Bring in any changes we want to make before the query.
 	call_integration_hook('integrate_pre_messageindex', [&$sort_methods]);
 
-	foreach ($sort_methods as $key => $val)
-		$context['topics_headers'][$key] = '<a href="' . $scripturl . '?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $key . ($context['sort_by'] == $key && $context['sort_direction'] == 'up' ? ';desc' : '') . (isset($context['prefix_filter']) ? ';prefix=' . $context['prefix_filter']['id_prefix'] : '') . '">' . $txt[$key] . ($context['sort_by'] == $key ? '<span class="sort sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
+	if ($board_sort_force)
+	{
+		foreach ($sort_methods as $key => $val)
+		{
+			$context['topics_headers'][$key] = $txt[$key];
+		}
+	}
+	else
+	{
+		foreach ($sort_methods as $key => $val)
+		{
+			$context['topics_headers'][$key] = '<a href="' . $scripturl . '?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $key . ($context['sort_by'] == $key && $context['sort_direction'] == 'up' ? ';desc' : '') . (isset($context['prefix_filter']) ? ';prefix=' . $context['prefix_filter']['id_prefix'] : '') . '">' . $txt[$key] . ($context['sort_by'] == $key ? '<span class="sort sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
+		}
+	}
 
 	// Calculate the fastest way to get the topics.
 	$start = (int) $_REQUEST['start'];
