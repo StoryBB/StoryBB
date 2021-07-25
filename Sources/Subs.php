@@ -1953,6 +1953,7 @@ function setupMenuContext()
 			'shipper' => [
 				'url' => $scripturl . '?action=shipper',
 				'icon' => 'fas fa-ship fa-fw',
+				'visible' => !empty($modSettings['enable_shipper']),
 			],
 		];
 
