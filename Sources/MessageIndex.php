@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
@@ -683,6 +684,16 @@ function MessageIndex()
 		foreach ($prefixes as $prefix_topic => $prefixes)
 		{
 			$context['topics'][$prefix_topic]['prefixes'] = $prefixes;
+		}
+
+		$context['is_character_board'] = !empty($board_info['in_character']);
+		if ($context['is_character_board'])
+		{
+			$participants = TopicCollection::get_participants_for_topic_list(array_keys($context['topics']));
+			foreach ($participants as $id_topic => $participants_in_topic)
+			{
+				$context['topics'][$id_topic]['participants'] = $participants_in_topic;
+			}
 		}
 
 		$context['can_order_sticky'] = false;

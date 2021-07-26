@@ -1012,7 +1012,7 @@ h3.catbg .icon {
 	}
 }
 
-.title_bar .moderation input {
+.title_bar:not(.topic-header) .moderation input {
 	margin-right: -8px; /* Fix for 8px padding on left */
 }
 

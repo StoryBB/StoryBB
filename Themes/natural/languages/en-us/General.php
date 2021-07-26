@@ -118,6 +118,7 @@ $txt['started_by'] = 'Started by';
 $txt['topic_started_by'] = 'Started by <strong>%1$s</strong> in <em>%2$s</em>';
 $txt['replies'] = 'Replies';
 $txt['last_post'] = 'Last post';
+$txt['participants'] = 'Participants';
 $txt['first_post'] = 'First post';
 $txt['last_poster'] = 'Last post by';
 $txt['last_post_topic'] = '%1$s<br>by %2$s';

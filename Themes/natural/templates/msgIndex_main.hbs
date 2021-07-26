@@ -59,6 +59,19 @@
 
 		<div id="messageindex">
 
+{{#if context.is_character_board}}
+			<div class="title_bar topic-header">
+				<div class="topic-subject">{{{context.topics_headers.subject}}} / {{{context.topics_headers.starter}}}</div>
+				<div class="replies">{{{context.topics_headers.replies}}}</div>
+				<div class="last-post">{{{context.topics_headers.last_post}}}</div>
+				<div class="participants">{{{txt.participants}}}</div>
+	{{#if context.can_quick_mod}}
+				<div class="moderation">
+					<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
+				</div>
+	{{/if}}
+			</div>
+{{else}}
 			<div class="title_bar" id="topic_header">
 
 	{{#if context.topics}}
@@ -83,8 +96,9 @@
 	{{/if}}
 
 			</div>
+{{/if}}
 
-			<div id="topic_container">
+			<div id="{{#unless context.is_character_board}}topic_container{{/unless}}" class="{{#if context.is_character_board}}topic-list{{/if}}">
 	{{#if context.prefix_filter}}
 				<div class="information">
 					{{txt.prefix_filter}}&nbsp; <span class="{{{context.prefix_filter.css_class}}}">{{{context.prefix_filter.name}}}</span> <a href="{{scripturl}}?board={{context.current_board}}.0"><span class="main_icons delete"></span></a>
@@ -96,7 +110,12 @@
 				</div>
 	{{/if}}
 
-	{{#each context.topics}}
+	{{#if context.is_character_board}}
+		{{#each context.topics}}
+			{{> topic_display_ic txt=../txt context=../context can_quick_mod=../context.can_quick_mod message_index_preview_first=../modSettings.message_index_preview_first scripturl=../scripturl}}
+		{{/each}}
+	{{else}}
+		{{#each context.topics}}
 				<div class="{{css_class}}">
 					<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
 						<div class="icons floatright">
@@ -109,16 +128,16 @@
 						<div class="first_poster">
 							{{{first_post.member.avatar.image}}}
 
-		{{#if (eq_coerce is_posted_in 1)}}
+			{{#if (eq_coerce is_posted_in 1)}}
 							<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">
-		{{/if}}
+			{{/if}}
 						</div>
 						<div class="msg_container">
 							<div class="message_index_title">
 
-		{{#if (and new ../context.user.is_logged)}}
+			{{#if (and new ../context.user.is_logged)}}
 								<a href="{{new_href}}" id="newicon{{first_post.id}}" class="new_posts" title="{{../txt.new_posts}}"></a>
-		{{/if}}
+			{{/if}}
 								<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
 
 									{{#each prefixes}}
@@ -145,15 +164,16 @@
 							{{{last_post.member.avatar.image}}}
 						</div>
 						<p>{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}</p>
-					</div> 
+					</div>
 
-		{{#if ../context.can_quick_mod}}
+			{{#if ../context.can_quick_mod}}
 					<div class="moderation">
 						<input type="checkbox" name="topics[]" value="{{id}}">
 					</div>
-		{{/if}}
+			{{/if}}
 				</div>
-	{{/each}}
+		{{/each}}
+	{{/if}}
 
 	{{#if (and context.can_quick_mod context.topics)}}
 				<div class="righttext" id="quick_actions">

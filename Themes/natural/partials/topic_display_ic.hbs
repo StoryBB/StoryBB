@@ -1,0 +1,53 @@
+				<div class="{{css_class}} topic-ic">
+					<div class="topic-subject">
+			{{#if (and new ../context.user.is_logged)}}
+						<a href="{{new_href}}" id="newicon{{first_post.id}}" class="new_posts" title="{{txt.new_posts}}"></a>
+			{{/if}}
+						<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
+
+							{{#each prefixes}}
+								<a href="{{../scripturl}}?board={{../context.current_board}}.0;prefix={{id_prefix}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
+							{{/each}}
+							<span id="msg_{{first_post.id}}">
+								{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{txt.awaiting_approval}})</em>{{/unless}}
+							</span>
+						</span>
+					</div>
+
+					<div class="topic-starter" data-started-by="{{txt.started_by}}">
+						{{{first_post.member.link}}}
+						{{#if pages}}<span id="pages{{first_post.id}}" class="topic_pages">&nbsp;{{{pages}}}</span>{{/if}}
+					</div>
+
+					<div class="icons">
+						{{#if is_watched}}<span class="main_icons watch" title="{{txt.watching_this_topic}}"></span>{{/if}}
+						{{#if is_locked}}<span class="main_icons lock" title="{{txt.locked_topic}}"></span>{{/if}}
+						{{#if is_sticky}}<span class="main_icons sticky" title="{{txt.sticky_topic}}"></span>{{/if}}
+						{{#if is_redirect}}<span class="main_icons move" title="{{txt.moved_topic}}"></span>{{/if}}
+						{{#if is_poll}}<span class="main_icons poll" title="{{txt.poll}}"></span>{{/if}}
+					</div>
+
+					<div class="replies">
+						<p>{{replies}} {{txt.replies}}</p>
+					</div>
+					<div class="last-post">
+						<a href="{{{last_post.href}}}">{{{last_post.time}}}</a>
+					</div>
+					<div class="last-poster">
+						{{{txt.last_poster}}} {{{last_post.member.link}}}
+					</div>
+
+					<div class="participants">
+						{{#each participants}}
+						<span class="avatar">
+							<img src="{{{avatar.href}}}" alt="" title="{{{name}}}">
+						</span>
+						{{/each}}
+					</div>
+
+			{{#if can_quick_mod}}
+					<div class="moderation">
+						<input type="checkbox" name="topics[]" value="{{id}}">
+					</div>
+			{{/if}}
+				</div>
