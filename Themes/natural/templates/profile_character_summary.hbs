@@ -9,17 +9,11 @@
 
 	<div class="errorbox" style="display:none" id="profile_error"></div>
 	<div id="profileview" class="roundframe flow_auto">
-		<div id="basicinfo">
+		<div id="basicinfo" class="poster">
 			<ul class="user_info">
-
 				<li class="avatar">
-{{#if context.character.avatar}}
 					<img class="avatar" src="{{{context.character.avatar}}}" alt="">
-{{else}}
-					<img class="avatar" src="{{{settings.images_url}}}/default.png" alt="">
-{{/if}}
 				</li>
-
 
 {{#if context.character.group_labels.badges}}
 				<li class="icons">{{{context.character.group_labels.badges}}}</li>
