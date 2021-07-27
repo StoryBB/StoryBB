@@ -1,0 +1,13 @@
+{{#if online}}
+	{{#if (eq display 'both')}}
+		{{#each online}}<a href="{{{link}}}">{{{avatar.image}}}{{{name}}}</a>{{/each}}
+	{{/if}}
+	{{#if (eq display 'avatar')}}
+		{{#each online}}<a href="{{{link}}}">{{{avatar.image}}}</a>{{/each}}
+	{{/if}}
+	{{#if (eq display 'name')}}
+		{{#each online}}<a href="{{{link}}}">{{{name}}}</a>{{/each}}
+	{{/if}}
+{{else}}
+	{{{txt.no_one_recently_online}}}
+{{/if}}

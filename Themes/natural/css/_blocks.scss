@@ -134,3 +134,17 @@
 		font-weight: normal;
 	}
 }
+
+.blocktype_recentlyonline {
+	a {
+		display: inline-block;
+		vertical-align: middle;
+		padding: 10px;
+
+		img {
+			max-height: 25px;
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+}
