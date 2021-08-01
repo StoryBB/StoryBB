@@ -229,6 +229,10 @@ class Post
 			{
 				TopicPrefix::set_prefix_topic($topicOptions['id'], $topicOptions['prefixes']);
 			}
+			if (!empty($topicOptions['invite']))
+			{
+				TopicCollection::invite_to_topic($topicOptions['id'], $topicOptions['invite']);
+			}
 
 			if ($msgOptions['approved'])
 			{
@@ -544,6 +548,11 @@ class Post
 		if (isset($topicOptions['prefixes']))
 		{
 			TopicPrefix::set_prefix_topic($topicOptions['id'], $topicOptions['prefixes']);
+		}
+
+		if (!empty($topicOptions['invite']))
+		{
+			TopicCollection::invite_to_topic($topicOptions['id'], $topicOptions['invite']);
 		}
 
 		// Lock and or sticky the post.

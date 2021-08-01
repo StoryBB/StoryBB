@@ -33,6 +33,11 @@
 	padding: 12px 0 12px 12px;
 }
 
+.topic-ic .participants .invited {
+    filter: saturate(20%);
+    opacity: 0.7;
+}
+
 .topic-header.title_bar {
 	margin: 0;
 	padding: 5px 0px 5px 12px;
@@ -252,7 +257,7 @@
 	}
 }
 
-@media screen and (min-width:576px) and (max-width: 991px) {
+@media screen and (min-width:576px) and (max-width: 767px) {
 	.topic-ic {
 		grid-template-columns: 1fr 1fr 50px 50px 50px;
 
@@ -317,6 +322,77 @@
 			grid-row-end: 2;
 			text-align: center;
 			width: inherit;
+		}
+	}
+}
+
+@media screen and (min-width: 576px) {
+	.topic-tracker {
+		.topic-ic {
+			grid-template-columns: 1fr 1fr 50px 50px 50px;
+
+			.topic-subject {
+				grid-column-start: 1;
+				grid-column-end: 3;
+				grid-row-start: 1;
+				grid-row-end: 2;
+			}
+
+			.topic-starter {
+				grid-column-start: 1;
+				grid-column-end: 3;
+				grid-row-start: 2;
+				grid-row-end: 3;
+			}
+
+			.icons {
+				grid-column-start: 3;
+				grid-column-end: 5;
+				grid-row-start: 2;
+				grid-row-end: 3;
+				text-align: center;
+			}
+
+			.replies {
+				grid-column-start: 3;
+				grid-column-end: 5;
+				grid-row-start: 1;
+				grid-row-end: 2;
+			}
+
+			.last-post {
+				grid-column-start: 1;
+				grid-column-end: 3;
+				grid-row-start: 4;
+				grid-row-end: 5;
+			}
+
+			.last-poster {
+				grid-column-start: 1;
+				grid-column-end: 3;
+				grid-row-start: 3;
+				grid-row-end: 4;
+				padding-top: 12px
+			}
+
+			.participants {
+				grid-column-start: 2;
+				grid-column-end: 6;
+				grid-row-start: 3;
+				grid-row-end: 5;
+				text-align: right;
+				padding-right: 12px;
+				padding-top:12px
+			}
+
+			.moderation {
+				grid-column-start: 5;
+				grid-column-end: 6;
+				grid-row-start: 1;
+				grid-row-end: 2;
+				text-align: center;
+				width: inherit;
+			}
 		}
 	}
 }

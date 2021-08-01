@@ -28,6 +28,7 @@ $txt['alert_topic_lock'] = 'The topic {topic_msg} has been locked';
 $txt['alert_topic_split'] = 'The topic {topic_msg} has been split';
 $txt['alert_topic_merge'] = 'One or more topics have been merged into {topic_msg}';
 $txt['alert_topic_sticky'] = 'The topic {topic_msg} has been stickied';
+$txt['alert_topic_invitechr'] = '{your_chr} was invited to {topic_msg}';
 $txt['alert_board_topic'] = '{char_link} started a new topic {topic_msg} in {board_msg}';
 $txt['alert_unapproved_topic'] = '{char_link} started a new unapproved topic {topic_msg} in {board_msg}';
 $txt['alert_unapproved_post'] = '{char_link} made a new unapproved post {topic_msg} in {board_msg}';
