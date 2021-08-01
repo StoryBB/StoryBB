@@ -173,6 +173,8 @@ $txt['pm_alert_none'] = 'No messages...';
 $txt['no_messages'] = 'No messages';
 
 $txt['online_users'] = 'Users Online';
+$txt['recently_online'] = 'Recently Online';
+$txt['no_one_recently_online'] = 'No-one recently online.';
 $txt['jump_to'] = 'Jump to';
 $txt['go'] = 'Go';
 $txt['are_sure_remove_topic'] = 'Are you sure you want to remove this topic?';
