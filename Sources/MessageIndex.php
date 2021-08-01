@@ -557,6 +557,11 @@ function MessageIndex()
 			// 'Print' the topic info.
 			$context['topics'][$row['id_topic']] = array_merge($row, [
 				'id' => $row['id_topic'],
+				'board' => [
+					'id' => $board_info['id'],
+					'name' => $board_info['name'],
+					'href' => $scripturl . '?board=' . $board_info['id'] . '.0',
+				],
 				'first_post' => [
 					'id' => $row['id_first_msg'],
 					'member' => [

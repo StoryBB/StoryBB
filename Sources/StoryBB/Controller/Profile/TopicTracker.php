@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 
 class TopicTracker
@@ -98,18 +99,23 @@ class TopicTracker
 		// We also need to get all the prefixes.
 		$prefixes = TopicPrefix::get_prefixes_for_topic_list(array_keys($topic_ids));
 
+		// And topic participants.
+		$participants = TopicCollection::get_participants_for_topic_list(array_keys($topic_ids));
+
 		// And things like the board these topics are in, plus first/last poster, and whether there are new posts in them.
 		$topic_data = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT
 				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
-				ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
+				ml.id_msg_modified, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
 				lt.unwatched, chars.is_main AS started_ooc, chars2.is_main AS updated_ooc,
 				chars.id_character AS started_char, chars2.id_character AS updated_char,
 				chars.avatar AS first_member_avatar, af.filename AS first_member_filename,
-				chars2.avatar AS last_member_avatar, al.filename AS last_member_filename
+				chars2.avatar AS last_member_avatar, al.filename AS last_member_filename,
+				t.id_first_msg, t.id_last_msg, t.num_replies,
+				ms.poster_time AS first_poster_time, ml.poster_time AS last_poster_time
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
@@ -134,7 +140,7 @@ class TopicTracker
 
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$classes = '';
+			$classes = 'windowbg topic-ic';
 			if (!empty($row['locked']))
 			{
 				$classes .= ' locked';
@@ -152,7 +158,7 @@ class TopicTracker
 
 			foreach ($context['time_ago_options'] as $class => $time)
 			{
-				if ($row['poster_time'] > $time['timestamp'])
+				if ($row['last_poster_time'] > $time['timestamp'])
 				{
 					$classes .= ' lp-' . $class;
 					break;
@@ -176,25 +182,44 @@ class TopicTracker
 					'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				],
 				'subject' => $row['subject'],
-				'topic_href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
+				'replies' => comma_format($row['num_replies']),
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
-				'locked' => !empty($row['locked']),
-				'updated' => timeformat($row['poster_time']),
+				'is_locked' => !empty($row['locked']),
 				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 				'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
-				'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (empty($row['started_ooc']) && !empty($row['started_char']) ? ';area=characters;char=' . $row['started_char'] : '') . '">' . $row['real_name_col'] . '</a>',
-				'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . (empty($row['updated_ooc']) && !empty($row['updated_char']) ? ';area=characters;char=' . $row['updated_char'] : '') . '">' . $row['last_real_name'] . '</a>',
-				'prefixes' => [],
-				'starter_avatar' => set_avatar_data([
-					'avatar' => $row['first_member_avatar'],
-					'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
-				]),
-				'updated_avatar' => set_avatar_data([
-					'avatar' => $row['last_member_avatar'],
-					'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
-				]),
-				'classes' => $classes,
+				'first_post' => [
+					'id' => $row['id_first_msg'],
+					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+					'time' => timeformat($row['first_poster_time']),
+					'timestamp' => forum_time(true, $row['first_poster_time']),
+					'member' => [
+						'link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (empty($row['started_ooc']) && !empty($row['started_char']) ? ';area=characters;char=' . $row['started_char'] : '') . '">' . $row['real_name_col'] . '</a>',
+					],
+					'preview' => '',
+				],
+				'last_post' => [
+					'id' => $row['id_last_msg'],
+					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_last_msg'] . '#msg' . $row['id_last_msg'] . '">' . $row['subject'],
+					'time' => timeformat($row['last_poster_time']),
+					'timestamp' => forum_time(true, $row['last_poster_time']),
+					'member' => [
+						'link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . (empty($row['updated_ooc']) && !empty($row['updated_char']) ? ';area=characters;char=' . $row['updated_char'] : '') . '">' . $row['last_real_name'] . '</a>',
+					],
+					'preview' => '',
+				],
+				'prefixes' => $prefixes[$row['id_topic']] ?? [],
+				'participants' => $participants[$row['id_topic']] ?? [],
+				// 'starter_avatar' => set_avatar_data([
+				// 	'avatar' => $row['first_member_avatar'],
+				// 	'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
+				// ]),
+				// 'updated_avatar' => set_avatar_data([
+				// 	'avatar' => $row['last_member_avatar'],
+				// 	'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
+				// ]),
+				'css_class' => $classes,
+				'approved' => true, // We only filter on approved topics.
 			];
 		}
 		$smcFunc['db']->free_result($request);
@@ -216,11 +241,46 @@ class TopicTracker
 				}
 
 				$context['member']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
+			}
+		}
 
-				if (isset($prefixes[$character_topic_id]))
+		// Now step through each of the characters looking for topics they were merely invited to, but have not actually posted yet.
+		foreach ($participants as $character_topic_id => $characters_in_topic)
+		{
+			foreach ($characters_in_topic as $id_character => $character)
+			{
+				// We have no data about this topic? Skip it.
+				if (!isset($topic_data[$character_topic_id]))
 				{
-					$context['member']['characters'][$id_character]['topics'][$character_topic_id]['prefixes'] = $prefixes[$character_topic_id];
+					continue;
 				}
+
+				// If this character is already in the topic, skip it.
+				if (isset($context['member']['characters'][$id_character]['topics'][$character_topic_id]))
+				{
+					continue;
+				}
+
+				// If we're not dealing with an invite, skip.
+				if (empty($character['invite']))
+				{
+					continue;
+				}
+
+				$context['member']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
+				$context['member']['characters'][$id_character]['topics'][$character_topic_id]['invite'] = true;
+			}
+		}
+
+		foreach ($context['member']['characters'] as $id_character => $character)
+		{
+			if (empty($character['topics']))
+			{
+				continue;
+			}
+			foreach ($character['topics'] as $id_topic => $topic)
+			{
+				$context['member']['characters'][$id_character]['topics'][$id_topic]['css_class'] .= (!empty($topic['invite']) ? ' invitedtopic' : ' postedtopic');
 			}
 		}
 	}

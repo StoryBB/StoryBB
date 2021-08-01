@@ -77,6 +77,8 @@ $txt['topic_tracker_unread_topics'] = 'Include topics with new posts';
 $txt['topic_tracker_read_topics'] = 'Include topics with no new posts';
 $txt['topic_tracker_lastme'] = 'Last post in the topic from me';
 $txt['topic_tracker_lastnotme'] = 'Last post in the topic not from me';
+$txt['topic_tracker_posted'] = 'Topics posted in';
+$txt['topic_tracker_invited'] = 'Topics invited to';
 
 $txt['topic_tracker_last_post'] = 'Last post in:';
 $txt['topic_tracker_last_post_1week'] = 'the last week';

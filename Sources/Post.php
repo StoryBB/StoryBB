@@ -11,8 +11,10 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
@@ -29,7 +31,7 @@ use StoryBB\StringLibrary;
  */
 function Post($post_errors = [])
 {
-	global $txt, $scripturl, $topic, $modSettings, $board;
+	global $txt, $scripturl, $topic, $modSettings, $board, $board_info;
 	global $user_info, $context, $settings;
 	global $sourcedir, $smcFunc, $language;
 
@@ -91,6 +93,7 @@ function Post($post_errors = [])
 
 	// Check if it's locked. It isn't locked if no topic is specified.
 	$context['prefix_editing'] = false;
+	$context['invites'] = false;
 	if (!empty($topic))
 	{
 		$request = $smcFunc['db']->query('', '
@@ -155,6 +158,7 @@ function Post($post_errors = [])
 			if ($_REQUEST['msg'] == $id_first_msg)
 			{
 				$context['prefix_editing'] = true;
+				$context['invites'] = !empty($board_info['in_character']);
 			}
 		}
 
@@ -193,6 +197,7 @@ function Post($post_errors = [])
 		$context['sticky'] = !empty($_REQUEST['sticky']);
 
 		$context['prefix_editing'] = true;
+		$context['invites'] = !empty($board_info['in_character']);
 	}
 
 	$context['prefixes'] = [];
@@ -203,6 +208,48 @@ function Post($post_errors = [])
 	if (empty($context['prefixes']))
 	{
 		$context['prefix_editing'] = false;
+	}
+
+	if ($context['invites'])
+	{
+		$context['already_invited'] = [];
+
+		if (!isset($context['new_invite']))
+		{
+			$context['new_invite'] = [];
+		}
+
+		if (!empty($topic))
+		{
+			$invites = TopicCollection::get_invites_for_topic_list([(int) $topic]);
+			if (!empty($invites[$topic]))
+			{
+				$context['already_invited'] = $invites[$topic];
+
+				$result = $smcFunc['db']->query('', '
+					SELECT chars.id_character, chars.character_name AS display_name, chars.avatar, COALESCE(a.id_attach, 0) AS id_attach, a.filename
+					FROM {db_prefix}characters AS chars
+						LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
+					WHERE chars.id_character IN ({array_int:characters})',
+					[
+						'characters' => array_keys($context['already_invited']),
+					]
+				);
+				while ($row = $smcFunc['db']->fetch_assoc($result))
+				{
+					if (isset($context['already_invited'][$row['id_character']]))
+					{
+						$context['already_invited'][$row['id_character']]['avatar'] = set_avatar_data($row);
+					}
+				}
+				$smcFunc['db']->free_result($result);
+			}
+		}
+		$context['can_invite'] = count($context['already_invited']) < 5;
+		if ($context['can_invite'])
+		{
+			Autocomplete::init('character', '#invite_character', 5, $context['new_invite']);
+		}
 	}
 
 	// If we came from Post2 we might already have prefixes defined. Or we might not, so if not, preload them into the array.
@@ -1310,6 +1357,7 @@ function Post2()
 	}
 
 	$context['prefix_editing'] = false;
+	$context['invites'] = false;
 	// If this isn't a new topic load the topic info that we need.
 	if (!empty($topic))
 	{
@@ -1349,6 +1397,8 @@ function Post2()
 			$_SESSION['becomesUnapproved'] = true;
 		}
 	}
+
+	$context['invites'] = false;
 
 	// Replying to a topic?
 	if (!empty($topic) && !isset($_REQUEST['msg']))
@@ -1439,6 +1489,7 @@ function Post2()
 	elseif (empty($topic))
 	{
 		$context['prefix_editing'] = true;
+		$context['invites'] = !empty($board_info['in_character']);
 
 		// Now don't be silly, new topics will get their own id_msg soon enough.
 		unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
@@ -1483,6 +1534,7 @@ function Post2()
 		if ($_REQUEST['msg'] == $topic_info['id_first_msg'])
 		{
 			$context['prefix_editing'] = true;
+			$context['invites'] = !empty($board_info['in_character']);
 		}
 
 		$request = $smcFunc['db']->query('', '
@@ -1620,6 +1672,77 @@ function Post2()
 					$context['prefixes'][$key]['selected'] = true;
 					$saving_prefixes[$prefix['id_prefix']] = $prefix['id_prefix'];
 				}
+			}
+		}
+	}
+
+	if ($context['invites'])
+	{
+		$context['already_invited'] = [];
+		$context['new_invite'] = [];
+
+		if (!empty($topic))
+		{
+			$invites = TopicCollection::get_invites_for_topic_list([(int) $topic]);
+			if (!empty($invites[$topic]))
+			{
+				$context['already_invited'] = $invites[$topic];
+
+				$result = $smcFunc['db']->query('', '
+					SELECT chars.id_character, chars.character_name AS display_name, chars.avatar, COALESCE(a.id_attach, 0) AS id_attach, a.filename
+					FROM {db_prefix}characters AS chars
+						LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
+					WHERE chars.id_character IN ({array_int:characters})',
+					[
+						'characters' => array_keys($context['already_invited']),
+					]
+				);
+				while ($row = $smcFunc['db']->fetch_assoc($result))
+				{
+					if (isset($context['already_invited'][$row['id_character']]))
+					{
+						$context['already_invited'][$row['id_character']]['avatar'] = set_avatar_data($row);
+					}
+				}
+				$smcFunc['db']->free_result($result);
+			}
+		}
+
+		if (!empty($_POST['invite']) && is_array($_POST['invite']))
+		{
+			$_POST['invite'] = array_filter(array_map('intval', $_POST['invite']));
+			$_POST['invite'] = array_diff($_POST['invite'], [$user_info['id_character']]);
+			if (!empty($_POST['invite']))
+			{
+				$matched_invites = [];
+				$result = $smcFunc['db']->query('', '
+					SELECT id_character
+					FROM {db_prefix}characters
+					WHERE id_character IN ({array_int:invites})
+					AND is_main = 0',
+					[
+						'invites' => $_POST['invite'],
+					]
+				);
+				while ($row = $smcFunc['db']->fetch_assoc($result))
+				{
+					$context['new_invite'][] = $row['id_character'];
+				}
+				$smcFunc['db']->free_result($result);
+			}
+
+			// Now we need to sift out any already invited people.
+			foreach ($context['new_invite'] as $position => $invite)
+			{
+				if (isset($context['already_invited'][$invite]))
+				{
+					unset ($context['new_invite'][$position]);
+				}
+			}
+
+			if (count($context['already_invited']) + count($context['new_invite']) > 5)
+			{
+				$post_errors[] = 'too_many_invites';
 			}
 		}
 	}
@@ -1960,6 +2083,10 @@ function Post2()
 	if (isset($context['selected_prefixes']) && isset($saving_prefixes))
 	{
 		$topicOptions['prefixes'] = $saving_prefixes;
+	}
+	if (!empty($context['new_invite']))
+	{
+		$topicOptions['invite'] = $context['new_invite'];
 	}
 
 	$character_id = $user_info['id_character'];

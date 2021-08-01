@@ -156,6 +156,25 @@
 			</div>
 {{/if}}
 
+{{#if context.invites}}
+			<dl class="topic-invites settings">
+				<dt class="clear">
+	{{#if context.can_invite}}
+					{{{txt.invite_character}}}
+					<select name="invite[]" id="invite_character" multiple></select>
+	{{/if}}
+				</dt>
+	{{#if context.already_invited}}
+				<dd class="invites">
+					{{{txt.already_invited}}}
+		{{#each context.already_invited}}
+			{{{avatar.image}}}
+		{{/each}}
+				</dd>
+	{{/if}}
+			</dl>
+{{/if}}
+
 {{#if modSettings.additional_options_collapsable}}
 			<div id="postAdditionalOptionsHeader">
 				<span id="postMoreExpandToggle"></span>

@@ -7,6 +7,9 @@
 				<br>
 				<label><input type="checkbox" name="lastme" checked> {{{txt.topic_tracker_lastme}}}</label><br>
 				<label><input type="checkbox" name="lastnotme" checked> {{{txt.topic_tracker_lastnotme}}}</label><br>
+				<br>
+				<label><input type="checkbox" name="postedtopic" checked> {{{txt.topic_tracker_posted}}}</label><br>
+				<label><input type="checkbox" name="invitedtopic" checked> {{{txt.topic_tracker_invited}}}</label><br>
 			</div>
 			<div class="half_content">
 				<strong>{{{txt.topic_tracker_last_post}}}</strong><br>
@@ -15,7 +18,7 @@
 {{/each}}
 			</div>
 		</div>
-		<div id="topic_container">
+		<div class="topic-list topic-tracker">
 {{#each context.member.characters}}
 	{{#if (and (eq_coerce is_main '0') (eq_coerce retired '0'))}}
 			<div class="character">
@@ -24,37 +27,7 @@
 				</div>
 		{{#if topics}}
 			{{#each topics}}
-				<div class="windowbg{{classes}}">
-					<div class="info info_block">
-						<div class="icons floatright">
-							{{#if locked}}<span class="main_icons lock" title="{{../../txt.locked_topic}}"></span>{{/if}}
-						</div>
-						<div class="first_poster">
-							<img class="avatar" src="{{{starter_avatar.href}}}">
-						</div>
-						<div class="msg_container">
-							<div class="message_index_title">
-								<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
-								{{#if new}}
-								&nbsp;<a href="{{{new_href}}}" class="new_posts"></a>
-								{{/if}}
-							</div>
-							<div>
-								{{{../../txt.started_by}}} {{{poster_link}}}									
-							</div>
-						</div>
-
-					</div>
-
-					<div class="lastpost">
-						<div class="last_poster">
-							<img class="avatar" src="{{{updated_avatar.href}}}">
-						</div>
-						<p><a href="{{{new_href}}}">{{{updated}}}</a><br>
-						{{{../../txt.by}}} {{{poster_updated_link}}}</p>
-					</div> 
-				</div>
-
+				{{> topic_display_ic txt=../../txt context=../../context scripturl=../../scripturl}}
 			{{/each}}
 		{{else}}
 				<div class="roundframe centertext">
@@ -76,7 +49,9 @@
 			unread: $('#topic_filter input[name="unread"]').prop('checked'),
 			nounread: $('#topic_filter input[name="nounread"]').prop('checked'),
 			lastme: $('#topic_filter input[name="lastme"]').prop('checked'),
-			lastnotme: $('#topic_filter input[name="lastnotme"]').prop('checked')
+			lastnotme: $('#topic_filter input[name="lastnotme"]').prop('checked'),
+			postedtopic: $('#topic_filter input[name="postedtopic"]').prop('checked'),
+			invitedtopic: $('#topic_filter input[name="invitedtopic"]').prop('checked')
 		};
 		var time_ago_filters = {{{json context.time_ago_options}}};
 		for (key in time_ago_filters) {
@@ -91,7 +66,7 @@
 			// Do nothing - this can fail e.g. Mobile Safari in private browsing.
 		}
 
-		$('#topic_container .character').each(function () {
+		$('.topic-list .character').each(function () {
 			$(this).find('div.roundframe.centertext').remove();
 
 			$(this).find('.windowbg').show();

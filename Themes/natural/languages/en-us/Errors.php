@@ -226,6 +226,7 @@ $txt['error_no_question'] = 'No question was filled in for this poll.';
 $txt['error_no_message'] = 'The message body was left empty.';
 $txt['error_long_message'] = 'The message exceeds the maximum allowed length (%1$d characters).';
 $txt['error_no_comment'] = 'The comment field was left empty.';
+$txt['error_too_many_invites'] = 'You can only invite a total of 5 people to a topic.';
 // duplicate of post_too_long in Post.{language}.php
 $txt['error_post_too_long'] = 'Your message is too long. Please go back and shorten it, then try again.';
 $txt['error_session_timeout'] = 'Your session timed out while posting. Please try to re-submit your message.';

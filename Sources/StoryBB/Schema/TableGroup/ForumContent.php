@@ -121,6 +121,24 @@ class ForumContent
 					Index::key(['likes']),
 				]
 			),
+			Table::make('topic_invites', 
+				[
+					'id_invite' => Column::int()->auto_increment(),
+					'id_topic' => Column::mediumint(),
+					'id_character' => Column::int(),
+					'invite_status' => Column::tinyint(),
+					'invite_time' => Column::int(),
+				],
+				[
+					Index::primary(['id_invite']),
+					Index::key(['id_topic', 'id_character']),
+					Index::key(['id_character', 'id_topic']),
+				],
+				[
+					Constraint::from('topic_invites.id_topic')->to('topics.id_topic'),
+					Constraint::from('topic_invites.id_character')->to('characters.id_character'),
+				]
+			),
 			Table::make('topic_prefixes',
 				[
 					'id_prefix' => Column::smallint()->auto_increment(),
