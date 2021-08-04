@@ -22,6 +22,41 @@ class TopicCollection
 	const INVITE_PENDING = 0;
 	const INVITE_REFUSED = 1;
 
+	public static function is_participant(int $account_id, array $topic_ids): array
+	{
+		global $smcFunc;
+
+		$topic_ids = array_filter($topic_ids, function($x) {
+			$x = (int) $x;
+			return $x > 0;
+		});
+		if (empty($topic_ids))
+		{
+			return false;
+		}
+
+		$return = [];
+		$result = $smcFunc['db']->query('', '
+			SELECT COUNT(*) AS count, id_topic
+			FROM {db_prefix}messages
+			WHERE id_member = {int:account_id}
+				AND id_topic IN ({array_int:topic_ids})
+				AND approved = 1
+			GROUP BY id_topic',
+			[
+				'account_id' => $account_id,
+				'topic_ids' => $topic_ids,
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($result))
+		{
+			$return[$row['id_topic']] = !empty($row['count']);
+		}
+		$smcFunc['db']->free_result($result);
+
+		return $return;
+	}
+
 	public static function get_participants_for_topic_list(array $topic_ids, bool $include_moderated = false): array
 	{
 		global $smcFunc, $txt;

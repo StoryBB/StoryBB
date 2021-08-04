@@ -291,6 +291,10 @@ $txt['locked_topic'] = 'Locked Topic';
 $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
+$txt['ongoing_topics'] = 'Ongoing Topics';
+$txt['finished_topics'] = 'Finished Topics';
+$txt['mark_as_finished'] = 'Mark as Finished';
+$txt['reopen_topic'] = 'Reopen Topic';
 
 $txt['out_of_character'] = 'Out Of Character';
 $txt['ooc_character_topics'] = 'Out of character topics';

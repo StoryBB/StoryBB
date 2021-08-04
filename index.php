@@ -239,6 +239,7 @@ function sbb_main()
 		'dlattach' => ['ShowAttachments.php', 'showAttachment'],
 		'editpoll' => ['Poll.php', 'EditPoll'],
 		'editpoll2' => ['Poll.php', 'EditPoll2'],
+		'finish' => ['Topic.php', 'Finish'],
 		'forum' => ['BoardIndex.php', 'BoardIndex'],
 		'groups' => ['Groups.php', 'Groups'],
 		'help' => ['Help.php', 'ShowHelp'],
