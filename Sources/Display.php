@@ -15,6 +15,7 @@ use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
 use StoryBB\Model\Bookmark;
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 use StoryBB\StringLibrary;
 
@@ -91,7 +92,7 @@ function Display()
 	// Get all the important topic info.
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, ms.body, ms.smileys_enabled, t.is_sticky, t.id_poll,
+			t.num_replies, t.num_views, t.locked, t.finished, ms.subject, ms.body, ms.smileys_enabled, t.is_sticky, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.id_redirect_topic,
 			COALESCE(mem.real_name, ms.poster_name) AS topic_started_name, ms.poster_time AS topic_started_time,
 			IFNULL(chars.character_name, IFNULL(mem.real_name, ms.poster_name)) AS topic_started_name,
@@ -414,6 +415,7 @@ function Display()
 	// Information about the current topic...
 	$context['is_locked'] = (bool) $context['topicinfo']['locked'];
 	$context['is_sticky'] = (bool) $context['topicinfo']['is_sticky'];
+	$context['is_finished'] = (bool) $context['topicinfo']['finished'];
 	$context['is_approved'] = $context['topicinfo']['approved'];
 	$context['is_poll'] = $context['topicinfo']['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 
@@ -1063,6 +1065,7 @@ function Display()
 	// Can restore topic?  That's if the topic is in the recycle board and has a previous restore state.
 	$context['can_restore_topic'] &= !empty($board_info['recycle']) && !empty($context['topicinfo']['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($board_info['recycle']) && !empty($context['topicinfo']['id_previous_topic']);
+	$context['can_finish_topic'] = $board_info['in_character'] && $context['user']['id'] && (allowedTo('admin_forum') || !empty(TopicCollection::is_participant($context['user']['id'], [$topic])[$topic]));
 
 	// Check if the draft functions are enabled and that they have permission to use them (for quick reply.)
 	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && $context['can_reply'];
@@ -1183,6 +1186,9 @@ function Display()
 	// Restore topic. eh?  No monkey business.
 	if ($context['can_restore_topic'])
 		$context['mod_buttons']['restore_topic'] = ['text' => 'restore_topic', 'image' => '', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+
+	if ($context['can_finish_topic'])
+		$context['mod_buttons']['finish_topic'] = ['text' => empty($context['is_finished']) ? 'mark_as_finished' : 'reopen_topic', 'image' => '', 'url' => $scripturl . '?action=finish;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	// Show a message in case a recently posted message became unapproved.
 	$context['becomesUnapproved'] = !empty($_SESSION['becomesUnapproved']) ? true : false;

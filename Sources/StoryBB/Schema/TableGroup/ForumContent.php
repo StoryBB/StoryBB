@@ -212,6 +212,7 @@ class ForumContent
 					'num_replies' => Column::int(),
 					'num_views' => Column::int(),
 					'locked' => Column::tinyint(),
+					'finished' => Column::tinyint(),
 					'redirect_expires' => Column::int(),
 					'id_redirect_topic' => Column::mediumint(),
 					'unapproved_posts' => Column::smallint(),

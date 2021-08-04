@@ -155,6 +155,61 @@ function Sticky()
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . ';moderate');
 }
 
+function Finish()
+{
+	global $topic, $board, $sourcedir, $smcFunc, $board_info, $context;
+
+	// You can't sticky a board or something!
+	if (empty($topic))
+		fatal_lang_error('not_a_topic', false);
+
+	checkSession('get');
+
+	if (empty($board_info['in_character']))
+	{
+		// Take them back to the now stickied topic.
+		redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . ';ooc');
+	}
+	if (!$context['user']['id'])
+	{
+		redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . ';guest');
+	}
+	if (!(allowedTo('admin_forum') || !empty(TopicCollection::is_participant($context['user']['id'], [$topic])[$topic])))
+	{
+		redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . ';perms');
+	}
+
+	// Is this topic already stickied, or no?
+	$request = $smcFunc['db']->query('', '
+		SELECT finished
+		FROM {db_prefix}topics
+		WHERE id_topic = {int:current_topic}
+		LIMIT 1',
+		[
+			'current_topic' => $topic,
+		]
+	);
+	list ($is_finished) = $smcFunc['db']->fetch_row($request);
+	$smcFunc['db']->free_result($request);
+
+	// Toggle the sticky value.... pretty simple ;).
+	$smcFunc['db']->query('', '
+		UPDATE {db_prefix}topics
+		SET finished = {int:is_finished}
+		WHERE id_topic = {int:current_topic}',
+		[
+			'current_topic' => $topic,
+			'is_finished' => empty($is_finished) ? 1 : 0,
+		]
+	);
+
+	// Log this sticky action - always a moderator thing.
+	logAction(empty($is_finished) ? 'finish' : 'unfinish', ['topic' => $topic, 'board' => $board]);
+
+	// Take them back to the now stickied topic.
+	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
+}
+
 function ReorderSticky()
 {
 	global $board, $txt, $context, $smcFunc, $scripturl, $modSettings;

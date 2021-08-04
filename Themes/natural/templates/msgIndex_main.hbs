@@ -111,8 +111,25 @@
 	{{/if}}
 
 	{{#if context.is_character_board}}
+		{{#if context.ongoing_topics}}
+			<div class="sub_bar">
+				<div class="subbg">{{{txt.ongoing_topics}}}</div>
+			</div>
+		{{/if}}
 		{{#each context.topics}}
+			{{#unless is_finished}}
 			{{> topic_display_ic txt=../txt context=../context can_quick_mod=../context.can_quick_mod message_index_preview_first=../modSettings.message_index_preview_first scripturl=../scripturl}}
+			{{/unless}}
+		{{/each}}
+		{{#if context.finished_topics}}
+			<div class="sub_bar">
+				<div class="subbg">{{{txt.finished_topics}}}</div>
+			</div>
+		{{/if}}
+		{{#each context.topics}}
+			{{#if is_finished}}
+			{{> topic_display_ic txt=../txt context=../context can_quick_mod=../context.can_quick_mod message_index_preview_first=../modSettings.message_index_preview_first scripturl=../scripturl}}
+			{{/if}}
 		{{/each}}
 	{{else}}
 		{{#each context.topics}}

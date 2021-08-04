@@ -335,6 +335,9 @@ function MessageIndex()
 	$context['sort_direction'] = $ascending ? 'up' : 'down';
 	$txt['starter'] = $txt['started_by'];
 
+	$context['ongoing_topics'] = false;
+	$context['finished_topics'] = false;
+
 	// Bring in any changes we want to make before the query.
 	call_integration_hook('integrate_pre_messageindex', [&$sort_methods]);
 
@@ -441,7 +444,7 @@ function MessageIndex()
 
 		$result = $smcFunc['db']->query('substring', '
 			SELECT
-				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board,
+				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board, t.finished,
 				' . ($user_info['is_guest'] ? '0' : 'COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1') . ' AS new_from,
 				' . ( $enableParticipation ? ' COALESCE(( SELECT 1 FROM {db_prefix}messages AS parti WHERE t.id_topic = parti.id_topic and parti.id_member = {int:current_member} LIMIT 1) , 0) as is_posted_in,
 				'	: '') . '
@@ -554,6 +557,17 @@ function MessageIndex()
 			if ($row['locked'])
 				$colorClass .= ' locked';
 
+			// Finished topics might get special treatment too.
+			if ($row['finished'])
+			{
+				$context['finished_topics'] = true;
+				$colorClass .= ' finished';
+			}
+			else
+			{
+				$context['ongoing_topics'] = true;
+			}
+
 			// 'Print' the topic info.
 			$context['topics'][$row['id_topic']] = array_merge($row, [
 				'id' => $row['id_topic'],
@@ -600,6 +614,7 @@ function MessageIndex()
 				'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
 				'is_posted_in' => ($enableParticipation ? $row['is_posted_in'] : false),
 				'is_watched' => false,
+				'is_finished' => !empty($row['finished']),
 				'subject' => $row['first_subject'],
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],

@@ -173,6 +173,8 @@ $txt['pm_alert_none'] = 'No messages...';
 $txt['no_messages'] = 'No messages';
 
 $txt['online_users'] = 'Users Online';
+$txt['recently_online'] = 'Recently Online';
+$txt['no_one_recently_online'] = 'No-one recently online.';
 $txt['jump_to'] = 'Jump to';
 $txt['go'] = 'Go';
 $txt['are_sure_remove_topic'] = 'Are you sure you want to remove this topic?';
@@ -289,6 +291,10 @@ $txt['locked_topic'] = 'Locked Topic';
 $txt['normal_topic'] = 'Normal Topic';
 $txt['participation_caption'] = 'Topic you have posted in';
 $txt['moved_topic'] = 'Moved Topic';
+$txt['ongoing_topics'] = 'Ongoing Topics';
+$txt['finished_topics'] = 'Finished Topics';
+$txt['mark_as_finished'] = 'Mark as Finished';
+$txt['reopen_topic'] = 'Reopen Topic';
 
 $txt['out_of_character'] = 'Out Of Character';
 $txt['ooc_character_topics'] = 'Out of character topics';
