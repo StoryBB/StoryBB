@@ -82,10 +82,28 @@ class TopicTracker
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$topic_ids[$row['id_topic']] = $row['id_topic'];
-			censorText($row['subject']);
 			$context['member']['characters'][$row['id_character']]['topics'][$row['id_topic']] = [
 				'id_topic' => $row['id_topic'],
 			];
+		}
+
+		$smcFunc['db']->free_result($request);
+
+		$request = $smcFunc['db']->query('', '
+			SELECT t.id_topic, chars.id_character
+			FROM {db_prefix}topic_invites AS ti
+			INNER JOIN {db_prefix}topics AS t ON (ti.id_topic = t.id_topic)
+			INNER JOIN {db_prefix}characters AS chars ON (ti.id_character = chars.id_character)
+			WHERE chars.id_character IN ({array_int:characters})
+			GROUP BY chars.id_character, t.id_topic
+			ORDER BY chars.id_character, t.id_topic',
+			[
+				'characters' => $character_ids,
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$topic_ids[$row['id_topic']] = $row['id_topic'];
 		}
 
 		$smcFunc['db']->free_result($request);
@@ -210,14 +228,6 @@ class TopicTracker
 				],
 				'prefixes' => $prefixes[$row['id_topic']] ?? [],
 				'participants' => $participants[$row['id_topic']] ?? [],
-				// 'starter_avatar' => set_avatar_data([
-				// 	'avatar' => $row['first_member_avatar'],
-				// 	'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
-				// ]),
-				// 'updated_avatar' => set_avatar_data([
-				// 	'avatar' => $row['last_member_avatar'],
-				// 	'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
-				// ]),
 				'css_class' => $classes,
 				'approved' => true, // We only filter on approved topics.
 			];
