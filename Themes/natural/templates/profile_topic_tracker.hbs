@@ -2,6 +2,7 @@
 		<div class="windowbg" id="topic_filter" style="display:none">
 			<div class="half_content">
 				<label><input type="checkbox" name="locked"> {{{txt.topic_tracker_locked_topics}}}</label><br>
+				<label><input type="checkbox" name="finished"> {{{txt.topic_tracker_finished_topics}}}</label><br>
 				<label><input type="checkbox" name="unread" checked> {{{txt.topic_tracker_unread_topics}}}</label><br>
 				<label><input type="checkbox" name="nounread" checked> {{{txt.topic_tracker_read_topics}}}</label><br>
 				<br>
@@ -46,6 +47,7 @@
 
 		var filters = {
 			locked: $('#topic_filter input[name="locked"]').prop('checked'),
+			finished: $('#topic_filter input[name="finished"]').prop('checked'),
 			unread: $('#topic_filter input[name="unread"]').prop('checked'),
 			nounread: $('#topic_filter input[name="nounread"]').prop('checked'),
 			lastme: $('#topic_filter input[name="lastme"]').prop('checked'),

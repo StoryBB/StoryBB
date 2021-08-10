@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 
 /**

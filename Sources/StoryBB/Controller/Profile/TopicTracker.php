@@ -124,7 +124,7 @@ class TopicTracker
 		$topic_data = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked,
+				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked, t.finished,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
@@ -162,6 +162,10 @@ class TopicTracker
 			if (!empty($row['locked']))
 			{
 				$classes .= ' locked';
+			}
+			if (!empty($row['finished']))
+			{
+				$classes .= ' finished';
 			}
 
 			if ($row['id_member_updated'] == $context['member']['id'])

@@ -73,6 +73,7 @@ $txt['remove_bookmarks'] = 'Remove Bookmarks';
 
 $txt['topic_tracker_no_topics'] = 'This character has not participated in matching topics.';
 $txt['topic_tracker_locked_topics'] = 'Include locked topics';
+$txt['topic_tracker_finished_topics'] = 'Include finished topics';
 $txt['topic_tracker_unread_topics'] = 'Include topics with new posts';
 $txt['topic_tracker_read_topics'] = 'Include topics with no new posts';
 $txt['topic_tracker_lastme'] = 'Last post in the topic from me';
