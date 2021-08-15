@@ -21,25 +21,48 @@
 				{{{txt.no_shipper_topics}}}
 			</div>
 {{#each context.ships}}
+	{{#if show}}
+		{{#if hidden}}
 			<div class="character"{{#each characters}} data-char-{{@key}}="{{@key}}"{{/each}}>
 				<div class="title_bar">
-					<h3 class="titlebg">{{{join characters ' / '}}}</h3>
+					<h3 class="titlebg">
+						{{{join characters ' / '}}}
+						{{#if ship_name}} &mdash; &ldquo;{{{ship_name}}}&rdquo;{{/if}}
+						{{#if toggle_hidden_link}}<span class="floatright"><a href="{{{toggle_hidden_link}}}">{{{../txt.show}}}</a></span>{{/if}}
+					</h3>
+				</div>
+			</div>
+		{{else}}
+			<div class="character"{{#each characters}} data-char-{{@key}}="{{@key}}"{{/each}}>
+				<div class="title_bar">
+					<h3 class="titlebg">
+						{{{join characters ' / '}}}
+						{{#if ship_name}} &mdash; &ldquo;{{{ship_name}}}&rdquo;{{/if}}
+						<span class="floatright">
+						{{#if shipper_link}}
+							&nbsp; <a href="{{{shipper_link}}}">{{{../txt.view_shipper}}}</a>
+						{{/if}}
+						{{#if editable}}
+							&nbsp; <a href="{{{edit_shipper_link}}}">{{{../txt.edit_shipper}}}</a>
+							&nbsp; <a href="{{{timeline_link}}}">{{{../txt.edit_timeline}}}</a>
+						{{/if}}
+						{{#if toggle_hidden_link}}&nbsp; <a href="{{{toggle_hidden_link}}}">{{{../txt.hide}}}</a>{{/if}}
+						</span>
+					</h3>
 				</div>
 
 			{{#each topics}}
 				<div class="windowbg">
-					<div class="info info_block">
-						<div class="icons floatright">
-						</div>
-						<div class="msg_container">
-							<div class="message_index_title">
-								<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
-							</div>
-						</div>
-					</div>
+				{{#if extra_characters}}&nbsp; &nbsp;{{/if}}
+					<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+				{{#if extra_characters}}
+					&mdash; {{textTemplate ../../txt.also_with (join extra_characters ', ')}}
+				{{/if}}
 				</div>
 			{{/each}}
 			</div>
+		{{/if}}
+	{{/if}}
 {{/each}}
 		</div>
 

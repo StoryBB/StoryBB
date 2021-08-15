@@ -1,0 +1,125 @@
+	<div class="cat_bar">
+		<h3 class="catbg">
+			{{{context.page_title}}}
+		</h3>
+	</div>
+
+	<div class="title_bar">
+		<h3 class="titlebg">{{{txt.shipper_topics}}}</h3>
+	</div>
+
+	<form action="{{{context.edit_timeline_link}}}" method="post" accept-charset="UTF-8" class="flow_hidden">
+		<div class="sortable">
+{{#each context.ship.topics}}
+			<div class="windowbg">
+				<span class="draggable-handle"></span>
+
+				<input type="hidden" name="order[]" value="{{{@key}}}">
+				<div class="info">
+
+					{{#if extra_characters}}&nbsp; &nbsp;{{/if}}
+						<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+					{{#if extra_characters}}
+						&mdash; {{textTemplate ../txt.also_with (join extra_characters ', ')}}
+					{{/if}}
+				</div>
+
+				{{#if extra_characters}}
+				<span class="buttonlist righttext">
+					<button type="button" class="button">{{{../txt.remove}}}</button>
+				</span>
+				{{/if}}
+			</div>
+{{/each}}
+		</div>
+
+		<div class="buttonlist righttext">
+			<button type="submit" class="active button" name="save" value="save" onclick="return submitThisOnce(this);">{{{txt.save}}}</button>
+		</div>
+		{{session_form}}
+	</form>
+
+{{#if context.other_ships}}
+	<br>
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.other_ships_generic}}}</h3>
+	</div>
+
+	<div id="other_ships">
+
+	{{#each context.other_ships}}
+		<div class="character">
+			<div class="title_bar">
+				<h3 class="titlebg">
+					{{{join characters ' / '}}}
+					{{#if ship_name}} &mdash; &ldquo;{{{ship_name}}}&rdquo;{{/if}}
+					<span class="floatright">
+					{{#if shipper_link}}
+						&nbsp; <a href="{{{shipper_link}}}">{{{../txt.view_shipper}}}</a>
+					{{/if}}
+					</span>
+				</h3>
+			</div>
+
+		{{#each topics}}
+			<div class="windowbg{{#if already_in_timeline}} already_in_timeline{{/if}}">
+
+				<input type="hidden" name="order[]" value="{{{@key}}}">
+				<div class="info">
+			{{#if extra_characters}}&nbsp; &nbsp;{{/if}}
+					<a href="{{{topic_href}}}">{{#each prefixes}}<span class="{{{css_class}}}">{{{name}}}</span>{{/each}}{{{subject}}}</a>
+			{{#if extra_characters}}
+					&mdash; {{textTemplate ../../txt.also_with (join extra_characters ', ')}}
+			{{/if}}
+				</div>
+
+				<span class="buttonlist righttext">
+					<span class="already_in_timeline">{{{../../txt.already_in_timeline}}}</span>
+					<span class="add_to_timeline">
+						<button type="button" class="button">{{{../../txt.add_to_timeline}}}</button>
+					</span>
+				</span>
+			</div>
+
+		{{/each}}
+
+		</div>
+	{{/each}}
+
+	</div>
+{{/if}}
+
+<script>
+function apply_remove()
+{
+	$('.sortable button').off().on('click', function(e) {
+		e.preventDefault();
+		$(this).closest('.windowbg').find('input[name="order[]"]').each(function () {
+			$('#other_ships').find('input[name="order[]"][value="' + $(this).val() + '"]').closest('.windowbg').removeClass('already_in_timeline');
+			$(this).closest('.windowbg').remove();
+		});
+		$('.sortable').sortable('refresh');
+		apply_add();
+	});
+}
+
+function apply_add()
+{
+	$('#other_ships .add_to_timeline button').off().on('click', function(e) {
+		e.preventDefault();
+		var el = $(this).closest('.windowbg').clone();
+		$(el).find('.buttonlist').empty().html('<button type="button" class="button">' + {{{json txt.remove}}} + '</button>');
+		$(el).prepend('<span class="draggable-handle"></span>');
+		$('.sortable').append(el);
+		$(el).find('input[name="order[]"]').each(function () {
+			console.log('adding ' + $(this).val());
+			$('#other_ships').find('input[name="order[]"][value="' + $(this).val() + '"]').closest('.windowbg').addClass('already_in_timeline');
+		});
+
+		$('.sortable').sortable('refresh');
+		apply_remove();
+	});
+}
+apply_add();
+apply_remove();
+</script>

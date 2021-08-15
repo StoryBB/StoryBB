@@ -1,0 +1,43 @@
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{{context.page_title}}}
+				</h3>
+			</div>
+
+			<form action="{{{context.edit_link}}}" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
+				<div class="windowbg">
+{{#if context.errors}}
+					<div class="errorbox">
+						<ul>
+	{{#each context.errors}}
+							<li>{{{.}}}</li>
+	{{/each}}
+						</ul>
+					</div>
+{{/if}}
+					<dl class="settings">
+						<dt>{{{txt.shipper_name}}}</dt>
+						<dd><input type="text" name="ship_name" value="{{{context.ship_name}}}"></dd>
+						<dt>{{{txt.shipper_slug}}}</dt>
+						<dd>
+							{{{context.shipper_url_base}}} <input type="text" name="ship_slug" value="{{{context.ship_slug}}}">
+						</dd>
+					</dl>
+				</div>
+
+				<div id="post_area">
+					<div class="roundframe">
+
+						{{{richtexteditor 'message' '' 'bbcBox'}}}
+
+						<br class="clear">
+						<div class="buttonlist righttext">
+							<button type="submit" class="active button" name="save" value="save" onclick="return submitThisOnce(this);">{{{txt.save}}}</button>
+							<!--<button type="submit" class="button" name="preview" value="preview" id="preview_sheet">{{{txt.preview}}}</button>-->
+						</div>
+					</div>
+				</div>
+				<br class="clear">
+				<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
+				{{session_form}}
+			</form>

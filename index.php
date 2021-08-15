@@ -276,7 +276,6 @@ function sbb_main()
 		'search' => ['Search.php', 'PlushSearch1'],
 		'search2' => ['Search.php', 'PlushSearch2'],
 		'sendactivation' => ['Register.php', 'SendActivation'],
-		'shipper' => ['Shipper.php', 'Shipper'],
 		'signup' => ['Register.php', 'Register'],
 		'signup2' => ['Register.php', 'Register2'],
 		'suggest' => ['Subs-Editor.php', 'AutoSuggestHandler'],
