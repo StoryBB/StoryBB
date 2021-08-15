@@ -1951,7 +1951,7 @@ function setupMenuContext()
 				'icon' => 'fas fa-users fa-fw',
 			],
 			'shipper' => [
-				'url' => $scripturl . '?action=shipper',
+				'url' => $urlgenerator->generate('shippers'),
 				'icon' => 'fas fa-ship fa-fw',
 				'visible' => !empty($modSettings['enable_shipper']),
 			],

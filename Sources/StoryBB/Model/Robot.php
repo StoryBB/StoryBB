@@ -42,6 +42,7 @@ class Robot
 			'bingbot' => 'bing',
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
+			'blexbot' => 'webmeup',
 			'bw/1' => 'builtwith',
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
@@ -420,6 +421,10 @@ class Robot
 			'webhose' => [
 				'title' => 'Webhose.io (Omgilibot)',
 				'link' => 'https://blog.webhose.io/2017/12/28/what-is-the-omgili-bot-and-why-is-it-crawling-your-website/',
+			],
+			'webmeup' => [
+				'title' => 'WebMeUp (BLEXBot)',
+				'link' => 'http://webmeup-crawler.com/',
 			],
 			'who.is_bot' => [
 				'title' => 'Who.is Bot',

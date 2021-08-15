@@ -3611,3 +3611,23 @@ div#manage_boards dl dd textarea[name=desc] {
 		z-index: 5;
 	}
 }
+
+#other_ships {
+	.buttonlist {
+		.already_in_timeline {
+			display: none;
+		}
+		.add_to_timeline {
+			display: inline;
+		}
+	}
+
+	.already_in_timeline .buttonlist {
+		.already_in_timeline {
+			display: inline;
+		}
+		.add_to_timeline {
+			display: none;
+		}
+	}
+}
