@@ -608,7 +608,7 @@ function isBannedEmail($email, $restriction, $error)
  */
 function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
-	global $modSettings, $boardurl;
+	global $modSettings, $boardurl, $context;
 
 	$container = Container::instance();
 	$session = $container->get('session');
@@ -629,6 +629,17 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		$check = isset($_GET[$session_var]) ? $_GET[$session_var] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
 		if ($check !== $session_value)
 			$error = 'session_verify_fail';
+	}
+
+	// How about /index.php/some/route/{var}/{id}?
+	elseif ($type == 'route')
+	{
+		$svar = $context['routing']['session_var'] ?? '';
+		$sid = $context['routing']['session_id'] ?? '';
+		if ($svar !== $session_var || $sid !== $session_value)
+		{
+			$error = 'session_verify_fail';
+		}
 	}
 
 	// Or can it be in either?
