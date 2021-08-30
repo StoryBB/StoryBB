@@ -2,7 +2,7 @@
 /*
 
 MIT License
-Copyright 2013-2018 Zordius Chen. All Rights Reserved.
+Copyright 2013-2021 Zordius Chen. All Rights Reserved.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -18,9 +18,6 @@ Origin: https://github.com/zordius/lightncandy
  */
 
 namespace LightnCandy;
-
-use \LightnCandy\Validator;
-use \LightnCandy\Token;
 
 /**
  * LightnCandy Expression handler
@@ -39,7 +36,8 @@ class Expression
      * @expect 'false' when input 0
      * @expect 'false' when input -1
      */
-    public static function boolString($v) {
+    public static function boolString($v)
+    {
         return ($v > 0) ? 'true' : 'false';
     }
 
@@ -54,7 +52,8 @@ class Expression
      * @expect "'a'" when input array('a')
      * @expect "'a','b','c'" when input array('a', 'b', 'c')
      */
-    public static function listString($list) {
+    public static function listString($list)
+    {
         return implode(',', (array_map(function ($v) {
             return "'$v'";
         }, $list)));
@@ -71,7 +70,8 @@ class Expression
      * @expect "['a']" when input array('a')
      * @expect "['a']['b']['c']" when input array('a', 'b', 'c')
      */
-    public static function arrayString($list) {
+    public static function arrayString($list)
+    {
         return implode('', (array_map(function ($v) {
             return "['$v']";
         }, $list)));
@@ -88,7 +88,8 @@ class Expression
      * @expect array(0, false, array('foo')) when input array('flags' => array('spvar' => 0)), array(0, 'foo')
      * @expect array(1, false, array('foo')) when input array('flags' => array('spvar' => 0)), array(1, 'foo')
      */
-    public static function analyze($context, $var) {
+    public static function analyze($context, $var)
+    {
         $levels = 0;
         $spvar = false;
 
@@ -129,10 +130,10 @@ class Expression
      * @expect '../../[a].[b]' when input 2, false, array('a', 'b')
      * @expect '../[a\'b]' when input 1, false, array('a\'b')
      */
-    public static function toString($levels, $spvar, $var) {
-        return ($spvar ? '@' : '') . str_repeat('../', $levels) . ((is_array($var) && count($var)) ? implode('.', array_map(function($v) {
+    public static function toString($levels, $spvar, $var)
+    {
+        return ($spvar ? '@' : '') . str_repeat('../', $levels) . ((is_array($var) && count($var)) ? implode('.', array_map(function ($v) {
             return ($v === null) ? 'this' : "[$v]";
         }, $var)) : 'this');
     }
 }
-

@@ -21,7 +21,7 @@ Features
    * Runs 2~7 times faster than <a href="https://github.com/dingram/mustache-php">mustache-php</a> (Dave Ingram implementation).
    * Runs 10~50 times faster than <a href="https://github.com/XaminProject/handlebars.php">handlebars.php</a>.
    * Detail performance test reports can be found <a href="https://github.com/zordius/HandlebarsTest">here</a>, go http://zordius.github.io/HandlebarsTest/ to see charts.
-* **SMALL!** all PHP files in 188K
+* **SMALL!** all PHP files in 189K
 * **ROBUST!**
    * 100% supports <a href="https://github.com/mustache/spec">mustache spec v1.1.3</a>. For the optional lambda module, supports 4 of 10 specs.
    * Supports almost all <a href="https://github.com/jbboehr/handlebars-spec">handlebars.js spec</a>
@@ -62,7 +62,7 @@ Compile Options
 You can apply more options by running `LightnCandy::compile($template, $options)`:
 
 ```php
-LightnCandy::compile($template, Array(
+LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_ERROR_LOG | LightnCandy::FLAG_STANDALONEPHP
 ));
 ```
@@ -144,9 +144,9 @@ Custom Helper Examples
 * LightnCandy
 ```php
 // LightnCandy sample, #mywith works same with #with
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
-    'helpers' => Array(
+    'helpers' => array(
         'mywith' => function ($context, $options) {
             return $options['fn']($context);
         }
@@ -166,9 +166,9 @@ Handlebars.registerHelper('mywith', function(context, options) {
 * LightnCandy
 ```php
 // LightnCandy sample, #myeach works same with #each
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
-    'helpers' => Array(
+    'helpers' => array(
         'myeach' => function ($context, $options) {
             $ret = '';
             foreach ($context as $cx) {
@@ -196,9 +196,9 @@ Handlebars.registerHelper('myeach', function(context, options) {
 * LightnCandy
 ```php
 // LightnCandy sample, #myif works same with #if
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
-    'helpers' => Array(
+    'helpers' => array(
         'myif' => function ($conditional, $options) {
             if ($conditional) {
                 return $options['fn']();
@@ -229,9 +229,9 @@ You can use `isset($options['fn'])` to detect your custom helper is a block or n
 You can get special data variables from `$options['data']`. Using `$options['_this']` to receive current context.
 
 ```php
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
-    'helpers' => Array(
+    'helpers' => array(
         'getRoot' => function ($options) {
             print_r($options['_this']); // dump current context
             return $options['data']['root']; // same as {{@root}}
@@ -254,16 +254,16 @@ You can inject private variables into inner block when you execute child block w
 
 * LightnCandy
 ```php
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
-    'helpers' => Array(
+    'helpers' => array(
         'list' => function ($context, $options) {
             $out = '';
             $data = $options['data'];
 
             foreach ($context as $idx => $cx) {
                 $data['index'] = $idx;
-                $out .= $options['fn']($cx, Array('data' => $data));
+                $out .= $options['fn']($cx, array('data' => $data));
             }
 
             return $out;
@@ -296,7 +296,7 @@ You may change delimiters from `{{` and `}}` to other strings. In the template, 
 If you want to change default delimiters for a template and all included partials, you may `compile()` it with `delimiters` option:
 
 ```php
-LightnCandy::compile('I wanna use <% foo %> as delimiters!', Array(
+LightnCandy::compile('I wanna use <% foo %> as delimiters!', array(
     'delimiters' => array('<%', '%>')
 ));
 ```
@@ -327,23 +327,26 @@ section Value: {{.}}
 ";
 
 // compile to debug version
-$php = LightnCandy::compile($template, Array(
+$phpStr = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_HANDLEBARSJS
 ));
 
-// Get the render function
-$renderer = LightnCandy::prepare($php);
+// Save the compiled PHP code into a php file
+file_put_contents('render.php', '<?php ' . $phpStr . '?>');
+
+// Get the render function from the php file
+$renderer = include('render.php');
 
 // error_log() when missing data:
 //   LightnCandy\Runtime: [gender] is not exist
 //   LightnCandy\Runtime: ../[test] is not exist
-$renderer(Array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_ERROR_LOG));
+$renderer(array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_ERROR_LOG));
 
 // Output visual debug template with ANSI color:
-echo $renderer(Array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_TAGS_ANSI));
+echo $renderer(array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_TAGS_ANSI));
 
 // Output debug template with HTML comments:
-echo $renderer(Array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_TAGS_HTML));
+echo $renderer(array('name' => 'John'), array('debug' => LightnCandy\Runtime::DEBUG_TAGS_HTML));
 ```
 
 The ANSI output will be: 
@@ -364,7 +367,7 @@ Preprocess Partials
 If you want to do extra process before the partial be compiled, you may use `prepartial` when `compile()`. For example, this sample adds HTML comments to identify the partial by the name:
 
 ```php
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
     'prepartial' => function ($context, $template, $name) {
         return "<!-- partial start: $name -->$template<!-- partial end: $name -->";
@@ -380,7 +383,7 @@ Customize Render Function
 If you want to do extra tasks inside render function or add more comment, you may use `renderex` when `compile()` . For example, this sample embed the compile time comment into the template:
 
 ```php
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
     'renderex' => '// Compiled at ' . date('Y-m-d h:i:s')
 ));
@@ -412,7 +415,7 @@ class MyRunTime extends LightnCandy\Runtime {
 }
 
 // Use MyRunTime as runtime library
-$php = LightnCandy::compile($template, Array(
+$php = LightnCandy::compile($template, array(
     'flags' => LightnCandy::FLAG_HANDLEBARSJS,
     'runtime' => 'MyRunTime'
 ));
@@ -477,6 +480,8 @@ Go http://handlebarsjs.com/ to see more feature description about handlebars.js.
 * `{{#each var}}` : each loop
 * `{{#each}}` : each loop on {{.}}
 * `{{/each}}` : end loop
+* `{{#each bar as |foo|}}` : echo loop on bar and set the value as foo. (require `FLAG_ADVARNAME`)
+* `{{#each bar as |foo moo|}}` : echo loop on bar, set the value as foo, set the index as moo. (require `FLAG_ADVARNAME`)
 * `{{#if var}}` : run if logic with original scope (null, false, empty Array and '' will skip this block)
 * `{{#if foo includeZero=true}}` : result as true when foo === 0 (require `FLAG_NAMEDARG`)
 * `{{/if}}` : end if
@@ -521,7 +526,7 @@ Go http://handlebarsjs.com/ to see more feature description about handlebars.js.
 Developer Notes
 ---------------
 
-Please read <a href=".github/CONTRIBUTING.md">CONTRIBUTING.md</a> for develop environment setup.
+Please read <a href=".github/CONTRIBUTING.md">CONTRIBUTING.md</a> for development environment setup.
 
 Framework Integration
 ---------------------

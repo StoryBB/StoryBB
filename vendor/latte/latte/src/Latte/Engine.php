@@ -17,8 +17,8 @@ class Engine
 {
 	use Strict;
 
-	public const VERSION = '2.9.2';
-	public const VERSION_ID = 20902;
+	public const VERSION = '2.10.3';
+	public const VERSION_ID = 21003;
 
 	/** Content types */
 	public const
@@ -32,6 +32,9 @@ class Engine
 
 	/** @var callable[] */
 	public $onCompile = [];
+
+	/** @internal */
+	public $probe;
 
 	/** @var Parser|null */
 	private $parser;
@@ -74,6 +77,7 @@ class Engine
 	{
 		$this->filters = new Runtime\FilterExecutor;
 		$this->functions = new \stdClass;
+		$this->probe = function () {};
 
 		$defaults = new Runtime\Defaults;
 		foreach ($defaults->getFilters() as $name => $callback) {
@@ -91,8 +95,10 @@ class Engine
 	 */
 	public function render(string $name, $params = [], string $block = null): void
 	{
-		$this->createTemplate($name, $this->processParams($params))
-			->render($block);
+		$template = $this->createTemplate($name, $this->processParams($params));
+		$template->global->coreCaptured = false;
+		($this->probe)($template);
+		$template->render($block);
 	}
 
 
@@ -103,6 +109,8 @@ class Engine
 	public function renderToString(string $name, $params = [], string $block = null): string
 	{
 		$template = $this->createTemplate($name, $this->processParams($params));
+		$template->global->coreCaptured = true;
+		($this->probe)($template);
 		return $template->capture(function () use ($template, $block) { $template->render($block); });
 	}
 
@@ -133,6 +141,7 @@ class Engine
 		$this->onCompile = [];
 
 		$source = $this->getLoader()->getContent($name);
+		$comment = preg_match('#\n|\?#', $name) ? null : "source: $name";
 
 		try {
 			$tokens = $this->getParser()
@@ -143,7 +152,7 @@ class Engine
 				->setContentType($this->contentType)
 				->setFunctions(array_keys((array) $this->functions))
 				->setPolicy($this->sandboxed ? $this->policy : null)
-				->compile($tokens, $this->getTemplateClass($name));
+				->compile($tokens, $this->getTemplateClass($name), $comment, $this->strictTypes);
 
 		} catch (\Exception $e) {
 			if (!$e instanceof CompileException) {
@@ -155,14 +164,6 @@ class Engine
 			throw $e->setSource($source, $line, $name);
 		}
 
-		if ($this->strictTypes) {
-			$code = "<?php\ndeclare(strict_types=1);\n?>" . $code;
-		}
-		if (!preg_match('#\n|\?#', $name)) {
-			$code = "<?php\n// source: $name\n?>" . $code;
-		}
-		$code = PhpHelpers::inlineHtmlToEcho($code);
-		$code = PhpHelpers::reformatCode($code);
 		return $code;
 	}
 
@@ -284,6 +285,21 @@ class Engine
 			throw new \LogicException("Invalid filter name '$name'.");
 		}
 		$this->filters->add($name, $callback);
+		return $this;
+	}
+
+
+	/**
+	 * Registers filter loader.
+	 * @return static
+	 */
+	public function addFilterLoader(callable $callback)
+	{
+		$this->filters->add(null, function ($name) use ($callback) {
+			if ($filter = $callback($name)) {
+				$this->filters->add($name, $callback($name));
+			}
+		});
 		return $this;
 	}
 
@@ -492,10 +508,15 @@ class Engine
 
 		$methods = (new \ReflectionClass($params))->getMethods(\ReflectionMethod::IS_PUBLIC);
 		foreach ($methods as $method) {
-			if (strpos((string) $method->getDocComment(), '@filter')) {
+			if ((PHP_VERSION_ID >= 80000 && $method->getAttributes(Attributes\TemplateFilter::class))
+				|| (strpos((string) $method->getDocComment(), '@filter'))
+			) {
 				$this->addFilter($method->name, [$params, $method->name]);
 			}
-			if (strpos((string) $method->getDocComment(), '@function')) {
+
+			if ((PHP_VERSION_ID >= 80000 && $method->getAttributes(Attributes\TemplateFunction::class))
+				|| (strpos((string) $method->getDocComment(), '@function'))
+			) {
 				$this->addFunction($method->name, [$params, $method->name]);
 			}
 		}

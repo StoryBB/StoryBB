@@ -21,7 +21,7 @@ use Symfony\Component\Mime\Exception\LogicException;
  */
 final class Headers
 {
-    private static $uniqueHeaders = [
+    private const UNIQUE_HEADERS = [
         'date', 'from', 'sender', 'reply-to', 'to', 'cc', 'bcc',
         'message-id', 'in-reply-to', 'references', 'subject',
     ];
@@ -59,7 +59,7 @@ final class Headers
     }
 
     /**
-     * @param (Address|string)[] $addresses
+     * @param array<Address|string> $addresses
      *
      * @return $this
      */
@@ -153,7 +153,7 @@ final class Headers
             throw new LogicException(sprintf('The "%s" header must be an instance of "%s" (got "%s").', $header->getName(), $map[$name], \get_class($header)));
         }
 
-        if (\in_array($name, self::$uniqueHeaders, true) && isset($this->headers[$name]) && \count($this->headers[$name]) > 0) {
+        if (\in_array($name, self::UNIQUE_HEADERS, true) && isset($this->headers[$name]) && \count($this->headers[$name]) > 0) {
             throw new LogicException(sprintf('Impossible to set header "%s" as it\'s already defined and must be unique.', $header->getName()));
         }
 
@@ -201,7 +201,7 @@ final class Headers
 
     public static function isUniqueHeader(string $name): bool
     {
-        return \in_array($name, self::$uniqueHeaders, true);
+        return \in_array(strtolower($name), self::UNIQUE_HEADERS, true);
     }
 
     public function toString(): string
@@ -229,7 +229,7 @@ final class Headers
     /**
      * @internal
      */
-    public function getHeaderBody($name)
+    public function getHeaderBody(string $name)
     {
         return $this->has($name) ? $this->get($name)->getBody() : null;
     }
@@ -266,7 +266,7 @@ final class Headers
     /**
      * @internal
      */
-    public function setHeaderParameter(string $name, string $parameter, $value): void
+    public function setHeaderParameter(string $name, string $parameter, ?string $value): void
     {
         if (!$this->has($name)) {
             throw new LogicException(sprintf('Unable to set parameter "%s" on header "%s" as the header is not defined.', $parameter, $name));

@@ -2,7 +2,7 @@
 /*
 
 MIT License
-Copyright 2013-2018 Zordius Chen. All Rights Reserved.
+Copyright 2013-2021 Zordius Chen. All Rights Reserved.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -19,8 +19,6 @@ Origin: https://github.com/zordius/lightncandy
 
 namespace LightnCandy;
 
-use \LightnCandy\Flags;
-
 /**
  * LightnCandy class to handle Context
  */
@@ -33,7 +31,8 @@ class Context extends Flags
      *
      * @return array<string,array|string|integer> Context from options
      */
-    public static function create($options) {
+    public static function create($options)
+    {
         if (!is_array($options)) {
             $options = array();
         }
@@ -194,7 +193,8 @@ class Context extends Flags
      * @expect array('flags' => array('exhlp' => 1), 'helpers' => array('\\LightnCandy\\Runtime::raw' => '\\LightnCandy\\Runtime::raw')) when input array('flags' => array('exhlp' => 1), 'helpers' => array()), array('helpers' => array('\\LightnCandy\\Runtime::raw'))
      * @expect array('flags' => array('exhlp' => 1), 'helpers' => array('test' => '\\LightnCandy\\Runtime::raw')) when input array('flags' => array('exhlp' => 1), 'helpers' => array()), array('helpers' => array('test' => '\\LightnCandy\\Runtime::raw'))
      */
-    protected static function updateHelperTable(&$context, $options, $tname = 'helpers') {
+    protected static function updateHelperTable(&$context, $options, $tname = 'helpers')
+    {
         if (isset($options[$tname]) && is_array($options[$tname])) {
             foreach ($options[$tname] as $name => $func) {
                 $tn = is_int($name) ? $func : $name;
@@ -223,7 +223,8 @@ class Context extends Flags
      * @param array<string,array|string|integer> $context master context
      * @param array<string,array|string|integer> $tmp another context will be overwrited into master context
      */
-    public static function merge(&$context, $tmp) {
+    public static function merge(&$context, $tmp)
+    {
         $context['error'] = $tmp['error'];
         $context['helpers'] = $tmp['helpers'];
         $context['partials'] = $tmp['partials'];
@@ -234,4 +235,3 @@ class Context extends Flags
         $context['usedPartial'] = $tmp['usedPartial'];
     }
 }
-

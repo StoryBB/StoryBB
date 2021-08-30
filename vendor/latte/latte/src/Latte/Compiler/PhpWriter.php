@@ -32,6 +32,9 @@ class PhpWriter
 	/** @var string[] */
 	private $functions = [];
 
+	/** @var int|null */
+	private $line;
+
 
 	public static function using(MacroNode $node, Compiler $compiler = null): self
 	{
@@ -39,6 +42,7 @@ class PhpWriter
 		$me->modifiers = &$node->modifiers;
 		$me->functions = $compiler ? $compiler->getFunctions() : [];
 		$me->policy = $compiler ? $compiler->getPolicy() : null;
+		$me->line = $node->startLine;
 		return $me;
 	}
 
@@ -55,7 +59,7 @@ class PhpWriter
 
 
 	/**
-	 * Expands %node.word, %node.array, %node.args, %escape(), %modify(), %var, %raw, %word in code.
+	 * Expands %node.word, %node.array, %node.args, %node.line, %escape(), %modify(), %var, %raw, %word in code.
 	 * @param  mixed  ...$args
 	 */
 	public function write(string $mask, ...$args): string
@@ -78,7 +82,7 @@ class PhpWriter
 		}
 
 		$code = preg_replace_callback(
-			'#([,+]\s*)?%(node_|\d+_|)(word|var|raw|array|args)(\?)?(\s*\+\s*)?()#',
+			'#([,+]?\s*)?%(node_|\d+_|)(word|var|raw|array|args|line)(\?)?(\s*\+\s*)?()#',
 			function ($m) use ($word, &$args) {
 				[, $l, $source, $format, $cond, $r] = $m;
 
@@ -103,6 +107,9 @@ class PhpWriter
 						$code = PhpHelpers::dump($arg); break;
 					case 'raw':
 						$code = (string) $arg; break;
+					case 'line':
+						$l = trim($l);
+						$code = $this->line ? " /* line $this->line */" : ''; break;
 				}
 
 				if ($cond && $code === '') {
@@ -190,6 +197,7 @@ class PhpWriter
 		$tokens = $this->sandboxPass($tokens);
 		$tokens = $this->replaceFunctionsPass($tokens);
 		$tokens = $this->inlineModifierPass($tokens);
+		$tokens = $this->modernArraySyntax($tokens);
 		return $tokens;
 	}
 
@@ -212,11 +220,7 @@ class PhpWriter
 				throw new CompileException('Unexpected ' . $tokenValue);
 
 			} elseif ($tokens->isCurrent('`')) {
-				if ($this->policy) {
-					throw new CompileException('Forbidden backtick operator.');
-				} else {
-					trigger_error('Backtick operator is deprecated in Latte.', E_USER_DEPRECATED);
-				}
+				throw new CompileException('Backtick operator is forbidden in Latte.');
 
 			} elseif (
 				Helpers::startsWith($tokenValue, '$ʟ_')
@@ -492,6 +496,35 @@ class PhpWriter
 				$tokens->depth === 0
 				&& $tokens->isCurrent($tokens::T_SYMBOL)
 				&& (!$tokens->isPrev() || $tokens->isPrev(','))
+				&& $tokens->isNext(':')
+			) {
+				$res->append("'" . $tokens->currentValue() . "' =>");
+				$tokens->nextToken(':');
+			} else {
+				$res->append($tokens->currentToken());
+			}
+		}
+		return $res;
+	}
+
+
+	/**
+	 * Converts [name: value] to ['name' => value]
+	 */
+	public function modernArraySyntax(MacroTokens $tokens): MacroTokens
+	{
+		$res = new MacroTokens;
+		$brackets = [];
+		while ($tokens->nextToken()) {
+			if ($tokens->isCurrent('[', '(', '{')) {
+				$brackets[] = $tokens->currentValue();
+			} elseif ($tokens->isCurrent(']', ')', '}')) {
+				array_pop($brackets);
+			}
+
+			if (end($brackets) === '['
+				&& $tokens->isCurrent($tokens::T_SYMBOL)
+				&& ($tokens->isPrev('[', ','))
 				&& $tokens->isNext(':')
 			) {
 				$res->append("'" . $tokens->currentValue() . "' =>");
