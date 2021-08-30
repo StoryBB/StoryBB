@@ -1294,6 +1294,7 @@ function InstallCopy()
 		'theme_dir' => $themedir . '/' . $name,
 		'theme_url' => $themeurl . '/' . $name,
 		'name' => $name,
+		'shortname' => StringLibrary::toLower(str_replace(' ', '', $name)),
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
 		'install_for' => '1.0 - 1.0.99, ' . App::SOFTWARE_VERSION,
@@ -1330,6 +1331,7 @@ function InstallCopy()
 	$json = [
 		'id' => 'StoryBB:' . StringLibrary::toLower($context['to_install']['name']),
 		'name' => $context['to_install']['name'],
+		'shortname' => $context['to_install']['shortname'],
 		'theme_version' => '1.0',
 		'storybb_version' => $context['to_install']['install_for'],
 	];
