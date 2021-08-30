@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Container;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 
