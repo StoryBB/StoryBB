@@ -245,6 +245,9 @@ function EditPage()
 		redirectexit('action=admin;area=pages');
 	}
 
+	$context['page']['show_help'] = !empty($context['page']['show_help']);
+	$context['page']['show_sidebar'] = !empty($context['page']['show_sidebar']);
+
 	load_page_sidebar_icons();
 	load_page_access();
 	load_page_fields();
