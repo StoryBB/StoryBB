@@ -318,7 +318,7 @@ ul.post_options li {
 #personal_messages .labels {
 	padding: 0 0 0 1em;
 }
-#to_item_list_container div, #bcc_item_list_container div {
+#to_item_list_container div {
 	float: right;
 	margin: 0;
 }

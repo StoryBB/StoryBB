@@ -1294,6 +1294,7 @@ function InstallCopy()
 		'theme_dir' => $themedir . '/' . $name,
 		'theme_url' => $themeurl . '/' . $name,
 		'name' => $name,
+		'shortname' => StringLibrary::toLower(str_replace(' ', '', $name)),
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
 		'install_for' => '1.0 - 1.0.99, ' . App::SOFTWARE_VERSION,
@@ -1313,13 +1314,20 @@ function InstallCopy()
 	mkdir($context['to_install']['theme_dir'] . '/scripts', 0777);
 
 	// Copy over the default non-theme files.
-	$to_copy = ['/index.php', '/css/index.css', '/css/adaptive.css', '/css/rtl.css', '/css/admin.css', '/scripts/theme.js'];
+	$to_copy = ['/index.php', '/css/_variables.scss', '/css/index.scss', '/css/adaptive.css', '/css/rtl.css', '/css/admin.css', '/scripts/theme.js'];
 
 	foreach ($to_copy as $file)
 	{
 		copy($settings['default_theme_dir'] . $file, $context['to_install']['theme_dir'] . $file);
 		sbb_chmod($context['to_install']['theme_dir'] . $file, 0777);
 	}
+
+	// Now inject the new variables into the theme base.
+	$index_scss = file_get_contents($context['to_install']['theme_dir'] . '/css/index.scss');
+	$current_include = '@import "' . basename($settings['default_theme_dir']) . '/_variables.scss";';
+	$new_include = '@import "' . $context['to_install']['shortname'] . '/_variables.scss";';
+	$index_scss = str_replace($current_include, $current_include . "\n" . $new_include, $index_scss);
+	file_put_contents($context['to_install']['theme_dir'] . '/css/index.scss', $index_scss);
 
 	// And now the entire images directory!
 	copytree($settings['default_theme_dir'] . '/images', $context['to_install']['theme_dir'] . '/images');
@@ -1330,6 +1338,7 @@ function InstallCopy()
 	$json = [
 		'id' => 'StoryBB:' . StringLibrary::toLower($context['to_install']['name']),
 		'name' => $context['to_install']['name'],
+		'shortname' => $context['to_install']['shortname'],
 		'theme_version' => '1.0',
 		'storybb_version' => $context['to_install']['install_for'],
 	];
