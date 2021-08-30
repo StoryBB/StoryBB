@@ -11,6 +11,8 @@ namespace Latte\Runtime;
 
 use Latte;
 use Latte\Engine;
+use Latte\RuntimeException;
+use function is_array, is_string, count, strlen;
 
 
 /**
@@ -44,9 +46,12 @@ class Filters
 	 */
 	public static function escapeHtmlText($s): string
 	{
-		return $s instanceof HtmlStringable || $s instanceof \Nette\Utils\IHtmlString
-			? $s->__toString(true)
-			: htmlspecialchars((string) $s, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8');
+		if ($s instanceof HtmlStringable || $s instanceof \Nette\Utils\IHtmlString) {
+			return $s->__toString(true);
+		}
+		$s = htmlspecialchars((string) $s, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8');
+		$s = str_replace('{{', '{<!-- -->{', $s);
+		return $s;
 	}
 
 
@@ -202,9 +207,7 @@ class Filters
 	 */
 	public static function stripHtml(FilterInfo $info, $s): string
 	{
-		if (!in_array($info->contentType, [null, 'html', 'xhtml', 'htmlAttr', 'xhtmlAttr', 'xml', 'xmlAttr'], true)) {
-			trigger_error('Filter |stripHtml used with incompatible type ' . strtoupper($info->contentType), E_USER_WARNING);
-		}
+		$info->validate([null, 'html', 'xhtml', 'htmlAttr', 'xhtmlAttr', 'xml', 'xmlAttr'], __FUNCTION__);
 		$info->contentType = Engine::CONTENT_TEXT;
 		return html_entity_decode(strip_tags((string) $s), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 	}
@@ -217,9 +220,8 @@ class Filters
 	 */
 	public static function stripTags(FilterInfo $info, $s): string
 	{
-		if (!in_array($info->contentType, [null, 'html', 'xhtml', 'htmlAttr', 'xhtmlAttr', 'xml', 'xmlAttr'], true)) {
-			trigger_error('Filter |stripTags used with incompatible type ' . strtoupper($info->contentType), E_USER_WARNING);
-		}
+		$info->contentType = $info->contentType ?? 'html';
+		$info->validate(['html', 'xhtml', 'htmlAttr', 'xhtmlAttr', 'xml', 'xmlAttr'], __FUNCTION__);
 		return strip_tags((string) $s);
 	}
 
@@ -236,7 +238,7 @@ class Filters
 			$info->contentType = $dest;
 			return $conv($s);
 		} else {
-			trigger_error('Filters: unable to convert content type ' . strtoupper($source) . ' to ' . strtoupper($dest), E_USER_WARNING);
+			throw new RuntimeException('Filters: unable to convert content type ' . strtoupper($source) . ' to ' . strtoupper($dest));
 			return $s;
 		}
 	}
@@ -405,6 +407,17 @@ class Filters
 
 
 	/**
+	 * Splits a string by a string.
+	 */
+	public static function explode(string $value, string $separator = ''): array
+	{
+		return $separator === ''
+			? preg_split('//u', $value, -1, PREG_SPLIT_NO_EMPTY)
+			: explode($separator, $value);
+	}
+
+
+	/**
 	 * Repeats text.
 	 * @return string plain text
 	 */
@@ -465,11 +478,21 @@ class Filters
 	/**
 	 * Performs a search and replace.
 	 * @param  string|string[]  $search
-	 * @param  string|string[]  $replacement
+	 * @param  string|string[]  $replace
 	 */
-	public static function replace(FilterInfo $info, $subject, $search, $replacement = ''): string
+	public static function replace(FilterInfo $info, $subject, $search, $replace = null): string
 	{
-		return str_replace($search, $replacement, (string) $subject);
+		$subject = (string) $subject;
+		if (is_array($search)) {
+			if (is_array($replace)) {
+				return strtr($subject, array_combine($search, $replace));
+			} elseif ($replace === null && is_string(key($search))) {
+				return strtr($subject, $search);
+			} else {
+				return strtr($subject, array_fill_keys($search, $replace));
+			}
+		}
+		return str_replace($search, $replace ?? '', $subject);
 	}
 
 
@@ -701,9 +724,9 @@ class Filters
 	 * @param  mixed[]  $array
 	 * @return mixed[]
 	 */
-	public static function sort(array $array): array
+	public static function sort(array $array, \Closure $callback = null): array
 	{
-		sort($array);
+		$callback ? uasort($array, $callback) : asort($array);
 		return $array;
 	}
 
@@ -721,6 +744,119 @@ class Filters
 			throw new \InvalidArgumentException("Minimum ($min) is not less than maximum ($max).");
 		}
 		return min(max($value, $min), $max);
+	}
+
+
+	/**
+	 * Generates URL-encoded query string
+	 * @param  string|array  $data
+	 * @return string
+	 */
+	public static function query($data): string
+	{
+		return is_string($data)
+			? urlencode($data)
+			: http_build_query($data, '', '&');
+	}
+
+
+	/**
+	 * Is divisible by?
+	 */
+	public static function divisibleBy(int $value, int $by): bool
+	{
+		return $value % $by === 0;
+	}
+
+
+	/**
+	 * Is odd?
+	 */
+	public static function odd(int $value): bool
+	{
+		return $value % 2 !== 0;
+	}
+
+
+	/**
+	 * Is even?
+	 */
+	public static function even(int $value): bool
+	{
+		return $value % 2 === 0;
+	}
+
+
+	/**
+	 * Returns the first item from the array or null if array is empty.
+	 * @param  string|array  $value
+	 * @return mixed
+	 */
+	public static function first($value)
+	{
+		return is_string($value)
+			? self::substring($value, 0, 1)
+			: (count($value) ? reset($value) : null);
+	}
+
+
+	/**
+	 * Returns the last item from the array or null if array is empty.
+	 * @param  string|array  $value
+	 * @return mixed
+	 */
+	public static function last($value)
+	{
+		return is_string($value)
+			? self::substring($value, -1)
+			: (count($value) ? end($value) : null);
+	}
+
+
+	/**
+	 * Extracts a slice of an array or string.
+	 * @param  string|array  $value
+	 * @return string|array
+	 */
+	public static function slice($value, int $start, int $length = null, bool $preserveKeys = false)
+	{
+		return is_string($value)
+			? self::substring($value, $start, $length)
+			: array_slice($value, $start, $length, $preserveKeys);
+	}
+
+
+	public static function round(float $value, int $precision = 0): float
+	{
+		return round($value, $precision);
+	}
+
+
+	public static function floor(float $value, int $precision = 0): float
+	{
+		return floor($value * 10 ** $precision) / 10 ** $precision;
+	}
+
+
+	public static function ceil(float $value, int $precision = 0): float
+	{
+		return ceil($value * 10 ** $precision) / 10 ** $precision;
+	}
+
+
+	/**
+	 * Picks random element/char.
+	 * @param  string|array  $value
+	 * @return mixed
+	 */
+	public static function random($values)
+	{
+		if (is_string($values)) {
+			$values = preg_split('//u', $values, -1, PREG_SPLIT_NO_EMPTY);
+		}
+		return $values
+			? $values[array_rand($values, 1)]
+			: null;
 	}
 
 
@@ -777,5 +913,24 @@ class Filters
 				. $q;
 		}
 		return $s;
+	}
+
+
+	public static function checkTagSwitch(string $orig, $new): void
+	{
+		if (
+			!is_string($new)
+			|| !preg_match('~' . Latte\Parser::RE_TAG_NAME . '$~DA', $new)
+		) {
+			throw new Latte\RuntimeException('Invalid tag name ' . var_export($new, true));
+		}
+
+		$new = strtolower($new);
+		if (
+			$new === 'style' || $new === 'script'
+			|| isset(Latte\Helpers::$emptyElements[strtolower($orig)]) !== isset(Latte\Helpers::$emptyElements[$new])
+		) {
+			throw new Latte\RuntimeException("Forbidden tag <$orig> change to <$new>.");
+		}
 	}
 }

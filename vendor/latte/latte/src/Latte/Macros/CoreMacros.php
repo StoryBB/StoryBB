@@ -40,23 +40,24 @@ class CoreMacros extends MacroSet
 		$me->addMacro('if', [$me, 'macroIf'], [$me, 'macroEndIf']);
 		$me->addMacro('else', [$me, 'macroElse']);
 		$me->addMacro('elseif', [$me, 'macroElseIf']);
-		$me->addMacro('ifset', 'if (isset(%node.args)) {', '}');
+		$me->addMacro('ifset', 'if (isset(%node.args)) %node.line {', '}');
 		$me->addMacro('elseifset', [$me, 'macroElseIf']);
 		$me->addMacro('ifcontent', [$me, 'macroIfContent'], [$me, 'macroEndIfContent']);
 		$me->addMacro('ifchanged', [$me, 'macroIfChanged'], '}');
 
-		$me->addMacro('switch', '$ʟ_switch = (%node.args); if (false) {', '}');
+		$me->addMacro('switch', '$ʟ_switch = (%node.args) %node.line; if (false) {', '}');
 		$me->addMacro('case', [$me, 'macroCase']);
 
 		$me->addMacro('foreach', '', [$me, 'macroEndForeach']);
-		$me->addMacro('for', 'for (%node.args) {', '}');
+		$me->addMacro('iterateWhile', [$me, 'macroIterateWhile'], [$me, 'macroEndIterateWhile']);
+		$me->addMacro('for', 'for (%node.args) %node.line {', '}');
 		$me->addMacro('while', [$me, 'macroWhile'], [$me, 'macroEndWhile']);
 		$me->addMacro('continueIf', [$me, 'macroBreakContinueIf']);
 		$me->addMacro('breakIf', [$me, 'macroBreakContinueIf']);
 		$me->addMacro('skipIf', [$me, 'macroBreakContinueIf']);
-		$me->addMacro('first', 'if ($iterator->isFirst(%node.args)) {', '}');
-		$me->addMacro('last', 'if ($iterator->isLast(%node.args)) {', '}');
-		$me->addMacro('sep', 'if (!$iterator->isLast(%node.args)) {', '}');
+		$me->addMacro('first', 'if ($iterator->isFirst(%node.args)) %node.line {', '}');
+		$me->addMacro('last', 'if ($iterator->isLast(%node.args)) %node.line {', '}');
+		$me->addMacro('sep', 'if (!$iterator->isLast(%node.args)) %node.line {', '}');
 
 		$me->addMacro('try', [$me, 'macroTry'], '}');
 		$me->addMacro('rollback', [$me, 'macroRollback']);
@@ -65,6 +66,7 @@ class CoreMacros extends MacroSet
 		$me->addMacro('default', [$me, 'macroVar']);
 		$me->addMacro('dump', [$me, 'macroDump']);
 		$me->addMacro('debugbreak', [$me, 'macroDebugbreak']);
+		$me->addMacro('trace', 'LR\Tracer::throw() %node.line;');
 		$me->addMacro('l', '?>{<?php');
 		$me->addMacro('r', '?>}<?php');
 
@@ -81,6 +83,7 @@ class CoreMacros extends MacroSet
 
 		$me->addMacro('class', null, null, [$me, 'macroClass']);
 		$me->addMacro('attr', null, null, [$me, 'macroAttr']);
+		$me->addMacro('tag', [$me, 'macroTag'], [$me, 'macroTagEnd']);
 
 		$me->addMacro('parameters', [$me, 'macroParameters'], null, null, self::ALLOWED_IN_HEAD);
 		$me->addMacro('varType', [$me, 'macroVarType'], null, null, self::ALLOWED_IN_HEAD);
@@ -133,19 +136,19 @@ class CoreMacros extends MacroSet
 	{
 		$node->validate(null);
 		if ($node->data->capture = ($node->args === '')) {
-			return 'ob_start(function () {})';
+			return $writer->write('ob_start(function () {}) %node.line;');
 		}
 		if ($node->prefix === $node::PREFIX_TAG) {
 			for ($id = 0, $tmp = $node->htmlNode; $tmp = $tmp->parentNode; $id++);
 			$node->htmlNode->data->id = $node->htmlNode->data->id ?? $id;
 			return $writer->write(
 				$node->htmlNode->closing
-					? 'if ($ʟ_if[%var]) {'
-					: 'if ($ʟ_if[%var] = (%node.args)) {',
+					? 'if ($ʟ_if[%var]) %node.line {'
+					: 'if ($ʟ_if[%var] = (%node.args)) %node.line {',
 				$node->htmlNode->data->id
 			);
 		}
-		return $writer->write('if (%node.args) {');
+		return $writer->write('if (%node.args) %node.line {');
 	}
 
 
@@ -160,7 +163,7 @@ class CoreMacros extends MacroSet
 
 		$node->validate('condition');
 		return $writer->write(
-			'if (%node.args) '
+			'if (%node.args) %node.line '
 			. (isset($node->data->else)
 				? '{ ob_end_clean(); echo ob_get_clean(); }'
 				: 'echo ob_get_clean();')
@@ -180,7 +183,7 @@ class CoreMacros extends MacroSet
 		if ($node->args !== '' && Helpers::startsWith($node->args, 'if')) {
 			throw new CompileException('Arguments are not allowed in {else}, did you mean {elseif}?');
 		}
-		$node->validate(false, ['if', 'ifset', 'foreach', 'ifchanged', 'try']);
+		$node->validate(false, ['if', 'ifset', 'foreach', 'ifchanged', 'try', 'first', 'last', 'sep']);
 
 		$parent = $node->parentNode;
 		if (isset($parent->data->else)) {
@@ -189,13 +192,13 @@ class CoreMacros extends MacroSet
 
 		$parent->data->else = true;
 		if ($parent->name === 'if' && $parent->data->capture) {
-			return 'ob_start(function () {})';
+			return $writer->write('ob_start(function () {}) %node.line;');
 
 		} elseif ($parent->name === 'foreach') {
-			return '$iterations++; } if ($iterator->isEmpty()) {';
+			return $writer->write('$iterations++; } if ($iterator->isEmpty()) %node.line {');
 
 		} elseif ($parent->name === 'ifchanged' && $parent->data->capture) {
-			$res = '?>' . $parent->closingCode . '<?php else {';
+			$res = '?>' . $parent->closingCode . $writer->write('<?php else %node.line {');
 			$parent->closingCode = '<?php } ?>';
 			return $res;
 
@@ -204,7 +207,7 @@ class CoreMacros extends MacroSet
 			$parent->closingCode = '<?php } ?>';
 			return '';
 		}
-		return '} else {';
+		return $writer->write('} else %node.line {');
 	}
 
 
@@ -220,8 +223,8 @@ class CoreMacros extends MacroSet
 		}
 
 		return $writer->write($node->name === 'elseif'
-			? '} elseif (%node.args) {'
-			: '} elseif (isset(%node.args)) {');
+			? '} elseif (%node.args) %node.line {'
+			: '} elseif (isset(%node.args)) %node.line {');
 	}
 
 
@@ -257,14 +260,13 @@ class CoreMacros extends MacroSet
 		$node->validate(null);
 		$id = $node->data->id = ++$this->idCounter;
 		if ($node->data->capture = ($node->args === '')) {
-			$node->openingCode = '<?php ob_start(function () {}); try { ?>';
+			$node->openingCode = $writer->write('<?php ob_start(function () {}); try %node.line { ?>');
 			$node->closingCode =
 				'<?php } finally { $ʟ_tmp = ob_get_clean(); } '
 				. "if ((\$ʟ_loc[$id] ?? null) !== \$ʟ_tmp) { echo \$ʟ_loc[$id] = \$ʟ_tmp; } ?>";
 		} else {
 			$node->openingCode = $writer->write(
-				'<?php if (($ʟ_loc[%var] ?? null) !== ($ʟ_tmp = [%node.args])) { $ʟ_loc[%var] = $ʟ_tmp; ?>',
-				$id,
+				'<?php if (($ʟ_loc[%0_var] ?? null) !== ($ʟ_tmp = [%node.args])) { $ʟ_loc[%0_var] = $ʟ_tmp; ?>',
 				$id
 			);
 		}
@@ -280,12 +282,12 @@ class CoreMacros extends MacroSet
 		for ($id = 0, $tmp = $node; $tmp = $tmp->closest(['try']); $id++);
 		$node->data->code = $writer->write('<?php echo ob_get_clean();
 			} catch (\Throwable $ʟ_e) {
-			$iterator = $ʟ_it = $ʟ_try[%var][1];
-			while (ob_get_level() > $ʟ_try[%var][0]) ob_end_clean();
+			$iterator = $ʟ_it = $ʟ_try[%0_var][1];
+			while (ob_get_level() > $ʟ_try[%0_var][0]) ob_end_clean();
 			if (!($ʟ_e instanceof LR\RollbackException) && isset($this->global->coreExceptionHandler)) {
 				($this->global->coreExceptionHandler)($ʟ_e, $this);
-			} ?>', $id, $id);
-		$node->openingCode = $writer->write('<?php $ʟ_try[%var] = [ob_get_level(), $ʟ_it ?? null]; ob_start(function () {}); try { ?>', $id);
+			} ?>', $id);
+		$node->openingCode = $writer->write('<?php $ʟ_try[%var] = [ob_get_level(), $ʟ_it ?? null]; ob_start(function () {}); try %node.line { ?>', $id);
 		$node->closingCode = $node->data->code . '<?php } ?>';
 	}
 
@@ -320,13 +322,13 @@ class CoreMacros extends MacroSet
 			}
 
 			return $writer->write(
-				'$ʟ_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $ʟ_fi, %raw))',
-				$node->context[0],
+				'$ʟ_fi = new LR\FilterInfo(%var); echo %modifyContent($this->filters->filterContent("translate", $ʟ_fi, %raw)) %node.line;',
+				implode($node->context),
 				$value
 			);
 
 		} elseif ($node->empty = ($node->args !== '')) {
-			return $writer->write('echo %modify(($this->filters->translate)(%node.args))');
+			return $writer->write('echo %modify(($this->filters->translate)(%node.args)) %node.line;');
 		}
 		return '';
 	}
@@ -347,15 +349,11 @@ class CoreMacros extends MacroSet
 
 		$node->replaced = false;
 		$noEscape = Helpers::removeFilter($node->modifiers, 'noescape');
-		if (!$noEscape && Helpers::removeFilter($node->modifiers, 'escape')) {
-			trigger_error("Macro {{$node->name}} provides auto-escaping, remove |escape.");
-		}
 		if ($node->modifiers && !$noEscape) {
 			$node->modifiers .= '|escape';
 		}
 		return $writer->write(
-			'/* line ' . $node->startLine . ' */
-			$this->createTemplate(%word, %node.array? + $this->params, %var)->renderToContentType(%raw);',
+			'$this->createTemplate(%word, %node.array? + $this->params, %var)->renderToContentType(%raw) %node.line;',
 			$file,
 			$mode,
 			$node->modifiers
@@ -373,9 +371,8 @@ class CoreMacros extends MacroSet
 		$node->validate(null);
 		$node->replaced = false;
 		return $writer->write(
-			'/* line ' . $node->startLine . ' */
-			ob_start(function () {});
-			try { $this->createTemplate(%node.word, %node.array, "sandbox")->renderToContentType(%var); echo ob_get_clean(); }
+			'ob_start(function () {});
+			try { $this->createTemplate(%node.word, %node.array, "sandbox")->renderToContentType(%var) %node.line; echo ob_get_clean(); }
 			catch (\Throwable $ʟ_e) {
 				if (isset($this->global->coreExceptionHandler)) { ob_end_clean(); ($this->global->coreExceptionHandler)($ʟ_e, $this); }
 				else { echo ob_get_clean(); throw $ʟ_e; }
@@ -398,7 +395,7 @@ class CoreMacros extends MacroSet
 		}
 		$this->checkExtraArgs($node);
 		$node->data->variable = $variable;
-		return 'ob_start(function () {})';
+		return $writer->write('ob_start(function () {}) %node.line;');
 	}
 
 
@@ -407,12 +404,12 @@ class CoreMacros extends MacroSet
 	 */
 	public function macroCaptureEnd(MacroNode $node, PhpWriter $writer): string
 	{
-		$body = in_array($node->context[0], [Engine::CONTENT_HTML, Engine::CONTENT_XHTML], true)
+		$body = in_array(implode($node->context), [Engine::CONTENT_HTML, Engine::CONTENT_XHTML], true)
 			? 'ob_get_length() ? new LR\\Html(ob_get_clean()) : ob_get_clean()'
 			: 'ob_get_clean()';
 		return $writer->write(
 			'$ʟ_fi = new LR\FilterInfo(%var); %raw = %modifyContent(%raw);',
-			$node->context[0],
+			implode($node->context),
 			$node->data->variable,
 			$body
 		);
@@ -422,12 +419,12 @@ class CoreMacros extends MacroSet
 	/**
 	 * {spaceless} ... {/spaceless}
 	 */
-	public function macroSpaceless(MacroNode $node): void
+	public function macroSpaceless(MacroNode $node, PhpWriter $writer): void
 	{
 		$node->validate(false);
-		$node->openingCode = in_array($node->context[0], [Engine::CONTENT_HTML, Engine::CONTENT_XHTML], true)
-			? "<?php ob_start('Latte\\Runtime\\Filters::spacelessHtmlHandler', 4096); ?>"
-			: "<?php ob_start('Latte\\Runtime\\Filters::spacelessText', 4096); ?>";
+		$node->openingCode = $writer->write(in_array($node->context[0], [Engine::CONTENT_HTML, Engine::CONTENT_XHTML], true)
+			? "<?php ob_start('Latte\\Runtime\\Filters::spacelessHtmlHandler', 4096) %node.line; ?>"
+			: "<?php ob_start('Latte\\Runtime\\Filters::spacelessText', 4096) %node.line; ?>");
 		$node->closingCode = '<?php ob_end_flush(); ?>';
 	}
 
@@ -439,9 +436,9 @@ class CoreMacros extends MacroSet
 	{
 		$node->validate(null);
 		if ($node->data->do = ($node->args === '')) {
-			return 'do {';
+			return $writer->write('do %node.line {');
 		}
-		return $writer->write('while (%node.args) {');
+		return $writer->write('while (%node.args) %node.line {');
 	}
 
 
@@ -481,12 +478,49 @@ class CoreMacros extends MacroSet
 			!$noIterator
 			&& preg_match('#\$iterator\W|\Wget_defined_vars\W#', $this->getCompiler()->expandTokens($node->content))
 		) {
-			$node->openingCode .= 'foreach ($iterator = $ʟ_it = new LR\CachingIterator('
-				. preg_replace('#(.*)\s+as\s+#i', '$1, $ʟ_it ?? null) as ', $args, 1) . ') { ?>';
+			$args = preg_replace('#(.*)\s+as\s+#i', '$1, $ʟ_it ?? null) as ', $args, 1);
+			$node->openingCode .= $writer->write('foreach ($iterator = $ʟ_it = new LR\CachingIterator(%raw) %node.line { ?>', $args);
 			$node->closingCode = '<?php $iterations++; } $iterator = $ʟ_it = $ʟ_it->getParent(); ?>';
 		} else {
-			$node->openingCode .= 'foreach (' . $args . ') { ?>';
+			$node->openingCode .= $writer->write('foreach (%raw) %node.line { ?>', $args);
 			$node->closingCode = '<?php $iterations++; } ?>';
+		}
+	}
+
+
+	/**
+	 * {iterateWhile ...}
+	 */
+	public function macroIterateWhile(MacroNode $node, PhpWriter $writer): void
+	{
+		if (!$node->closest(['foreach'])) {
+			throw new CompileException('Tag ' . $node->getNotation() . ' must be inside {foreach} ... {/foreach}.');
+		}
+		$node->data->begin = $node->args !== '';
+	}
+
+
+	/**
+	 * {/iterateWhile ...}
+	 */
+	public function macroEndIterateWhile(MacroNode $node, PhpWriter $writer): void
+	{
+		$node->validate(true);
+		$foreach = $node->closest(['foreach']);
+		$vars = preg_replace('#^.+\s+as\s+(?:(.+)=>)?(.+)$#i', '$1, $2', $foreach->args);
+		$stmt = '
+		 	if (!$iterator->hasNext()' . ($node->args ? $writer->write(' || !(%node.args)') : '') . ') {
+		 		break;
+		 	}
+		 	$iterator->next();
+		 	[' . $vars . '] = [$iterator->key(), $iterator->current()];
+		';
+		if ($node->data->begin) {
+			$node->openingCode = $writer->write('<?php do %node.line { %raw ?>', $stmt);
+			$node->closingCode = '<?php } while (true); ?>';
+		} else {
+			$node->openingCode = $writer->write('<?php do %node.line { ?>');
+			$node->closingCode = "<?php $stmt } while (true); ?>";
 		}
 	}
 
@@ -511,9 +545,9 @@ class CoreMacros extends MacroSet
 		$node->validate('condition');
 
 		if ($node->parentNode->prefix === $node::PREFIX_NONE) {
-			return $writer->write("if (%node.args) { echo \"</{$node->parentNode->htmlNode->name}>\\n\"; $cmd; }");
+			return $writer->write("if (%node.args) %node.line { echo \"</{$node->parentNode->htmlNode->name}>\\n\"; $cmd; }");
 		}
-		return $writer->write("if (%node.args) $cmd;");
+		return $writer->write("if (%node.args) %node.line $cmd;");
 	}
 
 
@@ -526,7 +560,7 @@ class CoreMacros extends MacroSet
 			throw new CompileException('It is not possible to combine class with n:class.');
 		}
 		$node->validate(true);
-		return $writer->write('echo ($ʟ_tmp = array_filter(%node.array)) ? \' class="\' . %escape(implode(" ", array_unique($ʟ_tmp))) . \'"\' : "";');
+		return $writer->write('echo ($ʟ_tmp = array_filter(%node.array)) ? \' class="\' . %escape(implode(" ", array_unique($ʟ_tmp))) . \'"\' : "" %node.line;');
 	}
 
 
@@ -536,7 +570,48 @@ class CoreMacros extends MacroSet
 	public function macroAttr(MacroNode $node, PhpWriter $writer): string
 	{
 		$node->validate(true);
-		return $writer->write('$ʟ_tmp = %node.array; echo LR\Filters::htmlAttributes(isset($ʟ_tmp[0]) && is_array($ʟ_tmp[0]) ? $ʟ_tmp[0] : $ʟ_tmp);');
+		return $writer->write('$ʟ_tmp = %node.array; echo LR\Filters::htmlAttributes(isset($ʟ_tmp[0]) && is_array($ʟ_tmp[0]) ? $ʟ_tmp[0] : $ʟ_tmp) %node.line;');
+	}
+
+
+	/**
+	 * n:tag="..."
+	 */
+	public function macroTag(MacroNode $node, PhpWriter $writer): void
+	{
+		if (!$node->prefix || $node->prefix !== MacroNode::PREFIX_NONE) {
+			throw new CompileException("Unknown {$node->getNotation()}, use n:{$node->name} attribute.");
+
+		} elseif (preg_match('(style$|script$)iA', $node->htmlNode->name)) {
+			throw new CompileException("Attribute {$node->getNotation()} is not allowed in <script> or <style>");
+		}
+		$node->validate(true);
+	}
+
+
+	/**
+	 * n:tag="..."
+	 */
+	public function macroTagEnd(MacroNode $node, PhpWriter $writer): void
+	{
+		for ($id = 0, $tmp = $node->htmlNode; $tmp = $tmp->parentNode; $id++);
+		$node->htmlNode->data->id = $node->htmlNode->data->id ?? $id;
+
+		$node->openingCode = $writer->write('<?php
+			$ʟ_tag[%0_var] = (%node.args) ?? %1_var;
+			Latte\Runtime\Filters::checkTagSwitch(%1_var, $ʟ_tag[%0_var]);
+		?>', $node->htmlNode->data->id, $node->htmlNode->name);
+
+		$node->content = preg_replace(
+			'~^(\s*<)' . Latte\Parser::RE_TAG_NAME . '~',
+			"\$1<?php echo \$ʟ_tag[{$node->htmlNode->data->id}]; ?>\n",
+			$node->content
+		);
+		$node->content = preg_replace(
+			'~</' . Latte\Parser::RE_TAG_NAME . '(\s*>\s*)$~',
+			"</<?php echo \$ʟ_tag[{$node->htmlNode->data->id}]; ?>\n\$1",
+			$node->content
+		);
 	}
 
 
@@ -548,7 +623,7 @@ class CoreMacros extends MacroSet
 		$node->validate(null);
 		$args = $writer->formatArgs();
 		return $writer->write(
-			'Tracy\Debugger::barDump(' . ($args ? "($args)" : 'get_defined_vars()') . ', %var);',
+			'Tracy\Debugger::barDump(' . ($args ? "($args)" : 'get_defined_vars()') . ', %var) %node.line;',
 			$args ?: 'variables'
 		);
 	}
@@ -561,7 +636,7 @@ class CoreMacros extends MacroSet
 	{
 		$node->validate(null);
 		if (function_exists($func = 'debugbreak') || function_exists($func = 'xdebug_break')) {
-			return $writer->write($node->args === '' ? "$func()" : "if (%node.args) $func();");
+			return $writer->write(($node->args === '' ? '' : 'if (%node.args) ') . "$func() %node.line;");
 		}
 		return '';
 	}
@@ -576,7 +651,7 @@ class CoreMacros extends MacroSet
 		if (isset($node->parentNode->data->default)) {
 			throw new CompileException('Tag {default} must follow after {case} clause.');
 		}
-		return $writer->write('} elseif (in_array($ʟ_switch, %node.array, true)) {');
+		return $writer->write('} elseif (in_array($ʟ_switch, %node.array, true)) %node.line {');
 	}
 
 
@@ -593,7 +668,7 @@ class CoreMacros extends MacroSet
 				throw new CompileException('Tag {switch} may only contain one {default} clause.');
 			}
 			$node->parentNode->data->default = true;
-			return '} else {';
+			return $writer->write('} else %node.line {');
 
 		} elseif ($node->modifiers) {
 			$node->setArgs($node->args . $node->modifiers);
@@ -658,9 +733,9 @@ class CoreMacros extends MacroSet
 		}
 		$res = $writer->preprocess($res);
 		$out = $writer->quotingPass($res)->joinAll();
-		return $node->name === 'default'
-			? "extract([$out], EXTR_SKIP)"
-			: "$out;";
+		return $writer->write($node->name === 'default'
+			? 'extract([%raw], EXTR_SKIP) %node.line;'
+			: '%raw %node.line;', $out);
 	}
 
 
@@ -674,8 +749,8 @@ class CoreMacros extends MacroSet
 		$node->validate(true, [], $node->name === '=');
 		return $writer->write(
 			$node->name === '='
-			? "echo %modify(%node.args) /* line {$node->startLine} */"
-			: '%modify(%node.args);'
+				? 'echo %modify(%node.args) %node.line;'
+				: '%modify(%node.args) %node.line;'
 		);
 	}
 
@@ -712,7 +787,7 @@ class CoreMacros extends MacroSet
 
 		if (strpos($node->args, '/') && !$node->htmlNode) {
 			return $writer->write(
-				'if (empty($this->global->coreCaptured) && in_array($this->getReferenceType(), ["extends", null], true)) { header(%var); } ',
+				'if (empty($this->global->coreCaptured) && in_array($this->getReferenceType(), ["extends", null], true)) { header(%var) %node.line; } ',
 				'Content-Type: ' . $node->args
 			);
 		}

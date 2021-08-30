@@ -2,7 +2,7 @@
 /*
 
 MIT License
-Copyright 2013-2018 Zordius Chen. All Rights Reserved.
+Copyright 2013-2021 Zordius Chen. All Rights Reserved.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -18,8 +18,6 @@ Origin: https://github.com/zordius/lightncandy
  */
 
 namespace LightnCandy;
-
-use \LightnCandy\Encoder;
 
 /**
  * LightnCandy SafeString class
@@ -45,11 +43,13 @@ class SafeString extends Encoder
      * @param string $str input string
      * @param bool|string $escape false to not escape, true to escape, 'encq' to escape as handlebars.js
      */
-    public function __construct($str, $escape = false) {
+    public function __construct($str, $escape = false)
+    {
         $this->string = $escape ? (($escape === 'encq') ? static::encq(static::$jsContext, $str) : static::enc(static::$jsContext, $str)) : $str;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->string;
     }
 
@@ -64,7 +64,8 @@ class SafeString extends Encoder
      * @expect 'abc{{!}}cde' when input 'abc{{!}}cde'
      * @expect 'abc{{! }}cde' when input 'abc{{!----}}cde'
      */
-    public static function stripExtendedComments($template) {
+    public static function stripExtendedComments($template)
+    {
         return preg_replace(static::EXTENDED_COMMENT_SEARCH, '{{! }}', $template);
     }
 
@@ -79,8 +80,8 @@ class SafeString extends Encoder
      * @expect 'a\\\\bc' when input 'a\bc'
      * @expect 'a\\\'bc' when input 'a\'bc'
      */
-    public static function escapeTemplate($template) {
+    public static function escapeTemplate($template)
+    {
         return addcslashes(addcslashes($template, '\\'), "'");
     }
 }
-

@@ -2,7 +2,7 @@
 /*
 
 MIT License
-Copyright 2013-2018 Zordius Chen. All Rights Reserved.
+Copyright 2013-2021 Zordius Chen. All Rights Reserved.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -18,11 +18,6 @@ Origin: https://github.com/zordius/lightncandy
  */
 
 namespace LightnCandy;
-
-use \LightnCandy\Context;
-use \LightnCandy\Compiler;
-use \LightnCandy\Partial;
-use \LightnCandy\Exporter;
 
 /**
  * LightnCandy major static class
@@ -40,7 +35,8 @@ class LightnCandy extends Flags
      *
      * @return string|false Compiled PHP code when successed. If error happened and compile failed, return false.
      */
-    public static function compile($template, $options = array('flags' => self::FLAG_BESTPERFORMANCE)) {
+    public static function compile($template, $options = array('flags' => self::FLAG_BESTPERFORMANCE))
+    {
         $context = Context::create($options);
 
         if (static::handleError($context)) {
@@ -69,7 +65,8 @@ class LightnCandy extends Flags
      *
      * @expect false when input '{{"}}', array('flags' => LightnCandy::FLAG_HANDLEBARS)
      */
-    public static function compilePartial($template, $options = array('flags' => self::FLAG_BESTPERFORMANCE)) {
+    public static function compilePartial($template, $options = array('flags' => self::FLAG_BESTPERFORMANCE))
+    {
         $context = Context::create($options);
 
         if (static::handleError($context)) {
@@ -99,7 +96,8 @@ class LightnCandy extends Flags
      * @expect false when input array('error' => array())
      * @expect true when input array('error' => array('some error'), 'flags' => array('errorlog' => 0, 'exception' => 0))
      */
-    protected static function handleError(&$context) {
+    protected static function handleError(&$context)
+    {
         static::$lastContext = $context;
 
         if (count($context['error'])) {
@@ -119,7 +117,8 @@ class LightnCandy extends Flags
      *
      * @return array<string,array|string|integer> Context data
      */
-    public static function getContext() {
+    public static function getContext()
+    {
         return static::$lastContext;
     }
 
@@ -134,7 +133,8 @@ class LightnCandy extends Flags
      *
      * @deprecated
      */
-    public static function prepare($php, $tmpDir = null, $delete = true) {
+    public static function prepare($php, $tmpDir = null, $delete = true)
+    {
         $php = "<?php $php ?>";
 
         if (!ini_get('allow_url_include') || !ini_get('allow_url_fopen')) {
@@ -166,4 +166,3 @@ class LightnCandy extends Flags
         return include('data://text/plain,' . urlencode($php));
     }
 }
-

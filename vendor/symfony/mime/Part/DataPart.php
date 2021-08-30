@@ -39,15 +39,15 @@ class DataPart extends TextPart
 
         parent::__construct($body, null, $subtype, $encoding);
 
-        $this->filename = $filename;
-        $this->setName($filename);
+        if (null !== $filename) {
+            $this->filename = $filename;
+            $this->setName($filename);
+        }
         $this->setDisposition('attachment');
     }
 
     public static function fromPath(string $path, string $name = null, string $contentType = null): self
     {
-        // FIXME: if file is not readable, exception?
-
         if (null === $contentType) {
             $ext = strtolower(substr($path, strrpos($path, '.') + 1));
             if (null === self::$mimeTypes) {
@@ -155,7 +155,13 @@ class DataPart extends TextPart
         $r->setValue($this, $this->_headers);
         unset($this->_headers);
 
+        if (!\is_array($this->_parent)) {
+            throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+        }
         foreach (['body', 'charset', 'subtype', 'disposition', 'name', 'encoding'] as $name) {
+            if (null !== $this->_parent[$name] && !\is_string($this->_parent[$name])) {
+                throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
+            }
             $r = new \ReflectionProperty(TextPart::class, $name);
             $r->setAccessible(true);
             $r->setValue($this, $this->_parent[$name]);
