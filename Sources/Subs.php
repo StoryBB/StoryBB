@@ -1918,10 +1918,12 @@ function setupMenuContext()
 		'home' => [
 			'url' => $scripturl,
 			'icon' => 'fas fa-home fa-fw',
+			'label' => $txt['home'],
 		],
 		'search' => [
 			'url' => $scripturl . '?action=search',
 			'icon' => 'fas fa-search fa-fq',
+			'label' => $txt['search'],
 		],
 	];
 
@@ -1931,6 +1933,7 @@ function setupMenuContext()
 			'alerts' => [
 				'url' => $scripturl . '?action=profile;area=alerts;u=' . $context['user']['id'],
 				'icon' => 'far fa-bell fa-fw',
+				'label' => $txt['alerts'],
 				'popupmenu' => true,
 				'amt' => $context['user']['alerts'],
 				'position' => 'top',
@@ -1938,6 +1941,7 @@ function setupMenuContext()
 			'pm' => [
 				'url' => $scripturl . '?action=pm',
 				'icon' => 'far fa-comments fa-fw',
+				'label' => $txt['personal_messages'],
 				'popupmenu' => true,
 				'amt' => $context['user']['unread_messages'],
 				'visible' => $context['allow_pm'],
@@ -1945,14 +1949,17 @@ function setupMenuContext()
 			'bookmark' => [
 				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
 				'icon' => 'fas fa-bookmark fa-fw',
+				'label' => $txt['bookmarks'],
 			],
 			'characterlist' => [
 				'url' => $urlgenerator->generate('characters'),
 				'icon' => 'fas fa-users fa-fw',
+				'label' => $txt['chars_menu_title'],
 			],
 			'shipper' => [
 				'url' => $urlgenerator->generate('shippers'),
 				'icon' => 'fas fa-ship fa-fw',
+				'label' => $txt['shippers'],
 				'visible' => !empty($modSettings['enable_shipper']),
 			],
 		];
@@ -1962,6 +1969,7 @@ function setupMenuContext()
 			$context['sidebar']['page-' . $page['page_name']] = [
 				'url' => $scripturl . '?action=pages;page=' . $page['page_name'],
 				'icon' => $page['sidebar_icon'] . ' fa-fw',
+				'label' => $page['page_title'],
 			];
 		}
 
@@ -1969,6 +1977,7 @@ function setupMenuContext()
 			'manage' => [
 				'url' => $scripturl,
 				'icon' => 'fas fa-tools fa-fw',
+				'label' => $txt['admin'],
 				'visible' => $context['allow_admin'] || $context['user']['can_mod'],
 				'subitems' => [
 					'admin' => [
@@ -2050,20 +2059,32 @@ function setupMenuContext()
 			'logout' => [
 				'url' => $urlgenerator->generate('logout', ['t' => $context['session_id']]),
 				'icon' => 'fas fa-sign-out-alt fa-fw',
+				'label' => $txt['logout'],
 			],
 		];
 	}
 	else
 	{
+		foreach (get_sidebar_page_items() as $page)
+		{
+			$context['sidebar']['page-' . $page['page_name']] = [
+				'url' => $scripturl . '?action=pages;page=' . $page['page_name'],
+				'icon' => $page['sidebar_icon'] . ' fa-fw',
+				'label' => $page['page_title'],
+			];
+		}
+
 		$context['sidebar'] += [
 			'login' => [
 				'url' => $urlgenerator->generate('login'),
 				'icon' => 'fas fa-sign-in-alt fa-fw',
+				'label' => $txt['login'],
 				'popup' => $txt['login'],
 			],
 			'register' => [
 				'url' => $scripturl . '?action=signup',
 				'icon' => 'fas fa-user-plus fa-fw',
+				'label' => $txt['register'],
 				'visible' => $context['can_register'],
 			],
 		];
