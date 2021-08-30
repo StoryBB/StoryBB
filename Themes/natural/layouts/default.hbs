@@ -109,35 +109,7 @@
 				{{/if}}
 			</ul>
 {{/if}}
-		
-{{#if context.allow_search}}
-	<!--<div id="btn-search" class="floatright">
-		<a href="{{scripturl}}?action=search" id="search_menu_top"><i class="fas fa-search fa-fq"></i></a>
-		<div id="search_menu" class="top_menu scrollable subitems">
-			<form id="search_form" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
-				<input type="search" name="search" value="">
-				<select name="search_selection">
-					<option value="all">{{txt.search_entireforum}}</option>
-		{{#if context.current_topic}}
-					<option value="topic" selected="selected">{{txt.search_thistopic}}</option>
-		{{/if}}
-		{{#if context.current_board}}
-					<option value="board" selected="selected">{{txt.search_thisbrd}}</option>
-		{{/if}}
-				</select>
-		{{#if context.current_topic}}
-				<input type="hidden" name="sd_topic" value="{{context.current_topic}}">
-		{{/if}}
-		{{#if context.current_board}}
-				<input type="hidden" name="sd_brd" value="{{context.current_board}}">
-		{{/if}}
-				<button type="submit" name="search2" value="search2" class="button">{{txt.search}}</button>
-				<input type="hidden" name="advanced" value="0">
-			</form>
-		</div>
-	</div>-->
 
-{{/if}}
 		</div><!-- #top_section -->
 	
 		<header>
