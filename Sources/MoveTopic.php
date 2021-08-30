@@ -26,7 +26,7 @@ use StoryBB\StringLibrary;
  */
 function MoveTopic()
 {
-	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $smcFunc, $modSettings, $sourcedir;
+	global $txt, $board, $board_info, $topic, $user_info, $context, $language, $scripturl, $smcFunc, $modSettings, $sourcedir;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -47,6 +47,8 @@ function MoveTopic()
 	// Can they see it - if not approved?
 	if (!$context['is_approved'])
 		isAllowedTo('approve_posts');
+
+	$context['do_redirect_notice'] = $context['is_approved'] && empty($board_info['in_character']);
 
 	// Permission check!
 	// @todo
