@@ -40,10 +40,10 @@
 					</fieldset>
 
 					<label for="postRedirect">
-						<input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.move_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';">
+						<input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.do_redirect_notice}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.move_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';">
 						{{{txt.post_redirection}}}.
 					</label>
-					<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.is_approved}}display: none;{{/unless}}">
+					<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.do_redirect_notice}}display: none;{{/unless}}">
 						<dl class="settings">
 							<dt>
 								{{{txt.move_why}}}
@@ -77,6 +77,7 @@
 {{/if}}
 						</dl>
 					</fieldset>
+					<hr>
 
 					<input type="submit" value="{{{txt.move_topic}}}" onclick="return submitThisOnce(this);">
 				</div>

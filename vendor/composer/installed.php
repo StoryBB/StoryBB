@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => 'f816c3fd68f33c8eaf341e1e53b3801487a21907',
         'name' => '__root__',
         'dev' => false,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => 'f816c3fd68f33c8eaf341e1e53b3801487a21907',
             'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
@@ -148,6 +148,15 @@
             'reference' => '6ab91e811439360339ebde803630c8d74223fa77',
             'dev_requirement' => false,
         ),
+        'symfony/polyfill-ctype' => array(
+            'pretty_version' => 'v1.23.0',
+            'version' => '1.23.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-ctype',
+            'aliases' => array(),
+            'reference' => '46cd95797e9df938fdd2b03693b5fca5e64b01ce',
+            'dev_requirement' => false,
+        ),
         'symfony/polyfill-iconv' => array(
             'pretty_version' => 'v1.23.0',
             'version' => '1.23.0.0',
@@ -227,6 +236,15 @@
             'install_path' => __DIR__ . '/../symfony/service-contracts',
             'aliases' => array(),
             'reference' => 'b776d18b303a39f56c63747bcb977ad4b27aca26',
+            'dev_requirement' => false,
+        ),
+        'twig/twig' => array(
+            'pretty_version' => 'v2.13.1',
+            'version' => '2.13.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../twig/twig',
+            'aliases' => array(),
+            'reference' => '57e96259776ddcacf1814885fc3950460c8e18ef',
             'dev_requirement' => false,
         ),
         'zordius/lightncandy' => array(
