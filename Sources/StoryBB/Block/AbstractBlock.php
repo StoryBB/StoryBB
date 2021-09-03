@@ -12,6 +12,7 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\Container;
 use StoryBB\Template;
 
 /**
@@ -31,6 +32,14 @@ abstract class AbstractBlock
 		$template = Template::load_partial($partialname);
 		$phpStr = Template::compile($template, [], $partialname . Template::get_theme_id('partials', $partialname));
 		return Template::prepare($phpStr, $blockcontext);
+	}
+
+	protected function template(string $partialname, array $blockcontext): string
+	{
+		$container = Container::instance();
+		$twig = $container->get('templaterenderer');
+		$template = $twig->load('@partials/blocks/' . $partialname . '.twig');
+		return $template->render($blockcontext);
 	}
 
 	public function get_block_title(): string
