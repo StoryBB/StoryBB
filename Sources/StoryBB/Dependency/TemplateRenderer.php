@@ -13,23 +13,23 @@
 namespace StoryBB\Dependency;
 
 use RuntimeException;
-use Latte\Engine;
+use Twig\Environment as TwigEnvironment;
 
-trait Templater
+trait TemplateRenderer
 {
-	protected $_templater;
+	protected $_templaterenderer;
 
-	public function _accept_templater(Engine $templater) : void
+	public function _accept_templaterenderer(TwigEnvironment $templater) : void
 	{
-		$this->_templater = $templater;
+		$this->_templaterenderer = $templater;
 	}
 
-	protected function templater() : Engine
+	protected function templaterenderer() : TwigEnvironment
 	{
-		if (empty($this->_templater))
+		if (empty($this->_templaterenderer))
 		{
 			throw new RuntimeException('Templater not initialised');
 		}
-		return $this->_templater;
+		return $this->_templaterenderer;
 	}
 }

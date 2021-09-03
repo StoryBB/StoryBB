@@ -21,8 +21,6 @@ use StoryBB\Dependency\Database;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
 use StoryBB\Dependency\UrlGenerator;
-use StoryBB\Routing\RenderResponse;
-use StoryBB\Routing\LegacyRenderResponse;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;

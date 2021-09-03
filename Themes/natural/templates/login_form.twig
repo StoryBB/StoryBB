@@ -1,0 +1,19 @@
+	<div class="login">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{ phrase('General:login') }}
+			</h3>
+		</div>
+		<div class="roundframe noup">
+			{% if login_errors %}
+				<div class="errorbox">
+					<ul>
+						{% for error in login_errors %}
+						<li>{{ error|raw }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			{{ form|raw }}
+		</div>
+	</div>

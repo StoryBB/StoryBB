@@ -14,23 +14,23 @@ namespace StoryBB\Routing;
 
 use StoryBB\Dependency\Page;
 use StoryBB\Dependency\SiteSettings;
-use StoryBB\Dependency\Templater;
+use StoryBB\Dependency\TemplateRenderer;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * A class for assembling a page and sending it to the user.
  */
-class LegacyRenderResponse extends Response
+class LegacyTemplateResponse extends Response
 {
 	use Page;
 	use SiteSettings;
-	use Templater;
+	use TemplateRenderer;
 
 	public function render(string $template, array $rendercontext = []): Response
 	{
 		global $sourcedir, $context, $settings, $boardurl, $scripturl;
 
-		$templater = $this->templater();
+		$templater = $this->templaterenderer();
 
 		$rendercontext['page'] = $this->page();
 		$rendercontext['site_settings'] = $this->sitesettings();
@@ -50,7 +50,7 @@ class LegacyRenderResponse extends Response
 		loadPermissions();
 		loadTheme();
 
-		$context['legacycontent'] = $templater->renderToString($template, $rendercontext);
+		$context['legacycontent'] = ($templater->load($template))->render($rendercontext);
 		obExit(null, null, false);
 	}
 }

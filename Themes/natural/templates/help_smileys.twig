@@ -1,0 +1,29 @@
+{#{% extends '@layouts/default.twig' %}#}
+
+{#% block title %}{{ phrase('Manual:manual_smileys') }}{% endblock %}#}
+
+{% block content %}
+	<div class="cat_bar">
+		<h3 class="catbg">{{ phrase('Manual:manual_smileys') }} - {{ forum_name }}</h3>
+	</div>
+	<div id="help_container">
+		<div id="helpmain" class="windowbg">
+			<table>
+
+				{% for smiley in smileys %}
+				<tr>
+					<td>
+						<img src="{{ smiley.image }}" alt="{{ smiley.text|striptags }}">
+					</td>
+					<td>{{ smiley.text|striptags }}</td>
+					<td>
+						{% for code in smliey.code %}
+						<span class="smiley_code">{{ code }}</span>
+						{% endfor %}
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+{% endblock %}

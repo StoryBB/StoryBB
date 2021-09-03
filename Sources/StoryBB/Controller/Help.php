@@ -14,7 +14,7 @@ namespace StoryBB\Controller;
 
 use StoryBB\Dependency\Page;
 use StoryBB\Dependency\UrlGenerator;
-use StoryBB\Routing\RenderResponse;
+use StoryBB\Routing\LegacyTemplateResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -59,8 +59,9 @@ class Help implements Routable
 			];
 		}
 
-		return ($container->instantiate(RenderResponse::class))->render('help_smileys.latte', [
+		return ($container->instantiate(LegacyTemplateResponse::class))->render('help_smileys.twig', [
 			'smileys' => $smileys,
+			'forum_name' => $container->get('sitesettings')->forum_name,
 		]);
 	}
 }

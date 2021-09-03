@@ -12,7 +12,6 @@
 
 namespace StoryBB\Form\Element;
 
-use Latte\Engine;
 use StoryBB\Form\Element\Inputtable;
 use StoryBB\Form\Element\Traits;
 
@@ -24,17 +23,15 @@ class Buttons extends Traits\Base implements Inputtable
 	/**
 	 * Take the current element, and return the formatted HTML.
 	 *
-	 * @param Latte\Engine $templater The form template render engine
-	 * @param array $rawdata The submitted raw data for the format
 	 * @return string The final HTML for this element
 	 */
-	public function render(Engine $templater, array $rawdata): string
+	public function render(): string
 	{
 		$rendercontext = [
 			'name' => $this->name,
 			'buttons' => $this->choices,
 		];
 
-		return $templater->renderToString('form/element/buttons.latte', $rendercontext);
+		return ($this->templater->load('@partials/form/buttons.twig'))->render($rendercontext);
 	}
 }

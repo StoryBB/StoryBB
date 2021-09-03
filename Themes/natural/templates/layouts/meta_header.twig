@@ -1,0 +1,14 @@
+	<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %}</title>
+	{% if site_settings.analytics_google_id %}
+		{% include '@partials/analytics_google.twig' %}
+	{% endif %}
+	{% for name, content in page.getMetaNames %}
+		<meta name="{{ name }}" content="{{ content }}">
+	{% endfor %}
+	{% for property, content in page.getMetaProperties %}
+		<meta property="{{ property }}" content="{{ content }}">
+	{% endfor %}
+	{% for link in page.getLink %}
+		<link rel="{{ link.rel }}" href="{{ link.href }}">
+	{% endfor %}

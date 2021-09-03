@@ -14,7 +14,7 @@ namespace StoryBB\Routing;
 
 use StoryBB\Dependency\Page;
 use StoryBB\Dependency\SiteSettings;
-use StoryBB\Dependency\Templater;
+use StoryBB\Dependency\TemplateRenderer;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -24,16 +24,16 @@ class RenderResponse extends Response
 {
 	use Page;
 	use SiteSettings;
-	use Templater;
+	use TemplateRenderer;
 
 	public function render(string $template, array $rendercontext = []): Response
 	{
-		$templater = $this->templater();
+		$templater = $this->templaterenderer();
 
 		$rendercontext['page'] = $this->page();
 		$rendercontext['site_settings'] = $this->sitesettings();
 
-		$this->setContent($templater->renderToString($template, $rendercontext));
+		$this->setContent(($templater->load($template))->render($rendercontext));
 		return $this;
 	}
 }
