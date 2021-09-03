@@ -67,9 +67,8 @@ class WhosOnline extends AbstractBlock implements Block
 		{
 			$this->track_online($stats['num_guests'] + $stats['num_robots'] + $stats['num_users_online']);
 		}
-		
 
-		$this->content = $this->render('block_whos_online', [
+		$this->content = $this->template('whos_online', [
 			'users_online' => $stats['users_online'],
 			'list_users_online' => $stats['list_users_online'],
 			'see_online' => allowedTo('who_view') && !empty($modSettings['who_enabled']),
@@ -79,8 +78,8 @@ class WhosOnline extends AbstractBlock implements Block
 			'num_hidden' => !empty($stats['num_hidden']) ? numeric_context('num_hidden', $stats['num_users_hidden']) : '',
 			'membergroups' => $membergroups,
 			'txt' => $txt,
-			'scripturl' => $scripturl,
-			'modSettings' => $modSettings,
+			'whos_online_url' => $scripturl . '?action=who',
+			'last_active' => (int) $modSettings['lastActive'],
 		]);
 		return $this->content;
 	}

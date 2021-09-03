@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * A class for assembling a page and sending it to the user.
  */
-class RenderResponse extends Response
+class LegacyTemplateResponse extends Response
 {
 	use Page;
 	use SiteSettings;
@@ -28,12 +28,29 @@ class RenderResponse extends Response
 
 	public function render(string $template, array $rendercontext = []): Response
 	{
+		global $sourcedir, $context, $settings, $boardurl, $scripturl;
+
 		$templater = $this->templaterenderer();
 
 		$rendercontext['page'] = $this->page();
 		$rendercontext['site_settings'] = $this->sitesettings();
 
-		$this->setContent(($templater->load($template))->render($rendercontext));
-		return $this;
+		require_once($sourcedir . '/Errors.php');
+		require_once($sourcedir . '/Logging.php');
+		require_once($sourcedir . '/Security.php');
+
+		$scripturl = $boardurl . '/index.php';
+		$context['current_action'] = 'legacyrenderresponse';
+		$context['sub_template'] = 'legacycontent';
+
+		reloadSettings();
+		frameOptionsHeader();
+		loadUserSettings();
+		loadBoard();
+		loadPermissions();
+		loadTheme();
+
+		$context['legacycontent'] = ($templater->load($template))->render($rendercontext);
+		obExit(null, null, false);
 	}
 }

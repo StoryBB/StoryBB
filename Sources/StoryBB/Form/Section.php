@@ -78,6 +78,11 @@ class Section
 			$this->templater = $templater;
 			$this->rawdata = $rawdata;
 		}
+
+		foreach ($this->fields as $fieldname => $field)
+		{
+			$field->accept_templater($this->templater, $rawdata);
+		}
 	}
 
 	public function render($field)

@@ -1,0 +1,2 @@
+<input name="{{ name }}" type="hidden" value="0">
+<input name="{{ name }}" type="checkbox" value="1"{% if required %} required{% endif %}{% if checked %} checked{% endif %} aria-labelledby="element-label-{{ slugify(name) }}" id="element-{{ slugify(name) }}">

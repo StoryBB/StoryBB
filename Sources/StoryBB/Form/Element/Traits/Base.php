@@ -12,13 +12,15 @@
 
 namespace StoryBB\Form\Element\Traits;
 
-use Latte\Engine;
+use Twig\Environment as TwigEnvironment;
 
 abstract class Base
 {
 	protected $name = [];
 	protected $attrs = [];
 	protected $templater = null;
+	protected $rawdata = [];
+	protected $errors = [];
 
 	/**
 	 * Constructor for form elements.
@@ -33,11 +35,13 @@ abstract class Base
 	/**
 	 * Injector for the template engine into the form object.
 	 *
-	 * @param Latte\Engine $templater The template engine to use.
+	 * @param Twig\Environment $templater The template engine to use.
+	 * @param array $rawdata The raw form data.
 	 */
-	public function accept_templater(Engine $templater)
+	public function accept_templater(TwigEnvironment $templater, array $rawdata = []): void
 	{
 		$this->templater = $templater;
+		$this->rawdata = $rawdata;
 	}
 
 	/**
@@ -81,12 +85,25 @@ abstract class Base
 		return $data[$this->name] ?? null;
 	}
 
+	public function set_errors(array $error): void
+	{
+		$this->errors = $errors;
+	}
+
+	public function get_errors(): array
+	{
+		return $this->errors;
+	}
+
+	public function has_errors(): bool
+	{
+		return !empty($this->errors);
+	}
+
 	/**
 	 * Take the current element, and return the formatted HTML.
 	 *
-	 * @param Latte\Engine $templater The form template render engine
-	 * @param array $rawdata The submitted raw data for the format
 	 * @return string The final HTML for this element
 	 */
-	abstract public function render(Engine $templater, array $rawdata): string;
+	abstract public function render(): string;
 }

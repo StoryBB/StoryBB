@@ -21,8 +21,7 @@ use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
 use StoryBB\Phrase;
 use StoryBB\Dependency\UrlGenerator;
-use StoryBB\Routing\RenderResponse;
-use StoryBB\Routing\LegacyRenderResponse;
+use StoryBB\Routing\LegacyTemplateResponse;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -82,7 +81,7 @@ class Login implements Routable, MaintenanceAccessible
 	protected function return_login_form($form): Response
 	{
 		$container = Container::instance();
-		return ($container->instantiate(LegacyRenderResponse::class))->render('login_form.latte', [
+		return ($container->instantiate(LegacyTemplateResponse::class))->render('login_form.twig', [
 			'form' => $form->render(),
 			'login_errors' => $this->login_errors,
 		]);

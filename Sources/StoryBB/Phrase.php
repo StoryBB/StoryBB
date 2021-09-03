@@ -15,12 +15,14 @@ namespace StoryBB;
 class Phrase
 {
 	protected $id = '';
+	protected $params = [];
 
 	protected static $cache = [];
 
-	public function __construct(string $string)
+	public function __construct(string $string, array $params = [])
 	{
 		$this->id = $string;
+		$this->params = $params;
 	}
 
 	public function __toString(): string
@@ -69,6 +71,13 @@ class Phrase
 
 		$txt = $oldTxt + static::$cache[$lang][$langsection];
 
-		return static::$cache[$lang][$langsection][$string] ?? '[[' . $lang . ':' . $langsection . ':' . $string . ']]';
+		$string = static::$cache[$lang][$langsection][$string] ?? '[[' . $lang . ':' . $langsection . ':' . $string . ']]';
+
+		if (!empty($this->params))
+		{
+			return sprintf($string, ...$this->params);
+		}
+
+		return $string;
 	}
 }

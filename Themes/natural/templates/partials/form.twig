@@ -1,0 +1,38 @@
+<form action="{{ action }}" method="post" accept-charset="UTF-8">
+	{% if errors._form %}
+		<ul class="form-errors">
+			{% for error in errors._form %}
+				{{ error }}
+			{% endfor %}
+		</ul>
+	{% endif %}
+	{% for key, value in hidden %}
+		<input type="hidden" name="{{ key }}" value="{{ value }}">
+	{% endfor %}
+	{% for section_name, section in sections %}
+		<fieldset id="section-{$section_name|slugify}">
+			{% if section.has_label %}
+			<legend>{{ phrase(section.get_label) }}</legend>
+			{% endif %}
+			<dl>
+				{% for field in section.get_fields %}
+					{% if field.labelable and field.has_label %}
+						<dt><label id="element-label-{{ slugify(field.get_name) }}" for="element-{{ slugify(field.get_name) }}">{{ phrase(field.get_label) }}</label></dt>
+					{% else %}
+						<dt class="collapse-label"></dt>
+					{% endif %}
+					<dd>
+						{{ field.render|raw }}
+						{% if field.has_errors %}
+							<ul class="field-errors">
+							{% for error in field.get_errors %}
+								{{ phrase(error) }}
+							{% endfor %}
+							</ul>
+						{% endif %}
+					</dd>
+				{% endfor %}
+			</dl>
+		</fieldset>
+	{% endfor %}
+</form>

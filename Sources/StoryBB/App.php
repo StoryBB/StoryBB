@@ -35,6 +35,9 @@ use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment as TwigEnvironment;
+use Twig\TwigFunction;
 
 class App
 {
@@ -309,23 +312,44 @@ class App
 		$container->inject('urlmatcher', function() use ($container) {
 			return new CompiledUrlMatcher($container->get('compiled_matcher'), $container->get('requestcontext'));
 		});
-		$container->inject('templater', function() use ($container) {
-			$latte = new \Latte\Engine;
-			$latte->setTempDirectory($container->get('cachedir') . '/template');
+		$container->inject('templaterenderer', function() use ($container) {
+			global $settings;
+			// @todo
+			if (empty($settings['theme_dir']))
+			{
+				loadTheme();
+			}
 
-			$loader = new \Latte\Loaders\FileLoader(self::get_root_path() . '/Themes/natural/templates');
-			$latte->setLoader($loader);
+			$loader = new FilesystemLoader();
+			if (file_exists($settings['theme_dir'] . '/templates'))
+			{
+				$loader->addPath($settings['theme_dir'] . '/templates');
+			}
+			if (file_exists($settings['theme_dir'] . '/templates/layouts'))
+			{
+				$loader->addPath($settings['theme_dir'] . '/templates/layouts', 'layouts');
+			}
+			if (file_exists($settings['theme_dir'] . '/templates/partials'))
+			{
+				$loader->addPath($settings['theme_dir'] . '/templates/partials', 'partials');
+			}
 
-			$latte->addFilter('translate', function ($string) {
-				return new Phrase($string);
-			});
-			$latte->addFilter('slugify', function ($string) {
-				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
-				$string = strtolower($string);
-				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
-				return trim($string, '-');
-			});
-			$latte->addFunction('link', function($url, $params = []) use ($container) {
+			$loader->addPath($settings['default_theme_dir'] . '/templates');
+			$loader->addPath($settings['default_theme_dir'] . '/templates/layouts', 'layouts');
+			$loader->addPath($settings['default_theme_dir'] . '/templates/partials', 'partials');
+
+			$sitesettings = $container->get('sitesettings');
+			$options = [];
+			if (!$sitesettings->debug_templates)
+			{
+				$options['cache'] = $container->get('cachedir') . '/template/' . $settings['theme_id'];
+			}
+			$twig = new TwigEnvironment($loader, $options);
+
+			$twig->addFunction(new TwigFunction('phrase', function ($string, ...$params) {
+				return new Phrase($string, $params);
+			}));
+			$twig->addFunction(new TwigFunction('link', function ($url, array $params = []) use ($container) {
 				try
 				{
 					$urlgenerator = $container->get('urlgenerator');
@@ -335,8 +359,15 @@ class App
 				{
 					return $e->getMessage();
 				}
-			});
-			return $latte;
+			}, ['is_variadic' => true]));
+			$twig->addFunction(new TwigFunction('slugify', function ($string) {
+				$string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+				$string = strtolower($string);
+				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
+				return trim($string, '-');
+			}));
+
+			return $twig;
 		});
 
 		$container->inject('page', function() use ($container) {

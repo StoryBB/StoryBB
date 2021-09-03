@@ -1,0 +1,34 @@
+{#
+	Displays the 'Who's Online' block to users.
+
+	Expected context:
+	{
+		"see_online": true,
+		"whos_online_url": "http://link/to/whos/online",
+		"num_guests": "10 guests",
+		"num_users_online": "1 user",
+		"num_hidden": "(1 hidden)",
+		"num_robots": "3 robots",
+		"users_online": 14,
+		"last_active": 15,
+		"list_users_online": [
+			"<a href=\"http://link/to/profile\">Character Name</a>"
+		],
+		"membergroups": [
+			"<a href=\"http://link/to/group/listing\">Administrator</a>"
+		]
+	}
+#}
+
+{% if see_online %}<a href="{{ whos_online_url|raw }}">{% endif %}
+	<strong>{{ phrase('online') }}:</strong> {{ num_guests|raw }}, {{ num_users_online }}{% if num_hidden %} {{ num_hidden|raw }}{% endif %}, {{ num_robots|raw }}
+{% if see_online %}</a>{% endif %}
+
+{% if users_online %}
+	<br>
+	{{ phrase('users_active', last_active) }}: {{ list_users_online|join(',&nbsp;')|raw }}
+
+	{% if membergroups %}
+	<div class="membergroups">{{ membergroups|join(', ')|raw }}</div>
+	{% endif %}
+{% endif %}

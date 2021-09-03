@@ -1,0 +1,62 @@
+{#
+	Displays the 'Recent Posts' block to users.
+
+	Expected context:
+	{
+		"latest_posts": [
+			{
+				"href": "http://link/to/post",
+				"subject": "Subject of the post, pre-escaped",
+				"poster"
+
+				"board": {
+					"id": 1,
+					"name": "Board Name",
+					"href": "http://link/to/board",
+					"link": "<a href=\"http://link/to/board\">Board Name</a>"
+				},
+				"topic": 123,
+				"poster": {
+					"id": 1,
+					"name": "Poster Name",
+					"href": "http://link/to/poster",
+					"link": "<a href=\"http://link/to/poster\">Poster Name</a>"
+				},
+				"subject": "Subject of the post, pre-escaped",
+				"short_subject": "Subject of the post, pre-es...",
+				"preview": "Lorem ipsum dolor amit",
+				"time": "31 August 2021 00:01",
+				"timestamp": 1234567890,
+				"raw_timestamp": 1234567890,
+				"href": "http://link/to/post",
+				"link": "<a href=\"http://link/to/post\">Subject of the post, pre-escaped</a>",
+				"prefixes": [
+					{
+						"css_class": "prefix prefix-secondary prefix-id-1",
+						"name": "My Prefix"
+					}
+				]
+			}
+		]
+	}
+#}
+	<table>
+		<thead>
+			<tr>
+				<th class="recentpost">{{ phrase('message') }}</th>
+				<th class="recentposter">{{ phrase('author') }}</th>
+				<th class="recentboard">{{ phrase('board') }}</th>
+				<th class="recenttime">{{ phrase('date') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for post in latest_posts %}
+			<tr>
+				<td class="recentpost"><a href="{{ post.href }}" rel="nofollow noopener">{% for prefix in post.prefixes %}<span class="{{ prefix.css_class }}">{{ prefix.name|raw }}</span>{% endfor %}{{ post.subject|raw }}</a></td>
+				<td class="recentposter">{{ post.poster.link|raw }}</td>
+				<td class="recentboard">{{ post.board.link|raw }}</td>
+				<td class="recenttime">{{ post.time|raw }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>

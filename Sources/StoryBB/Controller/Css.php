@@ -22,7 +22,6 @@ use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Model\Theme;
 use StoryBB\Routing\ErrorResponse;
 use StoryBB\Routing\NotFoundResponse;
-use StoryBB\Routing\RenderResponse;
 use StoryBB\StringLibrary;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Route;

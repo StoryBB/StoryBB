@@ -15,7 +15,7 @@ namespace StoryBB\Form;
 use RuntimeException;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
-use StoryBB\Dependency\Templater;
+use StoryBB\Dependency\TemplateRenderer;
 use StoryBB\Helper\Random;
 use StoryBB\Form\Rule\Exception as RuleException;
 use StoryBB\Phrase;
@@ -24,7 +24,7 @@ abstract class Base
 {
 	use RequestVars;
 	use Session;
-	use Templater;
+	use TemplateRenderer;
 
 	protected $action = '';
 
@@ -112,6 +112,18 @@ abstract class Base
 		}
 
 		$this->finalised = true;
+
+		foreach ($this->sections as $section)
+		{
+			foreach ($section->get_fields() as $field)
+			{
+				$field_name = $field->get_name();
+				if (!empty($this->errors[$field_name]))
+				{
+					$field->set_errors($this->errors[$field_name]);
+				}
+			}
+		}
 	}
 
 	public function validate(array $data): array
@@ -170,7 +182,7 @@ abstract class Base
 
 	public function render()
 	{
-		$templater = $this->templater();
+		$templater = $this->templaterenderer();
 
 		$this->finalise();
 
@@ -212,7 +224,7 @@ abstract class Base
 			'sections' => $this->sections,
 			'errors' => $this->errors,
 		];
-		return $this->templater()->renderToString('form/form.latte', $rendercontext);
+		return ($this->templaterenderer()->load('@partials/form.twig'))->render($rendercontext);
 	}
 
 	protected function get_form_token()

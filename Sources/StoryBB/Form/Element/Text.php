@@ -12,7 +12,6 @@
 
 namespace StoryBB\Form\Element;
 
-use Latte\Engine;
 use StoryBB\Form\Element\Inputtable;
 use StoryBB\Form\Element\Traits;
 
@@ -27,11 +26,9 @@ class Text extends Traits\Base implements Inputtable
 	/**
 	 * Take the current element, and return the formatted HTML.
 	 *
-	 * @param Latte\Engine $templater The form template render engine
-	 * @param array $rawdata The submitted raw data for the format
 	 * @return string The final HTML for this element
 	 */
-	public function render(Engine $templater, array $rawdata): string
+	public function render(): string
 	{
 		$rendercontext = [
 			'name' => $this->name,
@@ -39,6 +36,6 @@ class Text extends Traits\Base implements Inputtable
 			'value' => $rawdata[$this->name] ?? '',
 		];
 
-		return $templater->renderToString('form/element/text.latte', $rendercontext);
+		return ($this->templater->load('@partials/form/text.twig'))->render($rendercontext);
 	}
 }

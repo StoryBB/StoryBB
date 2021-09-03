@@ -1,0 +1,5 @@
+{% for button_value, button_text in buttons %}
+	<button role="button" type="submit" class="button" name="{{ name }}" aria-labelledby="element-label-{{ slugify(name) }}" value="{{ button_value }}">
+		{{ phrase(button_text) }}
+	</button>
+{% endfor %}

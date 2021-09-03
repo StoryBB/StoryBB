@@ -60,9 +60,8 @@ class RecentPosts extends AbstractBlock implements Block
 
 		$latest_posts = cache_quick_get('block-recent_posts:' . $this->config['number_recent_posts'] . ':' . md5($user_info['query_wanna_see_board'] . $user_info['language']), null, [$this, 'cache_recent_posts'], [$latestPostOptions]);
 
-		$this->content = $this->render('block_recent_posts', [
+		$this->content = $this->template('recent_posts', [
 			'latest_posts' => $latest_posts,
-			'txt' => $txt,
 		]);
 		return $this->content;
 	}
