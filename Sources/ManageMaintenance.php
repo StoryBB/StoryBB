@@ -33,7 +33,6 @@ function ManageMaintenance()
 		'description' => $txt['maintain_info'],
 		'tabs' => [
 			'routine' => [],
-			'database' => [],
 			'members' => [],
 			'topics' => [],
 		],
@@ -50,14 +49,6 @@ function ManageMaintenance()
 				'logs' => 'MaintainEmptyUnimportantLogs',
 				'cleancache' => 'MaintainCleanCache',
 				'cleantemplatecache' => 'MaintainCleanTemplateCache',
-			],
-		],
-		'database' => [
-			'function' => 'MaintainDatabase',
-			'template' => 'admin_maintain_database',
-			'activities' => [
-				'optimize' => 'OptimizeTables',
-				'convertutf8' => 'ConvertUtf8',
 			],
 		],
 		'members' => [
@@ -277,96 +268,6 @@ function MaintainEmptyUnimportantLogs()
 	updateSettings(['search_pointer' => 0]);
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
-}
-
-/**
- * Optimizes all tables in the database and lists how much was saved.
- * It requires the admin_forum permission.
- * It shows as the maintain_forum admin area.
- * It is accessed from ?action=admin;area=maintain;sa=database;activity=optimize.
- * It also updates the optimize scheduled task such that the tables are not automatically optimized again too soon.
-
- * @uses the optimize sub template
- */
-function OptimizeTables()
-{
-	global $db_prefix, $txt, $context, $smcFunc, $time_start;
-
-	isAllowedTo('admin_forum');
-
-	checkSession('request');
-
-	if (!isset($_SESSION['optimized_tables']))
-		validateToken('admin-maint');
-	else
-		validateToken('admin-optimize', 'post', false);
-
-	ignore_user_abort(true);
-
-	$context['page_title'] = $txt['database_optimize'];
-	$context['sub_template'] = 'admin_maintain_database_optimize';
-	$context['continue_post_data'] = '';
-	$context['continue_countdown'] = 3;
-
-	// Only optimize the tables related to this StoryBB install, not all the tables in the db
-	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
-
-	// Get a list of tables, as well as how many there are.
-	$temp_tables = $smcFunc['db']->list_tables($real_prefix . '%');
-	$tables = [];
-	foreach ($temp_tables as $table)
-		$tables[] = ['table_name' => $table];
-
-	// If there aren't any tables then I believe that would mean the world has exploded...
-	$context['num_tables'] = count($tables);
-	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running StoryBB in a flat file mode... fantastic!', false);
-
-	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-
-	// Try for extra time due to large tables.
-	@set_time_limit(100);
-
-	// For each table....
-	$_SESSION['optimized_tables'] = !empty($_SESSION['optimized_tables']) ? $_SESSION['optimized_tables'] : [];
-	for ($key = $_REQUEST['start']; $context['num_tables'] - 1; $key++)
-	{
-		if (empty($tables[$key]))
-			break;
-
-		// Continue?
-		if (microtime(true) - $time_start > 10)
-		{
-			$_REQUEST['start'] = $key;
-			$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=optimize;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
-			$context['continue_percent'] = round(100 * $_REQUEST['start'] / $context['num_tables']);
-			$context['sub_template'] = 'not_done';
-			$context['page_title'] = $txt['not_done_title'];
-
-			createToken('admin-optimize');
-			$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-optimize_token_var'] . '" value="' . $context['admin-optimize_token'] . '">';
-
-			if (function_exists('apache_reset_timeout'))
-				apache_reset_timeout();
-
-			return;
-		}
-
-		// Optimize the table!  We use backticks here because it might be a custom table.
-		$data_freed = $smcFunc['db']->optimize_table($tables[$key]['table_name']);
-
-		if ($data_freed > 0)
-			$_SESSION['optimized_tables'][] = [
-				'name' => $tables[$key]['table_name'],
-				'data_freed' => $data_freed,
-			];
-	}
-
-	// Number of tables, etc...
-	$txt['database_numb_tables'] = sprintf($txt['database_numb_tables'], $context['num_tables']);
-	$context['num_tables_optimized'] = count($_SESSION['optimized_tables']);
-	$context['optimized_tables'] = $_SESSION['optimized_tables'];
-	unset($_SESSION['optimized_tables']);
 }
 
 /**

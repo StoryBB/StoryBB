@@ -87,15 +87,6 @@ $txt['salvaged_poll_topic_name'] = 'Salvaged Poll';
 $txt['salvaged_poll_message_body'] = 'This poll was found without a topic.';
 $txt['salvaged_poll_question'] = 'This poll was found without a question.';
 
-$txt['database_optimize'] = 'Optimize Database';
-$txt['database_numb_tables'] = 'Your database contains %1$d tables.';
-$txt['database_optimize_attempt'] = 'Attempting to optimize your database...';
-$txt['database_optimizing'] = 'Optimizing %1$s... %2$01.2f KB optimized.';
-$txt['database_already_optimized'] = 'All of the tables were already optimized.';
-$txt['database_opimize_unneeded'] = 'It wasn\'t necessary to optimize any tables.';
-$txt['database_optimized'] = ' table(s) optimized.';
-$txt['database_no_id'] = 'has a non-existent member ID';
-
 $txt['apply_filter'] = 'Apply Filter';
 $txt['applying_filter'] = 'Applying Filter';
 $txt['filter_only_member'] = 'Only show the error messages of this member';
@@ -154,8 +145,6 @@ $txt['maintain_cache'] = 'Empty the file cache';
 $txt['maintain_cache_info'] = 'This function will empty out the file cache should you need it to be cleared.';
 $txt['maintain_template_cache'] = 'Clear the template cache';
 $txt['maintain_template_cache_info'] = 'The templates for the forum are converted into usable code before they are used. This process is not especially fast, so they are stored ready-to-go. Sometimes you will need to clear the template cache to make changes visible.';
-$txt['maintain_optimize'] = 'Optimize all tables';
-$txt['maintain_optimize_info'] = 'This task allows you to optimize all tables. This will get rid of overhead, effectively making the tables smaller in size and your forum faster.';
 $txt['maintain_run_now'] = 'Run task now';
 $txt['maintain_return'] = 'Back to Forum Maintenance';
 

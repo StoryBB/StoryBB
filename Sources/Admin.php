@@ -349,7 +349,6 @@ function AdminMain()
 					'function' => 'ManageMaintenance',
 					'subsections' => [
 						'routine' => [$txt['maintain_sub_routine'], 'admin_forum'],
-						'database' => [$txt['maintain_sub_database'], 'admin_forum'],
 						'members' => [$txt['maintain_sub_members'], 'admin_forum'],
 						'topics' => [$txt['maintain_sub_topics'], 'admin_forum'],
 					],
