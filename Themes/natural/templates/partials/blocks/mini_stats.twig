@@ -1,0 +1,3 @@
+	{{ boardindex_total_posts|raw }}{% if show_latest_member %} - {{ phrase('latest_member') }}: <strong> {{ latest_member.link|raw }}</strong>{% endif %}<br>
+	{% if latest_post %}{{ phrase('latest_post') }}: <strong>&quot;{{ latest_post.link|raw }}&quot;</strong> ({{ latest_post.time|raw }})<br>{% endif %}
+	<a href="{{ recent_posts_link|raw }}">{{ phrase('recent_view') }}</a>

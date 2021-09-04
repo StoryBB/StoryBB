@@ -157,8 +157,7 @@ class SupportInformation extends AbstractBlock implements Block
 			}
 		}
 
-		$this->content = $this->render('block_support_information', [
-			'txt' => $txt,
+		$this->content = $this->template('support_info', [
 			'forum_version' => App::SOFTWARE_VERSION,
 			'current_version' => $current_version,
 			'needs_update' => $needs_update,

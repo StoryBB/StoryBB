@@ -1,0 +1,15 @@
+{% if tiers %}
+	{% for tier in tiers %}
+		<div class="affiliate_tier affiliate_tier_{{ tier.id_tier }}{% if desaturate %} desaturate{% endif %}">
+			<div class="title_bar">
+				<h3 class="titlebg">{{ tier.tier_name|raw }}</h3>
+			</div>
+
+			<div class="centertext">
+				{% for affiliate in tier.affiliates %}
+				<a href="{{ affiliate.url|raw }}" target="_blank" rel="noopener" title="{{ affiliate.affiliate_name|raw }}"><img src="{{ affiliate.image|raw }}" alt="{{ affiliate.affiliate_name|raw }}" width="{{ tier.image_width }}" height="{{ tier.image_height }}"></a>
+				{% endfor %}
+			</div>
+		</div>
+	{% endfor %}
+{% endif %}

@@ -38,7 +38,7 @@ class MiniStats extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $context, $txt, $sourcedir;
+		global $context, $txt, $sourcedir, $scripturl;
 
 		if ($this->content !== null)
 		{
@@ -73,12 +73,12 @@ class MiniStats extends AbstractBlock implements Block
 			}
 		}
 
-		$this->content = $this->render('block_mini_stats', [
+		$this->content = $this->template('mini_stats', [
 			'boardindex_total_posts' => $context['common_stats']['boardindex_total_posts'],
 			'show_latest_member' => !empty($this->config['show_latest_member']),
 			'latest_member' => $context['common_stats']['latest_member'],
 			'latest_post' => !empty($latest_post) ? $latest_post : false,
-			'txt' => $txt,
+			'recent_posts_link' => $scripturl . '?action=recent',
 		]);
 		return $this->content;
 	}

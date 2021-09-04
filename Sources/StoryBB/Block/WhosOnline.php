@@ -77,7 +77,6 @@ class WhosOnline extends AbstractBlock implements Block
 			'num_robots' => numeric_context('num_robots', $stats['num_robots']),
 			'num_hidden' => !empty($stats['num_hidden']) ? numeric_context('num_hidden', $stats['num_users_hidden']) : '',
 			'membergroups' => $membergroups,
-			'txt' => $txt,
 			'whos_online_url' => $scripturl . '?action=who',
 			'last_active' => (int) $modSettings['lastActive'],
 		]);
