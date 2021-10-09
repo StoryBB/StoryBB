@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
@@ -205,7 +206,7 @@ function Register($reg_errors = [])
 function Register2()
 {
 	global $txt, $modSettings, $context, $sourcedir;
-	global $smcFunc, $maintenance;
+	global $smcFunc;
 
 	require_once($sourcedir . '/Subs-Members.php');
 
@@ -213,7 +214,7 @@ function Register2()
 	validateToken('register');
 
 	// Check to ensure we're forcing SSL for authentication
-	if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
+	if (!empty($modSettings['force_ssl']) && !App::in_maintenance() && !httpsOn())
 		fatal_lang_error('register_ssl_required');
 
 	// Start collecting together any errors.

@@ -361,17 +361,16 @@ function setup_fatal_error_context($error_message, $error_code = null)
 /**
  * Show a message for the (full block) maintenance mode.
  * It shows a complete page independent of language files or themes.
- * It is used only if $maintenance = 2 in Settings.php.
+ * It is used only if in hard maintenance in Settings.php.
  * It stops further execution of the script.
  */
 function display_maintenance_message()
 {
-	global $maintenance, $mtitle, $mmessage;
+	global $mtitle, $mmessage;
 
 	set_fatal_error_headers();
 
-	if (!empty($maintenance))
-		echo '<!DOCTYPE html>
+	echo '<!DOCTYPE html>
 <html>
 	<head>
 		<meta name="robots" content="noindex">
