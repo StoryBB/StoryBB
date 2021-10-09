@@ -109,7 +109,7 @@ class DatabaseHandler extends AbstractSessionHandler
 
 	public function updateTimestamp($session_id, $data)
 	{
-		$expiry = time() + (int) ini_get('session.gc_maxlifetime');
+		$expiry = (int) ini_get('session.gc_maxlifetime');
 
 		$this->db()->query('', '
 			UPDATE {db_prefix}sessions
