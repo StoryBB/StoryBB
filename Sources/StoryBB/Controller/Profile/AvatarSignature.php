@@ -61,7 +61,7 @@ class AvatarSignature extends AbstractProfileController
 
 	public function post_action()
 	{
-		global $context, $txt, $sourcedir, $modSettings, $maintenance, $post_errors, $profile_vars, $user_info, $cur_profile;
+		global $context, $txt, $sourcedir, $modSettings, $post_errors, $profile_vars, $user_info, $cur_profile;
 
 		$memID = $this->params['u'];
 
