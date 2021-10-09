@@ -1433,11 +1433,11 @@ function template_header()
 				continue;
 			}
 
-			if ($header == 'set-cookie')
+			if ($header == 'set-cookie' || $header == 'Set-Cookie')
 			{
 				foreach ($response_headers->getCookies() as $cookie)
 				{
-					header($header . ':' . $cookie);
+					header($header . ':' . $cookie, false);
 				}
 				continue;
 			}
