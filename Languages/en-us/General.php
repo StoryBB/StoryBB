@@ -29,6 +29,9 @@ $txt['starts'] = 'Starts';
 $txt['ends'] = 'Ends';
 $txt['none'] = 'None';
 
+$txt['enabled'] = 'Enabled';
+$txt['disabled'] = 'Disabled';
+
 $txt['time_am'] = 'am';
 $txt['time_pm'] = 'pm';
 
@@ -411,6 +414,9 @@ $txt['quote_from'] = 'Quote from';
 $txt['quote'] = 'Quote';
 $txt['quote_action'] = 'Quote';
 $txt['quote_selected_action'] = 'Quote selected text';
+$txt['spoiler_open'] = 'Click/tap to see more';
+$txt['mature_open'] = 'Mature content within. Open at your own risk.';
+$txt['mature_restricted'] = 'Mature content. This is not currently available to you.';
 $txt['fulledit'] = 'Full&nbsp;edit';
 $txt['edit'] = 'Edit';
 $txt['quick_edit'] = 'Quick Edit';
@@ -550,6 +556,7 @@ $txt['quick_reply_verification_guests'] = '(required for all guests)';
 $txt['quick_reply_verification_posts'] = '(required for all users with less than %1$d posts)';
 $txt['wait_for_approval'] = 'Note: this post will not display until it\'s been approved by a moderator.';
 
+$txt['bookmarks'] = 'Bookmarks';
 $txt['bookmark_topic'] = 'Bookmark topic';
 $txt['unbookmark_topic'] = 'Unbookmark topic';
 

@@ -47,11 +47,15 @@ class App
 	protected static $global_config = [];
 	protected static $storybb_root = '';
 	protected static $storybb_sources = '';
+	protected static $storybb_languages = '';
+	protected static $app = null;
+	protected static $container = null;
 
-	public static function start($path)
+	public static function start($path, $app)
 	{
 		static::$storybb_root = $path;
 		static::$storybb_sources = $path . '/Sources';
+		static::$storybb_languages = $path . '/Languages';
 
 		require($path . '/Settings.php');
 
@@ -92,6 +96,11 @@ class App
 	public static function get_sources_path(): string
 	{
 		return static::$storybb_sources;
+	}
+
+	public static function get_languages_path(): string
+	{
+		return static::$storybb_languages;
 	}
 
 	public static function get_global_config_item(string $key)

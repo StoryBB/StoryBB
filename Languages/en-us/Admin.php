@@ -10,6 +10,66 @@
  * @version 1.0 Alpha 1
  */
 
+// The admin navigation.
+$txt['configuration'] = 'Configuration';
+$txt['overview'] = 'Overview';
+$txt['dashboard'] = 'Dashboard';
+$txt['general_configuration'] = 'General Configuration';
+$txt['contact_form'] = 'Contact Form';
+$txt['affiliates'] = 'Affiliates';
+$txt['integrations'] = 'Integrations';
+$txt['appearance'] = 'Appearance';
+$txt['site_design'] = 'Site Design';
+$txt['themes'] = 'Themes';
+$txt['icons_and_logos'] = 'Icons and Logos';
+$txt['content_editing'] = 'Content Editing';
+$txt['fonts'] = 'Fonts';
+$txt['smileys'] = 'Smileys';
+$txt['localization'] = 'Localization';
+$txt['languages'] = 'Languages';
+$txt['accounts'] = 'Accounts';
+$txt['ip_lookup'] = 'IP Lookup';
+$txt['account_settings'] = 'Account Settings';
+$txt['profile_fields'] = 'Profile Fields';
+$txt['notifications'] = 'Notifications';
+$txt['avatar_settings'] = 'Avatar Settings';
+$txt['signature_settings'] = 'Signature Settings';
+$txt['preferences'] = 'Preferences';
+$txt['registrations'] = 'Registrations';
+$txt['registration_settings'] = 'Registration Settings';
+$txt['site_policies'] = 'Site Policies';
+$txt['forum'] = 'Forum';
+$txt['forum_organization'] = 'Forum Organization';
+$txt['board_structure'] = 'Board Structure';
+$txt['board_settings'] = 'Board Settings';
+$txt['reports'] = 'Reports';
+$txt['site_overview'] = 'Site Overview';
+$txt['site_stats'] = 'Site Stats';
+$txt['membergroups'] = 'Membergroups';
+$txt['membergroup_permissions'] = 'Membergroup Permissions';
+$txt['boards'] = 'Boards';
+$txt['board_permissions'] = 'Board Permissions';
+$txt['member_reports'] = 'Member Reports';
+$txt['member_visits'] = 'Member Visits';
+$txt['member_activity'] = 'Member Activity';
+$txt['character_activity'] = 'Character Activity';
+$txt['logs'] = 'Logs';
+$txt['error_log'] = 'Error Log';
+$txt['administration_log'] = 'Administration Log';
+$txt['moderation_log'] = 'Moderation Log';
+$txt['log_settings'] = 'Log Settings';
+$txt['system'] = 'System';
+$txt['system_settings'] = 'System Settings';
+$txt['security_settings'] = 'Security Settings';
+$txt['cache_settings'] = 'Cache Settings';
+$txt['php_info'] = 'PHP Info';
+$txt['mail_settings'] = 'Mail Settings';
+$txt['mail_queue'] = 'Mail Queue';
+$txt['tasks'] = 'Tasks';
+$txt['scheduled_tasks'] = 'Scheduled Tasks';
+$txt['adhoc_tasks'] = 'Adhoc Tasks';
+
+
 $txt['settings_saved'] = 'The settings were successfully saved';
 $txt['settings_not_saved'] = 'Your changes were not saved because: %1$s';
 
@@ -450,7 +510,6 @@ $txt['layout_controls'] = 'Forum';
 $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 $txt['generate_reports_index'] = 'Reports List';
-$txt['gr_type_boards'] = 'Boards';
 $txt['gr_type_board_perms'] = 'Board Permissions';
 $txt['gr_type_member_groups'] = 'Membergroups';
 $txt['gr_type_group_perms'] = 'Group Permissions';
@@ -537,7 +596,6 @@ $txt['not_done_continue'] = 'Continue';
 $txt['general_settings'] = 'General';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
-$txt['phpinfo_settings'] = 'PHP Info';
 $txt['phpinfo_localsettings'] = 'Local Settings';
 $txt['phpinfo_defaultsettings'] = 'Default Settings';
 $txt['phpinfo_itemsettings'] = 'Settings';

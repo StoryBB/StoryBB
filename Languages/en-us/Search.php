@@ -76,3 +76,7 @@ $txt['search_warning_ignored_words'] = 'The following terms have been ignored in
 $txt['search_adjust_submit'] = 'Revise Search';
 
 $txt['search_example'] = '<em>e.g.</em> Orwell "Animal Farm" -movie';
+
+/* NEW */
+$txt['search_everywhere'] = 'Search everywhere';
+$txt['search_character_sheets'] = 'Search character sheets';

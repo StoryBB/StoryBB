@@ -11,6 +11,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
@@ -2005,10 +2006,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
 		$context['user']['name'] = $txt['guest_title'];
 
-	// Any theme-related strings that need to be loaded?
-	if (!empty($settings['require_theme_strings']))
-		loadLanguage('ThemeStrings', '', false);
-
 	// Make a special URL for the language.
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
@@ -2434,7 +2431,7 @@ function addInlineJavaScript($javascript, $defer = false)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $user_info, $language, $settings, $context;
+	global $user_info, $language, $context;
 	global $db_show_debug, $sourcedir, $cachedir;
 	global $txt, $helptxt, $txtBirthdayEmails, $editortxt;
 	static $already_loaded = [];
@@ -2463,28 +2460,14 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$editortxt = [];
 	}
 
-	// Make sure we have $settings - if not we're in trouble and need to find it!
-	if (empty($settings['default_theme_dir']))
-	{
-		require_once($sourcedir . '/ScheduledTasks.php');
-		loadEssentialThemeData();
-	}
-
-	// What theme are we in?
-	$theme_name = basename($settings['theme_url']);
-	if (empty($theme_name))
-		$theme_name = 'unknown';
-
 	// For each file open it up and write it out!
-	$theme_id = isset($settings['theme_id']) ? (int) $settings['theme_id'] : 1;
-
 	foreach (explode('+', $template_name) as $template)
 	{
-		$path = $cachedir . '/lang/' . $theme_id . '_' . $lang . '_' . $template . '.php';
+		$path = $cachedir . '/lang/' . $lang . '_' . $template . '.php';
 		// If it doesn't exist, try to make it.
 		if (!file_exists($path))
 		{
-			Language::cache_language($theme_id, $lang, $template);
+			Language::cache_language($lang, $template);
 		}
 
 		// If it still doesn't exist, abort!
@@ -2492,11 +2475,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		{
 			if ($fatal)
 			{
-				fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+				fatal_error('Language file missing ' . $template . ' for language ' . $lang, 'template');
 			}
 			else
 			{
-				log_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
+				log_error('Language file missing ' . $template . ' for language ' . $lang, 'template');
 				return;
 			}
 		}
@@ -2508,11 +2491,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		{
 			try
 			{
-				if (!file_exists($settings['default_theme_dir'] . '/languages/' . $lang . '/' . $lang . '.json'))
+				if (!file_exists(App::get_languages_path() . '/' . $lang . '/' . $lang . '.json'))
 				{
 					throw new RuntimeException('Language ' . $lang . ' is missing its ' . $lang . '.json file');
 				}
-				$general = @json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $lang . '/' . $lang . '.json'), true);
+				$general = @json_decode(file_get_contents(App::get_languages_path() . '/' . $lang . '/' . $lang . '.json'), true);
 				if (!is_array($general) || !isset($general['locale'], $general['native_name']))
 				{
 					throw new RuntimeException('Language ' . $file[2] . ' has an invalid ' . $file[2] . '.json file');
@@ -2539,7 +2522,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 	// Keep track of what we're up to soldier.
 	if ($db_show_debug === true)
-		$context['debug']['language_files'][] = $template_name . ' (' . $theme_name . '/' . $lang . ')';
+		$context['debug']['language_files'][] = $template_name . ' (' . $lang . ')';
 
 	// Remember what we have loaded, and in which language.
 	$already_loaded[$template_name] = $lang;
@@ -2653,66 +2636,43 @@ function getLanguages($use_cache = true)
 		if (empty($modSettings))
 			reloadSettings();
 
-		// If we don't have our theme information yet, let's get it.
-		if (empty($settings['default_theme_dir']))
-			loadTheme(0, false);
-
-		// Default language directories to try.
-		$language_directories = [
-			$settings['default_theme_dir'] . '/languages',
-		];
-		if (!empty($settings['actual_theme_dir']) && $settings['actual_theme_dir'] != $settings['default_theme_dir'])
-			$language_directories[] = $settings['actual_theme_dir'] . '/languages';
-
-		// We possibly have a base theme directory.
-		if (!empty($settings['base_theme_dir']))
-			$language_directories[] = $settings['base_theme_dir'] . '/languages';
-
-		// Remove any duplicates.
-		$language_directories = array_unique($language_directories);
-
 		// Get a list of languages.
 		$langList = !empty($modSettings['langList']) ? json_decode($modSettings['langList'], true) : [];
 		$langList = is_array($langList) ? $langList : false;
 
 		$catchLang = [];
 
-		foreach ($language_directories as $language_dir)
+		$language_dir = App::get_languages_path();
+
+		$dir = dir($language_dir);
+		while ($entry = $dir->read())
 		{
-			// Can't look in here... doesn't exist!
-			if (!file_exists($language_dir))
-				continue;
-
-			$dir = dir($language_dir);
-			while ($entry = $dir->read())
+			if ($entry[0] == '.')
 			{
-				if ($entry[0] == '.')
-				{
-					continue;
-				}
-				// If the JSON doesn't exist, don't load it.
-				if (!file_exists($language_dir . '/' . $entry . '/' . $entry . '.json'))
-				{
-					continue;
-				}
-				// If the language manifest JSON isn't valid, skip it.
-				$language_manifest = @json_decode(file_get_contents($language_dir . '/' . $entry . '/' . $entry . '.json'), true);
-				if (empty($language_manifest) || !is_array($language_manifest) || empty($language_manifest['native_name']))
-				{
-					continue;
-				}
-
-				$catchLang[$entry] = $language_manifest['native_name'];
-
-				// Build this language entry.
-				$context['languages'][$entry] = [
-					'name' => $language_manifest['native_name'],
-					'selected' => false,
-					'filename' => $entry,
-				];
+				continue;
 			}
-			$dir->close();
+			// If the JSON doesn't exist, don't load it.
+			if (!file_exists($language_dir . '/' . $entry . '/' . $entry . '.json'))
+			{
+				continue;
+			}
+			// If the language manifest JSON isn't valid, skip it.
+			$language_manifest = @json_decode(file_get_contents($language_dir . '/' . $entry . '/' . $entry . '.json'), true);
+			if (empty($language_manifest) || !is_array($language_manifest) || empty($language_manifest['native_name']))
+			{
+				continue;
+			}
+
+			$catchLang[$entry] = $language_manifest['native_name'];
+
+			// Build this language entry.
+			$context['languages'][$entry] = [
+				'name' => $language_manifest['native_name'],
+				'selected' => false,
+				'filename' => $entry,
+			];
 		}
+		$dir->close();
 
 		// Do we need to store the lang list?
 		if (empty($langList))

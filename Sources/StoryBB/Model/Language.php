@@ -12,7 +12,7 @@
 
 namespace StoryBB\Model;
 
-use StoryBB\Model\Theme;
+use StoryBB\App;
 
 /**
  * This class handles languages.
@@ -65,12 +65,11 @@ class Language
 	/**
 	 * Loads the changes for a specific language file.
 	 *
-	 * @param int $theme_id The theme to load language changes from.
 	 * @param string $lang_id The language code to look up for, e.g. en-us
 	 * @param string $file_id The language file to load
 	 * @return array Customisations in the database for that file for that language
 	 */
-	public static function get_language_changes(int $theme_id, string $lang_id, string $file_id): array
+	public static function get_language_changes(string $lang_id, string $file_id): array
 	{
 		global $smcFunc;
 
@@ -79,11 +78,9 @@ class Language
 		$result = $smcFunc['db']->query('', '
 			SELECT lang_var, lang_key, lang_string, is_multi
 			FROM {db_prefix}language_delta
-			WHERE id_theme = {int:id_theme}
-				AND id_lang = {string:lang_id}
+			WHERE id_lang = {string:lang_id}
 				AND lang_file = {string:file_id}',
 			[
-				'id_theme' => $theme_id,
 				'lang_id' => $lang_id,
 				'file_id' => $file_id,
 			]
@@ -106,21 +103,20 @@ class Language
 	 * Loads a language file, applies its customisations, backfilling with English if needed,
 	 * then saves the result to the cache area.
 	 *
-	 * @param int $theme_id The theme to load language changes from.
 	 * @param string $lang_id The language code to look up for, e.g. en-us
 	 * @param string $lang_file The language file to load
 	 */
-	public static function cache_language(int $theme_id, string $lang_id, string $lang_file)
+	public static function cache_language(string $lang_id, string $lang_file)
 	{
 		global $cachedir;
 
 		$overall_language_entries = [];
 
 		// Default English first.
-		if ($language_file = self::find_language_file(1, 'en-us', $lang_file))
+		if ($language_file = self::find_language_file('en-us', $lang_file))
 		{
 			$overall_language_entries = self::get_file_for_editing($language_file);
-			$language_delta = self::get_language_changes(1, 'en-us', $lang_file);
+			$language_delta = self::get_language_changes('en-us', $lang_file);
 			foreach ($language_delta as $lang_var => $lang_entries)
 			{
 				foreach ($lang_entries as $lang_key => $lang_string)
@@ -133,7 +129,7 @@ class Language
 		// Then default whichever language we wanted next.
 		if ($lang_id != 'en-us')
 		{
-			if ($language_file = self::find_language_file(1, $lang_id, $lang_file))
+			if ($language_file = self::find_language_file($lang_id, $lang_file))
 			{
 				$this_language_entries = self::get_file_for_editing($language_file);
 				foreach ($this_language_entries as $lang_var => $lang_entries)
@@ -144,7 +140,7 @@ class Language
 					}
 				}
 
-				$language_delta = self::get_language_changes(1, $lang_id, $lang_file);
+				$language_delta = self::get_language_changes($lang_id, $lang_file);
 				foreach ($language_delta as $lang_var => $lang_entries)
 				{
 					foreach ($lang_entries as $lang_key => $lang_string)
@@ -166,67 +162,56 @@ class Language
 		{
 			mkdir($cachedir . '/lang');
 		}
-		@file_put_contents($cachedir . '/lang/' . $theme_id . '_' . $lang_id . '_' . $lang_file . '.php', $cachefile);
+		@file_put_contents($cachedir . '/lang/' . $lang_id . '_' . $lang_file . '.php', $cachefile);
 		if (function_exists('opcache_invalidate'))
 		{
-			opcache_invalidate($cachedir . '/lang/' . $theme_id . '_' . $lang_id . '_' . $lang_file . '.php', true);
+			opcache_invalidate($cachedir . '/lang/' . $lang_id . '_' . $lang_file . '.php', true);
 		}
 	}
 
 	/**
 	 * Identifies the location of a given language file based on theme, language and file.
 	 *
-	 * @param int $theme_id The theme to load language data from.
 	 * @param string $lang_id The language code to look up for, e.g. en-us
 	 * @param string $file_id The language file to load
 	 * @return string Path to file, or empty string if not relevant or found
 	 */
-	public static function find_language_file(int $theme_id, string $lang_id, string $file_id): string
+	public static function find_language_file(string $lang_id, string $file_id): string
 	{
-		$themes = Theme::get_theme_list();
-		// Does the theme exist?
-		if (!isset($themes[$theme_id]))
-		{
-			return '';
-		}
-
 		// Does the theme have a language?
-		if (!file_exists($themes[$theme_id]['theme_dir'] . '/languages/' . $lang_id))
+		if (!file_exists(App::get_languages_path() . '/' . $lang_id))
 		{
 			return '';
 		}
 
 		// Does it have the right language file?
-		if (!file_exists($themes[$theme_id]['theme_dir'] . '/languages/' . $lang_id . '/' . $file_id . '.php'))
+		if (!file_exists(App::get_languages_path() . '/' . $lang_id . '/' . $file_id . '.php'))
 		{
 			return '';
 		}
 
-		return $themes[$theme_id]['theme_dir'] . '/languages/' . $lang_id . '/' . $file_id . '.php';
+		return App::get_languages_path() . '/' . $lang_id . '/' . $file_id . '.php';
 	}
 
 	/**
 	 * Delete a language entry.
 	 *
-	 * @param int $theme_id The theme containing the entry to be removed
 	 * @param string $lang_id The language containing the entry to be removed, e.g. en-us
 	 * @param string $lang_file The language file containing the entry to be removed, e.g. Admin
 	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
 	 * @param string $lang_key The key inside the language array to remove
 	 */
-	public static function delete_current_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key)
+	public static function delete_current_entry(string $lang_id, string $lang_file, string $lang_var, string $lang_key)
 	{
 		global $smcFunc;
 
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}language_delta
-			WHERE id_theme = {int:id_theme}
-				AND id_lang = {string:lang_id}
+			WHERE id_lang = {string:lang_id}
 				AND lang_file = {string:lang_file}
 				AND lang_var = {string:lang_var}
 				AND lang_key = {string:lang_key}',
 			[
-				'id_theme' => $theme_id,
 				'lang_id' => $lang_id,
 				'lang_file' => $lang_file,
 				'lang_var' => $lang_var,
@@ -234,54 +219,52 @@ class Language
 			]
 		);
 
-		self::cache_language($theme_id, $lang_id, $lang_file);
+		self::cache_language($lang_id, $lang_file);
 	}
 
 	/**
 	 * Save a single language entry (when a string contains only one item)
 	 *
-	 * @param int $theme_id The theme containing the entry to be saved
 	 * @param string $lang_id The language containing the entry to be saved, e.g. en-us
 	 * @param string $lang_file The language file containing the entry to be saved, e.g. Admin
 	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
 	 * @param string $lang_key The key inside the language array to remove
 	 * @param string $entry The single string to save
 	 */
-	public static function save_single_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key, string $entry)
+	public static function save_single_entry(string $lang_id, string $lang_file, string $lang_var, string $lang_key, string $entry)
 	{
 		global $smcFunc;
 
 		$smcFunc['db']->insert('replace',
 			'{db_prefix}language_delta',
-			['id_theme' => 'int', 'id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
-			[$theme_id, $lang_id, $lang_file, $lang_var, $lang_key, $entry, 0],
-			['id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key']
+			['id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
+			[$lang_id, $lang_file, $lang_var, $lang_key, $entry, 0],
+			['id_lang', 'lang_file', 'lang_var', 'lang_key']
 		);
 
-		self::cache_language($theme_id, $lang_id, $lang_file);
+		self::cache_language($lang_id, $lang_file);
 	}
 
 	/**
 	 * Save a multiple language entry, e.g. an entry like $txt['months'] that contains multiple strings.
 	 *
-	 * @param int $theme_id The theme containing the entry to be saved
 	 * @param string $lang_id The language containing the entry to be saved, e.g. en-us
 	 * @param string $lang_file The language file containing the entry to be saved, e.g. Admin
 	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
 	 * @param string $lang_key The key inside the language array to remove
 	 * @param array $entry The multiple strings to save
 	 */
-	public static function save_multiple_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key, array $entry)
+	public static function save_multiple_entry(string $lang_id, string $lang_file, string $lang_var, string $lang_key, array $entry)
 	{
 		global $smcFunc;
 
 		$smcFunc['db']->insert('replace',
 			'{db_prefix}language_delta',
-			['id_theme' => 'int', 'id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
-			[$theme_id, $lang_id, $lang_file, $lang_var, $lang_key, json_encode($entry), 1],
-			['id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key']
+			['id_lang' => 'string-5', 'lang_file' => 'string-64', 'lang_var' => 'string-20', 'lang_key' => 'string-64', 'lang_string' => 'string-65534', 'is_multi' => 'int'],
+			[$lang_id, $lang_file, $lang_var, $lang_key, json_encode($entry), 1],
+			['id_lang', 'lang_file', 'lang_var', 'lang_key']
 		);
 
-		self::cache_language($theme_id, $lang_id, $lang_file);
+		self::cache_language($lang_id, $lang_file);
 	}
 }
