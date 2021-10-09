@@ -111,7 +111,7 @@ class App
 
 	public static function in_hard_maintenance()
 	{
-		return stataic::$global_config['maintenance'] == 2;
+		return static::$global_config['maintenance'] == 2;
 	}
 
 	public static function set_base_environment()
