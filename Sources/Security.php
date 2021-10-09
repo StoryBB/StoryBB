@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Helper\Cookie;
 use StoryBB\Helper\IP;
@@ -27,7 +28,7 @@ use StoryBB\Helper\Random;
  */
 function validateSession($type = 'admin')
 {
-	global $modSettings, $sourcedir, $user_info, $maintenance;
+	global $modSettings, $sourcedir, $user_info;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();
@@ -58,7 +59,7 @@ function validateSession($type = 'admin')
 	if (isset($_POST[$type . '_pass']))
 	{
 		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
+		if (!empty($modSettings['force_ssl']) && !App::in_maintenance() && !httpsOn())
 			fatal_lang_error('login_ssl_required');
 
 		checkSession();

@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Model\Attachment;
 
 /**
@@ -24,7 +25,7 @@ use StoryBB\Model\Attachment;
  */
 function showAttachment($force_attach = false)
 {
-	global $smcFunc, $modSettings, $maintenance, $context;
+	global $smcFunc, $modSettings, $context;
 
 	// An early hook to set up global vars, clean cache and other early process.
 	call_integration_hook('integrate_pre_download_request');
@@ -62,7 +63,7 @@ function showAttachment($force_attach = false)
 	}
 
 	// No access in strict maintenance mode or you don't have permission to see attachments.
-	if ((!empty($maintenance) && $maintenance == 2) || (!allowedTo('view_attachments') && !$force_attach))
+	if (App::in_hard_maintenance() || (!allowedTo('view_attachments') && !$force_attach))
 	{
 		header('HTTP/1.0 404 File Not Found');
 		die('404 File Not Found');
