@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
 
 trait Session
 {
-	protected $_db;
+	protected $_session;
 
 	public function _accept_session($session) : void
 	{
