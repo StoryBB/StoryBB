@@ -1451,7 +1451,7 @@ function template_header()
 	if ($show_warnings)
 	{
 		// Check files that shouldn't be there for security reasons.
-		$securityFiles = ['install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~'];
+		$securityFiles = ['install.php', 'upgrade.php', 'convert.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~'];
 
 		// Add your own files.
 		call_integration_hook('integrate_security_files', [&$securityFiles]);
