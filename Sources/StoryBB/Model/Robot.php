@@ -55,12 +55,15 @@ class Robot
 			'facebot' => 'facebook',
 			'feedly' => 'feedly',
 			'feedvalidator' => 'w3c-feedvalidator',
+			'geliyoobot' => 'geliyoo',
 			'gigabot' => 'gigablast',
 			'go http package' => 'go',
 			'google-sa' => 'googlesearchappliance',
 			'googlebot' => 'google',
 			'google favicon' => 'google',
+			'gsacrawler' => 'googlesearchappliance',
 			'gsitecrawler' => 'gsitecrawler',
+			'ia_archiver-web.archive.org' => 'archive.org',
 			'ia_archiver' => 'alexa',
 			'ioncrawl' => 'ioncrawl',
 			'jigsaw' => 'w3c_css',
@@ -101,6 +104,7 @@ class Robot
 			'speedy spider' => 'entireweb',
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
+			'twitterbot' => 'twitter',
 			'uptimerobot' => 'uptimerobot',
 			'validator.nu' => 'w3c_validator_nu',
 			'w3c-checklink' => 'w3c_checklink',
@@ -232,6 +236,9 @@ class Robot
 			'feedly' => [
 				'title' => 'Feedly',
 				'link' => 'https://www.feedly.com/fetcher.html',
+			],
+			'geliyoo' => [
+				'title' => 'Geliyoo',
 			],
 			'gigablast' => [
 				'title' => 'GigaBlast',
@@ -377,6 +384,9 @@ class Robot
 			'teoma' => [
 				'title' => 'Teoma (Ask Jeeves/Ask)',
 				'link' => 'http://ask.com/',
+			],
+			'twitter' => [
+				'title' => 'Twitter',
 			],
 			'uptimerobot' => [
 				'title' => 'UptimeRobot',

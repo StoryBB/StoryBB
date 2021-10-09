@@ -428,6 +428,7 @@ function CharacterImmersion($return_config = false)
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
 			]],
+			['check', 'characters_ic_require_sheet'],
 		'',
 			['select', 'enable_immersive_mode', [
 				'user_on' => $txt['enable_immersive_mode_user_on'],

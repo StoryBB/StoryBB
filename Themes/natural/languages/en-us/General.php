@@ -39,6 +39,10 @@ $txt['moderate'] = 'Moderate';
 $txt['chars_menu_title'] = 'Characters';
 $txt['char_sheet_admin'] = 'Pending Character Sheets';
 
+$txt['cannot_post_ic_without_sheet'] = 'Unfortunately, posting in-character does require your character sheet to be approved by the administrators. Please check <a href="%1$s">your character sheet</a> in case the administrators left comments.';
+$txt['cannot_post_ooc'] = 'Unfortunately you are in a character board but without a particular character selected. Please switch to a character to post in this board.';
+$txt['cannot_post_ic'] = 'Unfortunately you are in an out-of-character board and you have a character selected. Please switch to the out-of-character account to post here.';
+
 $txt['save'] = 'Save';
 $txt['upload'] = 'Upload';
 $txt['upload_all'] = 'Upload All';

@@ -288,6 +288,7 @@ $helptxt['field_reg_require'] = 'If this field is required during registration, 
 
 $helptxt['characters_ic_may_post'] = 'On a forum where you have a strong sense of immersion, you might want to ensure that "characters" can only post in in-character boards and never outside. Tick this box to enforce this.';
 $helptxt['characters_ooc_may_post'] = 'On a forum where there is a strong divide between "in character" posts and "out of character" posts, you may wish to enforce that characters cannot post in the out of character areas - tick this box to enforce this.';
+$helptxt['characters_ic_require_sheet'] = 'By default, the permissions setup does not prevent a just-made character from posting. Ticking this box ensures that for in-character posts to happen, the character must have an approved character sheet.';
 $helptxt['enable_immersive_mode'] = 'Immersive mode is an optional way to run a roleplay forum that can be used to make users feel more like the site recognises their characters better. When immersive mode is enabled, the groups attached to each character are enforced, meaning that different characters may not be able to see all of the areas that the overall account theoretically could. For example, if roleplaying in a Harry Potter based universe, characters might have a Gryffindor group and a Slytherin group - and only Gryffindors can see the Gryffindor common room. This setting controls whether this is enforced or not.';
 
 

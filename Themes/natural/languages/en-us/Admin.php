@@ -633,6 +633,7 @@ $txt['remove_from_queue'] = 'Remove from Queue';
 $txt['immersion'] = 'Immersion';
 $txt['characters_ic_may_post'] = 'Characters may post in...';
 $txt['characters_ooc_may_post'] = 'Accounts (OOC characters) may post in...';
+$txt['characters_ic_require_sheet'] = 'Characters (IC characters) require an approved character sheet before posting';
 $txt['ic_boards_only'] = 'In-character (IC) boards only';
 $txt['ooc_boards_only'] = 'Out-of-character (OOC) boards only';
 $txt['ic_and_ooc_boards'] = 'Both IC and OOC boards';

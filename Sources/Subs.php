@@ -2768,7 +2768,8 @@ function get_main_menu_groups()
 function get_user_possible_characters($id_member, $board_id = 0)
 {
 	global $settings, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
-	static $boards_ic = [];
+	global $user_info, $scripturl;
+	static $boards_ic = [], $announced = false;
 
 	// First, some healthy defaults.
 	if (empty($modSettings['characters_ic_may_post']))
@@ -2821,19 +2822,43 @@ function get_user_possible_characters($id_member, $board_id = 0)
 
 	foreach ($memberContext[$id_member]['characters'] as $char_id => $character)
 	{
-		if ($board_in_character)
+		if (!allowedTo('admin_forum'))
 		{
-			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && !allowedTo('admin_forum'))
+			if ($board_in_character)
 			{
-				// IC board that requires IC only, and character is main and (not admin or no admin override)
-				continue;
+				if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'])
+				{
+					// IC board that requires IC only, and character is main and (not admin or no admin override)
+					if (!$announced && $character['id_character'] == $user_info['id_character'])
+					{
+						session_flash('warning', (string) new Phrase('General:cannot_post_ooc'));
+						$announced = true;
+					}
+					continue;
+				}
 			}
-		}
-		else
-		{
-			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && !allowedTo('admin_forum'))
+			else
 			{
-				// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
+				if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'])
+				{
+					// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
+					if (!$announced && $character['id_character'] == $user_info['id_character'])
+					{
+						session_flash('warning', (string) new Phrase('General:cannot_post_ic'));
+						$announced = true;
+					}
+					continue;
+				}
+			}
+
+			if (!$character['is_main'] && !empty($modSettings['characters_ic_require_sheet']) && empty($character['char_sheet']))
+			{
+				if ($char_id == $user_info['id_character'] && !$announced)
+				{
+					$announced = true;
+					$link = $scripturl . '?action=profile;area=character_sheet;u=' . $user_info['id'] . ';char=' . $char_id;
+					session_flash('warning', (string) new Phrase('General:cannot_post_ic_without_sheet', [$link]));
+				}
 				continue;
 			}
 		}
