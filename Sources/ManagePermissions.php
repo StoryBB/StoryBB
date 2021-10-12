@@ -10,7 +10,9 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
+use StoryBB\Model\PermissionProfile;
 
 /**
  * Dispatches to the right function based on the given subaction.
@@ -1430,35 +1432,12 @@ function save_inline_permissions($permissions)
 
 /**
  * Load permissions profiles.
+ * @deprecated
  */
 function loadPermissionProfiles()
 {
-	global $context, $txt, $smcFunc;
-
-	$request = $smcFunc['db']->query('', '
-		SELECT id_profile, profile_name
-		FROM {db_prefix}permission_profiles
-		ORDER BY id_profile',
-		[
-		]
-	);
-	$context['profiles'] = [];
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-	{
-		// Format the label nicely.
-		if (isset($txt['permissions_profile_' . $row['profile_name']]))
-			$name = $txt['permissions_profile_' . $row['profile_name']];
-		else
-			$name = $row['profile_name'];
-
-		$context['profiles'][$row['id_profile']] = [
-			'id' => $row['id_profile'],
-			'name' => $name,
-			'can_modify' => $row['id_profile'] == 1 || $row['id_profile'] > 4,
-			'unformatted_name' => $row['profile_name'],
-		];
-	}
-	$smcFunc['db']->free_result($request);
+	global $context;
+	$context['profiles'] = (App::make(PermissionProfile::class))->get_all();
 }
 
 /**
