@@ -64,12 +64,9 @@ class RecentlyOnline extends AbstractBlock implements Block
 			$since = time() - $this->config['since'];
 		}
 
-		$this->content = $this->render('block_recently_online', [
+		$this->content = $this->template('recently_online', [
 			'online' => $scope == 'account' ? $this->get_accounts($since, $order) : $this->get_characters($since, $order),
 			'display' => $display,
-			'txt' => $txt,
-			'scripturl' => $scripturl,
-			'modSettings' => $modSettings,
 		]);
 		return $this->content;
 	}

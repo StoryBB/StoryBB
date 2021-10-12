@@ -127,20 +127,20 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	for (var i = 0; i < XMLDoc.getElementsByTagName("message")[0].childNodes.length; i++)
 		sBodyText += XMLDoc.getElementsByTagName("message")[0].childNodes[i].nodeValue;
 	this.oCurMessageDiv = document.getElementById(this.sCurMessageId);
-	this.sMessageBuffer = getInnerHTML(this.oCurMessageDiv);
+	this.sMessageBuffer = this.oCurMessageDiv.innerHTML;
 
 	// We have to force the body to lose its dollar signs thanks to IE.
 	sBodyText = sBodyText.replace(/\$/g, '{&dollarfix;$}');
 
 	// Actually create the content, with a bodge for disappearing dollar signs.
-	setInnerHTML(this.oCurMessageDiv, this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$'));
+	this.oCurMessageDiv.innerHTML = this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	// Replace the subject part.
 	this.oCurSubjectDiv = document.getElementById('subject_' + this.sCurMessageId.substr(4));
-	this.sSubjectBuffer = getInnerHTML(this.oCurSubjectDiv);
+	this.sSubjectBuffer = this.oCurSubjectDiv.innerHTML;
 
 	sSubjectText = XMLDoc.getElementsByTagName('subject')[0].childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
-	setInnerHTML(this.oCurSubjectDiv, this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
+	this.oCurSubjectDiv.innerHTML = this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	// Field for editing reason.
 	sReasonText = XMLDoc.getElementsByTagName('reason')[0].childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
@@ -156,8 +156,8 @@ QuickModify.prototype.modifyCancel = function ()
 	// Roll back the HTML to its original state.
 	if (this.oCurMessageDiv)
 	{
-		setInnerHTML(this.oCurMessageDiv, this.sMessageBuffer);
-		setInnerHTML(this.oCurSubjectDiv, this.sSubjectBuffer);
+		this.oCurMessageDiv.innerHTML = this.sMessageBuffer;
+		this.oCurSubjectDiv.innerHTML = this.sSubjectBuffer;
 	}
 
 	// No longer in edit mode, that's right.
@@ -239,7 +239,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	{
 		// Mozilla will nicely tell us what's wrong.
 		if (XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
-			setInnerHTML(document.getElementById('error_box'), XMLDoc.firstChild.textContent);
+			document.getElementById('error_box').innerHTML = XMLDoc.firstChild.textContent;
 		else
 			this.modifyCancel();
 
@@ -258,18 +258,18 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 			bodyText += body.childNodes[i].nodeValue;
 
 		this.sMessageBuffer = this.opt.sTemplateBodyNormal.replace(/%body%/, bodyText.replace(/\$/g, '{&dollarfix;$}')).replace(/\{&dollarfix;\$\}/g,'$');
-		setInnerHTML(this.oCurMessageDiv, this.sMessageBuffer);
+		this.oCurMessageDiv.innerHTML = this.sMessageBuffer;
 
 		// Show new subject, but only if we want to...
 		var oSubject = message.getElementsByTagName('subject')[0];
 		var sSubjectText = oSubject.childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
 		var sTopSubjectText = oSubject.childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
 		this.sSubjectBuffer = this.opt.sTemplateSubjectNormal.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g,'$');
-		setInnerHTML(this.oCurSubjectDiv, this.sSubjectBuffer);
+		this.oCurSubjectDiv.innerHTML = this.sSubjectBuffer;
 
 		// If this is the first message, also update the topic subject.
 		if (oSubject.getAttribute('is_first') == '1')
-			setInnerHTML(document.getElementById('top_subject'), this.opt.sTemplateTopSubject.replace(/%subject%/, sTopSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
+			document.getElementById('top_subject').innerHTML = this.opt.sTemplateTopSubject.replace(/%subject%/, sTopSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
 
 		// Show this message as 'modified on x by y'.
 		if (this.opt.bShowModify)
@@ -283,7 +283,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	}
 	else if (error)
 	{
-		setInnerHTML(document.getElementById('error_box'), error.childNodes[0].nodeValue);
+		document.getElementById('error_box').innerHTML = error.childNodes[0].nodeValue;
 		document.forms.quickModForm.message.style.border = error.getAttribute('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
 		document.forms.quickModForm.subject.style.border = error.getAttribute('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
 	}
@@ -371,19 +371,19 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	// Show the number of messages selected in the button.
 	if (this.opt.bCanRemove && !this.opt.bUseImageButton)
 	{
-		setInnerHTML(document.getElementById(this.opt.sSelf + '_remove_button_text'), this.opt.sRemoveButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>');
+		document.getElementById(this.opt.sSelf + '_remove_button_text').innerHTML = this.opt.sRemoveButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>';
 		document.getElementById(this.opt.sSelf + '_remove_button_text').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 
 	if (this.opt.bCanRestore && !this.opt.bUseImageButton)
 	{
-		setInnerHTML(document.getElementById(this.opt.sSelf + '_restore_button_text'), this.opt.sRestoreButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>');
+		document.getElementById(this.opt.sSelf + '_restore_button_text').innerHTML = this.opt.sRestoreButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>';
 		document.getElementById(this.opt.sSelf + '_restore_button_text').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 
 	if (this.opt.bCanSplit && !this.opt.bUseImageButton)
 	{
-		setInnerHTML(document.getElementById(this.opt.sSelf + '_split_button_text'), this.opt.sSplitButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>');
+		document.getElementById(this.opt.sSelf + '_split_button_text').innerHTML = this.opt.sSplitButtonLabel + ' <span class="amt">' + this.iNumSelected + '</span>';
 		document.getElementById(this.opt.sSelf + '_split_button_text').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 

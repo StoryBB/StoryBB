@@ -249,7 +249,7 @@ sbb_DraftAutoSave.prototype.onDraftDone = function (XMLDoc)
 	// Update the form to show we finished, if the id is not set, then set it
 	document.getElementById(this.opt.sLastID).value = this.sCurDraftId;
 	oCurDraftDiv = document.getElementById(this.opt.sLastNote);
-	setInnerHTML(oCurDraftDiv, this.sLastSaved);
+	oCurDraftDiv.innerHTML = this.sLastSaved;
 
 	// hide the saved draft infobox in the event they pressed the save draft button at some point
 	if (this.opt.sType == 'post')

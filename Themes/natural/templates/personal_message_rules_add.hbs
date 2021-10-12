@@ -125,7 +125,7 @@
 			}
 
 			// Set the actual HTML!
-			setInnerHTML(document.getElementById("ruletext"), text);
+			document.getElementById("ruletext").innerHTML = text;
 		}
 </script>
 <form action="{{scripturl}}?action=pm;sa=manage_rules;save;rid={{context.rid}}" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">

@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
@@ -29,7 +30,7 @@ use StoryBB\StringLibrary;
 function Login2()
 {
 	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
-	global $cookiename, $modSettings, $context, $sourcedir, $maintenance;
+	global $cookiename, $modSettings, $context, $sourcedir;
 
 
 	// Are you guessing with a script?
@@ -194,7 +195,7 @@ function checkActivation()
 function DoLogin()
 {
 	global $user_info, $user_settings, $smcFunc;
-	global $maintenance, $modSettings, $context, $sourcedir;
+	global $modSettings, $context, $sourcedir;
 
 	// Load cookie authentication stuff.
 	require_once($sourcedir . '/Subs-Auth.php');
@@ -257,7 +258,7 @@ function DoLogin()
 	$urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]);
 
 	// Just log you back out if it's in maintenance mode and you AREN'T an admin.
-	if (empty($maintenance) || allowedTo('admin_forum'))
+	if (!App::in_maintenance() || allowedTo('admin_forum'))
 		redirectexit('action=login2;sa=check;member=' . $user_info['id']);
 	else
 		redirectexit($urlgenerator->generate('logout', ['t' => $container->get('session')->get('session_value')]));

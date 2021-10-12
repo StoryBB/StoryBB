@@ -45,48 +45,9 @@ function addOption()
 	startOptID++;
 }
 
-
-//Create a named element dynamically - thanks to: https://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
-function createNamedElement(type, name, customFields)
-{
-	var element = null;
-
-	if (!customFields)
-		customFields = "";
-
-	// Try the IE way; this fails on standards-compliant browsers
-	try
-	{
-		element = document.createElement("<" + type + ' name="' + name + '" ' + customFields + ">");
-	}
-	catch (e)
-	{
-	}
-	if (!element || element.nodeName != type.toUpperCase())
-	{
-		// Non-IE browser; use canonical method to create named element
-		element = document.createElement(type);
-		element.name = name;
-	}
-
-	return element;
-}
-
 function changeVariant(sVariant)
 {
 	document.getElementById('variant_preview').src = oThumbnails[sVariant];
-}
-
-// The idea here is simple: don't refresh the preview on every keypress, but do refresh after they type.
-function setPreviewTimeout()
-{
-	if (previewTimeout)
-	{
-		window.clearTimeout(previewTimeout);
-		previewTimeout = null;
-	}
-
-	previewTimeout = window.setTimeout("refreshPreview(true); previewTimeout = null;", 500);
 }
 
 function toggleDuration(toChange)
@@ -101,96 +62,6 @@ function toggleDuration(toChange)
 		document.getElementById("fixed_area").style.display = "none";
 		document.getElementById("flexible_area").style.display = "inline";
 	}
-}
-
-function calculateNewValues()
-{
-	var total = 0;
-	for (var i = 1; i <= 6; i++)
-	{
-		total += parseInt(document.getElementById('weight' + i + '_val').value);
-	}
-	setInnerHTML(document.getElementById('weighttotal'), total);
-	for (var i = 1; i <= 6; i++)
-	{
-		setInnerHTML(document.getElementById('weight' + i), (Math.round(1000 * parseInt(document.getElementById('weight' + i + '_val').value) / total) / 10) + '%');
-	}
-}
-
-function swap_database_changes()
-{
-	db_vis = !db_vis;
-	database_changes_area.style.display = db_vis ? "" : "none";
-	return false;
-}
-
-function testFTP()
-{
-	ajax_indicator(true);
-
-	// What we need to post.
-	var oPostData = {
-		0: "ftp_server",
-		1: "ftp_port",
-		2: "ftp_username",
-		3: "ftp_password",
-		4: "ftp_path"
-	}
-
-	var sPostData = "";
-	for (i = 0; i < 5; i++)
-		sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
-
-	// Post the data out.
-	sendXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=admin;area=packages;sa=ftptest;xml;' + sbb_session_var + '=' + sbb_session_id, sPostData, testFTPResults);
-}
-
-function expandFolder(folderIdent, folderReal)
-{
-	// See if it already exists.
-	var possibleTags = document.getElementsByTagName("tr");
-	var foundOne = false;
-
-	for (var i = 0; i < possibleTags.length; i++)
-	{
-		if (possibleTags[i].id.indexOf("content_" + folderIdent + ":-:") == 0)
-		{
-			possibleTags[i].style.display = possibleTags[i].style.display == "none" ? "" : "none";
-			foundOne = true;
-		}
-	}
-
-	// Got something then we're done.
-	if (foundOne)
-	{
-		return false;
-	}
-	// Otherwise we need to get the wicked thing.
-	else if (window.XMLHttpRequest)
-	{
-		ajax_indicator(true);
-		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=admin;area=packages;onlyfind=' + escape(folderReal) + ';sa=perms;xml;' + sbb_session_var + '=' + sbb_session_id, onNewFolderReceived);
-	}
-	// Otherwise reload.
-	else
-		return true;
-
-	return false;
-}
-
-function dynamicExpandFolder()
-{
-	expandFolder(this.ident, this.path);
-
-	return false;
-}
-
-function repeatString(sString, iTime)
-{
-	if (iTime < 1)
-		return '';
-	else
-		return sString + repeatString(sString, iTime - 1);
 }
 
 function select_in_category(cat_id, elem, brd_list)

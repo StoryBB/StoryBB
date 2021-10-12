@@ -16,6 +16,7 @@ use Exception;
 use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Controller\MaintenanceAccessible;
+use StoryBB\Controller\Unloggable;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\SiteSettings;
 use StoryBB\Dependency\UrlGenerator;
@@ -30,7 +31,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class Css implements Routable, MaintenanceAccessible
+class Css implements Routable, Unloggable, MaintenanceAccessible
 {
 	use Database;
 	use SiteSettings;
@@ -38,38 +39,40 @@ class Css implements Routable, MaintenanceAccessible
 
 	public static function register_own_routes(RouteCollection $routes): void
 	{
-		$routes->add('css', (new Route('/css/{theme<\d+>}/{timestamp<\d+>?0}', ['_controller' => [static::class, 'css_emitter']])));
+		$routes->add('css', (new Route('/css/{theme<\d+>}/{scssfile}/{timestamp<\d+>?0}', ['_controller' => [static::class, 'css_emitter']])));
 	}
 
-	public function css_emitter(int $theme, int $timestamp)
+	public function css_emitter(int $theme, string $scssfile, int $timestamp)
 	{
 		$available_themes = $this->get_available_themes();
 
-		if (!in_array($theme, $available_themes))
+		if (!in_array($theme, $available_themes) && !($theme == 1 && $scssfile == 'admin'))
 		{
 			return new NotFoundResponse;
 		}
 
 		$themes = $this->get_theme_settings($available_themes);
 
-		if (empty($themes[$theme]['theme_dir']) || !file_exists($themes[$theme]['theme_dir'] . '/css/index.scss'))
+		if (empty($themes[$theme]['theme_dir']) || !file_exists($themes[$theme]['theme_dir'] . '/css/' . $scssfile . '.scss'))
 		{
 			return new NotFoundResponse;
 		}
 
 		// Are we using a legacy version somehow?
-		if (!empty($themes[$theme]['compile_time']) && $timestamp != $themes[$theme]['compile_time'])
+		$compile_time_setting = 'compile_time_' . $scssfile;
+		if ($this->sitesettings()->minimize_css && !empty($themes[$theme][$compile_time_setting]) && $timestamp != $themes[$theme][$compile_time_setting])
 		{
 			$url = $this->urlgenerator()->generate('css', [
 				'theme' => $theme,
-				'timestamp' => $themes[$theme]['compile_time'],
+				'scssfile' => $scssfile,
+				'timestamp' => $themes[$theme][$compile_time_setting],
 			]);
 			return new RedirectResponse($url, 301);
 		}
 
 		// Do we have a cached version?
 		$cachedir = App::get_root_path() . '/cache';
-		$cached_css_file = $cachedir . '/css/' . $theme . '_' . $timestamp . '.css';
+		$cached_css_file = $cachedir . '/css/' . $theme . '_' . $scssfile . '_' . $timestamp . '.css';
 		if (file_exists($cached_css_file))
 		{
 			return new Response(file_get_contents($cached_css_file), 200, ['content-type' => 'text/css']);
@@ -77,7 +80,7 @@ class Css implements Routable, MaintenanceAccessible
 
 		try
 		{
-			$cached_css = static::compile_theme($themes, $theme);
+			$cached_css = static::compile_theme($themes, $theme, $scssfile);
 
 			return new Response($cached_css, 200, ['content-type' => 'text/css']);
 		}
@@ -133,7 +136,7 @@ class Css implements Routable, MaintenanceAccessible
 		return $themes;
 	}
 
-	private function compile_theme(array $themes, int $theme): string
+	private function compile_theme(array $themes, int $theme, string $scssfile): string
 	{
 		$db = $this->db();
 
@@ -162,6 +165,10 @@ class Css implements Routable, MaintenanceAccessible
 		// Add in all the theme's image URLs in case we want to cross the streams (e.g. refer to default iamges)
 		foreach ($themes as $theme_id => $theme_settings)
 		{
+			if (isset($theme_settings['shortname']) && isset($theme_settings['theme_url']))
+			{
+				$injections[$theme_settings['shortname'] . '__theme_url'] = '"' . $theme_settings['theme_url'] . '"';
+			}
 			if (isset($theme_settings['shortname']) && isset($theme_settings['images_url']))
 			{
 				$injections[$theme_settings['shortname'] . '__images_url'] = '"' . $theme_settings['images_url'] . '"';
@@ -187,7 +194,7 @@ class Css implements Routable, MaintenanceAccessible
 		});
 
 		$scss->setFormatter('ScssPhp\\ScssPhp\\Formatter\\Crunched');
-		$result = $scss->compile(file_get_contents($themes[$theme]['theme_dir'] . '/css/index.scss'));
+		$result = $scss->compile(file_get_contents($themes[$theme]['theme_dir'] . '/css/' . $scssfile . '.scss'));
 
 		$parsed = $scss->getParsedFiles();
 		if (count($parsed) === 0)
@@ -198,7 +205,7 @@ class Css implements Routable, MaintenanceAccessible
 		$result .= $this->get_font_css($themes, $theme);
 
 		$compile_time = max($parsed);
-		$filename = $theme . '_' . $compile_time;
+		$filename = $theme . '_' . $scssfile . '_' . $compile_time;
 		if (!file_exists($cachedir . '/css'))
 		{
 			@mkdir($cachedir . '/css');
@@ -212,7 +219,7 @@ class Css implements Routable, MaintenanceAccessible
 			$db->insert('replace',
 				'{db_prefix}themes',
 				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string', 'value' => 'string'],
-				[0, $theme, 'compile_time', $compile_time],
+				[0, $theme, 'compile_time_' . $scssfile, $compile_time],
 				['id_member', 'id_theme', 'variable']
 			);
 		}

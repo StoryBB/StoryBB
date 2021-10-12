@@ -35,10 +35,9 @@ class StoryBBNews extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $txt, $sourcedir, $user_info;
+		global $sourcedir, $user_info;
 
 		require_once($sourcedir . '/Subs-Admin.php');
-		loadLanguage('Admin');
 
 		if ($this->content !== null)
 		{
@@ -60,8 +59,7 @@ class StoryBBNews extends AbstractBlock implements Block
 			$announcements = $admin_news['sbbAnnouncements']['en'];
 		}
 
-		$this->content = $this->render('block_storybb_news', [
-			'txt' => $txt,
+		$this->content = $this->template('storybb_news', [
 			'announcements' => $announcements,
 		]);
 

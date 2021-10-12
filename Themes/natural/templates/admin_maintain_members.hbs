@@ -11,7 +11,7 @@
 			$("#membersPanel").slideToggle(300);
 
 			document.getElementById("membersIcon").src = sbb_images_url + (membersSwap ? "/selected_open.png" : "/selected.png");
-			setInnerHTML(document.getElementById("membersText"), membersSwap ? {{{json txt.maintain_members_choose}}} : {{{json txt.maintain_members_all}}});
+			document.getElementById("membersText").innerHTML = membersSwap ? {{{json txt.maintain_members_choose}}} : {{{json txt.maintain_members_all}}};
 
 			for (var i = 0; i < membersForm.length; i++)
 			{

@@ -33,7 +33,7 @@ class Text extends Traits\Base implements Inputtable
 		$rendercontext = [
 			'name' => $this->name,
 			'required' => $this->required,
-			'value' => $rawdata[$this->name] ?? '',
+			'value' => $this->rawdata[$this->name] ?? '',
 		];
 
 		return ($this->templater->load('@partials/form/text.twig'))->render($rendercontext);

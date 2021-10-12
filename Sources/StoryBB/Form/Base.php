@@ -81,6 +81,19 @@ abstract class Base
 		}
 	}
 
+	public function set_default_data($name, $value)
+	{
+		if ($this->finalised)
+		{
+			throw new RuntimeException('Form has already been finalised, cannot change');
+		}
+		$this->populate_raw_data();
+		if (!isset($this->data[$name]))
+		{
+			$this->data[$name] = $value;
+		}
+	}
+
 	public function set_data($name, $value)
 	{
 		if ($this->finalised)
@@ -224,7 +237,7 @@ abstract class Base
 			'sections' => $this->sections,
 			'errors' => $this->errors,
 		];
-		return ($this->templaterenderer()->load('@partials/form.twig'))->render($rendercontext);
+		return ($templater->load('@partials/form.twig'))->render($rendercontext);
 	}
 
 	protected function get_form_token()

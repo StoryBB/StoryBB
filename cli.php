@@ -13,7 +13,6 @@
 
 use StoryBB\App;
 use StoryBB\ClassManager;
-use StoryBB\Cli\App as CliApp;
 use StoryBB\Container;
 use Symfony\Component\Console;
 
@@ -23,9 +22,7 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/vendor/autoload.php';
 
 $container = Container::instance();
-App::start(__DIR__);
-
-CliApp::build_container(App::get_global_config());
+App::start(__DIR__, new \StoryBB\App\Cli);
 
 $app = new Console\Application;
 foreach (ClassManager::get_classes_implementing('StoryBB\\Cli\\Command') as $command)

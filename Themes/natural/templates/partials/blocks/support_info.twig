@@ -1,0 +1,12 @@
+		<div id="version_details" class="padding">
+			<strong>{{ phrase('Admin:support_versions') }}:</strong><br>
+			{{ phrase('Admin:support_versions_forum') }}:
+			<em><span class="{% if needs_update %}alert{% else %}up-to-date{% endif %}">{{ forum_version }}</span></em><br>
+			{{ phrase('Admin:support_versions_current') }}:
+			<em>StoryBB {{ current_version }}</em>
+			<br><br>
+
+			{% for component in server_versions %}
+			{{component.title}}: <em>{{component.version}}</em><br>
+			{% endfor %}
+		</div>

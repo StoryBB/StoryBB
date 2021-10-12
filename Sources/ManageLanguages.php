@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Model\Policy;
 use StoryBB\Model\Language;
 use StoryBB\Model\Theme;
@@ -280,22 +281,13 @@ function list_getLanguages()
 	$backup_actual_theme_dir = $settings['actual_theme_dir'];
 	$backup_base_theme_dir = !empty($settings['base_theme_dir']) ? $settings['base_theme_dir'] : '';
 
-	// Override these for now.
-	$settings['actual_theme_dir'] = $settings['base_theme_dir'] = $settings['default_theme_dir'];
 	getLanguages();
-
-	// Put them back.
-	$settings['actual_theme_dir'] = $backup_actual_theme_dir;
-	if (!empty($backup_base_theme_dir))
-		$settings['base_theme_dir'] = $backup_base_theme_dir;
-	else
-		unset($settings['base_theme_dir']);
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)
 	{
 		// Load the file to get the character set.
-		$general = json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $lang['filename'] . '/' . $lang['filename'] . '.json'), true);
+		$general = json_decode(file_get_contents(App::get_languages_path() . '/' . $lang['filename'] . '/' . $lang['filename'] . '.json'), true);
 
 		$languages[$lang['filename']] = [
 			'id' => $lang['filename'],
@@ -349,7 +341,7 @@ function ModifyLanguage()
 	$context['page_title'] = $txt['edit_languages'];
 
 	$context['lang_id'] = isset($_GET['lid']) ? $_GET['lid'] : '';
-	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '_') === false ? [1, ''] : explode('_', $_REQUEST['tfid']);
+	list($section_id, $file_id) = empty($_REQUEST['sfid']) || strpos($_REQUEST['sfid'], '_') === false ? [1, ''] : explode('_', $_REQUEST['sfid']);
 
 	// Clean the ID - just in case.
 	if (preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches))
@@ -361,38 +353,27 @@ function ModifyLanguage()
 		$context['lang_id'] = '';
 	}
 
-	// Get all the theme data.
-	$themes = [
+	// Get all the sections data.
+	$sections = [
 		1 => [
 			'name' => $txt['default_templates'],
-			'theme_dir' => $settings['default_theme_dir'],
+			'dir' => App::get_languages_path(),
 		],
 	];
-	foreach (Theme::get_theme_list() as $tid => $theme)
-	{
-		if (isset($themes[$tid]))
-		{
-			continue;
-		}
-		$themes[$tid] = $theme;
-	}
-
-	// This will be where we look
-	$lang_dirs = [];
 
 	// Does a hook need to add in some additional places to look for languages?
-	call_integration_hook('integrate_modifylanguages', [&$themes, &$lang_dirs]);
+	call_integration_hook('integrate_modifylanguages', [&$sections]);
 
 	// Check we have themes with a path and a name - just in case - and add the path.
-	foreach ($themes as $id => $data)
+	foreach ($sections as $id => $data)
 	{
 		if (count($data) != 2)
-			unset($themes[$id]);
-		elseif (is_dir($data['theme_dir'] . '/languages'))
-			$lang_dirs[$id] = $data['theme_dir'] . '/languages';
+			unset($sections[$id]);
+		elseif (!is_dir($data['dir']) || !is_dir($data['dir'] . '/en-us'))
+			unset($sections[$id]);
 	}
 
-	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $context['lang_id'] . '/' . $file_id . '.php' : '';
+	$current_file = $file_id && isset($sections[$section_id]) ? $sections[$section_id]['dir'] . '/' . $context['lang_id'] . '/' . $file_id . '.php' : '';
 	if (!file_exists($current_file))
 	{
 		$current_file = '';
@@ -400,10 +381,10 @@ function ModifyLanguage()
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = [];
-	foreach ($lang_dirs as $theme => $theme_dir)
+	foreach ($sections as $id => $data)
 	{
 		// Open it up.
-		$dir = dir($theme_dir);
+		$dir = dir($data['dir']);
 		while ($entry = $dir->read())
 		{
 			if ($entry[0] == '.')
@@ -411,10 +392,10 @@ function ModifyLanguage()
 				continue;
 			}
 
-			if (!is_dir($theme_dir . '/' . $entry) || !file_exists($theme_dir . '/' . $entry . '/' . $entry . '.json'))
+			if (!is_dir($data['dir'] . '/' . $entry) || !file_exists($data['dir'] . '/' . $entry . '/' . $entry . '.json'))
 				continue;
 
-			foreach (scandir($theme_dir . '/' . $entry) as $file)
+			foreach (scandir($data['dir'] . '/' . $entry) as $file)
 			{
 				if (!preg_match('/^([A-Z][A-Za-z0-9]+)\.php$/', $file, $matches))
 				{
@@ -426,11 +407,11 @@ function ModifyLanguage()
 					continue;
 				}
 
-				if (!isset($context['possible_files'][$theme]))
+				if (!isset($context['possible_files'][$id]))
 				{
-					$context['possible_files'][$theme] = [
-						'id' => $theme,
-						'name' => $themes[$theme]['name'],
+					$context['possible_files'][$id] = [
+						'id' => $id,
+						'name' => $data['name'],
 						'files' => [
 							'main_files' => [],
 							'admin_files' => [],
@@ -442,34 +423,34 @@ function ModifyLanguage()
 				$file_entry = [
 					'id' => $matches[1],
 					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
-					'selected' => $theme_id == $theme && $file_id == $matches[1],
-					'edit_link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme . '_' . $matches[1],
+					'selected' => $id == $section_id && $file_id == $matches[1],
+					'edit_link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';sfid=' . $id . '_' . $matches[1],
 				];
 
-				$context['possible_files'][$theme]['files']['all_files'][] = $file_entry;
+				$context['possible_files'][$id]['files']['all_files'][] = $file_entry;
 
 				$is_admin = in_array($matches[1], ['Admin', 'Modlog']) || strpos($matches[1], 'Manage') === 0;
 				$file_block = $is_admin ? 'admin_files' : 'main_files';
-				$context['possible_files'][$theme]['files'][$file_block][$matches[1]] = $file_entry;
+				$context['possible_files'][$id]['files'][$file_block][$matches[1]] = $file_entry;
 			}
 		}
 		$dir->close();
 		foreach (['all_files', 'main_files', 'admin_files'] as $fileset)
 		{
-			uasort($context['possible_files'][$theme]['files'][$fileset], function($val1, $val2)
+			uasort($context['possible_files'][$id]['files'][$fileset], function($val1, $val2)
 			{
 				return strcmp($val1['name'], $val2['name']);
 			});
 		}
 		// While we had the general strings sorted into their own bubble, we should put them first.
-		$context['possible_files'][$theme]['files']['main_files'] = array_merge(
-			['General' => $context['possible_files'][$theme]['files']['main_files']['General']],
-			$context['possible_files'][$theme]['files']['main_files']
+		$context['possible_files'][$id]['files']['main_files'] = array_merge(
+			['General' => $context['possible_files'][$id]['files']['main_files']['General']],
+			$context['possible_files'][$id]['files']['main_files']
 		);
 	}
 
 	// Quickly load index language entries.
-	$language_manifest = @json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $context['lang_id'] . '/' . $context['lang_id'] . '.json'), true);
+	$language_manifest = @json_decode(file_get_contents(App::get_languages_path() . '/' . $context['lang_id'] . '/' . $context['lang_id'] . '.json'), true);
 	$context['lang_file_not_writable_message'] = '';
 	// Setup the primary settings context.
 	$context['primary_settings'] = [
@@ -484,7 +465,7 @@ function ModifyLanguage()
 	if ($current_file)
 	{
 		$master = Language::get_file_for_editing($current_file);
-		$delta = Language::get_language_changes((int) $theme_id, $context['lang_id'], $file_id);
+		$delta = Language::get_language_changes($context['lang_id'], $file_id);
 		$context['entries'] = [];
 
 		foreach ($master as $lang_var => $lang_strings)
@@ -492,7 +473,7 @@ function ModifyLanguage()
 			foreach ($lang_strings as $lang_key => $lang_string)
 			{
 				$context['entries'][$lang_var . '_' . $lang_key] = [
-					'link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme_id . '_' . $file_id . ';eid=' . $lang_var . '_' . urlencode($lang_key),
+					'link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';sfid=' . $section_id . '_' . $file_id . ';eid=' . $lang_var . '_' . urlencode($lang_key),
 					'lang_var' => $lang_var,
 					'display' => $lang_key,
 					'master' => $lang_string,
@@ -536,11 +517,11 @@ function ModifyLanguage()
 						asort($current);
 						if ($master === $current)
 						{
-							Language::delete_current_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
+							Language::delete_current_entry($context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
 						}
 						else
 						{
-							Language::save_multiple_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entries);
+							Language::save_multiple_entry($context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entries);
 						}
 					}
 				}
@@ -549,11 +530,11 @@ function ModifyLanguage()
 					$entry = !empty($_POST['entry']) ? $_POST['entry'] : '';
 					if ($entry === $context['current_entry']['master'])
 					{
-						Language::delete_current_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
+						Language::delete_current_entry($context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
 					}
 					else
 					{
-						Language::save_single_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entry);
+						Language::save_single_entry($context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entry);
 					}
 				}
 

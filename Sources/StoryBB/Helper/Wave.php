@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\App;
+
 /**
  * A simple .wav maker.
  */
@@ -27,7 +29,7 @@ class Wave
 	 */
 	public static function create(string $word)
 	{
-		global $settings, $user_info;
+		global $user_info;
 
 		// Allow max 2 requests per 20 seconds.
 		if (($ip = cache_get_data('wave_file/' . $user_info['ip'], 20)) > 2 || ($ip2 = cache_get_data('wave_file/' . $user_info['ip2'], 20)) > 2)
@@ -41,11 +43,11 @@ class Wave
 		mt_srand(end($tmp));
 
 		// Try to see if there's a sound font in the user's language.
-		if (file_exists($settings['default_theme_dir'] . '/languages/' . $user_info['language'] . '/sound/a.wav'))
+		if (file_exists(App::get_languages_path() . '/' . $user_info['language'] . '/sound/a.wav'))
 			$sound_language = $user_info['language'];
 
 		// English should be there.
-		elseif (file_exists($settings['default_theme_dir'] . '/languages/en-us/sound/a.wav'))
+		elseif (file_exists(App::get_languages_path() . '/en-us/sound/a.wav'))
 			$sound_language = 'en-us';
 
 		// Guess not...
@@ -59,7 +61,7 @@ class Wave
 		$sound_word = '';
 		for ($i = 0, $wordlen = strlen($word); $i < $wordlen; $i++)
 		{
-			$sound_letter = implode('', file($settings['default_theme_dir'] . '/languages/' . $sound_language . '/sound/' . $word[$i] . '.wav'));
+			$sound_letter = implode('', file(App::get_languages_path() . '/' . $sound_language . '/sound/' . $word[$i] . '.wav'));
 			if (strpos($sound_letter, 'data') === false)
 				self::fail();
 

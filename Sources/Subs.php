@@ -735,10 +735,9 @@ function numeric_context(string $string, $number, bool $commaise = true): string
  * @param int $log_time A timestamp
  * @param bool $show_today Whether to show "Today"/"Yesterday" or just a date
  * @param bool|string $offset_type If false, uses both user time offset and forum offset. If 'forum', uses only the forum offset. Otherwise no offset is applied.
- * @param bool $process_safe Activate setlocale check for changes at runtime. Slower, but safer.
  * @return string A formatted timestamp
  */
-function timeformat($log_time, $show_today = true, $offset_type = false, $process_safe = false)
+function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $user_info, $txt, $modSettings, $sourcedir;
 
@@ -1268,7 +1267,7 @@ function get_image_size_from_string($data)
  */
 function setupThemeContext($forceload = false)
 {
-	global $modSettings, $user_info, $scripturl, $context, $settings, $txt, $maintenance;
+	global $modSettings, $user_info, $scripturl, $context, $settings, $txt;
 	static $loaded = false;
 
 	// Under some cases this function can be called more then once.  That can cause some problems.
@@ -1278,7 +1277,7 @@ function setupThemeContext($forceload = false)
 
 	$loaded = true;
 
-	$context['in_maintenance'] = !empty($maintenance);
+	$context['in_maintenance'] = App::in_maintenance();
 
 	if (!$user_info['is_guest'])
 	{
@@ -1434,11 +1433,11 @@ function template_header()
 				continue;
 			}
 
-			if ($header == 'set-cookie')
+			if ($header == 'set-cookie' || $header == 'Set-Cookie')
 			{
 				foreach ($response_headers->getCookies() as $cookie)
 				{
-					header($header . ':' . $cookie);
+					header($header . ':' . $cookie, false);
 				}
 				continue;
 			}
@@ -1452,7 +1451,7 @@ function template_header()
 	if ($show_warnings)
 	{
 		// Check files that shouldn't be there for security reasons.
-		$securityFiles = ['install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~'];
+		$securityFiles = ['install.php', 'upgrade.php', 'convert.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~'];
 
 		// Add your own files.
 		call_integration_hook('integrate_security_files', [&$securityFiles]);
@@ -1869,7 +1868,7 @@ function setupMenuContext()
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
-	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'manage_attachments', 'manage_smileys']);
+	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'manage_attachments', 'manage_smileys']);
 
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
@@ -2769,7 +2768,8 @@ function get_main_menu_groups()
 function get_user_possible_characters($id_member, $board_id = 0)
 {
 	global $settings, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
-	static $boards_ic = [];
+	global $user_info, $scripturl;
+	static $boards_ic = [], $announced = false;
 
 	// First, some healthy defaults.
 	if (empty($modSettings['characters_ic_may_post']))
@@ -2822,19 +2822,43 @@ function get_user_possible_characters($id_member, $board_id = 0)
 
 	foreach ($memberContext[$id_member]['characters'] as $char_id => $character)
 	{
-		if ($board_in_character)
+		if (!allowedTo('admin_forum'))
 		{
-			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && !allowedTo('admin_forum'))
+			if ($board_in_character)
 			{
-				// IC board that requires IC only, and character is main and (not admin or no admin override)
-				continue;
+				if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'])
+				{
+					// IC board that requires IC only, and character is main and (not admin or no admin override)
+					if (!$announced && $character['id_character'] == $user_info['id_character'])
+					{
+						session_flash('warning', (string) new Phrase('General:cannot_post_ooc'));
+						$announced = true;
+					}
+					continue;
+				}
 			}
-		}
-		else
-		{
-			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && !allowedTo('admin_forum'))
+			else
 			{
-				// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
+				if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'])
+				{
+					// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
+					if (!$announced && $character['id_character'] == $user_info['id_character'])
+					{
+						session_flash('warning', (string) new Phrase('General:cannot_post_ic'));
+						$announced = true;
+					}
+					continue;
+				}
+			}
+
+			if (!$character['is_main'] && !empty($modSettings['characters_ic_require_sheet']) && empty($character['char_sheet']))
+			{
+				if ($char_id == $user_info['id_character'] && !$announced)
+				{
+					$announced = true;
+					$link = $scripturl . '?action=profile;area=character_sheet;u=' . $user_info['id'] . ';char=' . $char_id;
+					session_flash('warning', (string) new Phrase('General:cannot_post_ic_without_sheet', [$link]));
+				}
 				continue;
 			}
 		}

@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
@@ -512,7 +513,7 @@ function BanEdit()
 			];
 
 			// Overwrite some of the default form values if a user ID was given.
-			if (!empty($_REQUEST['u']))
+			if (!empty($_REQUEST['user']))
 			{
 				$request = $smcFunc['db']->query('', '
 					SELECT id_member, real_name, member_ip, email_address
@@ -520,7 +521,7 @@ function BanEdit()
 					WHERE id_member = {int:current_user}
 					LIMIT 1',
 					[
-						'current_user' => (int) $_REQUEST['u'],
+						'current_user' => (int) $_REQUEST['user'],
 					]
 				);
 				if ($smcFunc['db']->num_rows($request) > 0)
@@ -552,7 +553,7 @@ function BanEdit()
 			elseif (isset($_GET['msg']) && !empty($_GET['msg']))
 			{
 				$request = $smcFunc['db']->query('', '
-					SELECT poster_name, poster_ip, poster_email
+					SELECT poster_name, poster_ip, poster_email, id_member
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:message}
 					LIMIT 1',
@@ -562,7 +563,7 @@ function BanEdit()
 				);
 				if ($smcFunc['db']->num_rows($request) > 0)
 				{
-					list ($context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email']) = $smcFunc['db']->fetch_row($request);
+					list ($context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email'], $context['ban_suggestions']['member']['id']) = $smcFunc['db']->fetch_row($request);
 					$context['ban_suggestions']['main_ip'] = IP::format($context['ban_suggestions']['main_ip']);
 				}
 				$smcFunc['db']->free_result($request);
@@ -574,7 +575,15 @@ function BanEdit()
 		}
 	}
 
-	loadJavaScriptFile('suggest.js', [], 'sbb_suggest');
+	if ($context['ban']['is_new'])
+	{
+		$default = null;
+		if ($context['ban_suggestions']['member']['id'])
+		{
+			$default = [$context['ban_suggestions']['member']['id']];
+		}
+		Autocomplete::init('member', '#user', 1, $default);
+	}
 	$context['sub_template'] = 'admin_ban_manage';
 
 }
@@ -851,14 +860,14 @@ function banEdit2()
 
 	if (isset($_POST['ban_suggestions']))
 		// @TODO: is $_REQUEST['bi'] ever set?
-		$saved_triggers = saveTriggers($_POST['ban_suggestions'], $ban_info['id'], isset($_REQUEST['u']) ? (int) $_REQUEST['u'] : 0, isset($_REQUEST['bi']) ? (int) $_REQUEST['bi'] : 0);
+		$saved_triggers = saveTriggers($_POST['ban_suggestions'], $ban_info['id'], isset($_REQUEST['user']) ? (int) $_REQUEST['user'] : 0, isset($_REQUEST['bi']) ? (int) $_REQUEST['bi'] : 0);
 
 	// Something went wrong somewhere... Oh well, let's go back.
 	if (!empty($context['ban_errors']))
 	{
 		$context['ban_suggestions'] = !empty($saved_triggers) ? $saved_triggers : [];
 		$context['ban']['from_user'] = true;
-		$context['ban_suggestions'] = array_merge($context['ban_suggestions'], getMemberData((int) $_REQUEST['u']));
+		$context['ban_suggestions'] = array_merge($context['ban_suggestions'], getMemberData((int) $_REQUEST['user']));
 
 		// Not strictly necessary, but it's nice
 		if (!empty($context['ban_suggestions']['member']['id']))
@@ -1200,16 +1209,14 @@ function validateTriggers(&$triggers)
 			}
 			elseif ($key == 'user')
 			{
-				$user = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', StringLibrary::escape($value, ENT_QUOTES));
-
 				$request = $smcFunc['db']->query('', '
 					SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
 					FROM {db_prefix}members
-					WHERE member_name = {string:username} OR real_name = {string:username}
+					WHERE id_member = {int:id_member}
 					LIMIT 1',
 					[
 						'admin_group' => 1,
-						'username' => $user,
+						'id_member' => $value,
 					]
 				);
 				if ($smcFunc['db']->num_rows($request) == 0)
@@ -1606,8 +1613,6 @@ function BanEditTrigger()
 		redirectexit('action=admin;area=ban;sa=edit' . (!empty($ban_group) ? ';bg=' . $ban_group : ''));
 	}
 
-	loadJavaScriptFile('suggest.js', [], 'sbb_suggest');
-
 	if (empty($ban_id))
 	{
 		$context['ban_trigger'] = [
@@ -1670,12 +1675,19 @@ function BanEditTrigger()
 				'selected' => !empty($row['email_address'])
 			],
 			'banneduser' => [
-				'value' => $row['member_name'],
+				'value' => $row['id_member'],
 				'selected' => !empty($row['member_name'])
 			],
 			'is_new' => false,
 		];
 	}
+
+	$default = null;
+	if ($context['ban_trigger']['banneduser']['selected'])
+	{
+		$default = [$context['ban_trigger']['banneduser']['value']];
+	}
+	Autocomplete::init('member', '#user', 1, $default);
 
 	createToken('admin-bet');
 }

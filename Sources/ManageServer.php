@@ -94,7 +94,6 @@ function ModifySettings()
 		'general' => 'ModifyGeneralSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
-		'phpinfo' => 'ShowPHPinfoSettings',
 	];
 
 	// By default we're editing the core settings
@@ -1061,64 +1060,4 @@ function saveDBSettings(&$config_vars)
 		require_once($sourcedir . '/ManagePermissions.php');
 		save_inline_permissions($inlinePermissions);
 	}
-}
-
-/**
- * Allows us to see the servers php settings
- *
- * - loads the settings into an array for display in a template
- * - drops cookie values just in case
- */
-function ShowPHPinfoSettings()
-{
-	global $context, $txt;
-
-	$category = $txt['phpinfo_settings'];
-
-	// get the data
-	ob_start();
-	phpinfo();
-
-	// We only want it for its body, pigs that we are
-	$info_lines = preg_replace('~^.*<body>(.*)</body>.*$~', '$1', ob_get_contents());
-	$info_lines = explode("\n", strip_tags($info_lines, "<tr><td><h2>"));
-	ob_end_clean();
-
-	// remove things that could be considered sensitive
-	$remove = '_COOKIE|Cookie|_GET|_REQUEST|REQUEST_URI|QUERY_STRING|REQUEST_URL|HTTP_REFERER';
-
-	// put all of it into an array
-	foreach ($info_lines as $line)
-	{
-		if (preg_match('~(' . $remove . ')~', $line))
-			continue;
-
-		// new category?
-		if (strpos($line, '<h2>') !== false)
-			$category = preg_match('~<h2>(.*)</h2>~', $line, $title) ? $category = $title[1] : $category;
-
-		// load it as setting => value or the old setting local master
-		if (preg_match('~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~', $line, $val))
-			$pinfo[$category][$val[1]] = $val[2];
-		elseif (preg_match('~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~', $line, $val))
-			$pinfo[$category][$val[1]] = [$txt['phpinfo_localsettings'] => $val[2], $txt['phpinfo_defaultsettings'] => $val[3]];
-	}
-
-	// load it in to context and display it
-	$context['pinfo'] = [];
-	foreach ($pinfo as $area => $php_area)
-	{
-		$id = str_replace(' ', '_', $area);
-		$context['pinfo'][$id] = [
-			'name' => $area,
-			'2col' => [],
-			'3col' => [],
-		];
-		foreach ($php_area as $key => $setting)
-		{
-			$context['pinfo'][$id][is_array($setting) ? '3col' : '2col'][$key] = $setting;
-		}
-	}
-	$context['page_title'] = $txt['admin_server_settings'];
-	$context['sub_template'] = 'admin_phpinfo';
 }

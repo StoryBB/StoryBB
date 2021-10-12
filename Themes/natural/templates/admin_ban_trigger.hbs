@@ -47,7 +47,7 @@
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
 						</dt>
 						<dd>
-							<input type="text" value="{{{context.ban_trigger.banneduser.value}}}" name="user" id="user" size="44"  onfocus="document.getElementById('user_check').checked = true;">
+							<select id="user" name="user"></select>
 						</dd>
 					</dl>
 				</fieldset>
@@ -62,21 +62,7 @@
 		</form>
 	</div>
 	<script>
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAddMemberSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'username',
-			sControlId: 'user',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
+		$('#user').on('change', function() {
+			$('#user_check').prop('checked', true);
 		});
-
-		function onUpdateName(oAutoSuggest)
-		{
-			document.getElementById('user_check').checked = true;
-			return true;
-		}
-		oAddMemberSuggest.registerCallback('onBeforeUpdate', 'onUpdateName');
 	</script>

@@ -53,7 +53,7 @@ class Affiliates extends AbstractBlock implements Block
 
 		$tiers = $this->get_affiliates();
 
-		$this->content = $this->render('block_affiliates', [
+		$this->content = $this->template('affiliates', [
 			'tiers' => $tiers,
 		]);
 		return $this->content;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %}</title>
+	{% include '@partials/admin/meta_header.twig' %}
+</head>
+<body>
+	{% if navigation %}
+		{% include '@partials/admin/navigation.twig' %}
+	{% endif %}
+	<main{% if navigation %} class="has-nav"{% else %} class="no-nav"{% endif %}>
+		<h4>{{ block('title') }}</h4>
+		<div>
+		{% block content %}{% endblock %}
+		</div>
+	</main>
+
+	{% include '@partials/admin/footer.twig' %}
+
+	<script>
+	var elements = document.querySelectorAll('#admin_menu > ul > li > a');
+	for (element in elements) {
+		if (Number.isInteger(elements[element]) || !('addEventListener' in elements[element])) {
+			continue;
+		}
+		elements[element].addEventListener('click', function(e) {
+			e.preventDefault();
+			var els = document.querySelectorAll('#admin_menu > ul > li.active');
+			for (el in els) {
+				if (Number.isInteger(els[el]) || !('classList' in els[el])) {
+					continue;
+				}
+				els[el].classList.remove('active');
+			}
+			e.target.closest('li').classList.add('active');
+		}, false);
+	};
+	</script>
+</body>
+</html>

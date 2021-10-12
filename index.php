@@ -34,7 +34,7 @@ if (version_compare($php_version, '7.1.3', '<'))
 }
 
 require_once(__DIR__ . '/vendor/autoload.php');
-App::start(__DIR__);
+App::start(__DIR__, new \StoryBB\App\Web);
 
 error_reporting(E_ALL);
 $time_start = microtime(true);
@@ -278,7 +278,6 @@ function sbb_main()
 		'sendactivation' => ['Register.php', 'SendActivation'],
 		'signup' => ['Register.php', 'Register'],
 		'signup2' => ['Register.php', 'Register2'],
-		'suggest' => ['Subs-Editor.php', 'AutoSuggestHandler'],
 		'splittopics' => ['SplitTopics.php', 'SplitTopics'],
 		'stats' => ['Stats.php', 'DisplayStats'],
 		'sticky' => ['Topic.php', 'Sticky'],

@@ -335,7 +335,6 @@ class Uncategorised
 			Table::make('language_delta',
 				[
 					'id_delta' => Column::int()->auto_increment(),
-					'id_theme' => Column::tinyint(),
 					'id_lang' => Column::varchar(5),
 					'lang_file' => Column::varchar(64),
 					'lang_var' => Column::varchar(20),
@@ -345,7 +344,7 @@ class Uncategorised
 				],
 				[
 					Index::primary(['id_delta']),
-					Index::unique(['id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key']),
+					Index::unique(['id_lang', 'lang_file', 'lang_var', 'lang_key']),
 				]
 			),
 			Table::make('log_actions',

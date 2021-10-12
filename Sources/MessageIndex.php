@@ -851,7 +851,7 @@ function MessageIndex()
 		$context['normal_buttons']['markread'] = ['text' => 'mark_read_short', 'image' => 'markread.png', 'lang' => true, 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_var'] . '=' . $context['session_id']];
 	}
 
-	if ($context['can_order_sticky'])
+	if (!empty($context['can_order_sticky']))
 	{
 		$context['normal_buttons']['order'] = ['text' => 'order_sticky_short', 'image' => 'sticky.png', 'lang' => true, 'url' => $scripturl . '?action=sticky;sa=order;board=' . $context['current_board'] . '.0'];
 	}

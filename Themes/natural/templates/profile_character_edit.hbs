@@ -238,7 +238,7 @@
 							}
 						}
 
-						setInnerHTML(document.getElementById("signatureLeft"), maxLength - currentChars);
+						document.getElementById("signatureLeft").innerHTML = maxLength - currentChars;
 					}
 					$(document).ready(function() {
 						calcCharLeft();

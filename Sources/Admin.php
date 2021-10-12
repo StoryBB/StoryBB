@@ -44,7 +44,7 @@ function AdminMain()
 	$admin_areas = [
 		'forum' => [
 			'title' => $txt['general_settings'],
-			'permission' => ['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'],
+			'permission' => ['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'],
 			'areas' => [
 				'index' => [
 					'label' => $txt['admin_center'],
@@ -339,7 +339,6 @@ function AdminMain()
 						'general' => [$txt['general_settings']],
 						'security' => [$txt['security_settings']],
 						'cache' => [$txt['caching_settings']],
-						'phpinfo' => [$txt['phpinfo_settings']],
 					],
 				],
 				'maintain' => [
@@ -349,7 +348,6 @@ function AdminMain()
 					'function' => 'ManageMaintenance',
 					'subsections' => [
 						'routine' => [$txt['maintain_sub_routine'], 'admin_forum'],
-						'database' => [$txt['maintain_sub_database'], 'admin_forum'],
 						'members' => [$txt['maintain_sub_members'], 'admin_forum'],
 						'topics' => [$txt['maintain_sub_topics'], 'admin_forum'],
 					],
@@ -382,7 +380,6 @@ function AdminMain()
 					'icon' => 'reports',
 					'subsections' => [
 						'list' => [$txt['generate_reports_index'], 'admin_forum'],
-						'boards' => [$txt['gr_type_boards'], 'admin_forum'],
 						'board_perms' => [$txt['gr_type_board_perms'], 'admin_forum'],
 						'member_groups' => [$txt['gr_type_member_groups'], 'admin_forum'],
 						'group_perms' => [$txt['gr_type_group_perms'], 'admin_forum'],
@@ -492,7 +489,7 @@ function AdminMain()
  * It uses the Admin template along with the admin sub template.
  * It requires the moderate_forum, manage_membergroups, manage_bans,
  *  admin_forum, manage_permissions, manage_attachments, manage_smileys,
- *  manage_boards, edit_news, or send_mail permission.
+ *  manage_boards, edit_news permission.
  *  It uses the index administrative area.
  *  It can be found by going to ?action=admin.
 */
@@ -501,7 +498,7 @@ function AdminHome()
 	global $txt, $context, $user_info;
 
 	// You have to be able to do at least one of the below to see this page.
-	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
+	isAllowedTo(['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments']);
 
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);

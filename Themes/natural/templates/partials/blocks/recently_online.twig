@@ -1,0 +1,13 @@
+{% if online %}
+	{% if display == "both" %}
+		{% for user in online %}<a href="{{ user.link|raw }}">{{ user.avatar.image|raw }}{{ user.name|raw }}</a>{% endfor %}
+	{% endif %}
+	{% if display == "avatar" %}
+		{% for user in online %}<a href="{{ user.link|raw }}">{{ user.avatar.image|raw }}</a>{% endfor %}
+	{% endif %}
+	{% if display == "name" %}
+		{% for user in online %}<a href="{{ user.link|raw }}">{{ user.name|raw }}</a>{% endfor %}
+	{% endif %}
+{% else %}
+	{{ phrase('no_one_recently_online') }}
+{% endif %}

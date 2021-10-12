@@ -7,7 +7,7 @@
 
 			// Toggle icon
 			document.getElementById("rotIcon").src = sbb_images_url + (rotSwap ? "/selected_open.png" : "/selected.png");
-			setInnerHTML(document.getElementById("rotText"), rotSwap ? {{{json txt.maintain_old_choose}}} : {{{json txt.maintain_old_all}}});
+			document.getElementById("rotText").innerHTML = rotSwap ? {{{json txt.maintain_old_choose}}} : {{{json txt.maintain_old_all}}};
 
 			// Toggle panel
 			$("#rotPanel").slideToggle(300);

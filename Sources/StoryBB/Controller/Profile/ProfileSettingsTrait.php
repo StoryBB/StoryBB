@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Hook\Observable;
 
 trait ProfileSettingsTrait
@@ -34,12 +35,12 @@ trait ProfileSettingsTrait
 	}
 	protected function validate_password()
 	{
-		global $modSettings, $maintenance, $post_errors, $context, $sourcedir, $cur_profile, $user_info, $user_profile;
+		global $modSettings, $post_errors, $context, $sourcedir, $cur_profile, $user_info, $user_profile;
 
 		$memID = $this->params['u'];
 
 		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
+		if (!empty($modSettings['force_ssl']) && !App::in_maintenance() && !httpsOn())
 			fatal_lang_error('login_ssl_required');
 
 		// You didn't even enter a password!

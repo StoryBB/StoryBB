@@ -1,0 +1,17 @@
+$first-tier-nav-bg: #f2f2f2;
+$second-tier-nav-bg: #fff;
+
+$primary-accent: #301a66;
+$primary-accent-contrast: #fff;
+$secondary-accent: #43238b;
+$secondary-accent-contrast: #fff;
+$tertiary-accent: #6736d9;
+$tertiary-accent-contrast: #fff;
+
+$background: #d9cef2;
+
+$admin-font-family: LatoRegular;
+@font-face {
+	font-family: $admin-font-family;
+	src: url("#{$natural__theme_url}/fonts/Lato-Regular.ttf") format("truetype");
+}

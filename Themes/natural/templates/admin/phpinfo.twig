@@ -1,0 +1,41 @@
+{% extends '@layouts/admin.twig' %}
+{% import '@partials/admin/panels.twig' as panel %}
+
+{% block title %}{{ phrase('Admin:php_info') }}{% endblock %}
+
+{% block content %}
+	{% for sectionid, section in phpinfo %}
+		<h5 id="phpinfo-{{ sectionid }}">{{ section.name }}</h5>
+		<table id="{{ sectionid }}" class="table_grid">
+			<tbody>
+
+		{% if section.col2 %}
+			{% for key, value in section.col2 %}
+				<tr>
+					<td>{{ key }}</td>
+					<td colspan="2">{{ value }}</td>
+				</tr>
+			{% endfor %}
+		{% elseif section.col3 %}
+			<tr>
+				<td>{{ phrase('Admin:phpinfo_itemsettings') }}</td>
+				<td>{{ phrase('Admin:phpinfo_localsettings') }}</td>
+				<td>{{ phrase('Admin:phpinfo_defaultsettings') }}</td>
+			</tr>
+
+			{% for key, columns in section.col3 %}
+				<tr>
+					<td>{{ key }}</td>
+
+				{% for value in columns %}
+					<td>{{ value }}</td>
+				{% endfor %}
+				</tr>
+			{% endfor %}
+		{% endif %}
+
+			</tbody>
+		</table>
+		<br>
+	{% endfor %}
+{% endblock %}

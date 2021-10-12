@@ -125,7 +125,7 @@
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
 						</dt>
 						<dd>
-							<input type="text"{{#if context.ban.from_user}}readonly value="{{{context.ban_suggestions.member.name}}}"{{else}} value=""{{/if}} name="user" id="user" size="44">
+							<select id="user" name="user"></select>
 						</dd>
 					</dl>
 
@@ -152,9 +152,6 @@
 				<input type="hidden" name="old_expire" value="{{{context.ban.expiration.days}}}">
 				<input type="hidden" name="bg" value="{{{context.ban.id}}}">
 
-{{#if context.ban.from_user}}
-				<input type="hidden" name="u" value="{{context.ban_suggestions.member.id}}">
-{{/if}}
 				{{session_form}}
 				{{token_form 'admin-bet'}}
 			</div>
@@ -178,24 +175,9 @@
 
 {{#if context.ban.is_new}}
 	// Auto suggest only needed for adding new bans, not editing
-
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAddMemberSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'user',
-			sControlId: 'user',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
-		});
-
-		function onUpdateName(oAutoSuggest)
-		{
-			document.getElementById('user_check').checked = true;
-			return true;
-		}
-		oAddMemberSuggest.registerCallback('onBeforeUpdate', 'onUpdateName');
+	$('#user').on('change', function() {
+		$('#user_check').prop('checked', true);
+	})
 {{/if}}
 
 		function confirmBan(aForm)

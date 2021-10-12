@@ -316,7 +316,7 @@ class Template
 	 */
 	public static function render_page(string $content)
 	{
-		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options, $db_show_debug;
+		global $context, $settings, $scripturl, $txt, $modSettings, $user_info, $options, $db_show_debug;
 
 		$context['session_flash'] = session_flash_retrieve();
 
@@ -364,7 +364,6 @@ class Template
 			'txt' => $txt,
 			'scripturl' => $scripturl,
 			'settings' => $settings,
-			'maintenance' => $maintenance,
 			'modSettings' => $modSettings,
 			'options' => $options,
 			'user_info' => $user_info,

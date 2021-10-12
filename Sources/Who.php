@@ -283,15 +283,13 @@ function determineActions($urls, $preferred_prefix = false)
 
 	// Actions that require a specific permission level.
 	$allowedActions = [
-		'admin' => ['moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'send_mail', 'manage_attachments', 'manage_smileys', 'manage_boards'],
+		'admin' => ['moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'manage_attachments', 'manage_smileys', 'manage_boards'],
 		'ban' => ['manage_bans'],
 		'boardrecount' => ['admin_forum'],
-		'mailing' => ['send_mail'],
 		'maintain' => ['admin_forum'],
 		'manageattachments' => ['manage_attachments'],
 		'manageboards' => ['manage_boards'],
 		'moderate' => ['access_mod_center', 'moderate_forum', 'manage_membergroups'],
-		'optimizetables' => ['admin_forum'],
 		'repairboards' => ['admin_forum'],
 		'search' => ['search_posts'],
 		'search2' => ['search_posts'],

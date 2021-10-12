@@ -651,9 +651,6 @@ function SetThemeSettings()
 	// Also load the actual themes language file - in case of special settings.
 	loadLanguage('Settings', '', true, true);
 
-	// And the custom language strings...
-	loadLanguage('ThemeStrings', '', false, true);
-
 	// Let the theme take care of the settings.
 	$context['theme_settings'] = StoryBB\Model\Theme::get_theme_settings();
 

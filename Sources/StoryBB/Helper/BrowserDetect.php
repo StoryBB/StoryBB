@@ -52,6 +52,11 @@ class BrowserDetect
 		// Initialize some values we'll set differently if necessary...
 		$this->_browsers['needs_size_fix'] = false;
 
+		if (!isset($_SERVER['HTTP_USER_AGENT']))
+		{
+			$_SERVER['HTTP_USER_AGENT'] = '';
+		}
+
 		// One at a time, one at a time, and in this order too
 		if ($this->isOpera())
 			$this->setupOpera();
