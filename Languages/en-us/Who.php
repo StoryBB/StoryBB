@@ -110,7 +110,6 @@ $txt['whoallow_admin'] = 'Viewing the <a href="{scripturl}?action=admin">adminis
 $txt['whoallow_ban'] = 'Editing the ban list.';
 $txt['whoallow_boardrecount'] = 'Recounting the forum totals.';
 $txt['whoallow_editnews'] = 'Editing the news.';
-$txt['whoallow_mailing'] = 'Sending a forum email.';
 $txt['whoallow_maintain'] = 'Performing routine forum maintenance.';
 $txt['whoallow_manageattachments'] = 'Managing the attachments.';
 $txt['whoallow_moderate'] = 'Viewing the <a href="{scripturl}?action=moderate">Moderation Center</a>.';

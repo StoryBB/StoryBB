@@ -121,7 +121,6 @@ $txt['cannot_delete_replies'] = 'Sorry, but you cannot remove these posts, even 
 $txt['cannot_delete_any'] = 'Deleting just any posts in this board is not allowed.';
 $txt['cannot_report_any'] = 'You are not allowed to report posts in this board.';
 $txt['cannot_search_posts'] = 'You are not allowed to search for posts in this forum.';
-$txt['cannot_send_mail'] = 'You don\'t have the privilege of sending out emails to everyone.';
 $txt['cannot_issue_warning'] = 'Sorry, you do not have permission to issue warnings to members.';
 $txt['cannot_split_any'] = 'Splitting just any topic is not allowed in this board.';
 $txt['cannot_view_attachments'] = 'It seems that you are not allowed to download or view attachments on this board.';
