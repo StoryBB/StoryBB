@@ -170,8 +170,8 @@
 				sendXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=pm;sa=send;preview;xml', x.join('&'), onDocSent);
 
 				document.getElementById('preview_section').style.display = '';
-				setInnerHTML(document.getElementById('preview_subject'), txt_preview_title);
-				setInnerHTML(document.getElementById('preview_body'), txt_preview_fetch);
+				document.getElementById('preview_subject').innerHTML = txt_preview_title;
+				document.getElementById('preview_body').innerHTML = txt_preview_fetch;
 
 				return false;
 			}
@@ -191,13 +191,13 @@
 
 			// Show the preview section.
 			var preview = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('preview')[0];
-			setInnerHTML(document.getElementById('preview_subject'), preview.getElementsByTagName('subject')[0].firstChild.nodeValue);
+			document.getElementById('preview_subject').innerHTML = preview.getElementsByTagName('subject')[0].firstChild.nodeValue;
 
 			var bodyText = '';
 			for (var i = 0, n = preview.getElementsByTagName('body')[0].childNodes.length; i < n; i++)
 				bodyText += preview.getElementsByTagName('body')[0].childNodes[i].nodeValue;
 
-			setInnerHTML(document.getElementById('preview_body'), bodyText);
+			document.getElementById('preview_body').innerHTML = bodyText;
 			document.getElementById('preview_body').className = 'post';
 
 			// Show a list of errors (if any).
@@ -206,7 +206,7 @@
 			for (var i = 0, numErrors = errors.getElementsByTagName('error').length; i < numErrors; i++)
 				errorList[errorList.length] = errors.getElementsByTagName('error')[i].firstChild.nodeValue;
 			document.getElementById('errors').style.display = numErrors == 0 ? 'none' : '';
-			setInnerHTML(document.getElementById('error_list'), numErrors == 0 ? '' : errorList.join('<br>'));
+			document.getElementById('error_list').innerHTML = numErrors == 0 ? '' : errorList.join('<br>');
 
 			// Adjust the color of captions if the given data is erroneous.
 			var captions = errors.getElementsByTagName('caption');

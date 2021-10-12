@@ -33,7 +33,7 @@
 				effectText = "{{{.}}}";
 			{{/each}}
 
-			setInnerHTML(document.getElementById('cur_level_div'), slideAmount + '% (' + effectText + ')');
+			document.getElementById('cur_level_div').innerHTML = slideAmount + '% (' + effectText + ')';
 		}
 	</script>
 

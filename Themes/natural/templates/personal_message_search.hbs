@@ -16,7 +16,6 @@
 					<strong>{{txt.pm_search_text}}:</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="{{context.search_params.search}}" size="40">
 					<script>
-						createEventListener(window);
 						window.addEventListener("load", initSearch, false);
 					</script>
 					<select name="searchtype">

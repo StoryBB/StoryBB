@@ -16,7 +16,6 @@ function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 		var cycleHandle = document.getElementById('visual_verification' + uniqueID + '_refresh');
 		if (cycleHandle)
 		{
-			createEventListener(cycleHandle);
 			cycleHandle.addEventListener('click', refreshImages, false);
 		}
 
@@ -24,7 +23,6 @@ function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 		var soundHandle = document.getElementById('visual_verification' + uniqueID + '_sound');
 		if (soundHandle)
 		{
-			createEventListener(soundHandle);
 			soundHandle.addEventListener('click', playSound, false);
 		}
 	}

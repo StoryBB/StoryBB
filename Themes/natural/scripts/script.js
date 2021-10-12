@@ -18,21 +18,6 @@ var is_ie11 = ua.indexOf('trident') != -1 && ua.indexOf('gecko') != -1;
 var is_iphone = ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1;
 var is_android = ua.indexOf('android') != -1;
 
-var ajax_indicator_ele = null;
-
-// Some older versions of Mozilla don't have this, for some reason.
-if (!('forms' in document))
-	document.forms = document.getElementsByTagName('form');
-
-// Versions of ie < 9 do not have this built in
-if (!('getElementsByClassName' in document))
-{
-	document.getElementsByClassName = function(className)
-	{
-		return $('".' + className + '"');
-	}
-}
-
 // Get a response from the server.
 function getServerResponse(sUrl, funcCallback, sType, sDataType)
 {
@@ -96,12 +81,6 @@ function sendXMLDocument(sUrl, sContent, funcCallback)
 	return true;
 }
 
-// A property we'll be needing for php_to8bit.
-String.prototype.oCharsetConversion = {
-	from: '',
-	to: ''
-};
-
 // Convert a string to an 8 bit representation (like in PHP).
 String.prototype.php_to8bit = function ()
 {
@@ -123,14 +102,6 @@ String.prototype.php_to8bit = function ()
 		return sReturn;
 	}
 
-// Character-level replacement function.
-String.prototype.php_strtr = function (sFrom, sTo)
-{
-	return this.replace(new RegExp('[' + sFrom + ']', 'g'), function (sMatch) {
-		return sTo.charAt(sFrom.indexOf(sMatch));
-	});
-}
-
 String.prototype.php_urlencode = function()
 {
 	return escape(this).replace(/\+/g, '%2b').replace('*', '%2a').replace('/', '%2f').replace('@', '%40');
@@ -144,11 +115,6 @@ String.prototype.php_htmlspecialchars = function()
 String.prototype.php_unhtmlspecialchars = function()
 {
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/&#39;/g, "'");
-}
-
-String.prototype.php_addslashes = function()
-{
-	return this.replace(/\\/g, '\\\\').replace(/'/g, '\\\'');
 }
 
 String.prototype._replaceEntities = function(sInput, sDummy, sNum)
@@ -487,17 +453,6 @@ function submitThisOnce(oControl)
 	return !sbb_formSubmitted;
 }
 
-// Deprecated, as innerHTML is supported everywhere.
-function setInnerHTML(oElement, sToValue)
-{
-	oElement.innerHTML = sToValue;
-}
-
-function getInnerHTML(oElement)
-{
-	return oElement.innerHTML;
-}
-
 // Set the "outer" HTML of an element.
 function setOuterHTML(oElement, sToValue)
 {
@@ -799,7 +754,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		{
 			var oLink = $(this.opt.aSwapLinks[i].sId);
 			if (oLink.length > 0)
-				setInnerHTML(oLink, bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
+				oLink.innerHTML = bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded;
 		}
 	}
 
@@ -854,90 +809,14 @@ smc_Toggle.prototype.toggle = function()
 
 function ajax_indicator(turn_on)
 {
-	if (ajax_indicator_ele == null)
+	var element = $('#ajax_in_progress');
+	if (!element.length)
 	{
-		ajax_indicator_ele = document.getElementById('ajax_in_progress');
-
-		if (ajax_indicator_ele == null && typeof(ajax_notification_text) != null)
-		{
-			create_ajax_indicator_ele();
-		}
+		var element = $('<div id="ajax_in_progress">');
+		element.html(ajax_notification_text);
+		element.appendTo('body');
 	}
-
-	if (ajax_indicator_ele != null)
-	{
-		ajax_indicator_ele.style.display = turn_on ? 'block' : 'none';
-	}
-}
-
-function create_ajax_indicator_ele()
-{
-	// Create the div for the indicator.
-	ajax_indicator_ele = document.createElement('div');
-
-	// Set the id so it'll load the style properly.
-	ajax_indicator_ele.id = 'ajax_in_progress';
-
-	// Set the text.  (Note:  You MUST append here and not overwrite.)
-	ajax_indicator_ele.innerHTML += ajax_notification_text;
-
-	// Finally attach the element to the body.
-	document.body.appendChild(ajax_indicator_ele);
-}
-
-function createEventListener(oTarget)
-{
-	if (!('addEventListener' in oTarget))
-	{
-		if (oTarget.attachEvent)
-		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget.attachEvent('on' + sEvent, funcHandler);
-			}
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget.detachEvent('on' + sEvent, funcHandler);
-			}
-		}
-		else
-		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget['on' + sEvent] = funcHandler;
-			}
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget['on' + sEvent] = null;
-			}
-		}
-	}
-}
-
-// This function will retrieve the contents needed for the jump to boxes.
-function grabJumpToContent(elem)
-{
-	var oXMLDoc = getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=xmlhttp;sa=jumpto;xml');
-	var aBoardsAndCategories = [];
-
-	ajax_indicator(true);
-
-	oXMLDoc.done(function(data, textStatus, jqXHR){
-
-		var items = $(data).find('item');
-			items.each(function(i) {
-			aBoardsAndCategories[i] = {
-				id: parseInt($(this).attr('id')),
-				isCategory: $(this).attr('type') == 'category',
-				name: this.firstChild.nodeValue.removeEntities(),
-				is_current: false,
-				childLevel: parseInt($(this).attr('childlevel'))
-			}
-		});
-
-		ajax_indicator(false);
-
-		for (var i = 0, n = aJumpTo.length; i < n; i++)
-		{
-			aJumpTo[i].fillSelect(aBoardsAndCategories);
-		}
-	});
+	element.css('display', turn_on ? 'block' : 'none');
 }
 
 // This'll contain all JumpTo objects on the page.
@@ -952,7 +831,31 @@ function JumpTo(oJumpToOptions)
 
 	// Register a change event after the select has been created.
 	$('#' + this.opt.sContainerId).one('mouseenter', function() {
-		grabJumpToContent(this);
+		var oXMLDoc = getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=xmlhttp;sa=jumpto;xml');
+		var aBoardsAndCategories = [];
+
+		ajax_indicator(true);
+
+		oXMLDoc.done(function(data, textStatus, jqXHR){
+
+			var items = $(data).find('item');
+				items.each(function(i) {
+				aBoardsAndCategories[i] = {
+					id: parseInt($(this).attr('id')),
+					isCategory: $(this).attr('type') == 'category',
+					name: this.firstChild.nodeValue.removeEntities(),
+					is_current: false,
+					childLevel: parseInt($(this).attr('childlevel'))
+				}
+			});
+
+			ajax_indicator(false);
+
+			for (var i = 0, n = aJumpTo.length; i < n; i++)
+			{
+				aJumpTo[i].fillSelect(aBoardsAndCategories);
+			}
+		});
 	});
 }
 
@@ -962,7 +865,7 @@ JumpTo.prototype.showSelect = function ()
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	setInnerHTML(document.getElementById(this.opt.sContainerId), this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : '?board=' + this.opt.iCurBoardId + '.0') + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + sbb_prepareScriptUrl(sbb_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';">' : '')));
+	document.getElementById(this.opt.sContainerId).innerHTML = this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : '?board=' + this.opt.iCurBoardId + '.0') + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + sbb_prepareScriptUrl(sbb_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';">' : ''));
 	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
 }
 
@@ -1033,26 +936,6 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 			if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 				window.location.href = sbb_scripturl + this.options[this.selectedIndex].value.substr(sbb_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 		}
-}
-
-// Handy shortcuts for getting the mouse position on the screen - only used for IE at the moment.
-function sbb_mousePose(oEvent)
-{
-	var x = 0;
-	var y = 0;
-
-	if (oEvent.pageX)
-	{
-		y = oEvent.pageY;
-		x = oEvent.pageX;
-	}
-	else if (oEvent.clientX)
-	{
-		x = oEvent.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
-		y = oEvent.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
-	}
-
-	return [x, y];
 }
 
 // Short function for finding the actual position of an item.
@@ -1127,15 +1010,7 @@ function sbbSelectText(oCurElement, bActOnElement)
 	if (typeof(oCodeArea) != 'object' || oCodeArea == null)
 		return false;
 
-	// Start off with my favourite, internet explorer.
-	if ('createTextRange' in document.body)
-	{
-		var oCurRange = document.body.createTextRange();
-		oCurRange.moveToElementText(oCodeArea);
-		oCurRange.select();
-	}
-	// Firefox at el.
-	else if (window.getSelection)
+	if (window.getSelection)
 	{
 		var oCurSelection = window.getSelection();
 		// Safari is special!
@@ -1160,17 +1035,7 @@ function sbbSelectText(oCurElement, bActOnElement)
 // A function used to clean the attachments on post page
 function cleanFileInput(idElement)
 {
-	// Simpler solutions work in Opera, IE, Safari and Chrome.
-	if (is_opera || is_ie || is_safari || is_chrome)
-	{
-		document.getElementById(idElement).outerHTML = document.getElementById(idElement).outerHTML;
-	}
-	// What else can we do? By the way, this doesn't work in Chrome and Mac's Safari.
-	else
-	{
-		document.getElementById(idElement).type = 'input';
-		document.getElementById(idElement).type = 'file';
-	}
+	document.getElementById(idElement).value = null;
 }
 
 function applyWindowClasses(oList)

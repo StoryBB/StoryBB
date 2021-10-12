@@ -52,7 +52,6 @@ function sbbRegister(formID, passwordDifficultyLevel, regTextStrings)
 		// Step to it!
 		if (eventHandler)
 		{
-			createEventListener(inputHandle);
 			inputHandle.addEventListener('keyup', eventHandler, false);
 			eventHandler();
 
