@@ -339,7 +339,6 @@ function AdminMain()
 						'general' => [$txt['general_settings']],
 						'security' => [$txt['security_settings']],
 						'cache' => [$txt['caching_settings']],
-						'phpinfo' => [$txt['phpinfo_settings']],
 					],
 				],
 				'maintain' => [
