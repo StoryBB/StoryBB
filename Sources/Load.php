@@ -2010,14 +2010,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// And of course, let's load the default CSS file.
-	if (empty($modSettings['minimize_css']) || empty($settings['compile_time']))
-	{
-		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => time()]), ['external' => true], 'sbb_index');
-	}
-	else
-	{
-		loadCSSFile($urlgenerator->generate('css', ['theme' => $settings['theme_id'], 'timestamp' => $settings['compile_time']]), ['external' => true], 'sbb_index');
-	}
+	loadSCSSFile('index');
 
 	loadCSSFile('fontawesome-free-5.15.1-web/css/all.min.css', ['default_theme' => true, 'minimize' => false, 'validate' => false], 'font-awesome');
 
@@ -2201,6 +2194,27 @@ function check_load_avg(string $category): void
 	{
 		fatal_lang_error('loadavg_' . $category . '_disabled', false);
 	}
+}
+
+function loadSCSSFile($scssfile)
+{
+	global $settings, $modSettings;
+
+	$container = Container::instance();
+	$urlgenerator = $container->get('urlgenerator');
+
+	$options = [
+		'theme' => $settings['theme_id'],
+		'scssfile' => $scssfile,
+		'timestamp' => time(),
+	];
+
+	if (!empty($modSettings['minimize_css']) && !empty($settings['compile_time_' . $scssfile]))
+	{
+		$options['timestamp'] = $settings['compile_time_' . $scssfile];
+	}
+
+	loadCSSFile($urlgenerator->generate('css', $options), ['external' => true], 'sbb_' . $scssfile);
 }
 
 /**
