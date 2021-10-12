@@ -13,6 +13,7 @@
 namespace StoryBB\Helper;
 
 use RuntimeException;
+use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Dependency\Database;
 
 class SiteSettings
@@ -25,7 +26,7 @@ class SiteSettings
 	{
 		if ($this->settings === null)
 		{
-			$this->settings = $this->load_settings();
+			$this->settings = $this->load();
 		}
 
 		if (isset($this->settings[$key]))
@@ -48,7 +49,7 @@ class SiteSettings
 		return $this->settings;
 	}
 
-	protected function load_settings(): array
+	protected function load(): array
 	{
 		$db = $this->db();
 
@@ -96,5 +97,68 @@ class SiteSettings
 		}
 
 		return $settings;
+	}
+
+	public function save(array $changes): void
+	{
+		if (empty($changes))
+		{
+			return;
+		}
+
+		// Go check if there are any settings to be removed.
+		$to_remove = [];
+		foreach ($changes as $k => $v)
+		{
+			if ($v === null)
+			{
+				// Found some, remove them from the original array and add them to ours.
+				unset($changes[$k]);
+				$to_remove[] = $k;
+			}
+		}
+
+		// Proceed with the deletion.
+		if (!empty($to_remove))
+		{
+			$this->db()->query('', '
+				DELETE FROM {db_prefix}settings
+				WHERE variable IN ({array_string:remove})',
+				[
+					'remove' => $to_remove,
+				]
+			);
+		}
+
+		$replaceArray = [];
+		foreach ($changes as $variable => $value)
+		{
+			// If it's already that value, leave it as is.
+			if (isset($this->settings[$variable]) && $this->settings[$variable] == $value)
+			{
+				continue;
+			}
+
+			// If the variable isn't set, but would only be set to nothing'ness, then don't bother setting it.
+			elseif (!isset($this->settings[$variable]) && empty($value))
+			{
+				continue;
+			}
+
+			$replaceArray[] = [$variable, $value];
+			$this->settings[$variable] = $value;
+		}
+
+		if (empty($replaceArray))
+		{
+			return;
+		}
+
+		$this->db()->insert(DatabaseAdapter::INSERT_REPLACE,
+			'{db_prefix}settings',
+			['variable' => 'string-255', 'value' => 'string-65534'],
+			$replaceArray,
+			['variable']
+		);
 	}
 }
