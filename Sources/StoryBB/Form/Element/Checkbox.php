@@ -33,7 +33,7 @@ class Checkbox extends Traits\Base implements Inputtable
 		$rendercontext = [
 			'name' => $this->name,
 			'required' => $this->required,
-			'checked' => !empty($rawdata[$this->name]),
+			'checked' => !empty($this->rawdata[$this->name]),
 		];
 
 		return ($this->templater->load('@partials/form/checkbox.twig'))->render($rendercontext);
