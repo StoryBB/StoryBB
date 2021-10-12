@@ -278,7 +278,6 @@ function sbb_main()
 		'sendactivation' => ['Register.php', 'SendActivation'],
 		'signup' => ['Register.php', 'Register'],
 		'signup2' => ['Register.php', 'Register2'],
-		'suggest' => ['Subs-Editor.php', 'AutoSuggestHandler'],
 		'splittopics' => ['SplitTopics.php', 'SplitTopics'],
 		'stats' => ['Stats.php', 'DisplayStats'],
 		'sticky' => ['Topic.php', 'Sticky'],

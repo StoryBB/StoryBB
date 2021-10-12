@@ -755,9 +755,6 @@ $txt['restore_topic'] = 'Restore Topic';
 $txt['restore_message'] = 'Restore';
 $txt['quick_mod_restore'] = 'Restore Selected';
 
-// Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
-$txt['autosuggest_delete_item'] = 'Delete Item';
-
 // Debug related - when $db_show_debug is true.
 $txt['debug_templates'] = 'Templates: ';
 $txt['debug_subtemplates'] = 'Sub templates: ';
