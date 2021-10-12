@@ -14,6 +14,7 @@ namespace StoryBB\User;
 
 use RuntimeException;
 use StoryBB\Dependency\Database;
+use StoryBB\Dependency\SiteSettings;
 
 class CurrentUser
 {
@@ -30,8 +31,9 @@ class CurrentUser
 	const GROUP_ADMIN = 1;
 
 	use Database;
+	use SiteSettings;
 
-	protected $user_data;
+	protected $user_data = [];
 
 	public function load_user(int $userid)
 	{
@@ -77,26 +79,200 @@ class CurrentUser
 			];
 		}
 
+		if (empty($this->user_data['time_format']))
+		{
+			$this->user_data['time_format'] = $this->sitesettings()->time_format;
+		}
+
 		$GLOBALS['user_settings'] = $this->user_data; // @todo Dirty legacy hack.
+	}
+
+	public function get_time_offset(): int
+	{
+		if (isset($this->user_data['time_offset']))
+		{
+			return $this->user_data['time_offset'];
+		}
+
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_user_time_offset.');
+		}
+
+		if (!empty($this->user_data['timezone']))
+		{
+			// Get the offsets from UTC for the server, then for the user.
+			$tz_system = new DateTimeZone(@date_default_timezone_get());
+			$tz_user = new DateTimeZone($this->user_data['timezone']);
+			$time_system = new DateTime('now', $tz_system);
+			$time_user = new DateTime('now', $tz_user);
+			$this->user_data['time_offset'] = ($tz_user->getOffset($time_user) - $tz_system->getOffset($time_system)) / 3600;
+		}
+		else
+		{
+			$this->user_data['time_offset'] = 0;
+		}
 	}
 
 	public function is_authenticated(): bool
 	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call is_authenticated.');
+		}
 		return $this->user_data['authenticated'];
 	}
 
 	public function is_activated(): bool
 	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call is_activated.');
+		}
 		return in_array($this->user_data['is_activated'], [self::STATE_ACTIVATED, self::STATE_BANNED + self::STATE_ACTIVATED]);
 	}
 
 	public function get_groups(): array
 	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_groups.');
+		}
 		return $this->user_data['groups'];
 	}
 
 	public function is_site_admin(): bool
 	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call is_site_admin.');
+		}
 		return in_array(self::GROUP_ADMIN, $this->user_data['groups']);
+	}
+
+	public function can($permission, string $type = 'general', int $perms_context = 0): bool
+	{
+		if ($this->is_site_admin())
+		{
+			return true;
+		}
+
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call permissions.');
+		}
+
+		if (!isset($this->user_data['permissions'][$type][$perms_context]))
+		{
+			switch ($type)
+			{
+				case 'general':
+					$perms_context = 0; // Generic permissions have no contextual cue.
+					$this->load_general_permissions();
+					break;
+				case 'board':
+					$this->load_board_permissions();
+					break;
+			}
+		}
+
+		$permission = (array) $permission;
+		if (!isset($this->user_data['permissions'][$type][$perms_context]))
+		{
+			throw new RuntimeException('Permissions not loaded (not found?) for type ' . $type . ' in context ' . $perms_context);
+		}
+		return count(array_intersect($this->user_data['permissions'][$type][$perms_context], $permission)) > 0;
+	}
+
+	public function must($permission, string $type = 'generic', int $perms_context = 0): void
+	{
+		if (!$this->can($permission, $type, $perms_context))
+		{
+			throw new RuntimeException('Insufficient permissions');
+		}
+	}
+
+	protected function load_general_permissions(): void
+	{
+		if (isset($this->user_data['permissions']['general'][0]))
+		{
+			return;
+		}
+
+		$this->user_data['permissions']['general'][0] = [];
+
+		$db = $this->db();
+		$request = $db->query('', '
+			SELECT permission, add_deny
+			FROM {db_prefix}permissions
+			WHERE id_group IN ({array_int:member_groups})',
+			[
+				'member_groups' => $this->user_data['groups'],
+			]
+		);
+		$removals = [];
+		while ($row = $db->fetch_assoc($request))
+		{
+			if (empty($row['add_deny']))
+			{
+				$removals[] = $row['permission'];
+			}
+			else
+			{
+				$this->user_data['permissions']['general'][0][] = $row['permission'];
+			}
+		}
+		$db->free_result($request);
+
+		$this->user_data['permissions']['general'][0] = array_diff($this->user_data['permissions']['general'][0], $removals);
+	}
+
+	protected function load_board_permissions(): void
+	{
+		if (isset($this->user_data['permissions']['board']))
+		{
+			return;
+		}
+
+		$this->user_data['permissions']['board'] = [];
+
+		$db = $this->db();
+
+		$profiles = [];
+
+		$request = $db->query('', '
+			SELECT id_profile, permission, add_deny
+			FROM {db_prefix}board_permissions
+			WHERE id_group IN ({array_int:member_groups})',
+			[
+				'member_groups' => $this->user_data['groups'],
+			]
+		);
+		while ($row = $db->fetch_assoc($request))
+		{
+			if (empty($row['add_deny']))
+			{
+				$removals[] = $row['permission'];
+			}
+			else
+			{
+				$profiles[$row['id_profile']][] = $row['permission'];
+			}
+		}
+		$db->free_result($request);
+
+		foreach ($profiles as $id_profile => $profile)
+		{
+			$profiles[$id_profile] = array_diff($profile, $removals);
+		}
+
+		$request = $db->query('', '
+			SELECT id_board, id_profile
+			FROM {db_prefix}boards');
+		while ($db->fetch_assoc($request))
+		{
+			$this->user_data['permission']['board'][$row['id_board']] = $row['id_profile'];
+		}
+		$db->free_result($request);
 	}
 }
