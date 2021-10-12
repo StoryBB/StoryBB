@@ -9,6 +9,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Hook\Observable;
 
 /**
@@ -49,7 +50,9 @@ function RemindMe()
  */
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $sourcedir, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
+	global $context, $txt, $scripturl, $sourcedir, $user_info, $smcFunc, $language, $modSettings;
+
+	$webmaster_email = App::container()->get('sitesettings')->webmaster_email;
 
 	checkSession();
 	validateToken('remind');

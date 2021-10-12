@@ -44,11 +44,6 @@ $language = 'en-us';
  */
 $boardurl = 'http://localhost:8000';
 /**
- * Email address to send emails from. (like noreply@yourdomain.com.)
- * @var string
- */
-$webmaster_email = 'noreply@myserver.com';
-/**
  * Name of the cookie to set for authentication.
  * @var string
  */

@@ -304,6 +304,7 @@ function ModifyMailSettings($return_config = false)
 		'',
 			// SMTP stuff.
 			['select', 'mail_type', [$txt['mail_type_default'], 'SMTP', 'SMTP - STARTTLS']],
+			['text', 'webmaster_email'],
 			['text', 'smtp_host'],
 			['text', 'smtp_port'],
 			['text', 'smtp_username'],
