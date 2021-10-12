@@ -46,7 +46,6 @@ function ManageMaintenance()
 			'activities' => [
 				'repair' => 'MaintainFindFixErrors',
 				'recount' => 'AdminBoardRecount',
-				'logs' => 'MaintainEmptyUnimportantLogs',
 				'cleancache' => 'MaintainCleanCache',
 				'cleantemplatecache' => 'MaintainCleanTemplateCache',
 			],
@@ -233,41 +232,6 @@ function MaintainCleanTemplateCache()
 	StoryBB\Template\Cache::clean();
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_template_cache']));
-}
-
-/**
- * Empties all uninmportant logs
- */
-function MaintainEmptyUnimportantLogs()
-{
-	global $context, $smcFunc, $txt;
-
-	checkSession();
-	validateToken('admin-maint');
-
-	// No one's online now.... MUHAHAHAHA :P.
-	$smcFunc['db']->query('', '
-		DELETE FROM {db_prefix}log_online');
-
-	// Dump the banning logs.
-	$smcFunc['db']->query('', '
-		DELETE FROM {db_prefix}log_banned');
-
-	// Start id_error back at 0 and dump the error log.
-	$smcFunc['db']->truncate_table('log_errors');
-
-	// Clear out the spam log.
-	$smcFunc['db']->query('', '
-		DELETE FROM {db_prefix}log_floodcontrol');
-
-	// Last but not least, the search logs!
-	$smcFunc['db']->truncate_table('log_search_topics');
-	$smcFunc['db']->truncate_table('log_search_messages');
-	$smcFunc['db']->truncate_table('log_search_results');
-
-	updateSettings(['search_pointer' => 0]);
-
-	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
 }
 
 /**
