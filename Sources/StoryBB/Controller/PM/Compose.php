@@ -39,7 +39,7 @@ class Compose extends AbstractPMController
 		$context['reply'] = isset($_REQUEST['pmsg']) || isset($_REQUEST['quote']);
 
 		// Check whether we've gone over the limit of messages we can send per hour.
-		if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum', 'send_mail']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+		if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 		{
 			// How many messages have they sent this last hour?
 			$request = $smcFunc['db']->query('', '
@@ -321,7 +321,7 @@ class Compose extends AbstractPMController
 		$post_errors = [];
 
 		// Check whether we've gone over the limit of messages we can send per hour - fatal error if fails!
-		if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum', 'send_mail']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+		if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 		{
 			// How many have they sent this last hour?
 			$request = $smcFunc['db']->query('', '
@@ -525,7 +525,7 @@ class Compose extends AbstractPMController
 		}
 
 		// Before we send the PM, let's make sure we don't have an abuse of numbers.
-		elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) > $modSettings['max_pm_recipients'] && !allowedTo(['moderate_forum', 'send_mail', 'admin_forum']))
+		elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) > $modSettings['max_pm_recipients'] && !allowedTo(['moderate_forum', 'admin_forum']))
 		{
 			$context['send_log'] = [
 				'sent' => [],

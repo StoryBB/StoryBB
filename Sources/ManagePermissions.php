@@ -1070,7 +1070,6 @@ function loadAllPermissions()
 			'manage_membergroups' => [false, 'member_admin'],
 			'manage_permissions' => [false, 'member_admin'],
 			'manage_bans' => [false, 'member_admin'],
-			'send_mail' => [false, 'member_admin'],
 			'issue_warning' => [false, 'member_admin'],
 			'profile_view' => [false, 'profile'],
 			'profile_forum' => [true, 'profile'],
@@ -1809,7 +1808,6 @@ function loadIllegalGuestPermissions()
 		'remove',
 		'report_any',
 		'report_user',
-		'send_mail',
 		'split_any',
 	];
 

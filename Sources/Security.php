@@ -426,7 +426,7 @@ function banPermissions()
 			'poll_lock_own', 'poll_lock_any',
 			'poll_remove_own', 'poll_remove_any',
 			'manage_attachments', 'manage_smileys', 'manage_boards', 'admin_forum', 'manage_permissions',
-			'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail',
+			'moderate_forum', 'manage_membergroups', 'manage_bans',
 			'profile_identity_any', 'profile_extra_any',
 			'profile_forum_any', 'profile_other_any', 'profile_signature_any',
 			'post_new', 'post_reply_own', 'post_reply_any',
