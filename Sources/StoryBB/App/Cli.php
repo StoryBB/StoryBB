@@ -10,8 +10,9 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Cli;
+namespace StoryBB\App;
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Routing\Exception\InvalidRouteException;
@@ -22,10 +23,12 @@ use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
 use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RequestContext;
 
-class App
+class Cli
 {
-	public static function build_container($global_config)
+	public function build_container()
 	{
+		$global_config = App::get_global_config();
+
 		$container = Container::instance();
 		$container->inject('cachedir', \StoryBB\App::get_root_path() . '/cache');
 

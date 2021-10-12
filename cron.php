@@ -32,7 +32,7 @@ define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 define('MAX_CRON_TIME', 10);
 
 // We're going to want a few globals... these are all set later.
-global $time_start, $maintenance, $msubject, $mmessage, $language;
+global $time_start, $msubject, $mmessage, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;
@@ -42,18 +42,13 @@ define('TIME_START', microtime(true));
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-App::start(__DIR__);
+App::start(__DIR__, new \StoryBB\App\Cli);
 
 if (App::in_maintenance())
 {
 	die(App::get_global_config_item('maintenance_message'));
 }
 $container = Container::instance();
-CliApp::build_container(App::get_global_config());
-
-$smcFunc = [
-	'db' => $container->get('database'),
-];
 
 $boarddir = __DIR__;
 $sourcedir = App::get_sources_path();
