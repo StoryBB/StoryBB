@@ -407,7 +407,7 @@ function Profile()
 	$section->add_item((new NavItem(
 		'ban_account',
 		$txt['profile_ban_account'],
-		['action' => 'admin', 'area' => 'ban', 'sa' => 'add', 'u' => $memID],
+		['action' => 'admin', 'area' => 'ban', 'sa' => 'add', 'user' => $memID],
 		'',
 		$context['user']['is_owner'] ? [] : ['manage_bans']
 	))->is_enabled(function () use ($cur_profile) {
