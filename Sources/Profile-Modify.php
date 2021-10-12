@@ -121,7 +121,6 @@ function setupProfileContext($fields)
 	addInlineJavaScript('
 	if (document.forms.creator) {
 		var form_handle = document.forms.creator;
-		createEventListener(form_handle);
 		' . (!empty($context['require_password']) ? '
 		form_handle.addEventListener(\'submit\', function(event)
 		{
