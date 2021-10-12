@@ -201,7 +201,7 @@ class App
 
 			$result = $instance->$method(...$args);
 			// There's a bit of logging we're going to be doing here, potentially.
-			if (!$instance instanceof Unloggable)
+			if (!$instance instanceof Unloggable && !$instance instanceof Administrative)
 			{
 				// @todo log the hit
 

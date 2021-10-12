@@ -1,0 +1,33 @@
+body {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	background: $first-tier-nav-bg;
+
+	font-family: $admin-font-family;
+}
+
+main {
+    background: $background;
+    height: 100vh;
+    &:not(.no-nav) {
+	    width: calc(100vw - 300px);
+	    position: absolute;
+	    top: 0;
+	    left: 300px;
+	    overflow-y: scroll;
+    }
+}
+main > h4 {
+	background: $tertiary-accent;
+	line-height: 70px;
+	display: block;
+	margin: 0;
+	color: #fff;
+	font-size: 24px;
+	font-family: $admin-font-family;
+}
+main > div {
+	margin: 40px;
+	background: #f2f2f2;
+}

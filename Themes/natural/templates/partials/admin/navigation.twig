@@ -1,0 +1,34 @@
+	<nav id="admin_menu">
+		<a href="/">
+			<i class="fa fa-fw fas fa-feather-alt"></i>
+		</a>
+		<ul>
+		{% for toplevelid, toplevelsection in navigation %}
+			<li {% if toplevelsection.active %} class="active"{% endif %}>
+				<a href="#{{ toplevelid }}">
+					<i class="fa fa-fw {{ toplevelsection.icon }}"></i>
+					{{ toplevelsection.label }}
+				</a>
+				<aside>
+					<h2>{{ toplevelsection.label }}</h2>
+					{% for section in toplevelsection.sections %}
+						<h3>{{ section.label }}</h3>
+						<ul>
+						{% for item in section.items %}
+							<li{% if item.active %} class="active"{% endif %}><a href="{{ item.url }}">{{ item.label }}</a></li>
+						{% endfor %}
+						</ul>
+					{% endfor %}
+				</aside>
+			</li>
+		{% endfor %}
+		{% if navigation %}
+			<li>
+				<a href="#">
+					<i class="fa fa-fw fas fa-sign-out-alt"></i>
+					{{ phrase('General:logout') }}
+				</a>
+			</li>
+		{% endif %}
+		</ul>
+	</nav>

@@ -1,0 +1,90 @@
+nav > a {
+	width: 70px;
+	height: 70px;
+	display: inline-block;
+	font-size: 40px;
+	line-height: 70px;
+	text-align: center;
+	background: $primary-accent;
+	color: $primary-accent-contrast;
+}
+nav > ul > li {
+	width: 70px;
+	height: 90px;
+	color: $secondary-accent;
+	background: $first-tier-nav-bg;
+}
+nav > ul > li > a {
+	display: inline-block;
+	color: $secondary-accent;
+	background: $first-tier-nav-bg;
+	font-size: 10px;
+	line-height: 20px;
+	text-decoration: none;
+	text-align: center;
+}
+nav .fa {
+	font-size: 40px;
+	line-height: 70px;
+	font-family: "Font Awesome 5 Free";
+}
+nav > ul > li.active, nav > ul > li.active > a {
+	background: $secondary-accent;
+	color: #fff;
+}
+nav > ul {
+	padding: 0;
+	margin: 0;
+	width: 70px;
+}
+nav > ul > li > aside {
+	display: none;
+}
+nav > ul > li.active > aside {
+	position: fixed;
+	display: block;
+	top: 0;
+	left: 70px;
+	width: 220px;
+	height: 100vh;
+	border-left: 5px solid $primary-accent;
+	border-right: 5px solid $tertiary-accent;
+	background: $primary-accent-contrast;
+}
+nav > ul > li.active > aside > h2 {
+	line-height: 70px;
+	background: $secondary-accent;
+	color: $secondary-accent-contrast;
+	margin: 0;
+	padding: 0 10px;
+}
+nav > ul > li.active > aside > h3 {
+	line-height: 40px;
+	color: #444;
+	margin: 10px;
+}
+nav > ul > li > aside > ul > li {
+	padding: 5px;
+	margin: 10px 0;
+}
+nav > ul > li > aside > ul > li {
+	&> a:link, a:visited {
+		color: $tertiary-accent;
+		text-decoration: none;
+	}
+}
+nav > ul > li > aside > ul > li.active {
+	background: $tertiary-accent;
+	color: $tertiary-accent-contrast;
+}
+nav > ul > li > aside > ul > li.active {
+	&> a:link, &> a:visited {
+		color: $tertiary-accent-contrast;
+	}
+}
+
+nav > ul > li > aside > ul > li > a[href='#']:after {
+	content: " !";
+	color: #e00;
+	font-weight: 700;
+}
