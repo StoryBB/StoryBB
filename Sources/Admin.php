@@ -380,7 +380,6 @@ function AdminMain()
 					'icon' => 'reports',
 					'subsections' => [
 						'list' => [$txt['generate_reports_index'], 'admin_forum'],
-						'boards' => [$txt['gr_type_boards'], 'admin_forum'],
 						'board_perms' => [$txt['gr_type_board_perms'], 'admin_forum'],
 						'member_groups' => [$txt['gr_type_member_groups'], 'admin_forum'],
 						'group_perms' => [$txt['gr_type_group_perms'], 'admin_forum'],

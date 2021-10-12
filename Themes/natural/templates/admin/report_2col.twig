@@ -1,0 +1,24 @@
+{% extends '@layouts/admin.twig' %}
+{% import '@partials/admin/panels.twig' as panel %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		{% for table in data %}
+			<table>
+				<thead>
+					<th colspan="2">{{ table.title }}</th>
+				</thead>
+				<tbody>
+					{% for key, label in table.heading %}
+						<tr>
+							<td>{{ label }}</td>
+							<td>{{ table.data[key] }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endfor %}
+	{% endautoescape %}
+{% endblock %}
