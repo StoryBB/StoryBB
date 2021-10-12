@@ -1267,7 +1267,7 @@ function get_image_size_from_string($data)
  */
 function setupThemeContext($forceload = false)
 {
-	global $modSettings, $user_info, $scripturl, $context, $settings, $txt, $maintenance;
+	global $modSettings, $user_info, $scripturl, $context, $settings, $txt;
 	static $loaded = false;
 
 	// Under some cases this function can be called more then once.  That can cause some problems.
@@ -1277,7 +1277,7 @@ function setupThemeContext($forceload = false)
 
 	$loaded = true;
 
-	$context['in_maintenance'] = !empty($maintenance);
+	$context['in_maintenance'] = App::in_maintenance();
 
 	if (!$user_info['is_guest'])
 	{
