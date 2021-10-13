@@ -100,6 +100,7 @@ abstract class AbstractSettingsPageController extends AbstractAdminController im
 	{
 		$form = $this->load_form();
 		return $this->render('admin/settings_page.twig', static::BASE_ROUTE, [
+			'title' => $this->get_title(),
 			'form' => $form->render(),
 		]);
 	}
@@ -112,6 +113,7 @@ abstract class AbstractSettingsPageController extends AbstractAdminController im
 		if (!$result)
 		{
 			return $this->render('admin/settings_page.twig', static::BASE_ROUTE, [
+				'title' => $this->get_title(),
 				'form' => $form->render(),
 			]);
 		}
