@@ -1,0 +1,9 @@
+{% extends '@layouts/admin.twig' %}
+
+{% block title %}{{ list.get_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		{{ list }}
+	{% endautoescape %}
+{% endblock %}
