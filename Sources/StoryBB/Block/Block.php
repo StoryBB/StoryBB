@@ -31,5 +31,5 @@ interface Block extends Discoverable
 
 	public function get_render_template(): string;
 
-    public function get_blocktype(): string;
+	public function get_blocktype(): string;
 }
