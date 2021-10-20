@@ -12,6 +12,7 @@
 
 namespace StoryBB\FileHandler;
 
+use Exception;
 use DateInterval;
 use Datetime;
 use StoryBB\Controller\Unloggable;

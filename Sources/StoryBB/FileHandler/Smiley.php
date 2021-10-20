@@ -14,6 +14,7 @@ namespace StoryBB\FileHandler;
 
 use DateInterval;
 use Datetime;
+use Exception;
 use StoryBB\Controller\Unloggable;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\Filesystem;
