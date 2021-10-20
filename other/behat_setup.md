@@ -2,10 +2,10 @@
 
 ## Things you need, to make you go.
 
-PHP - needs to be PHP 7.0 or higher, available from the command line. Go to your
+PHP - needs to be PHP 7.1 or higher, available from the command line. Go to your
 favourite command line and try `php -v`. If it fails with an error, you'll need
 to figure out how to get that going. If you get some output, the first line will
-be the version number. Needs to be 7.0 or higher.
+be the version number. Needs to be 7.1 or higher.
 
 MySQL - your Behat environment will require a database to be at least MySQL 5.5,
 it'll need to be running on its usual port 3306, with a user called root who has
@@ -28,6 +28,7 @@ exact same place to avoid breaking your normal site/environment.
   install all of the developer tools including Behat and all its libraries
 * Start a PHP development server on port 8000 - go to the main StoryBB folder
   and run `php -S localhost:8000`
+* Copy `behat.yml` from the other/ folder inot the root folder.
 * From the main StoryBB folder, run `vendor/bin/behat --init` (if you're on
   Windows, make that `vendor\bin\behat --init`) which will do some general setup
 
