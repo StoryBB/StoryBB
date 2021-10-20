@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Phrase;
 use StoryBB\Model\Alert;
 use StoryBB\Model\Character;
 use StoryBB\Model\Policy;
