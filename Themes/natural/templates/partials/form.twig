@@ -10,7 +10,7 @@
 		<input type="hidden" name="{{ key }}" value="{{ value }}">
 	{% endfor %}
 	{% for section_name, section in sections %}
-		<fieldset id="section-{$section_name|slugify}">
+		<fieldset id="section-{{ slugify(section_name) }}">
 			{% if section.has_label %}
 			<legend>{{ phrase(section.get_label) }}</legend>
 			{% endif %}
