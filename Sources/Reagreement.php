@@ -10,8 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Model\Policy;
-use StoryBB\Block\Manager;
 
 /**
  * Identifies if the requested URL/action is allowed to be visited if the user
@@ -77,7 +77,7 @@ function Reagreement()
 		$_SESSION['reagreement_return'] = $_GET;
 	}
 
-	Manager::set_overall_block_visibility(false);
+	App::container()->get('blockmanager')->set_overall_block_visibility(false);
 
 	loadLanguage('Login');
 
