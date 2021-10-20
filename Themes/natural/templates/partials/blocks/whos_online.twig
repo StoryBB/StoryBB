@@ -14,8 +14,14 @@
 		"list_users_online": [
 			"<a href=\"http://link/to/profile\">Character Name</a>"
 		],
-		"membergroups": [
-			"<a href=\"http://link/to/group/listing\">Administrator</a>"
+		"membergroups_names": [
+			"Administrator",
+		],
+		"membergroups_color_names": [
+			"<span style=\"color: red\">Administrator</span>",
+		],
+		"membergroups_links": [
+			"<a style=\"color: red\" href=\"http://link/to/group/listing\">Administrator</a>"
 		]
 	}
 #}
@@ -28,7 +34,9 @@
 	<br>
 	{{ phrase('users_active', last_active) }}: {{ list_users_online|join(',&nbsp;')|raw }}
 
-	{% if membergroups %}
-	<div class="membergroups">{{ membergroups|join(', ')|raw }}</div>
+	{% if show_links and membergroups_links %}
+	<div class="membergroups">{{ membergroups_links|join(', ')|raw }}</div>
+	{% elseif membergroups_color_names %}
+	<div class="membergroups">{{ membergroups_color_names|join(', ')|raw }}</div>
 	{% endif %}
 {% endif %}

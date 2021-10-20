@@ -12,6 +12,7 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\Phrase;
 use StoryBB\Model\Group;
 
 /**
@@ -29,8 +30,7 @@ class WhosOnline extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['online_users'];
+		return new Phrase('General:online_users');
 	}
 
 	public function get_default_title(): string
@@ -76,9 +76,12 @@ class WhosOnline extends AbstractBlock implements Block
 			'num_users_online' => numeric_context('num_users_online', $stats['num_users_online']),
 			'num_robots' => numeric_context('num_robots', $stats['num_robots']),
 			'num_hidden' => !empty($stats['num_hidden']) ? numeric_context('num_hidden', $stats['num_users_hidden']) : '',
-			'membergroups' => $membergroups,
+			'membergroups_color_names' => array_map(function ($x) { return $x['color_name']; }, $membergroups),
+			'membergroups_names' => array_map(function ($x) { return $x['name']; }, $membergroups),
+			'membergroups_links' => array_map(function ($x) { return $x['link']; }, $membergroups),
 			'whos_online_url' => $scripturl . '?action=who',
 			'last_active' => (int) $modSettings['lastActive'],
+			'show_links' => allowedTo('view_mlist'),
 		]);
 		return $this->content;
 	}
@@ -348,14 +351,19 @@ class WhosOnline extends AbstractBlock implements Block
 				AND id_group != {int:mod_group}
 			ORDER BY group_name',
 			[
-				'not_hidden' => 0,
+				'not_hidden' => Group::VISIBILITY_VISIBLE,
 				'mod_group' => Group::BOARD_MODERATOR,
 			]
 		);
 		$groupCache = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
+			$groupCache[] = [
+				'id_group' => $row['id_group'],
+				'name' => $row['group_name'],
+				'color_name' => '<span' . ($row['online_color'] ? ' style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</span>',
+				'link' => '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>',
+			];
 		}
 		$smcFunc['db']->free_result($request);
 
