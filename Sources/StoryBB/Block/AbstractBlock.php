@@ -68,4 +68,10 @@ abstract class AbstractBlock
 	{
 		return 'block__catbg';
 	}
+
+	public function get_blocktype(): string
+	{
+		$classname = get_class($this);
+		return strtolower(substr(strrchr($classname, '\\'), 1));
+	}
 }

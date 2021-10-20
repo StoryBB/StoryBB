@@ -120,7 +120,7 @@ class Misc
 	 */
 	public static function block_region($region)
 	{
-		return \StoryBB\Block\Manager::render_region($region);
+		return new \LightnCandy\SafeString(\StoryBB\App::container()->get('blockmanager')->render_region($region));
 	}
 
 	public static function buildlink($link, ...$params): string

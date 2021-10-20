@@ -87,6 +87,11 @@ class Web
 
 			return $container->instantiate(SearchAdapterFactory::get_adapter_class($backend));
 		});
+		$container->inject('blockmanager', function() use ($container) {
+			$blockmanager = $container->instantiate('StoryBB\\Block\\Manager');
+			$blockmanager->load_current_blocks();
+			return $blockmanager;
+		});
 		$container->inject('session', function() use ($container) {
 			global $sc;
 

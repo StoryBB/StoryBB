@@ -12,14 +12,17 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\App;
 use StoryBB\Template;
-use StoryBB\Block\Manager;
+use StoryBB\Dependency\TemplateRenderer;
 
 /**
  * A multiple-block block.
  */
 class Multiblock extends AbstractBlock implements Block
 {
+	use TemplateRenderer;
+
 	protected static $instancecount = 1;
 	protected $config;
 	protected $content;
@@ -68,18 +71,17 @@ class Multiblock extends AbstractBlock implements Block
 				continue;
 			}
 
-			$instance = new $block['class']($block_config);
+			$instance = App::make($block['class'], $block_config);
 
-			$partial = Template::load_partial($subblock_template);
-			$compiled = Template::compile($partial, [], $subblock_template . Template::get_theme_id('partials', $subblock_template));
+			$partial = '@partials/block_containers/' . $subblock_template . '.twig';
 
-			$this->content .= Template::prepare($compiled, [
+			$this->content .= $this->templaterenderer()->render($partial, [
 				'instance' => 'multiblock' . static::$instancecount++,
-				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
-				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
-				'blocktype' => Manager::get_blocktype($instance),
+				'title' => $instance->get_block_title(),
+				'content' => $instance->get_block_content(),
+				'blocktype' => $instance->get_blocktype(),
 				'icon' => !empty($block_config['icon']) ? $block_config['icon'] : '',
-				'fa-icon' => !empty($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
+				'fa_icon' => !empty($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
 				'collapsible' => false,
 				'collapsed' => false,
 			]);

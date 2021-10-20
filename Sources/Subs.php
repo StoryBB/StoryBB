@@ -1398,7 +1398,7 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['page_title_html_safe']];
 	}
 
-	$context['page_blocks'] = \StoryBB\Block\Manager::load_current_blocks();
+	$blockmanager = \StoryBB\App::container()->get('blockmanager');
 
 	call_integration_hook('integrate_theme_context');
 }
