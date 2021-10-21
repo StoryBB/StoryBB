@@ -1,6 +1,6 @@
 	{{! Editing profile fields }}
 	<script>
-		var startOptID = {{getNumItems context.field.options}};
+		var startOptID = {{count context.field.options}};
 	</script>
 	<div id="admincenter">
 		<form action="{{scripturl}}?action=admin;area=featuresettings;sa=profileedit;fid={{context.fid}};{{session_url}}" method="post" accept-charset="UTF-8">

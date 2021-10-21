@@ -10,7 +10,7 @@
 
 	{{#if context.search_ignored}}
 				<p>
-					{{#if (eq (getNumItems context.search_ignored) 1)}}
+					{{#if (eq (count context.search_ignored) 1)}}
 						{{{txt.search_warning_ignored_word}}}:
 					{{else}}
 						{{{txt.search_warning_ignored_words}}}:
