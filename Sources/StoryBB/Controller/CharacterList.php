@@ -30,13 +30,6 @@ class CharacterList implements Routable
 
 		loadLanguage('Profile');
 
-		if (!empty($modSettings['avatar_max_width']))
-		{
-			addInlineCss('
-.char_list_avatar { width: ' . $modSettings['avatar_max_width'] . 'px; height: ' . $modSettings['avatar_max_height'] . 'px; }
-.char_list_name { max-width: 180px; }');
-		}
-
 		loadJavaScriptFile('jquery.filterizr.min.js', ['defer' => true], 'sbb_filterizr');
 
 		$context['page_title'] = $txt['chars_menu_title'];

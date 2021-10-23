@@ -1315,11 +1315,6 @@ function setupThemeContext($forceload = false)
 	addInlineJavaScript('
 	var sbb_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
-	// Now add the capping code for avatars.
-	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
-		addInlineCss('
-img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
-
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = [
 		'id' => $modSettings['latestMember'],

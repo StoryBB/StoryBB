@@ -13,6 +13,7 @@
 
 use StoryBB\App;
 use StoryBB\Model\Attachment;
+use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 
 /**
@@ -267,8 +268,8 @@ function ManageAvatarSettings($return_config = false)
 
 	$config_vars = [
 		// Avatar size?
-		['int', 'avatar_max_width', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500],
-		['int', 'avatar_max_height', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500],
+		['int', 'avatar_max_width', 'min' => 1, 'max' => 1000],
+		['int', 'avatar_max_height', 'min' => 1, 'max' => 1000],
 		// External avatars
 		['title', 'avatar_external'],
 			['check', 'avatar_download_external', 0],
@@ -315,6 +316,10 @@ function ManageAvatarSettings($return_config = false)
 		settings_integration_hook('integrate_save_avatar_settings');
 
 		saveDBSettings($config_vars);
+
+		// If these have changed, we need to fix the CSS.
+		Theme::clear_css_cache();
+
 		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=manageattachments;sa=avatars');
 	}

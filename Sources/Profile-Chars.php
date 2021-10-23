@@ -134,13 +134,6 @@ function CharacterList()
 	$context['char_list'] = [];
 	if (!empty($context['char_count']))
 	{
-		if (!empty($modSettings['avatar_max_width']))
-		{
-			addInlineCss('
-.char_list_avatar { width: ' . $modSettings['avatar_max_width'] . 'px; height: ' . $modSettings['avatar_max_height'] . 'px; }
-.char_list_name { max-width: ' . $modSettings['avatar_max_width'] . 'px; }');
-		}
-
 		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
 				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.posts, chars.date_created,

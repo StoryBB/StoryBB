@@ -139,6 +139,7 @@ class Css implements Routable, Unloggable, MaintenanceAccessible
 	private function compile_theme(array $themes, int $theme, string $scssfile): string
 	{
 		$db = $this->db();
+		$site_settings = $this->sitesettings();
 
 		$cachedir = App::get_root_path() . '/cache';
 		$valid_theme_dirs = [];
@@ -172,6 +173,28 @@ class Css implements Routable, Unloggable, MaintenanceAccessible
 			if (isset($theme_settings['shortname']) && isset($theme_settings['images_url']))
 			{
 				$injections[$theme_settings['shortname'] . '__images_url'] = '"' . $theme_settings['images_url'] . '"';
+			}
+		}
+
+		$settings_to_export = [
+			'avatar_max_width' => ['raw', 125],
+			'avatar_max_height' => ['raw', 125],
+		];
+
+		foreach ($settings_to_export as $setting => $details)
+		{
+			[$format, $default] = $details;
+
+			$value = $site_settings->$setting ?? $default;
+
+			switch ($format)
+			{
+				case 'raw':
+					$injections[$setting] = $value;
+					break;
+				case 'px':
+					$injections[$setting] = $value . 'px';
+					break;
 			}
 		}
 
@@ -211,7 +234,6 @@ class Css implements Routable, Unloggable, MaintenanceAccessible
 			@mkdir($cachedir . '/css');
 		}
 
-		$site_settings = $this->sitesettings();
 		if ($site_settings->minimize_css)
 		{	
 			file_put_contents($cachedir . '/css/' . $filename . '.css', $result);
