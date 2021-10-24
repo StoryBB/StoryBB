@@ -63,6 +63,7 @@ class CurrentUser
 		{
 			$this->user_data = $user_data;
 			$this->user_data['authenticated'] = true;
+			$this->user_data['theme'] = (int) $user_data['char_theme'];
 
 			$this->user_data['groups'] = array_merge([$this->user_data['id_group']], explode(',', $this->user_data['additional_groups']));
 			$this->user_data['groups'] = array_unique(array_map('intval', $this->user_data['groups']));
@@ -76,6 +77,7 @@ class CurrentUser
 				'authenticated' => false,
 				'groups' => [self::GROUP_GUEST],
 				'time_offset' => 0,
+				'theme' => (int) $this->sitesettings()->theme_guests,
 			];
 		}
 
@@ -85,6 +87,16 @@ class CurrentUser
 		}
 
 		$GLOBALS['user_settings'] = $this->user_data; // @todo Dirty legacy hack.
+	}
+
+	public function get_theme(): int
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_user_time_offset.');
+		}
+
+		return $this->user_data['theme'];
 	}
 
 	public function get_time_offset(): int

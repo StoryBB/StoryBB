@@ -20,7 +20,6 @@ use StoryBB\Controller\Unloggable;
 use StoryBB\Dependency\Database;
 use StoryBB\Dependency\SiteSettings;
 use StoryBB\Dependency\UrlGenerator;
-use StoryBB\Model\Theme;
 use StoryBB\Routing\ErrorResponse;
 use StoryBB\Routing\NotFoundResponse;
 use StoryBB\StringLibrary;
@@ -294,7 +293,7 @@ class Css implements Routable, Unloggable, MaintenanceAccessible
 		}
 
 		// Then we need to include all the fonts from other themes that aren't covered but requested.
-		$theme_fonts = Theme::get_font_list();
+		$theme_fonts = App::container()->get('thememanager')->get_font_list();
 		foreach ($theme_fonts as $font_id => $font)
 		{
 			if (isset($fonts_done[$font_id]))

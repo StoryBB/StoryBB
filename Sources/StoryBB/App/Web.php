@@ -92,6 +92,42 @@ class Web
 			$blockmanager->load_current_blocks();
 			return $blockmanager;
 		});
+		$container->inject('current_theme_id', function() use ($container) {
+			$site_settings = $container->get('sitesettings');
+			$current_user = $container->get('currentuser');
+			$request = $container->get('requestvars');
+			$session = $container->get('session');
+
+			$theme = null;
+
+			if ($site_settings->theme_allow || $current_user->can('admin_forum'))
+			{
+				if ($request->query->has('theme'))
+				{
+					$theme = (int) $request->query->get('theme');
+				}
+				elseif ($session->has('theme'))
+				{
+					$theme = $session->get('theme');
+				}
+			}
+
+			if (!$theme)
+			{
+				$theme = $current_user->get_theme();
+			}
+
+			return $theme ? (int) $theme : (int) $site_settings->theme_guests;
+		});
+		$container->inject('current_theme', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\Theme', $container->get('current_theme_id'));
+		});
+		$container->inject('thememanager', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\ThemeManager');
+		});
+		$container->inject('formatter', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Formatter');
+		});
 		$container->inject('session', function() use ($container) {
 			global $sc;
 

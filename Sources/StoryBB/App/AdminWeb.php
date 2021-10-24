@@ -92,6 +92,19 @@ class AdminWeb
 			$blockmanager->load_current_blocks();
 			return $blockmanager;
 		});
+		$container->inject('autocomplete', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Autocomplete');
+		});
+		$container->inject('current_theme_id', 1);
+		$container->inject('current_theme', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\Theme', $container->get('current_theme_id'));
+		});
+		$container->inject('thememanager', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\ThemeManager');
+		});
+		$container->inject('formatter', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Formatter');
+		});
 		$container->inject('session', function() use ($container) {
 			$cookiename = App::get_global_config_item('cookiename') . '_admin';
 

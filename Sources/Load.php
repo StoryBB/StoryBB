@@ -1988,7 +1988,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize the theme.
-	$theme_settings = StoryBB\Model\Theme::get_defaults();
+	$theme_settings = App::container()->get('current_theme')->get_defaults();
 	foreach ($theme_settings as $key => $value)
 	{
 		if (!isset($settings[$key]))
@@ -2198,20 +2198,20 @@ function check_load_avg(string $category): void
 
 function loadSCSSFile($scssfile)
 {
-	global $settings, $modSettings;
-
 	$container = Container::instance();
 	$urlgenerator = $container->get('urlgenerator');
+	$site_settings = $container->get('sitesettings');
+	$theme = $container->get('current_theme');
 
 	$options = [
-		'theme' => $settings['theme_id'],
+		'theme' => $theme->id,
 		'scssfile' => $scssfile,
 		'timestamp' => time(),
 	];
 
-	if (!empty($modSettings['minimize_css']) && !empty($settings['compile_time_' . $scssfile]))
+	if ($site_settings->minimize_css && ($timestamp = $theme->get_compiled_time($scssfile)))
 	{
-		$options['timestamp'] = $settings['compile_time_' . $scssfile];
+		$options['timestamp'] = $timestamp;
 	}
 
 	loadCSSFile($urlgenerator->generate('css', $options), ['external' => true], 'sbb_' . $scssfile);
@@ -2908,71 +2908,13 @@ function clean_cache($type = '')
  * - avatar The raw "avatar" column in members table
  * - filename The attachment filename
  *
+ * @deprecated
  * @param array $data An array of raw info
  * @return array An array of avatar data
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings, $txt, $smcFunc;
-
-	// Come on!
-	if (empty($data))
-	{
-		return [];
-	}
-
-	// Set a nice default var.
-	$image = '';
-
-	// So it's stored in the member table?
-	if (!empty($data['avatar']))
-	{
-		// Using ssl?
-		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
-			$image = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
-
-		// Just a plain external url.
-		else
-			$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
-	}
-
-	// Perhaps this user has an attachment as avatar...
-	elseif (!empty($data['filename']))
-		$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
-
-	// Right... no avatar... use our default image.
-	else
-		$image = (isset($settings['images_url']) ? $settings['images_url'] : '{IMAGES_URL}') . '/default.png';
-
-	call_integration_hook('integrate_set_avatar_data', [&$image, &$data]);
-
-	// At this point in time $image has to be filled... thus a check for !empty() is still needed.
-	if (!empty($image))
-	{
-
-		if (!empty($data['display_name']))
-		{
-			$display_name = sprintf($txt['avatar_of'], $data['display_name']);
-		}
-		elseif (!empty($data['is_guest']))
-		{
-			$display_name = $txt['guest'];
-		}
-		return [
-			'name' => !empty($data['avatar']) ? $data['avatar'] : '',
-			'image' => '<img class="avatar" src="' . $image . '"' . (!empty($display_name) ? ' alt="' . $display_name . '"' : '') . ' />',
-			'href' => $image,
-			'url' => $image,
-		];
-	}
-	// Fallback to make life easier for everyone...
-	else
-		return [
-			'name' => '',
-			'image' => '',
-			'href' => '',
-			'url' => '',
-		];
+	return App::container()->get('formatter')->avatar($data);
 }
 
 /**

@@ -652,7 +652,7 @@ function SetThemeSettings()
 	loadLanguage('Settings', '', true, true);
 
 	// Let the theme take care of the settings.
-	$context['theme_settings'] = StoryBB\Model\Theme::get_theme_settings();
+	$context['theme_settings'] = App::container()->get('current_theme')->get_theme_settings();
 
 	// Load the variants separately...
 	$settings['theme_variants'] = [];
