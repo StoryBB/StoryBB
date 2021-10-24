@@ -76,9 +76,15 @@ class WhosOnline extends AbstractBlock implements Block
 			'num_users_online' => numeric_context('num_users_online', $stats['num_users_online']),
 			'num_robots' => numeric_context('num_robots', $stats['num_robots']),
 			'num_hidden' => !empty($stats['num_hidden']) ? numeric_context('num_hidden', $stats['num_users_hidden']) : '',
-			'membergroups_color_names' => array_map(function ($x) { return $x['color_name']; }, $membergroups),
-			'membergroups_names' => array_map(function ($x) { return $x['name']; }, $membergroups),
-			'membergroups_links' => array_map(function ($x) { return $x['link']; }, $membergroups),
+			'membergroups_color_names' => array_map(function ($x) {
+				return $x['color_name'];
+			}, $membergroups),
+			'membergroups_names' => array_map(function ($x) {
+				return $x['name'];
+			}, $membergroups),
+			'membergroups_links' => array_map(function ($x) {
+				return $x['link'];
+			}, $membergroups),
 			'whos_online_url' => $scripturl . '?action=who',
 			'last_active' => (int) $modSettings['lastActive'],
 			'show_links' => allowedTo('view_mlist'),
