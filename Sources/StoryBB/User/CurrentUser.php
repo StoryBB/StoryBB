@@ -81,6 +81,17 @@ class CurrentUser
 			];
 		}
 
+		$immersive = !empty($this->user_data['immersive_mode']);
+		if ($this->sitesettings()->enable_immersive_mode == 'on')
+		{
+			$immersive = true;
+		}
+		elseif ($this->sitesettings()->enable_immersive_mode == 'off')
+		{
+			$immersive = false;
+		}
+		$this->user_data['in_immersive_mode'] = $immersive;
+
 		if (empty($this->user_data['time_format']))
 		{
 			$this->user_data['time_format'] = $this->sitesettings()->time_format;
@@ -124,6 +135,15 @@ class CurrentUser
 		{
 			$this->user_data['time_offset'] = 0;
 		}
+	}
+
+	public function is_immersive_mode(): bool
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call is_authenticated.');
+		}
+		return $this->user_data['in_immersive_mode'];
 	}
 
 	public function is_authenticated(): bool

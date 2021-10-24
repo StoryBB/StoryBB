@@ -354,7 +354,7 @@ function loadUserSettings()
 		'char_avatar' => isset($user_settings['char_avatar']) ? $user_settings['char_avatar'] : '',
 		'char_signature' => isset($user_settings['char_signature']) ? $user_settings['char_signature'] : '',
 		'char_is_main' => !empty($user_settings['is_main']),
-		'immersive_mode' => !empty($user_settings['immersive_mode']),
+		'immersive_mode' => $user->is_immersive_mode(),
 		'username' => $username,
 		'name' => isset($user_settings['real_name']) ? $user_settings['real_name'] : '',
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
@@ -388,18 +388,6 @@ function loadUserSettings()
 		'ooc_avatar' => $user_settings['ooc_avatar'] ?? set_avatar_data(['generic' => true]),
 	];
 
-	// We now need to apply immersive mode, potentially.
-	$immersive = $user_info['immersive_mode'];
-	if ($modSettings['enable_immersive_mode'] == 'on')
-	{
-		$immersive = true;
-	}
-	elseif ($modSettings['enable_immersive_mode'] == 'off')
-	{
-		$immersive = false;
-	}
-	$user_info['in_immersive_mode'] = $immersive;
-
 	$group_filter = function($main, $extras) {
 		$return = [];
 		if (!empty($main))
@@ -419,7 +407,7 @@ function loadUserSettings()
 		return $return;
 	};
 
-	if ($immersive)
+	if ($user->is_immersive_mode())
 	{
 		// In immersive mode, we apply the groups for the current character.
 		if (isset($user_settings['main_char_group']))
