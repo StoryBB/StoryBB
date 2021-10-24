@@ -13,7 +13,6 @@
 
 use StoryBB\App;
 use StoryBB\Model\Attachment;
-use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 
 /**
@@ -318,7 +317,7 @@ function ManageAvatarSettings($return_config = false)
 		saveDBSettings($config_vars);
 
 		// If these have changed, we need to fix the CSS.
-		Theme::clear_css_cache();
+		App::container()->get('thememanager')->clear_css_cache();
 
 		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=manageattachments;sa=avatars');

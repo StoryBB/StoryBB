@@ -13,7 +13,6 @@
 use StoryBB\App;
 use StoryBB\Model\Policy;
 use StoryBB\Model\Language;
-use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 
 /**
