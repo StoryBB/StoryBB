@@ -13,12 +13,16 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\Dependency\Database;
+
 /**
  * Provide an autocomplete handler to match membergroups. This version by default matches all groups.
  * Subclasses may exist to be more specific for convenience purposes.
  */
 class Group extends AbstractCompletable implements Completable
 {
+	use Database;
+
 	/** @var bool $account_groups Sets out whether account groups should be included as possible group matches */
 	protected $account_groups = true;
 
@@ -69,19 +73,19 @@ class Group extends AbstractCompletable implements Completable
 	 */
 	public function get_count(): int
 	{
-		global $smcFunc;
+		$db = $this->db();
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT COUNT(id_group)
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters(),
 			[
-				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $db->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 			]
 		);
-		list ($count) = $smcFunc['db']->fetch_row($request);
-		$smcFunc['db']->free_result($request);
+		list ($count) = $db->fetch_row($request);
+		$db->free_result($request);
 
 		return (int) $count;
 	}
@@ -96,7 +100,9 @@ class Group extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc, $settings;
+		global $settings;
+
+		$db = $this->db();
 
 		if (empty($this->term))
 			return [];
@@ -113,19 +119,19 @@ class Group extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT mg.id_group, mg.group_name, mg.icons
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters() . '
 			LIMIT {int:start}, {int:limit}',
 			[
-				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $db->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 				'start' => $start,
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$row['icons'] = explode('#', $row['icons']);
 			$row['icons'] = !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' .  $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '';
@@ -136,7 +142,7 @@ class Group extends AbstractCompletable implements Completable
 				'icons' => $row['icons'],
 			];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return $result;
 	}
@@ -148,7 +154,7 @@ class Group extends AbstractCompletable implements Completable
 	 */
 	public function set_values(array $default_value)
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$default_value = array_map('intval', $default_value);
 		$default_value = array_filter($default_value, function($x) {
@@ -158,7 +164,7 @@ class Group extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_group, group_name
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:default_value})',
@@ -166,11 +172,11 @@ class Group extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$this->default[$row['id_group']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 	}
 
 	/**
@@ -182,7 +188,7 @@ class Group extends AbstractCompletable implements Completable
 	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
-		global $scripturl, $txt;
+		global $txt;
 
 		$js = '
 $("' . $target . '").select2({
@@ -192,15 +198,11 @@ $("' . $target . '").select2({
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
 	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
-		url: "' . $scripturl . '",
+		url: "' . $this->get_url() . '",
 		data: function (params) {
-			var query = {
-				action: "autocomplete",
-				term: params.term,
-				type: "' . $this->get_searchtype() . '"
-			}
-			query[sbb_session_var] = sbb_session_id;
-			return query;
+			return {
+				term: params.term
+			};
 		}
 	},
 	delay: 150,

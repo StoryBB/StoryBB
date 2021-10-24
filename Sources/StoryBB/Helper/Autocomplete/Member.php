@@ -12,11 +12,15 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\Dependency\Database;
+
 /**
  * Provide an autocomplete handler to match member accounts (not characters)
  */
 class Member extends AbstractCompletable implements Completable
 {
+	use Database;
+
 	/**
 	 * Whether the results will be paginated on return.
 	 *
@@ -34,20 +38,20 @@ class Member extends AbstractCompletable implements Completable
 	 */
 	public function get_count(): int
 	{
-		global $smcFunc;
+		$db = $this->db();
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT COUNT(id_member)
 			FROM {db_prefix}members
 			WHERE {raw:real_name} LIKE {string:search}
 				AND is_activated IN (1, 11)',
 			[
-				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $db->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
-		list ($count) = $smcFunc['db']->fetch_row($request);
-		$smcFunc['db']->free_result($request);
+		list ($count) = $db->fetch_row($request);
+		$db->free_result($request);
 
 		return (int) $count;
 	}
@@ -62,7 +66,7 @@ class Member extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		if (empty($this->term))
 			return [];
@@ -79,7 +83,7 @@ class Member extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
@@ -88,13 +92,13 @@ class Member extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $db->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$result[] = [
 				'id' => $row['id_member'],
@@ -102,7 +106,7 @@ class Member extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return $result;
 	}
@@ -114,7 +118,7 @@ class Member extends AbstractCompletable implements Completable
 	 */
 	public function set_values(array $default_value)
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$default_value = array_map('intval', $default_value);
 		$default_value = array_filter($default_value, function($x) {
@@ -124,7 +128,7 @@ class Member extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:default_value})',
@@ -132,11 +136,11 @@ class Member extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$this->default[$row['id_member']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 	}
 
 	/**
@@ -148,7 +152,7 @@ class Member extends AbstractCompletable implements Completable
 	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
-		global $scripturl, $txt;
+		global $txt;
 
 		$js = '
 $("' . $target . '").select2({
@@ -158,15 +162,11 @@ $("' . $target . '").select2({
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
 	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
-		url: "' . $scripturl . '",
+		url: "' . $this->get_url() . '",
 		data: function (params) {
-			var query = {
-				action: "autocomplete",
-				term: params.term,
-				type: "member"
-			}
-			query[sbb_session_var] = sbb_session_id;
-			return query;
+			return {
+				term: params.term
+			};
 		}
 	},
 	delay: 150,

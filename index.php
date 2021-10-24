@@ -229,7 +229,6 @@ function sbb_main()
 		'activate' => ['Register.php', 'Activate'],
 		'admin' => ['Admin.php', 'AdminMain'],
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
-		'autocomplete' => ['Autocomplete.php', 'Autocomplete'],
 		'board' => ['MessageIndex.php', 'MessageIndex'],
 		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],

@@ -12,11 +12,15 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\Dependency\Database;
+
 /**
  * Provide an autocomplete handler to match member characters (not OOC characters)
  */
 class Memberchar extends AbstractCompletable implements Completable
 {
+	use Database;
+
 	/**
 	 * Whether the results will be paginated on return.
 	 *
@@ -34,10 +38,10 @@ class Memberchar extends AbstractCompletable implements Completable
 	 */
 	protected function match_members(): array
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$members = [];
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT chars.id_member
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
@@ -45,15 +49,15 @@ class Memberchar extends AbstractCompletable implements Completable
 				AND chars.is_main = 1
 				AND mem.is_activated IN (1, 11)',
 			[
-				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $db->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$members[$row['id_member']] = $row['id_member'];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return $members;
 	}
@@ -65,13 +69,13 @@ class Memberchar extends AbstractCompletable implements Completable
 	 */
 	public function get_count(): int
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		// First find all the members who match.
 		$members = $this->match_members();
 
 		// Now find all the characters who are not the matched members.
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT chars.id_member
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
@@ -80,16 +84,16 @@ class Memberchar extends AbstractCompletable implements Completable
 				AND chars.id_member NOT IN ({array_int:members})
 				AND mem.is_activated IN (1, 11)',
 			[
-				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $db->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'members' => array_merge([0], array_values($members)),
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$members[$row['id_member']] = $row['id_member'];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return count($members);
 	}
@@ -105,7 +109,7 @@ class Memberchar extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		if (empty($this->term))
 			return [];
@@ -125,7 +129,7 @@ class Memberchar extends AbstractCompletable implements Completable
 		// First match the members.
 		$members = $this->match_members();
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT mem.id_member, mem.real_name, mem.real_name AS character_name, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member AND chars.is_main = 1)
@@ -141,14 +145,14 @@ class Memberchar extends AbstractCompletable implements Completable
 				AND mem.is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $db->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
 				'members' => array_merge([0], array_values($members)),
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$result[] = [
 				'id' => $row['id_member'],
@@ -158,7 +162,7 @@ class Memberchar extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return $result;
 	}
@@ -170,7 +174,7 @@ class Memberchar extends AbstractCompletable implements Completable
 	 */
 	public function set_values(array $default_value)
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$default_value = array_map('intval', $default_value);
 		$default_value = array_filter($default_value, function($x) {
@@ -180,7 +184,7 @@ class Memberchar extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:default_value})',
@@ -188,11 +192,11 @@ class Memberchar extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$this->default[$row['id_member']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 	}
 
 	/**
@@ -204,7 +208,7 @@ class Memberchar extends AbstractCompletable implements Completable
 	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
-		global $scripturl, $txt;
+		global $txt;
 
 		$js = '
 $("' . $target . '").select2({
@@ -214,15 +218,11 @@ $("' . $target . '").select2({
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
 	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
-		url: "' . $scripturl . '",
+		url: "' . $this->get_url() . '",
 		data: function (params) {
-			var query = {
-				action: "autocomplete",
-				term: params.term,
-				type: "memberchar"
-			}
-			query[sbb_session_var] = sbb_session_id;
-			return query;
+			return {
+				term: params.term
+			};
 		}
 	},
 	delay: 150,

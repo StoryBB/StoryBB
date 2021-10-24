@@ -13,12 +13,17 @@
 namespace StoryBB\Helper\Autocomplete;
 
 use StoryBB\StringLibrary;
+use StoryBB\Dependency\Session;
+use StoryBB\Dependency\UrlGenerator;
 
 /**
  * Any autocomplete handlers probably should extend this class.
  */
 abstract class AbstractCompletable
 {
+	use Session;
+	use UrlGenerator;
+
 	/** @var string $term The search term to be matched to find completions for */
 	protected $term = null;
 
@@ -107,5 +112,19 @@ abstract class AbstractCompletable
 	public function get_searchtype(): string
 	{
 		return strtolower(substr(static::class, strlen(__NAMESPACE__) + 1));
+	}
+
+	/**
+	 * Returns the base URL to this autocomplete instance.
+	 *
+	 * @return string URL for this instance.
+	 */
+	public function get_url(): string
+	{
+		return $this->urlgenerator()->generate('autocomplete', [
+			'type' => $this->get_searchtype(),
+			'sessvar' => $this->session()->get('session_var'),
+			'sessid' => $this->session()->get('session_value'),
+		]);
 	}
 }

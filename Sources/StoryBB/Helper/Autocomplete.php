@@ -13,6 +13,7 @@
 namespace StoryBB\Helper;
 
 use Exception;
+use StoryBB\App;
 use StoryBB\ClassManager;
 
 /**
@@ -36,7 +37,7 @@ class Autocomplete
 			throw new Exception('Unknown autocomplete type: ' . $type);
 		}
 
-		$autocomplete = new $searchTypes[$type];
+		$autocomplete = App::make($searchTypes[$type]);
 
 		// First, set up the generic stuff.
 		loadJavaScriptFile('select2/select2.min.js', ['minimize' => false, 'default_theme' => true], 'select2');

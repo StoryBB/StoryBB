@@ -92,6 +92,9 @@ class Web
 			$blockmanager->load_current_blocks();
 			return $blockmanager;
 		});
+		$container->inject('autocomplete', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Autocomplete');
+		});
 		$container->inject('current_theme_id', function() use ($container) {
 			$site_settings = $container->get('sitesettings');
 			$current_user = $container->get('currentuser');

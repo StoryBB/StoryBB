@@ -64,4 +64,11 @@ interface Completable extends Discoverable
 	 * @return string The JavaScript to initialise this widget.
 	 */
 	public function get_js(string $target, int $maximum = 1): string;
+
+	/**
+	 * Returns the base URL to this autocomplete instance.
+	 *
+	 * @return string URL for this instance.
+	 */
+	public function get_url(): string;
 }
