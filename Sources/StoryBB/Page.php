@@ -12,8 +12,12 @@
 
 namespace StoryBB;
 
+use StoryBB\Dependency\UrlGenerator;
+
 class Page
 {
+	use UrlGenerator;
+
 	protected $meta = [
 		'name' => [],
 		'property' => [],
@@ -101,5 +105,16 @@ class Page
 	public function setCanonical($url): void
 	{
 		$this->addLink('canonical', $url, true);
+	}
+
+	public function addSCSSfile(int $theme_id, string $scssfile, int $timestamp)
+	{
+		$urlgenerator = $this->urlgenerator();
+		$options = [
+			'theme' => $theme_id,
+			'scssfile' => $scssfile,
+			'timestamp' => $timestamp,
+		];
+		$this->addLink('stylesheet', $urlgenerator->generate('css', $options));
 	}
 }
