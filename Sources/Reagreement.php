@@ -126,9 +126,10 @@ function Reagreement()
 		redirectexit();
 	}
 
+	$url = App::container()->get('urlgenerator');
 	foreach ($policies as $policy_type => $policy)
 	{
-		$policy['title'] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy['title'] . '</a>';
+		$policy['title'] = '<a href="' . $url->generate('help_policy', ['policy' => $policy_type]) . '" target="_blank" rel="noopener">' . $policy['title'] . '</a>';
 		$context['policies'][$policy_type] = $policy;
 	}
 

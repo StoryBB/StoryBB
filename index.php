@@ -241,7 +241,6 @@ function sbb_main()
 		'finish' => ['Topic.php', 'Finish'],
 		'forum' => ['BoardIndex.php', 'BoardIndex'],
 		'groups' => ['Groups.php', 'Groups'],
-		'help' => ['Help.php', 'ShowHelp'],
 		'helpadmin' => ['Help.php', 'ShowAdminHelp'],
 		'jsmodify' => ['Post.php', 'JavaScriptModify'],
 		'jsoption' => ['Themes.php', 'SetJavaScript'],

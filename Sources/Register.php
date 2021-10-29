@@ -48,11 +48,12 @@ function Register($reg_errors = [])
 	loadLanguage('Login');
 
 	// Do we need them to agree to the registration agreement, first?
+	$url = App::container()->get('urlgenerator');
 	$policies = Policy::get_policies_for_registration();
 	$context['registration_policies'] = [];
 	foreach ($policies as $policy_type => $policy_name)
 	{
-		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy_name . '</a>';
+		$context['registration_policies'][$policy_type] = '<a href="' . $url->generate('help_policy', ['policy' => $policy_type]) . '" target="_blank" rel="noopener">' . $policy_name . '</a>';
 	}
 
 	// Show the user the right form.

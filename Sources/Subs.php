@@ -2134,7 +2134,8 @@ function setupMenuContext()
 		}
 	}
 
-	$context['footer_links'] = Policy::get_footer_policies();
+	$policy = App::make('StoryBB\\Model\\Policy');
+	$context['footer_links'] = $policy->get_footer_policies($user_info['language']);
 }
 
 /**
