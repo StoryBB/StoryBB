@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
 use StoryBB\Template;
 
@@ -321,6 +322,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		loadTheme();
 
 	Template::remove_layer('sidebar_navigation');
+	App::container()->get('blockmanager')->set_overall_block_visibility(false);
 
 	// Don't bother indexing errors mate...
 	$context['robot_no_index'] = true;
