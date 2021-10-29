@@ -13,13 +13,11 @@
 namespace StoryBB\Helper;
 
 use StoryBB\App;
-use StoryBB\Dependency\CurrentUser;
 use StoryBB\Dependency\SiteSettings;
 use StoryBB\Phrase;
 
 class Formatter
 {
-	use CurrentUser;
 	use SiteSettings;
 
 	public function avatar(array $data): array
