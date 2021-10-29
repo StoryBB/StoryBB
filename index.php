@@ -27,10 +27,9 @@ use Symfony\Component\Routing\RequestContext;
 // Get everything started up...
 define('STORYBB', 1);
 
-$php_version = phpversion();
-if (version_compare($php_version, '7.1.3', '<'))
+if (version_compare(phpversion(), '7.1.3', '<'))
 {
-	die("PHP 7.1.3 or newer is required, your server has " . $php_version . ". Please ask your host to upgrade PHP.");
+	die("PHP 7.1.3 or newer is required, your server has " . phpversion() . ". Please ask your host to upgrade PHP.");
 }
 
 require_once(__DIR__ . '/vendor/autoload.php');
@@ -52,11 +51,11 @@ require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 
-// If $maintenance is set specifically to 2, then we're upgrading or something.
-if (!empty($maintenance) && $maintenance == 2)
+// If we're in hard maintenance, we're upgrading or something.
+if (App::in_hard_maintenance())
 	display_maintenance_message();
 
-$result = App::dispatch_request(Request::createFromGlobals());
+$result = App::dispatch_request();
 
 if ($result && $result instanceof Response)
 {
@@ -110,7 +109,7 @@ obExit(null, null, true);
 function sbb_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic, $context;
-	global $board_info, $maintenance, $sourcedir;
+	global $board_info, $sourcedir;
 
 	// We should set our security headers now.
 	frameOptionsHeader();
@@ -182,7 +181,7 @@ function sbb_main()
 	unset($no_stat_actions);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
-	if (!empty($maintenance) && !allowedTo('admin_forum'))
+	if (App::in_maintenance() && !allowedTo('admin_forum'))
 	{
 		// You're getting maintenance mode; neither login nor logout run through here.
 		$context['current_action'] = 'in_maintenance';
