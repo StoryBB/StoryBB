@@ -90,9 +90,6 @@ class Manager
 			$config = !empty($row['configuration']) ? json_decode($row['configuration'], true) : [];
 			$row['object'] = App::make($row['class'], $config);
 
-			// Force a preload of the content.
-			$row['object']->get_block_content();
-
 			$this->page_blocks[$row['region']][$row['id_instance']] = $row;
 		}
 		$db->free_result($result);
