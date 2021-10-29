@@ -2151,21 +2151,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// Any files to include at this point?
-	if (!empty($modSettings['integrate_theme_include']))
-	{
-		$theme_includes = explode(',', $modSettings['integrate_theme_include']);
-		foreach ($theme_includes as $include)
-		{
-			$include = strtr(trim($include), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']]);
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
-
-	// Call load theme integration functions.
-	call_integration_hook('integrate_load_theme');
-
 	// We are ready to go.
 	$context['theme_loaded'] = true;
 }
