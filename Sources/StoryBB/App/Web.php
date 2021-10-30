@@ -17,6 +17,7 @@ use StoryBB\ClassManager;
 use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Helper\Cookie;
+use StoryBB\Hook\Mutatable;
 use StoryBB\Phrase;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use StoryBB\Search\AdapterFactory as SearchAdapterFactory;
@@ -208,8 +209,31 @@ class Web
 
 			return $session;
 		});
-		$container->inject('currentuser', function() use ($container) {
-			return $container->instantiate('StoryBB\User\CurrentUser');
+		$container->inject('currentuser', function(?int $userid = null) use ($container) {
+			// Check first the integration, then the cookie, and last the session.
+			if (!$userid)
+			{
+				$id_member = 0;
+				//(new Mutatable\Account\Authenticates($id_member))->execute();
+
+				if (!$id_member)
+				{
+					// Check the session.
+					$session = $container->get('session');
+					if ($session->has('userid'))
+					{
+						$id_member = $session->get('userid');
+					}
+				}
+			}
+			else
+			{
+				$id_member = $userid;
+			}
+
+			$user = $container->instantiate('StoryBB\User\CurrentUser');
+			$user->load_user($id_member);
+			return $user;
 		});
 		$container->inject('smileys', function() use ($container) {
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
@@ -308,36 +332,31 @@ class Web
 			return new CompiledUrlMatcher($container->get('admin_matcher'), $container->get('requestcontext'));
 		});
 		$container->inject('templaterenderer', function() use ($container) {
-			global $settings;
-			// @todo
-			if (empty($settings['theme_dir']))
-			{
-				loadTheme();
-			}
+			$theme = $container->get('current_theme');
 
 			$loader = new FilesystemLoader();
-			if (file_exists($settings['theme_dir'] . '/templates'))
+			if (file_exists($theme->theme_dir . '/templates'))
 			{
-				$loader->addPath($settings['theme_dir'] . '/templates');
+				$loader->addPath($theme->theme_dir . '/templates');
 			}
-			if (file_exists($settings['theme_dir'] . '/templates/layouts'))
+			if (file_exists($theme->theme_dir . '/templates/layouts'))
 			{
-				$loader->addPath($settings['theme_dir'] . '/templates/layouts', 'layouts');
+				$loader->addPath($theme->theme_dir . '/templates/layouts', 'layouts');
 			}
-			if (file_exists($settings['theme_dir'] . '/templates/partials'))
+			if (file_exists($theme->theme_dir . '/templates/partials'))
 			{
-				$loader->addPath($settings['theme_dir'] . '/templates/partials', 'partials');
+				$loader->addPath($theme->theme_dir . '/templates/partials', 'partials');
 			}
 
-			$loader->addPath($settings['default_theme_dir'] . '/templates');
-			$loader->addPath($settings['default_theme_dir'] . '/templates/layouts', 'layouts');
-			$loader->addPath($settings['default_theme_dir'] . '/templates/partials', 'partials');
+			$loader->addPath($theme->default_theme_dir . '/templates');
+			$loader->addPath($theme->default_theme_dir . '/templates/layouts', 'layouts');
+			$loader->addPath($theme->default_theme_dir . '/templates/partials', 'partials');
 
 			$sitesettings = $container->get('sitesettings');
 			$options = [];
 			if (!$sitesettings->debug_templates)
 			{
-				$options['cache'] = $container->get('cachedir') . '/template/' . $settings['theme_id'];
+				$options['cache'] = $container->get('cachedir') . '/template/' . $theme->id;
 			}
 			$twig = new TwigEnvironment($loader, $options);
 
@@ -371,6 +390,8 @@ class Web
 			$page->addMetaProperty('og:site_name', $container->get('sitesettings')->forum_name);
 
 			$page->addLink('help', $urlgenerator->generate('help'));
+			$theme = $container->get('current_theme');
+			$page->addSCSSfile($container->get('current_theme_id'), 'index', $theme->get_compiled_time('index'));
 			return $page;
 		});
 
