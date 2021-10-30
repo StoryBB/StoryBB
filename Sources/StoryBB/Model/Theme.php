@@ -73,17 +73,24 @@ class Theme
 		];
 
 		$request = $db->query('', '
-			SELECT variable, value
+			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member = 0
-				AND id_theme = {int:id_theme}',
+				AND id_theme IN ({int:default_theme}, {int:id_theme})',
 			[
+				'default_theme' => 1,
 				'id_theme' => $this->theme_id,
 			]
 		);
 		while ($row = $db->fetch_assoc($request))
 		{
-			$this->settings[$row['variable']] = $row['value'];
+			if ($row['id_theme'] == 1 && in_array($row['variable'], ['theme_dir']))
+			{
+				$this->settings['default_' . $row['variable']] = $row['value'];
+			}
+			if ($row['id_theme'] != 1 || !isset($this->settings[$row['variable']])) {
+				$this->settings[$row['variable']] = $row['value'];
+			}
 		}
 		$db->free_result($request);
 	}
