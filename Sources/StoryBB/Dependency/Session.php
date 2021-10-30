@@ -14,6 +14,7 @@ namespace StoryBB\Dependency;
 
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
+use StoryBB\Routing\Exception\SessionTimeoutException;
 
 trait Session
 {
@@ -31,5 +32,18 @@ trait Session
 			throw new RuntimeException('Session not initialised');
 		}
 		return $this->_session;
+	}
+
+	protected function check_session(string $sessvar, string $sessid): bool
+	{
+		return ($this->_session->get('session_var') === $sessvar) && ($this->_session->get('session_value') === $sessid);
+	}
+
+	protected function assert_session(string $sessvar, string $sessid): void
+	{
+		if (!$this->check_session($sessvar, $sessid))
+		{
+			throw new SessionTimeoutException;
+		}
 	}
 }

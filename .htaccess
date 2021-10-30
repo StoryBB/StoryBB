@@ -7,6 +7,10 @@ RewriteEngine on
 # If your site isn't in the root, e.g. you're in domain.com/folder/ you might need to add this to match the /folder/ part.
 # RewriteBase /
 
+# Keep out some of the worst offenders for visiting without value.
+RewriteCond %{HTTP_USER_AGENT} ^.*(Ahrefsbot|MauiBot|PetalBot).*$ [NC]
+RewriteRule .* - [F,L]
+
 # Perform the rest of the rewrites for the site.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -17,4 +21,8 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 <IfModule mod_security.c>
 	SecFilterEngine Off
 	SecFilterScanPOST Off
+</IfModule>
+
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/css application/javascript
 </IfModule>

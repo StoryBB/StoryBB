@@ -241,7 +241,7 @@
 {{/if}}
 
 {{! Are there any characters to display? }}
-{{#if (and context.member.characters (gt (getNumItems context.member.characters) 1))}}
+{{#if (and context.member.characters (gt (count context.member.characters) 1))}}
 			<div class="character_list">
 				<h5 id="user_char_list">{{{txt.my_characters}}}:</h5>
 			</div>

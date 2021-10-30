@@ -12,6 +12,7 @@
 
 namespace StoryBB\FileHandler;
 
+use Exception;
 use DateInterval;
 use Datetime;
 use StoryBB\Controller\Unloggable;
@@ -58,7 +59,15 @@ class Affiliate implements Servable, Unloggable
 		}
 
 		// Otherwise, we're serving the file.
-		$response = $this->filesystem()->serve($file);
+		try
+		{
+			$response = $this->filesystem()->serve($file);
+		}
+		catch (Exception $e)
+		{
+			// We didn't have a file of this id?
+			return new NotFoundResponse;
+		}
 
 		// Since this isn't a redirect or a not-found, we want long-term caching headers.
 		if (!$response->isRedirection() && !$response->isClientError())

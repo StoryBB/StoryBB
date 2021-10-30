@@ -55,7 +55,6 @@ class App
 			'maintenance_message' => $mmessage ?? '',
 			'language' => $language ?? 'en-us',
 			'boardurl' => $boardurl ?? 'http://localhost/',
-			'webmaster_email' => $webmaster_email ?? 'root@localhost',
 			'cookiename' => $cookiename ?? 'SBBCookie123',
 			'db_type' => $db_type ?? 'mysql',
 			'db_server' => $db_server ?? 'localhost',

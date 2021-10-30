@@ -99,10 +99,6 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context, $cachedir, $modSettings;
 
 	$config_vars = [
-			// Basic stuff, titles, permissions...
-			['text', 'forum_name', 'size' => 50],
-			'',
-			['check', 'allow_guestAccess'],
 			['check', 'enable_likes'],
 			['check', 'enable_mentions'],
 			['check', 'enable_buddylist'],

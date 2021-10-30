@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\App;
 use StoryBB\Container;
+use StoryBB\Phrase;
 use StoryBB\Model\Alert;
 use StoryBB\Model\Character;
 use StoryBB\Model\Policy;
@@ -1314,11 +1315,6 @@ function setupThemeContext($forceload = false)
 	addInlineJavaScript('
 	var sbb_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
-	// Now add the capping code for avatars.
-	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
-		addInlineCss('
-img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
-
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = [
 		'id' => $modSettings['latestMember'],
@@ -1398,7 +1394,7 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['page_title_html_safe']];
 	}
 
-	$context['page_blocks'] = \StoryBB\Block\Manager::load_current_blocks();
+	$blockmanager = \StoryBB\App::container()->get('blockmanager');
 
 	call_integration_hook('integrate_theme_context');
 }
@@ -1945,11 +1941,6 @@ function setupMenuContext()
 				'amt' => $context['user']['unread_messages'],
 				'visible' => $context['allow_pm'],
 			],
-			'bookmark' => [
-				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
-				'icon' => 'fas fa-bookmark fa-fw',
-				'label' => $txt['bookmarks'],
-			],
 			'characterlist' => [
 				'url' => $urlgenerator->generate('characters'),
 				'icon' => 'fas fa-users fa-fw',
@@ -2138,7 +2129,8 @@ function setupMenuContext()
 		}
 	}
 
-	$context['footer_links'] = Policy::get_footer_policies();
+	$policy = App::make('StoryBB\\Model\\Policy');
+	$context['footer_links'] = $policy->get_footer_policies($user_info['language']);
 }
 
 /**

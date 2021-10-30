@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\App;
+
 /**
  * This class handles the mail processing.
  */
@@ -34,7 +36,9 @@ class Mail
 	 */
 	public static function send($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 	{
-		global $webmaster_email, $context, $modSettings, $txt, $scripturl;
+		global $context, $modSettings, $txt, $scripturl;
+
+		$webmaster_email = App::container()->get('sitesettings')->webmaster_email;
 
 		// Use sendmail if it's set or if no SMTP server is set.
 		$use_sendmail = empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '';
@@ -308,7 +312,9 @@ class Mail
 	 */
 	public static function send_smtp($mail_to_array, $subject, $message, $headers)
 	{
-		global $modSettings, $webmaster_email, $txt;
+		global $modSettings, $txt;
+
+		$webmaster_email = App::container()->get('sitesettings')->webmaster_email;
 
 		$modSettings['smtp_host'] = trim($modSettings['smtp_host']);
 

@@ -30,4 +30,6 @@ interface Block extends Discoverable
 	public function get_block_content(): string;
 
 	public function get_render_template(): string;
+
+	public function get_blocktype(): string;
 }

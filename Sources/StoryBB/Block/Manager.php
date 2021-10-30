@@ -13,20 +13,32 @@
 namespace StoryBB\Block;
 
 use RuntimeException;
+use StoryBB\App;
+use StoryBB\Dependency\Database;
+use StoryBB\Dependency\SiteSettings;
+use StoryBB\Dependency\TemplateRenderer;
 
 /**
  * Manages blocks.
  */
 class Manager
 {
-	protected static $show_blocks = true;
-	protected static $rendered = false;
+	use Database;
+	use SiteSettings;
+	use TemplateRenderer;
 
-	public static function load_current_blocks()
+	protected $page_blocks = [];
+
+	protected $show_blocks = true;
+	protected $rendered = false;
+
+	public function load_current_blocks()
 	{
-		global $smcFunc, $user_info, $context;
+		global $user_info, $context;
 
-		$result = $smcFunc['db']->query('', '
+		$db = $this->db();
+
+		$result = $db->query('', '
 			SELECT id_instance, class, visibility, configuration, region, position, active
 			FROM {db_prefix}block_instances
 			WHERE active = {int:active}
@@ -36,9 +48,9 @@ class Manager
 			]
 		);
 
-		$instances = [];
+		$this->page_blocks = [];
 
-		while ($row = $smcFunc['db']->fetch_assoc($result))
+		while ($row = $db->fetch_assoc($result))
 		{
 			// Apply visibility.
 			if (!empty($row['visibility']))
@@ -76,30 +88,23 @@ class Manager
 				continue;
 			}
 			$config = !empty($row['configuration']) ? json_decode($row['configuration'], true) : [];
-			$row['object'] = new $row['class']($config);
+			$row['object'] = App::make($row['class'], $config);
 
-			// Force a preload of the content.
-			$row['object']->get_block_content();
-
-			$instances[$row['region']][$row['id_instance']] = $row;
+			$this->page_blocks[$row['region']][$row['id_instance']] = $row;
 		}
-		$smcFunc['db']->free_result($result);
-
-		return $instances;
+		$db->free_result($result);
 	}
 
-	public static function render_region(string $region)
+	public function render_region(string $region)
 	{
-		global $context;
-
-		if (empty($context['page_blocks'][$region]))
+		if (empty($this->page_blocks[$region]))
 		{
 			return '';
 		}
 
-		static::$rendered = true;
+		$this->rendered = true;
 
-		if (!static::$show_blocks)
+		if (!$this->show_blocks)
 		{
 			return '';
 		}
@@ -112,22 +117,10 @@ class Manager
 		$template_cache = [];
 		$compiled_cache = [];
 
-		foreach ($context['page_blocks'][$region] as $instance_id => $instance_details)
+		foreach ($this->page_blocks[$region] as $instance_id => $instance_details)
 		{
 			$instance = $instance_details['object'];
-			$partial_name = $instance->get_render_template();
-
-			if (!isset($template_cache[$partial_name]))
-			{
-				$template_cache[$partial_name] = \StoryBB\Template::load_partial($partial_name);
-			}
-			$template = $template_cache[$partial_name];
-
-			if (!isset($compiled_cache[$partial_name]))
-			{
-				$compiled_cache[$partial_name] = \StoryBB\Template::compile($template, [], $partial_name . \StoryBB\Template::get_theme_id('partials', $partial_name));
-			}
-			$phpStr = $compiled_cache[$partial_name];
+			$partial_name = '@partials/block_containers/' . $instance->get_render_template() . '.twig';
 
 			$block_config = $instance->get_configuration();
 
@@ -143,31 +136,22 @@ class Manager
 				$toggle->attach();
 			}
 
-			$block_context['instances'][] = \StoryBB\Template::prepare($phpStr, [
+			$block_context['instances'][] = $this->templaterenderer()->render($partial_name, [
 				'instance' => $instance_id,
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
-				'blocktype' => self::get_blocktype($instance),
+				'blocktype' => $instance->get_blocktype(),
 				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
-				'fa-icon' => isset($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
+				'fa_icon' => isset($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
 				'collapsible' => !empty($toggle),
 				'collapsed' => $toggle && $toggle->currently_collapsed(),
 			]);
 		}
 
-		$template_region = \StoryBB\Template::load_partial('block_region');
-		$phpStr = \StoryBB\Template::compile($template_region, [], 'block_region' . \StoryBB\Template::get_theme_id('partials', 'block_region'));
-
-		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
+		return $this->templaterenderer()->render('@partials/block_region.twig', [
 			'region' => $region,
 			'instances' => $block_context['instances'],
-		]));
-	}
-
-	public static function get_blocktype(Block $instance): string
-	{
-		$classname = get_class($instance);
-		return strtolower(substr(strrchr($classname, '\\'), 1));
+		]);
 	}
 
 	/**
@@ -176,13 +160,13 @@ class Manager
 	 * @param bool $visible True to show blocks on the current page, false to hide all blocks.
 	 * @throws RuntimeException if blocks have already been rendered prior to this change being called
 	 */
-	public static function set_overall_block_visibility(bool $visible): void
+	public function set_overall_block_visibility(bool $visible): void
 	{
-		if (static::$rendered)
+		if ($this->rendered)
 		{
 			throw new RuntimeException('Cannot alter overall block visibility as blocks have already been rendered.');
 		}
 
-		static::$show_blocks = $visible;
+		$this->show_blocks = $visible;
 	}
 }

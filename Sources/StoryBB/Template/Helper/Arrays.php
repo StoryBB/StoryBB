@@ -28,7 +28,6 @@ class Arrays
 			'in_array' => 'StoryBB\\Template\\Helper\\Arrays::in_array',
 			'is_array' => 'StoryBB\\Template\\Helper\\Arrays::is_array',
 			'array_key_exists' => 'StoryBB\\Template\\Helper\\Arrays::array_key_exists',
-			'getNumItems' => 'StoryBB\\Template\\Helper\\Arrays::count',
 			'count' => 'StoryBB\\Template\\Helper\\Arrays::count',
 			'keys' => 'StoryBB\\Template\\Helper\\Arrays::keys',
 			'array2js' => 'StoryBB\\Template\\Helper\\Arrays::array2js',

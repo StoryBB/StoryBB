@@ -63,12 +63,13 @@ class CurrentUser
 		{
 			$this->user_data = $user_data;
 			$this->user_data['authenticated'] = true;
+			$this->user_data['theme'] = (int) $user_data['char_theme'];
 
 			$this->user_data['groups'] = array_merge([$this->user_data['id_group']], explode(',', $this->user_data['additional_groups']));
 			$this->user_data['groups'] = array_unique(array_map('intval', $this->user_data['groups']));
 
-			$this->user_data['ic_avatar'] = set_avatar_data(['filename' => $user_data['chars_filename'], 'avatar' => $user_data['ic_avatar']]);
-			$this->user_data['ooc_avatar'] = set_avatar_data(['filename' => $user_data['filename'], 'avatar' => $user_data['ooc_avatar']]);
+			$this->user_data['ic_avatar'] = ['filename' => $user_data['chars_filename'], 'avatar' => $user_data['ic_avatar']];
+			$this->user_data['ooc_avatar'] = ['filename' => $user_data['filename'], 'avatar' => $user_data['ooc_avatar']];
 		}
 		else
 		{
@@ -76,8 +77,20 @@ class CurrentUser
 				'authenticated' => false,
 				'groups' => [self::GROUP_GUEST],
 				'time_offset' => 0,
+				'theme' => (int) $this->sitesettings()->theme_guests,
 			];
 		}
+
+		$immersive = !empty($this->user_data['immersive_mode']);
+		if ($this->sitesettings()->enable_immersive_mode == 'on')
+		{
+			$immersive = true;
+		}
+		elseif ($this->sitesettings()->enable_immersive_mode == 'off')
+		{
+			$immersive = false;
+		}
+		$this->user_data['in_immersive_mode'] = $immersive;
 
 		if (empty($this->user_data['time_format']))
 		{
@@ -85,6 +98,26 @@ class CurrentUser
 		}
 
 		$GLOBALS['user_settings'] = $this->user_data; // @todo Dirty legacy hack.
+	}
+
+	public function get_id(): int
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_user_time_offset.');
+		}
+
+		return $this->user_data['id_member'] ?? 0;
+	}
+
+	public function get_theme(): int
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_user_time_offset.');
+		}
+
+		return $this->user_data['theme'];
 	}
 
 	public function get_time_offset(): int
@@ -112,6 +145,15 @@ class CurrentUser
 		{
 			$this->user_data['time_offset'] = 0;
 		}
+	}
+
+	public function is_immersive_mode(): bool
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call is_authenticated.');
+		}
+		return $this->user_data['in_immersive_mode'];
 	}
 
 	public function is_authenticated(): bool

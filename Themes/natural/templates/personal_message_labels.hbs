@@ -12,13 +12,13 @@
 						{{txt.pm_label_name}}
 					</th>
 					<th class="centertext table_icon">
-						{{#if (gt (getNumItems context.labels) 2)}}<input type="checkbox" onclick="invertAll(this, this.form);">{{/if}}
+						{{#if (gt (count context.labels) 2)}}<input type="checkbox" onclick="invertAll(this, this.form);">{{/if}}
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 
-{{#if (lt (getNumItems context.labels) 2)}}
+{{#if (lt (count context.labels) 2)}}
 				<tr class="windowbg">
 					<td colspan="2">{{txt.pm_labels_no_exist}}</td>
 				</tr>
@@ -38,7 +38,7 @@
 			</tbody>
 		</table>
 
-{{#if (gte (getNumItems context.labels) 2)}}
+{{#if (gte (count context.labels) 2)}}
 		<div class="buttonlist righttext">
 			<button type="submit" class="active button" name="save" value="save">{{txt.save}}</button>
 			<button type="submit" class="button you_sure" name="delete" value="delete" data-confirm="{{txt.pm_labels_delete}}">{{txt.quickmod_delete_selected}}</button>

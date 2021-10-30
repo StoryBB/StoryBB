@@ -103,8 +103,8 @@
 								var avatar = document.getElementById("avatar");
 								var selavatar = {{{json context.avatar_selected}}};
 								var file = document.getElementById("file");
-								var maxHeight = {{#if (gt modSettings.avatar_max_height '0')}}{{modSettings.avatar_max_height}}{{else}}0{{/if}};
-								var maxWidth = {{#if (gt modSettings.avatar_max_width '0')}}{{modSettings.avatar_max_width}}{{else}}0{{/if}};
+								var maxHeight = {{modSettings.avatar_max_height}};
+								var maxWidth = {{modSettings.avatar_max_width}};
 
 								previewExternalAvatar(avatar.src)
 

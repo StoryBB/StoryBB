@@ -1,3 +1,7 @@
+img.avatar {
+	max-width: #{$avatar_max_width}px;
+	max-height: #{$avatar_max_height}px;
+}
 
 /* 3# Common classes to easy styling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1563,7 +1567,7 @@ p.moderators {
 	overflow: hidden;
 }
 
-.icons, #messageindex .board_stats p, .lastpost p, #unread .board_stats p, #unreadreplies .board_stats p {
+.icons, #messageindex .board_stats p, .lastpost p, #unread .board_statsS {
 	border: none;
 }
 
@@ -2839,6 +2843,7 @@ div#char_theme_wrapper, #char_theme_wrapper {
 
 .char_list_name {
 	margin: 0 auto 5px auto;
+	max-width: 180px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -2847,6 +2852,9 @@ div#char_theme_wrapper, #char_theme_wrapper {
 .char_list_avatar {
 	margin-left: auto;
 	margin-right: auto;
+
+	width: #{$avatar_max_width}px;
+	height: #{$avatar_max_height}px;
 }
 
 #filter_opts .filter_container {

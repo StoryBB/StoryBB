@@ -12,11 +12,15 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\Dependency\Database;
+
 /**
  * Provide an autocomplete handler to match member characters (not OOC characters)
  */
 class Character extends AbstractCompletable implements Completable
 {
+	use Database;
+
 	/**
 	 * Whether the results will be paginated on return.
 	 *
@@ -34,9 +38,9 @@ class Character extends AbstractCompletable implements Completable
 	 */
 	public function get_count(): int
 	{
-		global $smcFunc;
+		$db = $this->db();
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT COUNT(id_character)
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -44,12 +48,12 @@ class Character extends AbstractCompletable implements Completable
 				AND is_main = 0
 				AND is_activated IN (1, 11)',
 			[
-				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $db->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
-		list ($count) = $smcFunc['db']->fetch_row($request);
-		$smcFunc['db']->free_result($request);
+		list ($count) = $db->fetch_row($request);
+		$db->free_result($request);
 
 		return (int) $count;
 	}
@@ -65,7 +69,7 @@ class Character extends AbstractCompletable implements Completable
 	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		if (empty($this->term))
 			return [];
@@ -82,7 +86,7 @@ class Character extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT chars.id_character, chars.character_name, mem.real_name, mem.email_address, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
@@ -92,13 +96,13 @@ class Character extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $db->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$result[] = [
 				'id' => $row['id_character'],
@@ -108,7 +112,7 @@ class Character extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		return $result;
 	}
@@ -120,7 +124,7 @@ class Character extends AbstractCompletable implements Completable
 	 */
 	public function set_values(array $default_value)
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$default_value = array_map('intval', $default_value);
 		$default_value = array_filter($default_value, function($x) {
@@ -130,7 +134,7 @@ class Character extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
 			WHERE id_character IN ({array_int:default_value})
@@ -139,11 +143,11 @@ class Character extends AbstractCompletable implements Completable
 				'default_value' => $default_value,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$this->default[$row['id_character']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 	}
 
 	/**
@@ -155,7 +159,7 @@ class Character extends AbstractCompletable implements Completable
 	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
-		global $scripturl, $txt;
+		global $txt;
 
 		$js = '
 $("' . $target . '").select2({
@@ -165,15 +169,11 @@ $("' . $target . '").select2({
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
 	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
-		url: "' . $scripturl . '",
+		url: "' . $this->get_url() . '",
 		data: function (params) {
-			var query = {
-				action: "autocomplete",
-				term: params.term,
-				type: "character"
-			}
-			query[sbb_session_var] = sbb_session_id;
-			return query;
+			return {
+				term: params.term
+			};
 		}
 	},
 	delay: 150,

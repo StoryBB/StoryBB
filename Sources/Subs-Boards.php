@@ -169,42 +169,6 @@ function MarkRead()
 
 		redirectexit();
 	}
-	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'unreadreplies')
-	{
-		// Make sure all the topics are integers!
-		$topics = array_map('intval', explode('-', $_REQUEST['topics']));
-
-		$request = $smcFunc['db']->query('', '
-			SELECT id_topic, unwatched
-			FROM {db_prefix}log_topics
-			WHERE id_topic IN ({array_int:selected_topics})
-				AND id_member = {int:current_user}',
-			[
-				'selected_topics' => $topics,
-				'current_user' => $user_info['id'],
-			]
-		);
-		$logged_topics = [];
-		while ($row = $smcFunc['db']->fetch_assoc($request))
-			$logged_topics[$row['id_topic']] = $row['unwatched'];
-		$smcFunc['db']->free_result($request);
-
-		$markRead = [];
-		foreach ($topics as $id_topic)
-			$markRead[] = [$modSettings['maxMsgID'], $user_info['id'], $id_topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
-
-		$smcFunc['db']->insert('replace',
-			'{db_prefix}log_topics',
-			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
-			$markRead,
-			['id_member', 'id_topic']
-		);
-
-		if (isset($_SESSION['topicseen_cache']))
-			$_SESSION['topicseen_cache'] = [];
-
-		redirectexit('action=unreadreplies');
-	}
 
 	// Special case: mark a topic unread!
 	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'topic')

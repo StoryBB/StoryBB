@@ -65,6 +65,10 @@ class Cli
 			return $container->instantiate('StoryBB\\Helper\\Smiley');
 		});
 
+		$container->inject('formatter', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Formatter');
+		});
+
 		$container->inject('compiled_matcher', function() use ($container) {
 			$compiled_routes = $container->get('cachedir') . '/compiled_matcher.php';
 			if (file_exists($compiled_routes))

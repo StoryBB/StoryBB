@@ -347,7 +347,7 @@ function is_not_banned($forceCheck = false)
 		$_GET['board'] = '';
 		$_GET['topic'] = '';
 		writeLog(true);
-		Logout(true, false);
+		App::container()->get('session')->invalidate();
 
 		// You banned, sucka!
 		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']), !empty($modSettings['log_ban_hits']) ? 'ban' : false);

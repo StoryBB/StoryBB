@@ -44,7 +44,7 @@ class SiteSettings
 	{
 		if ($this->settings === null)
 		{
-			$this->settings = $this->load_settings();
+			$this->settings = $this->load();
 		}
 		return $this->settings;
 	}

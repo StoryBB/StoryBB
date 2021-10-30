@@ -12,13 +12,18 @@
 
 namespace StoryBB\Block;
 
-use StoryBB\Container;
+use StoryBB\Dependency\Database;
+use StoryBB\Dependency\UrlGenerator;
+use StoryBB\Phrase;
 
 /**
  * Affiliates block.
  */
 class Affiliates extends AbstractBlock implements Block
 {
+	use Database;
+	use UrlGenerator;
+
 	protected $config;
 	protected $content;
 
@@ -29,8 +34,7 @@ class Affiliates extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['affiliates_title'];
+		return new Phrase('General:affiliates_title');
 	}
 
 	public function get_default_title(): string
@@ -40,8 +44,6 @@ class Affiliates extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $txt, $scripturl, $modSettings;
-
 		if ($this->content !== null)
 		{
 			return $this->content;
@@ -61,26 +63,25 @@ class Affiliates extends AbstractBlock implements Block
 
 	protected function get_affiliates(): array
 	{
-		global $smcFunc;
+		$db = $this->db();
 
 		$tiers = [];
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_tier, tier_name, sort_order, image_width, image_height, desaturate
 			FROM {db_prefix}affiliate_tier
 			ORDER BY sort_order');
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			$row['affiliates'] = [];
 			$row['desaturate'] = !empty($row['desaturate']);
 			$tiers[$row['id_tier']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
-		$container = Container::instance();
-		$urlgenerator = $container->get('urlgenerator');
+		$urlgenerator = $this->urlgenerator();
 
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT a.id_affiliate, a.affiliate_name, a.url, a.image_url, a.id_tier, f.timemodified
 			FROM {db_prefix}affiliate AS a
 				LEFT JOIN {db_prefix}files AS f ON (f.handler = {literal:affiliate} AND f.content_id = a.id_affiliate)
@@ -91,7 +92,7 @@ class Affiliates extends AbstractBlock implements Block
 			]
 		);
 
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			if (!isset($tiers[$row['id_tier']]))
 			{
@@ -108,7 +109,7 @@ class Affiliates extends AbstractBlock implements Block
 			}
 			$tiers[$row['id_tier']]['affiliates'][$row['id_affiliate']] = $row;
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		// Prune any empty tiers.
 		foreach ($tiers as $tier_id => $tier)

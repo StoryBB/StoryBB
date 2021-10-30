@@ -27,10 +27,9 @@ use Symfony\Component\Routing\RequestContext;
 // Get everything started up...
 define('STORYBB', 1);
 
-$php_version = phpversion();
-if (version_compare($php_version, '7.1.3', '<'))
+if (version_compare(phpversion(), '7.1.3', '<'))
 {
-	die("PHP 7.1.3 or newer is required, your server has " . $php_version . ". Please ask your host to upgrade PHP.");
+	die("PHP 7.1.3 or newer is required, your server has " . phpversion() . ". Please ask your host to upgrade PHP.");
 }
 
 require_once(__DIR__ . '/vendor/autoload.php');
@@ -52,11 +51,11 @@ require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 
-// If $maintenance is set specifically to 2, then we're upgrading or something.
-if (!empty($maintenance) && $maintenance == 2)
+// If we're in hard maintenance, we're upgrading or something.
+if (App::in_hard_maintenance())
 	display_maintenance_message();
 
-$result = App::dispatch_request(Request::createFromGlobals());
+$result = App::dispatch_request();
 
 if ($result && $result instanceof Response)
 {
@@ -110,7 +109,7 @@ obExit(null, null, true);
 function sbb_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic, $context;
-	global $board_info, $maintenance, $sourcedir;
+	global $board_info, $sourcedir;
 
 	// We should set our security headers now.
 	frameOptionsHeader();
@@ -167,7 +166,7 @@ function sbb_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = ['autocomplete', 'dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'reagreement', 'reattributepost'];
+	$no_stat_actions = ['dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'reagreement', 'reattributepost'];
 	call_integration_hook('integrate_pre_log_stats', [&$no_stat_actions]);
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (!in_array($context['current_action'], $no_stat_actions))
@@ -182,14 +181,14 @@ function sbb_main()
 	unset($no_stat_actions);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
-	if (!empty($maintenance) && !allowedTo('admin_forum'))
+	if (App::in_maintenance() && !allowedTo('admin_forum'))
 	{
 		// You're getting maintenance mode; neither login nor logout run through here.
 		$context['current_action'] = 'in_maintenance';
 		return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['help', 'help_policy', 'reminder', 'activate', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
 	{
 		$context['current_action'] = 'kick_guest';
 		return 'KickGuest';
@@ -229,7 +228,6 @@ function sbb_main()
 		'activate' => ['Register.php', 'Activate'],
 		'admin' => ['Admin.php', 'AdminMain'],
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
-		'autocomplete' => ['Autocomplete.php', 'Autocomplete'],
 		'board' => ['MessageIndex.php', 'MessageIndex'],
 		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
@@ -242,7 +240,6 @@ function sbb_main()
 		'finish' => ['Topic.php', 'Finish'],
 		'forum' => ['BoardIndex.php', 'BoardIndex'],
 		'groups' => ['Groups.php', 'Groups'],
-		'help' => ['Help.php', 'ShowHelp'],
 		'helpadmin' => ['Help.php', 'ShowAdminHelp'],
 		'jsmodify' => ['Post.php', 'JavaScriptModify'],
 		'jsoption' => ['Themes.php', 'SetJavaScript'],
@@ -263,8 +260,8 @@ function sbb_main()
 		'post2' => ['Post.php', 'Post2'],
 		'profile' => ['Profile.php', 'Profile'],
 		'quotefast' => ['Post.php', 'QuoteFast'],
-		'quickmod' => ['MessageIndex.php', 'QuickModeration'],
-		'quickmod2' => ['Display.php', 'QuickInTopicModeration'],
+		'quickmod' => ['QuickModeration.php', 'QuickModeration'],
+		'quickmod2' => ['QuickInTopicModeration.php', 'QuickInTopicModeration'],
 		'reattributepost' => ['Profile-Chars.php', 'ReattributePost'],
 		'reagreement' => ['Reagreement.php', 'Reagreement'],
 		'recent' => ['Recent.php', 'RecentPosts'],
@@ -284,7 +281,6 @@ function sbb_main()
 		'theme' => ['Themes.php', 'ThemesMain'],
 		'topic' => ['Display.php', 'Display'],
 		'unread' => ['Recent.php', 'UnreadTopics'],
-		'unreadreplies' => ['Recent.php', 'UnreadReplies'],
 		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'vote' => ['Poll.php', 'Vote'],

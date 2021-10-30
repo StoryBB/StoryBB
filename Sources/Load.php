@@ -214,35 +214,20 @@ function loadUserSettings()
 		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'] ?? '';
 	}
 
-	// Check first the integration, then the cookie, and last the session.
-	$id_member = 0;
-	(new Mutatable\Account\Authenticates($id_member))->execute();
-	$already_verified = !empty($id_member);
-
 	$container = Container::instance();
 	$db = $container->get('database');
 
-	if (!$id_member)
-	{
-		// Check the session.
-		
-		$session = $container->get('session');
-		if ($session->has('userid'))
-		{
-			$id_member = $session->get('userid');
-		}
-	}
 
 	// Only load this stuff if the user isn't a guest.
 	$user = $container->get('currentuser');
-	$user->load_user($id_member);
+	$id_member = $user->get_id();
 	if ($id_member != 0)
 	{
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
 			// Wrong password or not activated - either way, you're going nowhere.
-			$id_member = ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
+			$id_member = $user->is_activated() ? (int) $user_settings['id_member'] : 0;
 		}
 		else
 			$id_member = 0;
@@ -307,22 +292,6 @@ function loadUserSettings()
 
 		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
-
-		// Figure out the new time offset.
-		if (!empty($user_settings['timezone']))
-		{
-			// Get the offsets from UTC for the server, then for the user.
-			$tz_system = new DateTimeZone(@date_default_timezone_get());
-			$tz_user = new DateTimeZone($user_settings['timezone']);
-			$time_system = new DateTime('now', $tz_system);
-			$time_user = new DateTime('now', $tz_user);
-			$user_info['time_offset'] = ($tz_user->getOffset($time_user) - $tz_system->getOffset($time_system)) / 3600;
-		}
-		else
-		{
-			// !!! Compatibility.
-			$user_info['time_offset'] = empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset'];
-		}
 	}
 	// If the user is a guest, initialize all the critical user settings.
 	else
@@ -340,9 +309,6 @@ function loadUserSettings()
 		}
 		$user_info['possibly_robot'] = !empty($_SESSION['robot_name']);
 
-		// We don't know the offset...
-		$user_info['time_offset'] = 0;
-
 		$context['show_cookie_notice'] = !empty($modSettings['show_cookie_notice']) && empty($_COOKIE['cookies']);
 	}
 
@@ -354,7 +320,7 @@ function loadUserSettings()
 		'char_avatar' => isset($user_settings['char_avatar']) ? $user_settings['char_avatar'] : '',
 		'char_signature' => isset($user_settings['char_signature']) ? $user_settings['char_signature'] : '',
 		'char_is_main' => !empty($user_settings['is_main']),
-		'immersive_mode' => !empty($user_settings['immersive_mode']),
+		'immersive_mode' => $user->is_immersive_mode(),
 		'username' => $username,
 		'name' => isset($user_settings['real_name']) ? $user_settings['real_name'] : '',
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
@@ -367,6 +333,7 @@ function loadUserSettings()
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
+		'time_offset' => $user->get_time_offset(),
 		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
 		'avatar' => [
 			'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
@@ -384,21 +351,18 @@ function loadUserSettings()
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => [],
 		'policy_acceptance' => isset($user_settings['policy_acceptance']) ? $user_settings['policy_acceptance'] : 0,
-		'ic_avatar' => $user_settings['ic_avatar'] ?? set_avatar_data(['generic' => true]),
-		'ooc_avatar' => $user_settings['ooc_avatar'] ?? set_avatar_data(['generic' => true]),
 	];
 
-	// We now need to apply immersive mode, potentially.
-	$immersive = $user_info['immersive_mode'];
-	if ($modSettings['enable_immersive_mode'] == 'on')
+	if (isset($user_settings['ic_avatar']))
 	{
-		$immersive = true;
+		$user_info['ic_avatar'] = set_avatar_data($user_settings['ic_avatar']);
+		$user_info['ooc_avatar'] = set_avatar_data($user_settings['ooc_avatar']);
 	}
-	elseif ($modSettings['enable_immersive_mode'] == 'off')
+	else
 	{
-		$immersive = false;
+		$user_info['ic_avatar'] = set_avatar_data(['generic' => true]);
+		$user_info['ooc_avatar'] = set_avatar_data(['generic' => true]);
 	}
-	$user_info['in_immersive_mode'] = $immersive;
 
 	$group_filter = function($main, $extras) {
 		$return = [];
@@ -419,7 +383,7 @@ function loadUserSettings()
 		return $return;
 	};
 
-	if ($immersive)
+	if ($user->is_immersive_mode())
 	{
 		// In immersive mode, we apply the groups for the current character.
 		if (isset($user_settings['main_char_group']))
@@ -915,10 +879,6 @@ function loadPermissions()
 		// This is a useful phantom permission added to the current user, and only the current user while they are logged in.
 		// For example this drastically simplifies certain changes to the profile area.
 		$user_info['permissions'][] = 'is_not_guest';
-		// And now some backwards compatibility stuff for mods and whatnot that aren't expecting the new permissions.
-		$user_info['permissions'][] = 'profile_view_own';
-		if (in_array('profile_view', $user_info['permissions']))
-			$user_info['permissions'][] = 'profile_view_any';
 	}
 }
 
@@ -1988,7 +1948,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize the theme.
-	$theme_settings = StoryBB\Model\Theme::get_defaults();
+	$theme_settings = App::container()->get('current_theme')->get_defaults();
 	foreach ($theme_settings as $key => $value)
 	{
 		if (!isset($settings[$key]))
@@ -2167,21 +2127,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// Any files to include at this point?
-	if (!empty($modSettings['integrate_theme_include']))
-	{
-		$theme_includes = explode(',', $modSettings['integrate_theme_include']);
-		foreach ($theme_includes as $include)
-		{
-			$include = strtr(trim($include), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']]);
-			if (file_exists($include))
-				require_once($include);
-		}
-	}
-
-	// Call load theme integration functions.
-	call_integration_hook('integrate_load_theme');
-
 	// We are ready to go.
 	$context['theme_loaded'] = true;
 }
@@ -2198,20 +2143,20 @@ function check_load_avg(string $category): void
 
 function loadSCSSFile($scssfile)
 {
-	global $settings, $modSettings;
-
 	$container = Container::instance();
 	$urlgenerator = $container->get('urlgenerator');
+	$site_settings = $container->get('sitesettings');
+	$theme = $container->get('current_theme');
 
 	$options = [
-		'theme' => $settings['theme_id'],
+		'theme' => $theme->id,
 		'scssfile' => $scssfile,
 		'timestamp' => time(),
 	];
 
-	if (!empty($modSettings['minimize_css']) && !empty($settings['compile_time_' . $scssfile]))
+	if ($site_settings->minimize_css && ($timestamp = $theme->get_compiled_time($scssfile)))
 	{
-		$options['timestamp'] = $settings['compile_time_' . $scssfile];
+		$options['timestamp'] = $timestamp;
 	}
 
 	loadCSSFile($urlgenerator->generate('css', $options), ['external' => true], 'sbb_' . $scssfile);
@@ -2908,71 +2853,13 @@ function clean_cache($type = '')
  * - avatar The raw "avatar" column in members table
  * - filename The attachment filename
  *
+ * @deprecated
  * @param array $data An array of raw info
  * @return array An array of avatar data
  */
 function set_avatar_data($data = [])
 {
-	global $modSettings, $boardurl, $image_proxy_enabled, $image_proxy_secret, $settings, $txt, $smcFunc;
-
-	// Come on!
-	if (empty($data))
-	{
-		return [];
-	}
-
-	// Set a nice default var.
-	$image = '';
-
-	// So it's stored in the member table?
-	if (!empty($data['avatar']))
-	{
-		// Using ssl?
-		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
-			$image = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
-
-		// Just a plain external url.
-		else
-			$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
-	}
-
-	// Perhaps this user has an attachment as avatar...
-	elseif (!empty($data['filename']))
-		$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
-
-	// Right... no avatar... use our default image.
-	else
-		$image = (isset($settings['images_url']) ? $settings['images_url'] : '{IMAGES_URL}') . '/default.png';
-
-	call_integration_hook('integrate_set_avatar_data', [&$image, &$data]);
-
-	// At this point in time $image has to be filled... thus a check for !empty() is still needed.
-	if (!empty($image))
-	{
-
-		if (!empty($data['display_name']))
-		{
-			$display_name = sprintf($txt['avatar_of'], $data['display_name']);
-		}
-		elseif (!empty($data['is_guest']))
-		{
-			$display_name = $txt['guest'];
-		}
-		return [
-			'name' => !empty($data['avatar']) ? $data['avatar'] : '',
-			'image' => '<img class="avatar" src="' . $image . '"' . (!empty($display_name) ? ' alt="' . $display_name . '"' : '') . ' />',
-			'href' => $image,
-			'url' => $image,
-		];
-	}
-	// Fallback to make life easier for everyone...
-	else
-		return [
-			'name' => '',
-			'image' => '',
-			'href' => '',
-			'url' => '',
-		];
+	return App::container()->get('formatter')->avatar($data);
 }
 
 /**

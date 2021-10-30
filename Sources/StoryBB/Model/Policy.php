@@ -12,11 +12,18 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\App;
+use StoryBB\Dependency\Database;
+use StoryBB\Dependency\UrlGenerator;
+
 /**
  * This class handles attachments.
  */
 class Policy
 {
+	use Database;
+	use UrlGenerator;
+
 	const POLICY_NOTACCEPTED = 0;
 	const POLICY_PREVIOUSLYACCEPTED = 1;
 	const POLICY_CURRENTLYACCEPTED = 2;
@@ -28,11 +35,13 @@ class Policy
 	 */
 	public static function get_policies_for_registration(): array
 	{
-		global $smcFunc, $user_info, $language;
+		global $smcFunc, $user_info;
+
+		$default_language = App::get_global_config_item('language');
 
 		$policies = [];
 		$final_policies = [];
-		$versions_in_order = [$user_info['language'], $language, 'en-us'];
+		$versions_in_order = [$user_info['language'], $default_language, 'en-us'];
 
 		// Fetch all the policies.
 		$request = $smcFunc['db']->query('', '
@@ -467,32 +476,32 @@ class Policy
 	 *
 	 * @return array A list of links for the footer.
 	 */
-	public static function get_footer_policies()
+	public function get_footer_policies($user_language = '')
 	{
-		global $smcFunc, $language, $user_info, $scripturl;
+		$db = $this->db();
+		$url = $this->urlgenerator();
 
-		if (($footer_links = cache_get_data('footer_links', 300)) === null)
+		$footer_links = [];
+
+		$request = $db->query('', '
+			SELECT p.id_policy, pt.policy_type, p.language, p.title
+			FROM {db_prefix}policy_types AS pt
+				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+			WHERE pt.show_footer = 1');
+		while ($row = $db->fetch_assoc($request))
 		{
-			$footer_links = [];
-
-			$request = $smcFunc['db']->query('', '
-				SELECT p.id_policy, pt.policy_type, p.language, p.title
-				FROM {db_prefix}policy_types AS pt
-					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
-				WHERE pt.show_footer = 1');
-			while ($row = $smcFunc['db']->fetch_assoc($request))
-			{
-				$footer_links[$row['policy_type']][$row['language']] = [
-					'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
-					'title' => $row['title'],
-				];
-			}
-			$smcFunc['db']->free_result($request);
-
-			cache_put_data('footer_links', $footer_links, 300);
+			$footer_links[$row['policy_type']][$row['language']] = [
+				'link' => $url->generate('help_policy', ['policy' => $row['policy_type']]),
+				'title' => $row['title'],
+			];
 		}
+		$db->free_result($request);
 
-		$versions = [$user_info['language'], $language, 'en-us'];
+		$versions = [App::get_global_config_item('language'), 'en-us'];
+		if ($user_language)
+		{
+			array_unshift($versions, $user_language);
+		}
 
 		$lang_footer_links = [];
 

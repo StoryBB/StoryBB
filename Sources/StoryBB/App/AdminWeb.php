@@ -87,6 +87,24 @@ class AdminWeb
 
 			return $container->instantiate(SearchAdapterFactory::get_adapter_class($backend));
 		});
+		$container->inject('blockmanager', function() use ($container) {
+			$blockmanager = $container->instantiate('StoryBB\\Block\\Manager');
+			$blockmanager->load_current_blocks();
+			return $blockmanager;
+		});
+		$container->inject('autocomplete', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Autocomplete');
+		});
+		$container->inject('current_theme_id', 1);
+		$container->inject('current_theme', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\Theme', $container->get('current_theme_id'));
+		});
+		$container->inject('thememanager', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\ThemeManager');
+		});
+		$container->inject('formatter', function() use ($container) {
+			return $container->instantiate('StoryBB\\Helper\\Formatter');
+		});
 		$container->inject('session', function() use ($container) {
 			$cookiename = App::get_global_config_item('cookiename') . '_admin';
 
@@ -288,17 +306,12 @@ class AdminWeb
 			$page = $container->instantiate('StoryBB\\Page');
 			$urlgenerator = $container->get('urlgenerator');
 			$sitesettings = $container->get('sitesettings');
+			$theme = $container->get('current_theme');
 			$page->addMetaProperty('og:site_name', $sitesettings->forum_name);
 
 			$page->addLink('help', $urlgenerator->generate('help'));
 
-			$options = [
-				'theme' => 1,
-				'scssfile' => 'admin',
-				'timestamp' => time(), // @todo
-			];
-
-			$page->addLink('stylesheet', $urlgenerator->generate('css', $options));
+			$page->addSCSSfile(1, 'admin', $theme->get_compiled_time('admin'));
 
 			$default_theme_url = App::get_global_config_item('boardurl') . '/Themes/natural';
 			$page->addLink('stylesheet', $default_theme_url . '/css/fontawesome-free-5.15.1-web/css/all.min.css');

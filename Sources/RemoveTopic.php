@@ -16,6 +16,7 @@
 
 */
 
+use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 
 /**
@@ -500,6 +501,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	);
 
 	TopicPrefix::delete_topics($topics);
+	TopicCollection::delete_topics($topics);
 
 	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}topics

@@ -10,8 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Model\Policy;
-use StoryBB\Block\Manager;
 
 /**
  * Identifies if the requested URL/action is allowed to be visited if the user
@@ -21,6 +21,8 @@ use StoryBB\Block\Manager;
  */
 function on_allowed_reagreement_actions(): bool
 {
+	global $context;
+
 	$allowed_actions = [
 		'contact' => true,
 		'help' => true,
@@ -30,7 +32,11 @@ function on_allowed_reagreement_actions(): bool
 		],
 		'reagreement' => true,
 	];
-	call_integration_hook('integration_reagreement_actions', [&$allowed_actions]);
+	$allowed_routes = [
+		'help',
+		'help_policy',
+	];
+	call_integration_hook('integration_reagreement_actions', [&$allowed_actions, &$allowed_routes]);
 
 	if (!empty($_REQUEST['action']) && isset($allowed_actions[$_REQUEST['action']]))
 	{
@@ -62,6 +68,11 @@ function on_allowed_reagreement_actions(): bool
 		}
 	}
 
+	if (!empty($context['routing']['_route']) && in_array($context['routing']['_route'], $allowed_routes))
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -77,7 +88,7 @@ function Reagreement()
 		$_SESSION['reagreement_return'] = $_GET;
 	}
 
-	Manager::set_overall_block_visibility(false);
+	App::container()->get('blockmanager')->set_overall_block_visibility(false);
 
 	loadLanguage('Login');
 
@@ -126,9 +137,10 @@ function Reagreement()
 		redirectexit();
 	}
 
+	$url = App::container()->get('urlgenerator');
 	foreach ($policies as $policy_type => $policy)
 	{
-		$policy['title'] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy['title'] . '</a>';
+		$policy['title'] = '<a href="' . $url->generate('help_policy', ['policy' => $policy_type]) . '" target="_blank" rel="noopener">' . $policy['title'] . '</a>';
 		$context['policies'][$policy_type] = $policy;
 	}
 

@@ -22,6 +22,13 @@ class TopicCollection
 	const INVITE_PENDING = 0;
 	const INVITE_REFUSED = 1;
 
+	protected static function sanitise_ints(array $ints): array
+	{
+		return array_filter(array_map('intval', $ints), function ($x) {
+			return $x > 0;
+		});
+	}
+
 	public static function is_participant(int $account_id, array $topic_ids): array
 	{
 		global $smcFunc;
@@ -277,5 +284,25 @@ class TopicCollection
 			$members = array_unique($members);
 			updateMemberData($members, ['alerts' => '+']);
 		}
+	}
+
+	public static function delete_topics(array $topics): void
+	{
+		global $smcFunc;
+
+		$topics = static::sanitise_ints($topics);
+
+		if (empty($topics))
+		{
+			return;
+		}
+
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}topic_invites
+			WHERE id_topic IN ({array_int:topics})',
+			[
+				'topics' => $topics,
+			]
+		);
 	}
 }

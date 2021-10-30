@@ -88,7 +88,7 @@ $txt['admin_server_settings'] = 'Server Settings';
 
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
-$txt['admin_webmaster_email'] = 'Webmaster email address';
+$txt['webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
 $txt['admin_manage_members'] = 'Members';

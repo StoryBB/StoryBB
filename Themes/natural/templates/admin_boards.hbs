@@ -28,13 +28,11 @@
 
 	{{! List through every board in the category, printing its name and link to modify the board. }}
 	{{#each boards}}
-					<li{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}} id="recycle_board"{{/if}} class="windowbg" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 child_level)}}px;">
+					<li class="windowbg" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 child_level)}}px;">
 						<span class="floatleft"><a href="{{../../scripturl}}?board={{id}}.0">{{{name}}}</a>
 
 		{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}}
-							<a href="{{../../scripturl}}?action=admin;area=manageboards;sa=settings">
-								<img src="{{../../settings.images_url}}/recycled.png" alt="{{../../txt.recycle_board}}" title="{{../../txt.recycle_board}}">
-							</a>
+							<span class="in_character_note">{{{../../txt.recycling_board}}}</span>
 		{{else}}
 			{{#if is_redirect}}
 							<span class="in_character_note">{{{../../txt.redirect_board}}}</span>

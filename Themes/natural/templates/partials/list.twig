@@ -1,0 +1,24 @@
+{% autoescape false %}
+<table id="{{ id }}">
+	<thead>
+		<tr>
+		{% for column in headings %}
+			<th>{{ column }}</th>
+		{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+		{% if rows %}
+			{% for row in rows %}
+				<tr>
+					{% for column in row %}
+						<td>{{ column }}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		{% else %}
+
+		{% endif %}
+	</tbody>
+</table>
+{% endautoescape %}

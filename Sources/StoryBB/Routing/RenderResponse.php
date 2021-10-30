@@ -12,6 +12,7 @@
 
 namespace StoryBB\Routing;
 
+use StoryBB\App;
 use StoryBB\Dependency\Page;
 use StoryBB\Dependency\SiteSettings;
 use StoryBB\Dependency\TemplateRenderer;
@@ -32,6 +33,11 @@ class RenderResponse extends Response
 
 		$rendercontext['page'] = $this->page();
 		$rendercontext['site_settings'] = $this->sitesettings();
+
+		$rendercontext['footer'] = [
+			'storybb_version' => App::SOFTWARE_VERSION,
+			'storybb_year' => App::SOFTWARE_YEAR,
+		];
 
 		$this->setContent(($templater->load($template))->render($rendercontext));
 		return $this;

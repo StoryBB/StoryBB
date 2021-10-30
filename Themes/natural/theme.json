@@ -7,7 +7,6 @@
     },
     "theme_version": "1.0",
     "storybb_version": "1.0",
-    "require_theme_strings": false,
     "disable_files": [],
     "meta_theme_color": "#557EA0",
     "theme_settings": [

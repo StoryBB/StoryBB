@@ -11,7 +11,7 @@
 		{{{context.description}}}&nbsp;
 
 		{{#if context.moderators}}
-			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{join context.link_moderators ', '}}}.
+			{{#if (eq (count context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{join context.link_moderators ', '}}}.
 		{{/if}}
 	</div>
 	{{/if}}
@@ -21,7 +21,7 @@
 		<div class="information">
 
 	{{#if (eq_coerce settings.display_who_viewing '1')}}
-			{{#if (eq_coerce (getNumItems context.view_members) '1')}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
+			{{#if (eq_coerce (count context.view_members) '1')}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 	{{else}}
 			{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}} 0 {{txt.members}}{{/if}}
 	{{/if}}

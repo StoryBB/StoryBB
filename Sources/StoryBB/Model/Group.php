@@ -12,11 +12,16 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\Phrase;
+use StoryBB\Dependency\Database;
+
 /**
  * This class handles the database processing for a membergroup.
  */
 class Group
 {
+	use Database;
+
 	const GUEST = -1;
 	const UNGROUPED_ACCOUNT = 0;
 	const ADMINISTRATOR = 1;
@@ -59,5 +64,28 @@ class Group
 		$smcFunc['db']->free_result($request);
 
 		return $is_character_group;
+	}
+
+	public function get_all_names(): array
+	{
+		$db = $this->db();
+
+		$groups = [
+			-1 => new Phrase('General:guest_title'),
+			0 => new Phrase('Reports:full_member'),
+		];
+		// Get all the possible membergroups!
+		$request = $db->query('', '
+			SELECT id_group, group_name, online_color
+			FROM {db_prefix}membergroups',
+			[]
+		);
+		while ($row = $db->fetch_assoc($request))
+		{
+			$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
+		}
+		$db->free_result($request);
+
+		return $groups;
 	}
 }

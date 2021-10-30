@@ -1297,7 +1297,14 @@ function AdminAccount()
 
 		// Update the webmaster's email?
 		if (!empty($_POST['server_email']) && (empty($webmaster_email) || $webmaster_email == 'noreply@myserver.com'))
-			updateSettingsFile(['webmaster_email' => $_POST['server_email']]);
+		{
+			$smcFunc['db']->insert('replace',
+				'{db_prefix}settings',
+				['variable' => 'string-255', 'value' => 'string-65534'],
+				['webmaster_email', $_POST['server_email']],
+				['variable']
+			);
+		}
 
 		// Work out whether we're going to have dodgy characters and remove them.
 		$invalid_characters = preg_match('~[<>&"\'=\\\]~', $_POST['username']) != 0;

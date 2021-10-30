@@ -44,11 +44,6 @@ $language = 'en-us';
  */
 $boardurl = 'http://127.0.0.1/storybb';
 /**
- * Email address to send emails from. (like noreply@yourdomain.com.)
- * @var string
- */
-$webmaster_email = 'noreply@myserver.com';
-/**
  * Name of the cookie to set for authentication.
  * @var string
  */

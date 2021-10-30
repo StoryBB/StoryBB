@@ -10,8 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
-use StoryBB\Model\Theme;
 use StoryBB\StringLibrary;
 use StoryBB\Task\Scheduler;
 
@@ -535,7 +535,7 @@ function ModifyFontSettings($return_config = false)
 	}
 
 	// And now on to the fonts from themes.
-	$fonts_from_themes = Theme::get_font_list();
+	$fonts_from_themes = App::container()->get('thememanager')->get_font_list();
 
 	if (!empty($fonts_from_themes))
 	{
@@ -577,7 +577,7 @@ function ModifyFontSettings($return_config = false)
 		}
 
 		updateSettings(['editor_fonts' => json_encode($new_fonts)]);
-		Theme::clear_css_cache();
+		App::container()->get('thememanager')->clear_css_cache();
 		redirectexit('action=admin;area=postsettings;sa=fonts');
 	}
 

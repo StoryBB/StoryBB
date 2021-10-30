@@ -414,9 +414,6 @@ button.plugin-remove {
 	font-weight: bold;
 	padding: 0 6px;
 }
-#manage_boards li#recycle_board {
-	background-color: #dee;
-}
 .move_links {
 	padding: 0 13px 0 0;
 }
