@@ -40,7 +40,6 @@ $txt['whoall_characters'] = 'Viewing the character list.';
 $txt['whoall_contact'] = 'Posting on the contact form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
-$txt['whoall_help'] = 'Viewing the help page.';
 $txt['whoall_helpadmin'] = 'Viewing a help popup.';
 $txt['whoall_pm'] = 'Viewing their messages.';
 $txt['whoall_login'] = 'Logging into the forum.';
@@ -61,6 +60,8 @@ $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 $txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>.';
 
 $txt['whoroute_characters'] = 'Viewing the character list.';
+$txt['whoroute_help'] = 'Viewing the help pages.';
+$txt['whoroute_help_policy'] = 'Viewing the help pages.';
 
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
 $txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';

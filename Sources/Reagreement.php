@@ -21,6 +21,8 @@ use StoryBB\Model\Policy;
  */
 function on_allowed_reagreement_actions(): bool
 {
+	global $context;
+
 	$allowed_actions = [
 		'contact' => true,
 		'help' => true,
@@ -30,7 +32,11 @@ function on_allowed_reagreement_actions(): bool
 		],
 		'reagreement' => true,
 	];
-	call_integration_hook('integration_reagreement_actions', [&$allowed_actions]);
+	$allowed_routes = [
+		'help',
+		'help_policy',
+	];
+	call_integration_hook('integration_reagreement_actions', [&$allowed_actions, &$allowed_routes]);
 
 	if (!empty($_REQUEST['action']) && isset($allowed_actions[$_REQUEST['action']]))
 	{
@@ -60,6 +66,11 @@ function on_allowed_reagreement_actions(): bool
 				}
 			}
 		}
+	}
+
+	if (!empty($context['routing']['_route']) && in_array($context['routing']['_route'], $allowed_routes))
+	{
+		return true;
 	}
 
 	return false;
