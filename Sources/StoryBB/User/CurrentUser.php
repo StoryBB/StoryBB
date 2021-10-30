@@ -68,8 +68,8 @@ class CurrentUser
 			$this->user_data['groups'] = array_merge([$this->user_data['id_group']], explode(',', $this->user_data['additional_groups']));
 			$this->user_data['groups'] = array_unique(array_map('intval', $this->user_data['groups']));
 
-			$this->user_data['ic_avatar'] = set_avatar_data(['filename' => $user_data['chars_filename'], 'avatar' => $user_data['ic_avatar']]);
-			$this->user_data['ooc_avatar'] = set_avatar_data(['filename' => $user_data['filename'], 'avatar' => $user_data['ooc_avatar']]);
+			$this->user_data['ic_avatar'] = ['filename' => $user_data['chars_filename'], 'avatar' => $user_data['ic_avatar']];
+			$this->user_data['ooc_avatar'] = ['filename' => $user_data['filename'], 'avatar' => $user_data['ooc_avatar']];
 		}
 		else
 		{
@@ -98,6 +98,16 @@ class CurrentUser
 		}
 
 		$GLOBALS['user_settings'] = $this->user_data; // @todo Dirty legacy hack.
+	}
+
+	public function get_id(): int
+	{
+		if (empty($this->user_data))
+		{
+			throw new RuntimeException('Current user has not been loaded; cannot call get_user_time_offset.');
+		}
+
+		return $this->user_data['id_member'] ?? 0;
 	}
 
 	public function get_theme(): int

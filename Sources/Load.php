@@ -214,35 +214,20 @@ function loadUserSettings()
 		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'] ?? '';
 	}
 
-	// Check first the integration, then the cookie, and last the session.
-	$id_member = 0;
-	(new Mutatable\Account\Authenticates($id_member))->execute();
-	$already_verified = !empty($id_member);
-
 	$container = Container::instance();
 	$db = $container->get('database');
 
-	if (!$id_member)
-	{
-		// Check the session.
-		
-		$session = $container->get('session');
-		if ($session->has('userid'))
-		{
-			$id_member = $session->get('userid');
-		}
-	}
 
 	// Only load this stuff if the user isn't a guest.
 	$user = $container->get('currentuser');
-	$user->load_user($id_member);
+	$id_member = $user->get_id();
 	if ($id_member != 0)
 	{
 		// Did we find 'im?  If not, junk it.
 		if (!empty($user_settings))
 		{
 			// Wrong password or not activated - either way, you're going nowhere.
-			$id_member = ($user_settings['is_activated'] == 1 || $user_settings['is_activated'] == 11) ? (int) $user_settings['id_member'] : 0;
+			$id_member = $user->is_activated() ? (int) $user_settings['id_member'] : 0;
 		}
 		else
 			$id_member = 0;
@@ -307,22 +292,6 @@ function loadUserSettings()
 
 		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
-
-		// Figure out the new time offset.
-		if (!empty($user_settings['timezone']))
-		{
-			// Get the offsets from UTC for the server, then for the user.
-			$tz_system = new DateTimeZone(@date_default_timezone_get());
-			$tz_user = new DateTimeZone($user_settings['timezone']);
-			$time_system = new DateTime('now', $tz_system);
-			$time_user = new DateTime('now', $tz_user);
-			$user_info['time_offset'] = ($tz_user->getOffset($time_user) - $tz_system->getOffset($time_system)) / 3600;
-		}
-		else
-		{
-			// !!! Compatibility.
-			$user_info['time_offset'] = empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset'];
-		}
 	}
 	// If the user is a guest, initialize all the critical user settings.
 	else
@@ -339,9 +308,6 @@ function loadUserSettings()
 			$_SESSION['robot_name'] = $robot->identify_robot_from_user_agent($_SERVER['HTTP_USER_AGENT'] ?? '');
 		}
 		$user_info['possibly_robot'] = !empty($_SESSION['robot_name']);
-
-		// We don't know the offset...
-		$user_info['time_offset'] = 0;
 
 		$context['show_cookie_notice'] = !empty($modSettings['show_cookie_notice']) && empty($_COOKIE['cookies']);
 	}
@@ -367,6 +333,7 @@ function loadUserSettings()
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
+		'time_offset' => $user->get_time_offset(),
 		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
 		'avatar' => [
 			'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
@@ -384,9 +351,18 @@ function loadUserSettings()
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => [],
 		'policy_acceptance' => isset($user_settings['policy_acceptance']) ? $user_settings['policy_acceptance'] : 0,
-		'ic_avatar' => $user_settings['ic_avatar'] ?? set_avatar_data(['generic' => true]),
-		'ooc_avatar' => $user_settings['ooc_avatar'] ?? set_avatar_data(['generic' => true]),
 	];
+
+	if (isset($user_settings['ic_avatar']))
+	{
+		$user_info['ic_avatar'] = set_avatar_data($user_settings['ic_avatar']);
+		$user_info['ooc_avatar'] = set_avatar_data($user_settings['ooc_avatar']);
+	}
+	else
+	{
+		$user_info['ic_avatar'] = set_avatar_data(['generic' => true]);
+		$user_info['ooc_avatar'] = set_avatar_data(['generic' => true]);
+	}
 
 	$group_filter = function($main, $extras) {
 		$return = [];
