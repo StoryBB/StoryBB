@@ -1,6 +1,14 @@
 	<footer>
-		<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB =StoryBB\App::SOFTWARE_VERSION} &copy; =StoryBB\App::SOFTWARE_YEAR}, StoryBB project</a>
+		<ul>
+			<li class="copyright"><a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB {{ footer.storybb_version }} &copy; {{ footer.storybb_year }}, StoryBB project</a></li>
+		</ul>
 
-		<a href="{{ link('help_smileys') }}">{{ phrase('help') }}</a>
+		<a href="{{ link('help') }}">{{ phrase('help') }}</a>
 		<a href="{{ link('help_policy', policy="terms") }}">{{ phrase('General:terms') }}</a>
+
+		<div class="jump_buttons" style="display: none;">
+		<a href="#top" title="{{txt.go_up}}" class="go_up"></a>
+		<a href="#bottom" title="{{txt.go_down}}" class="go_down"></a>
 	</footer>
+
+	<a href="" id="bottom"></a>
