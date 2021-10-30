@@ -306,17 +306,12 @@ class AdminWeb
 			$page = $container->instantiate('StoryBB\\Page');
 			$urlgenerator = $container->get('urlgenerator');
 			$sitesettings = $container->get('sitesettings');
+			$theme = $container->get('current_theme');
 			$page->addMetaProperty('og:site_name', $sitesettings->forum_name);
 
 			$page->addLink('help', $urlgenerator->generate('help'));
 
-			$options = [
-				'theme' => 1,
-				'scssfile' => 'admin',
-				'timestamp' => time(), // @todo
-			];
-
-			$page->addLink('stylesheet', $urlgenerator->generate('css', $options));
+			$page->addSCSSfile(1, 'admin', $theme->get_compiled_time('admin'));
 
 			$default_theme_url = App::get_global_config_item('boardurl') . '/Themes/natural';
 			$page->addLink('stylesheet', $default_theme_url . '/css/fontawesome-free-5.15.1-web/css/all.min.css');
