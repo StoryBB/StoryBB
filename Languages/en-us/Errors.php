@@ -330,7 +330,6 @@ $txt['error_while_editing_poll'] = 'The following error or errors occurred while
 
 $txt['loadavg_search_disabled'] = 'Due to high stress on the server, the search function has been automatically and temporarily disabled. Please try again in a short while.';
 $txt['loadavg_generic_disabled'] = 'Sorry, because of high stress on the server, this feature is currently unavailable.';
-$txt['loadavg_unreadreplies_disabled'] = 'The server is currently under high stress. Please try again shortly.';
 $txt['loadavg_show_posts_disabled'] = 'Please try again later. This member\'s posts are not currently available due to high load on the server.';
 $txt['loadavg_unread_disabled'] = 'The server\'s resources are temporarily under too high a demand to list out the topics you have not read.';
 $txt['loadavg_userstats_disabled'] = 'Please try again later. This member\'s statistics are not currently available due to high load on the server.';

@@ -595,7 +595,6 @@ $txt['report_profile'] = 'Report profile of %1$s';
 
 $txt['unread_topics'] = 'Unread Topics';
 $txt['unread_topics_all'] = 'All Unread Topics';
-$txt['unread_replies'] = 'Updated Topics';
 
 $txt['who_title'] = 'Who\'s Online';
 $txt['who_and'] = ' and ';
@@ -666,7 +665,6 @@ $txt['find_no_results'] = 'No results found';
 $txt['find_results'] = 'Results';
 
 $txt['unread_since_visit'] = 'Show unread posts since last visit.';
-$txt['show_unread_replies'] = 'Show new replies to your posts.';
 
 $txt['change_color'] = 'Change Color';
 

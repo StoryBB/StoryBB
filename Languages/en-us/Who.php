@@ -57,7 +57,6 @@ $txt['whoall_restoretopic'] = 'Restoring a topic.';
 $txt['whoall_signup'] = 'Registering for an account on the forum.';
 $txt['whoall_signup2'] = 'Registering for an account on the forum.';
 $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
-$txt['whoall_unreadreplies'] = 'Viewing unread replies since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 $txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>.';
 

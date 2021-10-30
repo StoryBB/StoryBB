@@ -281,7 +281,6 @@ function sbb_main()
 		'theme' => ['Themes.php', 'ThemesMain'],
 		'topic' => ['Display.php', 'Display'],
 		'unread' => ['Recent.php', 'UnreadTopics'],
-		'unreadreplies' => ['Recent.php', 'UnreadReplies'],
 		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'vote' => ['Poll.php', 'Vote'],
