@@ -28,8 +28,6 @@ $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 $txt['who_user_received_error'] = 'User received error message: %1$s';
 
-$txt['who_page'] = 'Viewing <a href="{scripturl}?action=pages;page=%1$s">%2$s</a>.';
-
 $txt['whorobot_login'] = 'Viewing the login page.';
 $txt['whorobot_signup'] = 'Viewing the registration page.';
 $txt['whorobot_reminder'] = 'Viewing the reminder page.';
@@ -62,6 +60,7 @@ $txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>
 $txt['whoroute_characters'] = 'Viewing the character list.';
 $txt['whoroute_help'] = 'Viewing the help pages.';
 $txt['whoroute_help_policy'] = 'Viewing the help pages.';
+$txt['whoroute_pages'] = 'Viewing <a href="%1$s">%2$s</a>.';
 
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
 $txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';

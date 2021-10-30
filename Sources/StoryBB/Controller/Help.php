@@ -68,7 +68,7 @@ class Help implements Routable
 				$context['manual_sections']['page_' . $id_page] = [
 					'title' => $page['page_title'],
 					'desc' => '',
-					'link' => $scripturl . '?action=pages;page=' . $page['page_name'],
+					'link' => $url->generate('pages', ['page' => $page['page_name']]),
 				];
 			}
 		}

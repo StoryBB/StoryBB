@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
 use StoryBB\Helper\FontAwesome;
 use StoryBB\Helper\Parser;
@@ -36,6 +37,8 @@ function ListPages()
 	global $context, $smcFunc, $txt, $sourcedir, $scripturl, $modSettings;
 	require_once($sourcedir . '/Subs-List.php');
 
+	$url = App::container()->get('urlgenerator');
+
 	$listOptions = [
 		'id' => 'page_list',
 		'title' => $txt['admin_page_list'],
@@ -44,7 +47,7 @@ function ListPages()
 		'default_sort_col' => 'page_title',
 		'no_items_label' => $txt['no_pages_yet'],
 		'get_items' => [
-			'function' => function($start, $items_per_page, $sort) use ($scripturl, $smcFunc)
+			'function' => function($start, $items_per_page, $sort) use ($url, $smcFunc)
 			{
 				$rows = [];
 				$request = $smcFunc['db']->query('', '
@@ -61,7 +64,7 @@ function ListPages()
 				);
 				while ($row = $smcFunc['db']->fetch_assoc($request))
 				{
-					$row['link'] = $scripturl . '?action=pages;page=' . $row['page_name'];
+					$row['link'] = $url->generate('pages', ['page' => $row['page_name']]);
 					$rows[$row['id_page']] = $row;
 				}
 				$smcFunc['db']->free_result($request);
@@ -82,9 +85,9 @@ function ListPages()
 					'value' => $txt['page_title'],
 				],
 				'data' => [
-					'function' => function ($rowData) use ($scripturl)
+					'function' => function ($rowData) use ($url)
 					{
-						return '<a href="' . $scripturl . '?action=pages;page=' . $rowData['page_name'] . '">' . $rowData['page_title'] . '</a>';
+						return '<a href="' . $url->generate('pages', ['page' => $rowData['page_name']]) . '">' . $rowData['page_title'] . '</a>';
 					},
 				],
 				'sort' => [
