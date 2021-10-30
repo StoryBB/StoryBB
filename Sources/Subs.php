@@ -1941,11 +1941,6 @@ function setupMenuContext()
 				'amt' => $context['user']['unread_messages'],
 				'visible' => $context['allow_pm'],
 			],
-			'bookmark' => [
-				'url' => $scripturl . '?action=profile;area=bookmarks;u=' . $context['user']['id'],
-				'icon' => 'fas fa-bookmark fa-fw',
-				'label' => $txt['bookmarks'],
-			],
 			'characterlist' => [
 				'url' => $urlgenerator->generate('characters'),
 				'icon' => 'fas fa-users fa-fw',
