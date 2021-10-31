@@ -236,6 +236,11 @@ class Post
 
 			if ($msgOptions['approved'])
 			{
+				Task::queue_adhoc('StoryBB\\Task\\Adhoc\\Achievement\\TopicStarter', [
+					'account' => $posterOptions['id'],
+					'character' => $posterOptions['char_id'],
+				]);
+
 				(new Integratable\Topic\Created($msgOptions, $topicOptions, $posterOptions))->execute();
 			}
 

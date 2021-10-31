@@ -108,6 +108,12 @@ function AdminMain()
 					'function' => 'ManageAffiliates',
 					'permission' => ['admin_forum'],
 				],
+				'achievements' => [
+					'label' => $txt['achievements'],
+					'file' => 'ManageAchievements.php',
+					'function' => 'ManageAchievements',
+					'permission' => ['admin_forum'],
+				],
 				'adminlogoff' => [
 					'label' => $txt['admin_logoff'],
 					'function' => 'AdminEndSession',

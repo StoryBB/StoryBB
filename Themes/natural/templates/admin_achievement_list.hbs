@@ -1,0 +1,28 @@
+		{{! Managing achievements. }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.achievements}}}</h3>
+		</div>
+
+		<div class="title_bar">
+			<h3 class="titlebg">{{{txt.account_achievements}}}</h3>
+		</div>
+{{#if context.achievements.account}}
+
+{{else}}
+		<div class="windowbg centertext">{{{txt.no_achievements_account}}}</div>
+		<div class="buttonlist righttext">
+			<a class="button" href="{{scripturl}}?action=admin;area=achievements;sa=add_achieve;type=account">{{{txt.add_achievement}}}</a>
+		</div>
+{{/if}}
+
+		<div class="title_bar">
+			<h3 class="titlebg">{{{txt.character_achievements}}}</h3>
+		</div>
+{{#if context.achievements.character}}
+
+{{else}}
+		<div class="windowbg centertext">{{{txt.no_achievements_character}}}</div>
+		<div class="buttonlist righttext">
+			<a class="button" href="{{scripturl}}?action=admin;area=achievements;sa=add_achieve;type=character">{{{txt.add_achievement}}}</a>
+		</div>
+{{/if}}

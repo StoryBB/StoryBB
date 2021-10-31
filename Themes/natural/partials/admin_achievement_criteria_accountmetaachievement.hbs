@@ -1,0 +1,46 @@
+		<div id="template_AccountMetaAchievement">
+			<div class="editable">
+				<div class="input">{{{txt.account_achievements_earned}}}</div>
+
+				{{#if context.metadata.achievements.account}}
+				<dl class="settings">
+					<dt>{{txt.account_achievements}}</dt>
+					<dd>
+						{{#each context.metadata.achievements.account}}
+						<label><input type="checkbox" name="AccountMetaAchievement[{{@key}}]" value="{{@key}}"{{#if (eq_coerce @key ../context.achievement.id)}} disabled{{/if}}> {{{this.achievement_name}}}</label>
+						{{/each}}
+					</dd>
+				</dl>
+				{{else}}
+					<div><em>{{{txt.no_achievements_account}}}</em></div>
+				{{/if}}
+
+				<button type="button" class="button done-editing active">{{{txt.done_editing}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+			<div class="noteditable">
+				<div class="output"></div>
+
+				<button type="button" class="button edit">{{{txt.edit}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+		</div>
+
+<script>
+achievement_validators['AccountMetaAchievement'] = function(dd) {
+	var selected = [];
+	dd.find('input:not(:disabled)').each(function() {
+		if ($(this).prop('checked')) {
+			selected.push($(this).closest('label').text());
+		}
+	});
+
+	var msg = {{{json txt.account_achievements_earned}}};
+	if (selected.length > 0) {
+		dd.find('.noteditable .output').html(msg + ' ' + selected.join(', '));
+	} else {
+		dd.find('.noteditable .output').html(msg + ' ' + {{{json txt.none_selected}}});
+	}
+	return false;
+};
+</script>
