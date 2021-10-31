@@ -216,7 +216,7 @@ function load_lang_file()
 	$incontext['detected_languages'] = [];
 
 	// Make sure the languages directory actually exists.
-	$langpath = __DIR__ . '/Themes/natural/languages';
+	$langpath = __DIR__ . '/Languages';
 	if (file_exists($langpath))
 	{
 		// Find all the "Install" language files in the directory.
@@ -253,7 +253,7 @@ function load_lang_file()
 
 		<p>This installer was unable to find the installer\'s language file or files.  They should be found under:</p>
 
-		<div style="margin: 1ex; font-family: monospace; font-weight: bold;">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Themes/natural/languages</div>
+		<div style="margin: 1ex; font-family: monospace; font-weight: bold;">', dirname($_SERVER['PHP_SELF']) != '/' ? dirname($_SERVER['PHP_SELF']) : '', '/Languages</div>
 
 		<p>In some cases, FTP clients do not properly upload files with this many folders.  Please double check to make sure you <span style="font-weight: 600;">have uploaded all the files in the distribution</span>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
@@ -269,7 +269,7 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $_GET['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Themes/natural/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
 	{
 		// Use the first one...
 		list ($_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
@@ -280,7 +280,7 @@ function load_lang_file()
 	}
 
 	// And now include the actual language file itself.
-	require_once(__DIR__ . '/Themes/natural/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
+	require_once(__DIR__ . '/Languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
 }
 
 /**
