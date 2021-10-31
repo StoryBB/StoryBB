@@ -11,6 +11,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Helper\Bbcode\AbstractParser;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 use StoryBB\Task\Scheduler;
@@ -124,9 +125,7 @@ function ModifyBBCSettings($return_config = false)
 		checkSession();
 
 		// Clean up the tags.
-		$bbcTags = [];
-		foreach (Parser::parse_bbc(false) as $tag)
-			$bbcTags[] = $tag['tag'];
+		$bbcTags = AbstractParser::get_all_bbcodes();
 
 		if (!isset($_POST['disabledBBC_enabledTags']))
 			$_POST['disabledBBC_enabledTags'] = [];

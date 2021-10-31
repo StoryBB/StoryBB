@@ -12,6 +12,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\Helper\Bbcode\AbstractParser;
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
 use StoryBB\Model\Theme;
@@ -738,9 +739,7 @@ function ModifySignatureSettings($return_config = false)
 		checkSession();
 
 		// Clean up the tag stuff!
-		$bbcTags = [];
-		foreach (Parser::parse_bbc(false) as $tag)
-			$bbcTags[] = $tag['tag'];
+		$bbcTags = AbstractParser::get_all_bbcodes();
 
 		if (!isset($_POST['signature_bbc_enabledTags']))
 			$_POST['signature_bbc_enabledTags'] = [];

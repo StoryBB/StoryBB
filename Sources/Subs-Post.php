@@ -12,6 +12,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Bbcode\AbstractParser;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -191,11 +192,8 @@ function preparsecode(&$message, $previewing = false)
 		'td',
 	];
 
-	require_once($sourcedir . '/Subs.php');
-
-	foreach (($codes = Parser::parse_bbc(false)) as $code)
-		if (!in_array($code['tag'], $allowedEmpty))
-			$alltags[] = $code['tag'];
+	$bbcTags = AbstractParser::get_all_bbcodes();
+	$alltags = array_diff($bbcTags, $allowedEmpty);
 
 	$alltags_regex = '\b' . implode("\b|\b", array_unique($alltags)) . '\b';
 
