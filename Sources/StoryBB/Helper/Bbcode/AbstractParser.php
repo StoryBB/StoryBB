@@ -544,6 +544,22 @@ abstract class AbstractParser
 				'block_level' => true,
 			],
 			[
+				'tag' => 'mature',
+				'before' => $context['user']['id'] ? '<details class="bbc_spoiler"><summary>' . $txt['mature_open'] . '</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $context['user']['id'] ? '</details>' : '</sbb___strip>',
+				'trim' => 'both',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
+				'tag' => 'mature',
+				'type' => 'parsed_equals',
+				'before' => $context['user']['id'] ? '<details class="bbc_spoiler"><summary>$1</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $context['user']['id'] ? '</details>' : '</sbb___strip>',
+				'trim' => 'both',
+				'quoted' => 'optional',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
 				'tag' => 'me',
 				'type' => 'unparsed_equals',
 				'before' => '<div class="meaction">* $1 ',
@@ -662,6 +678,22 @@ abstract class AbstractParser
 					$sizes = [1 => 0.7, 2 => 1.0, 3 => 1.35, 4 => 1.45, 5 => 2.0, 6 => 2.65, 7 => 3.95];
 					$data = $sizes[$data] . 'em';
 				},
+			],
+			[
+				'tag' => 'spoiler',
+				'before' => '<details class="bbc_spoiler"><summary>' . $txt['spoiler_open'] . '</summary>',
+				'after' => '</details>',
+				'trim' => 'both',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
+				'tag' => 'spoiler',
+				'type' => 'parsed_equals',
+				'before' => '<details class="bbc_spoiler"><summary>$1</summary>',
+				'after' => '</details>',
+				'trim' => 'both',
+				'quoted' => 'optional',
+				'disallow_children' => ['spoiler', 'mature'],
 			],
 			[
 				'tag' => 'sub',
