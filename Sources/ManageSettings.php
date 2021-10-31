@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
 use StoryBB\Model\Theme;
@@ -195,7 +196,7 @@ function ModifyBasicSettings($return_config = false)
 		if ($old_minimize_css != $new_minimize_css)
 		{
 			// It doesn't matter whether we're turning it on or off, we want to force a reset either way.
-			Theme::clear_css_cache();
+			App::container()->get('thememanager')->clear_css_cache();
 		}
 
 		settings_integration_hook('integrate_save_basic_settings');
