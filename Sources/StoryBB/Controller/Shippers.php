@@ -16,6 +16,7 @@ use StoryBB\Container;
 use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Helper\Parser;
 use StoryBB\Model\TopicPrefix;
+use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;

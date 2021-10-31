@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Any controller (routable) handlers must implement this interface.
+ * Base interface for any controller that indicates it can be called in maintenance mode.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -10,15 +10,15 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller;
+namespace StoryBB\Routing\Behaviours;
 
 use StoryBB\Discoverable;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Any controllers handlers must implement this interface.
+ * Any admin controllers handlers must implement this interface.
  */
-interface Routable extends Discoverable
+interface Administrative extends Discoverable
 {
 	public static function register_own_routes(RouteCollection $routes): void;
 }

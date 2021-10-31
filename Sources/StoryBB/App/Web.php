@@ -240,7 +240,7 @@ class Web
 		});
 		$container->inject('router_public', function() use ($container) {
 			$routes = new RouteCollection;
-			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Routable') as $controllable)
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Routing\\Behaviours\\Routable') as $controllable)
 			{
 				$controllable::register_own_routes($routes);
 			}
@@ -249,7 +249,7 @@ class Web
 		});
 		$container->inject('router_admin', function() use ($container) {
 			$routes = new RouteCollection;
-			foreach (ClassManager::get_classes_implementing('StoryBB\\Controller\\Administrative') as $controllable)
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Routing\\Behaviours\\Administrative') as $controllable)
 			{
 				$controllable::register_own_routes($routes);
 			}

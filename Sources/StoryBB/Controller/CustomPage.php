@@ -15,6 +15,7 @@ namespace StoryBB\Controller;
 use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\Phrase;
+use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;

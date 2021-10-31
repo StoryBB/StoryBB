@@ -13,11 +13,11 @@
 namespace StoryBB\Controller;
 
 use StoryBB\App;
-use StoryBB\Controller\MaintenanceAccessible;
-use StoryBB\Controller\Routable;
-use StoryBB\Controller\Unloggable;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
+use StoryBB\Routing\Behaviours\MaintenanceAccessible;
+use StoryBB\Routing\Behaviours\Routable;
+use StoryBB\Routing\Behaviours\Unloggable;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;

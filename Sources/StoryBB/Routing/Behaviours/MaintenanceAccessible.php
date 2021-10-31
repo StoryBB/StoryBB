@@ -10,15 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller;
+namespace StoryBB\Routing\Behaviours;
 
-use StoryBB\Discoverable;
-use Symfony\Component\Routing\RouteCollection;
-
-/**
- * Any admin controllers handlers must implement this interface.
- */
-interface Administrative extends Discoverable
+interface MaintenanceAccessible
 {
-	public static function register_own_routes(RouteCollection $routes): void;
 }
