@@ -1127,6 +1127,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 				'topic' => $row['id_topic'],
 				'msg' => $row['id_first_msg'],
 				'poster' => $row['id_member'],
+				'character' => $row['id_character'],
 				'new_topic' => true,
 			];
 		}
@@ -1144,6 +1145,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 					'topic' => $row['id_topic'],
 					'board' => $row['id_board'],
 					'poster' => $row['id_member'],
+					'character' => $row['id_character'],
 					'new_topic' => false,
 					'msg' => $row['id_msg'],
 				];
@@ -1256,6 +1258,14 @@ function approvePosts($msgs, $approve = true, $notify = true)
 					'name' => $topic['name'],
 				],
 				'type' => $topic['new_topic'] ? 'topic' : 'reply',
+			]);
+		}
+
+		foreach ($notification_topics as $topic)
+		{
+			StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\Achievement\\TopicStarter', [
+				'account' => $topic['poster'],
+				'character' => $topic['character'],
 			]);
 		}
 

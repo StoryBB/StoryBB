@@ -21,6 +21,7 @@ use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
 use StoryBB\Hook\Mutatable;
+use StoryBB\Model\Currency;
 use StoryBB\Plugin\Manager as PluginManager;
 use StoryBB\StringLibrary;
 
@@ -943,7 +944,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		case 'normal':
 			$select_columns .= ', mem.buddy_list,  mem.additional_groups, lo.id_character AS online_character, chars.is_main,
 			chars.main_char_group, chars.char_groups, cg.online_color AS char_group_color,
-			COALESCE(cg.group_name, {string:blank_string}) AS character_group, chars.char_sheet, mem.immersive_mode';
+			COALESCE(cg.group_name, {string:blank_string}) AS character_group, chars.char_sheet, mem.immersive_mode, mem.currency';
 			break;
 		case 'profile':
 			$select_columns .= ', mem.additional_groups, mem.id_theme, mem.pm_ignore_list, mem.pm_receive_from,
@@ -951,7 +952,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts,
 			lo.id_character AS online_character, chars.is_main, chars.main_char_group, chars.char_groups,
 			cg.online_color AS char_group_color, COALESCE(cg.group_name, {string:blank_string}) AS character_group,
-			chars.char_sheet, mem.immersive_mode';
+			chars.char_sheet, mem.immersive_mode, mem.currency';
 			break;
 		case 'minimal':
 			$select_columns = '
@@ -1256,6 +1257,12 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// If the set isn't minimal then load the monstrous array.
 	if ($context['loadMemberContext_set'] != 'minimal')
 	{
+		// Display the user's currency if we're doing that.
+		if (!empty($modSettings['currency_enabled']))
+		{
+			$memberContext[$user]['currency'] = Currency::process((int) $profile['currency']);
+		}
+
 		// Go the extra mile and load the user's native language name.
 		if (empty($loadedLanguages))
 			$loadedLanguages = getLanguages();

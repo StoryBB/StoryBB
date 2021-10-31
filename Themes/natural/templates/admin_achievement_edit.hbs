@@ -1,0 +1,277 @@
+		{{! Managing achievements. }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{context.page_title}}}</h3>
+		</div>
+
+		<form action="{{{scripturl}}}?action=admin;area=achievements;sa=save_achieve" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+			<div class="windowbg">
+				<dl class="settings">
+					<dt>{{{txt.achievement_name}}}</dt>
+					<dd><input type="text" name="achievement_name" value="{{{context.achievement.name}}}" required></dd>
+					<dt>{{{txt.achievement_desc}}}</dt>
+					<dd><textarea name="achievement_desc">{{{context.achievement.desc}}}</textarea></dd>
+					<dt>{{{txt.manually_awardable}}}</dt>
+					<dd><input type="checkbox" name="manually_awardable" value="1"{{#if context.achievement.manually_awardable}} checked{{/if}}></dd>
+					<dt>
+						{{{txt.achievement_active}}}
+						<div class="smalltext">{{{txt.achievement_active_desc}}}</div>
+					</dt>
+					<dd><input type="checkbox" name="active" value="1"{{#if context.achievement.active}} checked{{/if}}></dd>
+				</dl>
+				<hr>
+				<div class="title_bar automatic_awarding">
+					<h4 class="titlebg">{{{txt.automatic_awarding}}}</h4>
+				</div>
+
+				<div id="achievement-rulesets"></div>
+
+				<div class="buttonlist righttext">
+					<button class="button" type="button" id="add-achievement-ruleset">{{{txt.add_achievement_ruleset}}}</button>
+				</div>
+
+				<div class="title_bar">
+					<h4 class="titlebg">Unlockable achievement</h4>
+				</div>
+				<dl class="settings">
+					<dt>Achievement is hidden unless unlocked or awarded</dt>
+					<dd><input type="checkbox" checked></dd>
+				</dl>
+
+				<div id="unlock-rulesets"></div>
+
+				<div class="buttonlist righttext">
+					<button class="button" type="button" id="add-unlock-ruleset">{{{txt.add_unlock_ruleset}}}</button>
+				</div>
+
+				<div class="title_bar">
+					<h4 class="titlebg">Additional outcomes</h4>
+				</div>
+				<div class="information">You can add set additional outcomes if the achievement is awarded.</div>
+
+				<div class="achivement-outcome">
+					<dl class="settings">
+						<dt>Add the following account group</dt>
+						<dd>Prize Student</dd>
+						<dt>Remove the following account group</dt>
+						<dd>Beginner Student</dd>
+						<dt>Grant the following currency</dt>
+						<dd>1 Galleon, 0 Knuts, 0 Sickles</dd>
+					</dl>
+				</div>
+
+				<div class="buttonlist righttext">
+					<select id="outcome_selector">
+						<option>-- select outcome --</option>
+						{{#each context.achievement_configuration.outcomes}}
+						<option value="{{@key}}">{{{name}}}</option>
+						{{/each}}
+					</select>
+					<button class="button">Add outcome</button>
+				</div>
+
+				<hr>
+
+				<div class="buttonlist righttext">
+					<button class="button active">Save</button>
+				</div>
+			</div>
+
+			{{session_form}}
+			<input type="hidden" name="achievement_type" value="{{context.achievement_type}}">
+		</form>
+
+		<div id="achieve_template">
+			<div class="achievement-rule">
+				<div class="information">{{{txt.achievement_will_be_earned}}}</div>
+
+				<dl class="settings conditions">
+				</dl>
+
+				<div class="condition-selector">
+					<select>
+						<option value="">{{{txt.select_condition}}}</option>
+						{{#each context.achievement_configuration.criteria}}
+						<option value="{{@key}}">{{{name}}}</option>
+						{{/each}}
+					</select>
+					<button class="button" type="button">{{{txt.add_achievement_condition}}}</button>
+				</div>
+				<hr>
+			</div>
+		</div>
+
+		<div id="unlock_template">
+			<div class="unlock-rule">
+				<div class="information">{{{txt.achievement_will_be_unlocked}}}</div>
+
+				<dl class="settings conditions">
+				</dl>
+				<div class="condition-selector">
+					<select>
+						<option value="">{{{txt.select_condition}}}</option>
+						{{#each context.achievement_configuration.unlock_criteria}}
+						<option value="{{@key}}">{{{name}}}</option>
+						{{/each}}
+					</select>
+					<button class="button" type="button">{{{txt.add_unlock_condition}}}</button>
+				</div>
+			</div>
+		</div>
+
+		<script>var achievement_validators = {};</script>
+		<div id="achieve_templates">
+			{{#each context.achievement_configuration.criteria}}
+				{{{dynamicpartial partial}}}
+			{{/each}}
+		</div>
+		<div id="outcome_templates">
+
+		</div>
+
+		<style>
+		.achievement-rule, .unlock-rule { margin-top: 20px; }
+		#achieve_template, #achieve_templates, #unlock_template { display: none; }
+		</style>
+
+<script>
+$('#add-achievement-ruleset').on('click', function() {
+	var next = 0;
+	$('#achievement-rulesets .achievement-rule').each(function () {
+		var id = parseInt($(this).attr('data-ruleset'));
+		if (id >= next) {
+			next = id + 1;
+		}
+	})
+	$('#achievement-rulesets').append($('#achieve_template').html());
+	$('#achievement-rulesets .achievement-rule:last-of-type').attr('data-ruleset', next);
+
+	$('#achievement-rulesets .achievement-rule:last-of-type').each(function () {
+		var ruleset = next;
+		$(this).find('.condition-selector button').on('click', function(e) {
+			var $select = $(this).closest('div.condition-selector').find('select:first-of-type');
+			var condition_type = $select.val();
+			if (condition_type != '') {
+				add_achievement_condition(ruleset, condition_type);
+			}
+			$select.val('');
+		});
+	});
+});
+$('#add-unlock-ruleset').on('click', function() {
+	var next = 0;
+	$('#unlock-rulesets .unlock-rule').each(function () {
+		var id = parseInt($(this).attr('data-ruleset'));
+		if (id >= next) {
+			next = id + 1;
+		}
+	})
+	$('#unlock-rulesets').append($('#unlock_template').html());
+	$('#unlock-rulesets .unlock-rule:last-of-type').attr('data-ruleset', next);
+
+	$('#unlock-rulesets .unlock-rule:last-of-type').each(function () {
+		var ruleset = next;
+		$(this).find('.condition-selector button').on('click', function(e) {
+			var $select = $(this).closest('div.condition-selector').find('select:first-of-type');
+			var condition_type = $select.val();
+			if (condition_type != '') {
+				add_unlock_condition(ruleset, condition_type);
+			}
+			$select.val('');
+		});
+	});
+});
+
+function add_achievement_condition(ruleset, condition_type)
+{
+	var caption = $('#achieve_template div.condition-selector select:first-of-type option[value="' + condition_type + '"]').text();
+
+	$('#achievement-rulesets .achievement-rule[data-ruleset="' + ruleset + '"] .conditions').append('<dt>' + caption + '</dt>');
+
+	var dd = '<dd>';
+	dd += ($('#template_' + condition_type).html()).replace(condition_type + '[', condition_type + '[a' + ruleset + '][');
+	dd += '</dd>';
+
+	var dd_html = $(dd).appendTo('#achievement-rulesets .achievement-rule[data-ruleset="' + ruleset + '"] .conditions');
+	dd_html.find('.editable').show();
+	dd_html.find('.noteditable').hide();
+
+	dd_html.find('input[data-toggle]').each(function () {
+		if ($(this).attr('data-toggle') == 'true') {
+			$(this).on('click', function(e) {
+				$(this).parent().next('div').toggle($(this).prop('checked'));
+			})
+		} else {
+			$(this).on('click', function(e) {
+				$(this).parent().next('div').toggle(!$(this).prop('checked'));
+			})
+		}
+	});
+
+	dd_html.find('button.edit').on('click', function() {
+		var dd = $(this).closest('dd');
+		dd.find('.editable, .noteditable').toggle();
+	});
+	dd_html.find('button.done-editing').on('click', function() {
+		if (achievement_validators.hasOwnProperty(condition_type)) {
+			var result = achievement_validators[condition_type](dd_html);
+
+			if (result) {
+				dd_html.prepend('<div class="errorbox">' + result + '</div>');
+			} else {
+				$(this).closest('dd').find('.editable, .noteditable').toggle();
+			}
+		}
+	});
+	dd_html.find('button.remove').on('click', function() {
+		$(this).closest('dd').prev('dt').remove();
+		$(this).closest('dd').remove();
+	});
+}
+
+function add_unlock_condition(ruleset, condition_type)
+{
+	var caption = $('#unlock_template div.condition-selector select:first-of-type option[value="' + condition_type + '"]').text();
+
+	$('#unlock-rulesets .unlock-rule[data-ruleset="' + ruleset + '"] .conditions').append('<dt>' + caption + '</dt>');
+
+	var dd = '<dd>';
+	dd += ($('#template_' + condition_type).html()).replace(condition_type + '[', condition_type + '[u' + ruleset + '][');
+	dd += '</dd>';
+
+	var dd_html = $(dd).appendTo('#unlock-rulesets .unlock-rule[data-ruleset="' + ruleset + '"] .conditions');
+	dd_html.find('.editable').show();
+	dd_html.find('.noteditable').hide();
+
+	dd_html.find('input[data-toggle]').each(function () {
+		if ($(this).attr('data-toggle') == 'true') {
+			$(this).on('click', function(e) {
+				$(this).parent().next('div').toggle($(this).prop('checked'));
+			})
+		} else {
+			$(this).on('click', function(e) {
+				$(this).parent().next('div').toggle(!$(this).prop('checked'));
+			})
+		}
+	});
+
+	dd_html.find('button.edit').on('click', function() {
+		var dd = $(this).closest('dd');
+		dd.find('.editable, .noteditable').toggle();
+	});
+	dd_html.find('button.done-editing').on('click', function() {
+		if (achievement_validators.hasOwnProperty(condition_type)) {
+			var result = achievement_validators[condition_type](dd_html);
+
+			if (result) {
+				dd_html.prepend('<div class="errorbox">' + result + '</div>');
+			} else {
+				$(this).closest('dd').find('.editable, .noteditable').toggle();
+			}
+		}
+	});
+	dd_html.find('button.remove').on('click', function() {
+		$(this).closest('dd').prev('dt').remove();
+		$(this).closest('dd').remove();
+	});
+}
+</script>

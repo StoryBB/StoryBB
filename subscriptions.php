@@ -17,7 +17,7 @@ use StoryBB\StringLibrary;
 define('STORYBB', 'BACKGROUND');
 
 global $time_start, $maintenance, $msubject, $mmessage, $language;
-global $boardurl, $boarddir, $sourcedir, $webmaster_email;
+global $boardurl, $boarddir, $sourcedir;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $scripturl, $db_passwd, $cachedir;

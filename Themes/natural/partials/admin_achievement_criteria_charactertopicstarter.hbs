@@ -1,0 +1,59 @@
+		<div id="template_CharacterTopicStarter">
+			<div class="editable">
+				<div class="input">{{textTemplate txt.character_has_ic_topics '<input type="number" min="1" max="10000" value="0" name="CharacterTopicStarter[topics]">' }}</div>
+
+				<div>
+					<label><input type="checkbox" name="CharacterTopicStarter[allboards]" checked data-toggle="false"> {{{txt.in_all_boards}}}</label>
+
+					<div style="display:none">
+						{{#each context.metadata.boards}}
+							<strong>{{{name}}}</strong><br>
+							{{#each boards}}
+								<label><input type="checkbox" name="CharacterTopicStarter[boards][{{@key}}]" value="{{@key}}"{{#unless in_character}} disabled{{/unless}}> {{repeat '&nbsp;&nbsp;' child_level}} {{{board_name}}}</label><br>
+							{{/each}}
+						{{/each}}
+					</div>
+				</div>
+
+				<button type="button" class="button done-editing active">{{{txt.done_editing}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+			<div class="noteditable">
+				<div class="output"></div>
+
+				<button type="button" class="button edit">{{{txt.edit}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+		</div>
+
+<script>
+achievement_validators['CharacterTopicStarter'] = function(dd) {
+	var msg = {{{json txt.character_has_ic_topics}}};
+	var in_all_boards = {{{json txt.in_all_boards}}};
+	var in_the_following_boards = {{{json txt.in_the_following_boards}}};
+
+	var number = dd.find('input[type=number]').val();
+	if (number >= 0) {
+		msg = msg.replace('%1$s', number);
+	}
+
+	if (dd.find('input[name$="[allboards]"]').prop('checked')) {
+		msg = msg + ' (' + in_all_boards + ')';
+	} else {
+		var selected = [];
+		dd.find('input[name*="[boards]"]:not(:disabled)').each(function() {
+			if ($(this).prop('checked')) {
+				selected.push($(this).closest('label').text());
+			}
+		});
+		if (selected.length > 0) {
+			msg = msg + ' (' + in_the_following_boards.replace('%1$s', selected.join(', ')) + ')';
+		} else {
+			msg = msg + ' (' + {{{json txt.in_no_boards}}} + ')';
+		}
+	}
+
+	dd.find('.noteditable .output').html(msg);
+	return false;
+};
+</script>

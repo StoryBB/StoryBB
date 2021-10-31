@@ -47,7 +47,7 @@ class ServerEnvironment
 	 * @param string $url to check, in $boardurl format (no trailing slash).
 	 * @return bool True if a redirect was found and false if not.
 	 */
-	public function https_redirect_active($url): bool
+	public static function https_redirect_active($url): bool
 	{
 		// Ask for the headers for the passed url, but via http...
 		// Need to add the trailing slash, or it puts it there & thinks there's a redirect when there isn't...

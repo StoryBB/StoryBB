@@ -12,6 +12,8 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\Model\Achievement;
+
 /**
  * This class handles alerts.
  */
@@ -276,6 +278,7 @@ class Alert
 		$msgs = [];
 		$chars = [];
 		$char_accounts = [];
+		$achievements = [];
 		foreach ($alerts as $id_alert => $alert)
 		{
 			if (!empty($alert['chars_src']))
@@ -288,6 +291,10 @@ class Alert
 				$topics[$alert['extra']['topic']] = $txt['topic_na'];
 			if ($alert['content_type'] == 'msg')
 				$msgs[$alert['content_id']] = $txt['topic_na'];
+			if ($alert['content_type'] == 'achieve')
+			{
+				$achievements[$alert['content_id']] = $txt['achievement_na'];
+			}
 		}
 
 		// Having figured out what boards etc. there are, let's now get the names of them if we can see them. If not, there's already a fallback set up.
@@ -336,6 +343,43 @@ class Alert
 			);
 			while ($row = $smcFunc['db']->fetch_assoc($request))
 				$msgs[$row['id_msg']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
+			$smcFunc['db']->free_result($request);
+		}
+		if (!empty($achievements))
+		{
+			$achievement_types = [];
+
+			$request = $smcFunc['db']->query('', '
+				SELECT a.id_achieve, a.achievement_name, a.achievement_type
+				FROM {db_prefix}achieve AS a
+				WHERE a.id_achieve IN ({array_int:achievements})',
+				[
+					'achievements' => array_keys($achievements),
+				]
+			);
+			while ($row = $smcFunc['db']->fetch_assoc($request))
+			{
+				$achievements[$row['id_achieve']] = $row['achievement_name'];
+				$achievement_types[$row['id_achieve']] = $row['achievement_type'];
+			}
+			$smcFunc['db']->free_result($request);
+
+			// Having fetched achievement names, now make sure we don't display the achievement weirdly for OOC achievements.
+			foreach ($alerts as $id_alert => $alert)
+			{
+				if ($alert['content_type'] == 'achieve' && isset($achievement_types[$alert['content_id']]))
+				{
+					// Backfill the achievement name into the alert data.
+					$alerts[$id_alert]['extra']['achievement'] = $achievements[$alert['content_id']];
+
+					if ($achievement_types[$alert['content_id']] == Achievement::ACHIEVEMENT_TYPE_ACCOUNT)
+					{
+						// If it's an account achievement, make sure it's not targeted as a character.
+						unset($alerts[$id_alert]['chars_dest']);
+						continue;
+					}
+				}
+			}
 		}
 
 		// Now to handle characters

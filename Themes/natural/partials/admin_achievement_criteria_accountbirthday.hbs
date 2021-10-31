@@ -1,0 +1,25 @@
+		<div id="template_AccountBirthday">
+			<div class="editable">
+				<div class="input">{{textTemplate txt.account_birthday_years_ago '<input type="number" min="1" max="99" value="0" name="AccountBirthday[years]">' }}</div>
+
+				<button type="button" class="button done-editing active">{{{txt.done_editing}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+			<div class="noteditable">
+				<div class="output"></div>
+
+				<button type="button" class="button edit">{{{txt.edit}}}</button>
+				<button type="button" class="button remove">{{{txt.remove}}}</button>
+			</div>
+		</div>
+
+<script>
+achievement_validators['AccountBirthday'] = function(dd) {
+	var number = dd.find('input[type=number]').val();
+	if (number > 0) {
+		var msg = {{{json txt.account_birthday_years_ago}}};
+		dd.find('.noteditable .output').html(msg.replace('%1$s', number));
+	}
+	return false;
+};
+</script>
