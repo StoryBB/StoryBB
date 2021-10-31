@@ -1543,7 +1543,7 @@ function isBrowser($browser)
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_info, $user_settings, $board_info, $boarddir, $maintenance;
+	global $user_info, $user_settings, $board_info, $boarddir;
 	global $txt, $boardurl, $scripturl, $modSettings;
 	global $context, $settings, $options, $sourcedir, $smcFunc, $language, $board, $image_proxy_enabled;
 
@@ -1679,7 +1679,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		return;
 
 	// Check to see if we're forcing SSL
-	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && empty($maintenance) && !httpsOn())
+	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && !App::in_maintenance() && !httpsOn())
 	{
 		if (isset($_GET['sslRedirect']))
 		{
