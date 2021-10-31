@@ -56,6 +56,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Bbcode\AbstractParser;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\ServerEnvironment;
 use StoryBB\StringLibrary;
@@ -752,12 +753,7 @@ function prepareDBSettingContext(&$config_vars)
 	if (!empty($bbcChoice))
 	{
 		// What are the options, eh?
-		$temp = Parser::parse_bbc(false);
-		$bbcTags = [];
-		foreach ($temp as $tag)
-			$bbcTags[] = $tag['tag'];
-
-		$bbcTags = array_unique($bbcTags);
+		$bbcTags = AbstractParser::get_all_bbcodes();
 		$totalTags = count($bbcTags);
 
 		// The number of columns we want to show the BBC tags in.
@@ -1031,10 +1027,7 @@ function saveDBSettings(&$config_vars)
 		// BBC.
 		elseif ($var[0] == 'bbc')
 		{
-
-			$bbcTags = [];
-			foreach (Parser::parse_bbc(false) as $tag)
-				$bbcTags[] = $tag['tag'];
+			$bbcTags = AbstractParser::get_all_bbcodes();
 
 			if (!isset($_POST[$var[1] . '_enabledTags']))
 				$_POST[$var[1] . '_enabledTags'] = [];

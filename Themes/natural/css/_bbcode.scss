@@ -123,3 +123,66 @@ blockquote cite::before {
 	margin-left: 1em;
 	clear: right;
 }
+
+details.bbc_spoiler {
+	border: 1px solid #aaa;
+	border-radius: 4px;
+	padding: .5em .5em 0;
+
+	summary {
+		font-weight: bold;
+		margin: -.5em -.5em 0;
+		padding: .5em;
+		cursor: pointer;
+	}
+
+	&[open] {
+		padding: .5em;
+
+		summary {
+			border-bottom: 1px solid #aaa;
+			margin-bottom: .5em;
+		}
+	}
+}
+
+details.bbc_mature {
+	border-top: 1px solid #ffd324;
+	border-bottom: 1px solid #ffd324;
+	padding: .5em .5em 0;
+
+	summary {
+		font-weight: bold;
+		margin: -.5em -.5em 0;
+		padding: .5em .5em .5em 35px;
+		cursor: pointer;
+
+		background: #fff6ca;
+		border-top: 1px solid #ffd324;
+		border-bottom: 1px solid #ffd324;
+		position: relative;
+	}
+
+	summary::before {
+		width: 16px;
+		height: 16px;
+		background-image: url("#{$images_url}/icons/main_icons_sprite.png");
+		background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp");
+		background-repeat: no-repeat;
+		background-position: -83px -83px;
+		left: 10px;
+		content: '';
+		position: absolute;
+		top: 50%;
+		margin-top: -8px;
+	}
+
+	&[open] {
+		padding: .5em;
+
+		summary {
+			border-bottom: 1px solid #ffd324;
+			margin-bottom: .5em;
+		}
+	}
+}

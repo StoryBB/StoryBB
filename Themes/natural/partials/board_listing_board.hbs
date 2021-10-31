@@ -39,9 +39,7 @@
 						<a href="{{{href}}}" title="{{comma posts}} {{../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{{name}}}</a>
 				{{else}}
 					{{#if new}}
-						<a href="{{../scripturl}}?action=unread;board={{id}}" title="{{{../txt.new_posts}}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})">
-							<span class="{{#if this.new}}more_sub_new{{else}}more_sun_no_new{{/if}}"></span>
-						</a>
+						<a href="{{../scripturl}}?action=unread;board={{id}}" title="{{{../txt.new_posts}}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})"><span class="{{#if this.new}}more_sub_new{{else}}more_sun_no_new{{/if}}"></span></a>
 					{{/if}}
 						<a href="{{{href}}}"{{#if new}} class="board_new_posts"{{/if}} title="{{#if new}}{{{../txt.new_posts}}}{{else}}{{{../txt.old_posts}}}{{/if}} ({{{../txt.board_topics}}}: {{comma topics}}, {{{../txt.posts}}}: {{comma posts}})">{{{name}}}</a>
 					{{#if new}}

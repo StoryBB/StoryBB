@@ -13,6 +13,7 @@
 
 use LightnCandy\LightnCandy;
 use StoryBB\Container;
+use StoryBB\Helper\Bbcode\AbstractParser;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -970,7 +971,7 @@ function legalise_bbc($text)
 	$disabled = empty($modSettings['disabledBBC']) ? [] : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
 
 	// Get a list of all the tags that are not disabled.
-	$all_tags = Parser::parse_bbc(false);
+	[$all_tags] = AbstractParser::bbcode_definitions();
 	$valid_tags = [];
 	$self_closing_tags = [];
 	foreach ($all_tags as $tag)
