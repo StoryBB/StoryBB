@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
@@ -281,6 +282,8 @@ function determineActions($urls, $preferred_prefix = false)
 		return [];
 	loadLanguage('Who');
 
+	$urlgenerator = App::container()->get('urlgenerator');
+
 	// Actions that require a specific permission level.
 	$allowedActions = [
 		'admin' => ['moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'manage_attachments', 'manage_smileys', 'manage_boards'],
@@ -323,6 +326,17 @@ function determineActions($urls, $preferred_prefix = false)
 			if (empty($params))
 			{
 				$params = [];
+			}
+
+			// Viewable if they can see the page in question.
+			if ($url[3] == 'pages')
+			{
+				$data[$k] = $txt['who_hidden'];
+				if (!empty($params['page']))
+				{
+					$page_ids[$params['page']][$k] = $txt['whoroute_pages'];
+				}
+				continue;
 			}
 
 			if (isset($txt['whoroute_' . $url[3]]))
@@ -393,15 +407,6 @@ function determineActions($urls, $preferred_prefix = false)
 
 				$data[$k] = $txt['who_hidden'];
 				$profile_ids[(int) $actions['u']][$k] = $actions['u'] == $url[1] ? $txt['who_viewownprofile'] : $txt['who_viewprofile'];
-			}
-			// Viewable if they can see the page in question.
-			elseif ($actions['action'] == 'pages')
-			{
-				$data[$k] = $txt['who_hidden'];
-				if (!empty($actions['page']))
-				{
-					$page_ids[$actions['page']][$k] = $txt['who_page'];
-				}
 			}
 			elseif (($actions['action'] == 'post' || $actions['action'] == 'post2') && empty($actions['topic']) && isset($actions['board']))
 			{
@@ -586,7 +591,7 @@ function determineActions($urls, $preferred_prefix = false)
 
 			foreach ($page_ids[$page['page_name']] as $k => $page_text)
 			{
-				$data[$k] = sprintf($page_text, $page['page_name'], $page['page_title']);
+				$data[$k] = sprintf($page_text, $urlgenerator->generate('pages', ['page' => $page['page_name']]), $page['page_title']);
 			}
 		}
 	}

@@ -12,8 +12,8 @@
 
 namespace StoryBB\Controller\Admin;
 
-use StoryBB\Controller\Administrative;
-use StoryBB\Controller\MaintenanceAccessible;
+use StoryBB\Routing\Behaviours\Administrative;
+use StoryBB\Routing\Behaviours\MaintenanceAccessible;
 use StoryBB\Routing\RenderResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;

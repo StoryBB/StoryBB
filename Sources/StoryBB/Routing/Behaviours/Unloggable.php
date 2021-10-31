@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base interface for any controller that indicates it can be called in maintenance mode.
+ * Any that should not count in the hit logs should implement this interface.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -10,8 +10,11 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller;
+namespace StoryBB\Routing\Behaviours;
 
-interface MaintenanceAccessible
+/**
+ * Any that should not count in the hit logs should implement this interface.
+ */
+interface Unloggable
 {
 }

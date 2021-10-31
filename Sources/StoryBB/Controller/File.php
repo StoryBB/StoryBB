@@ -13,6 +13,7 @@
 namespace StoryBB\Controller;
 
 use StoryBB\ClassManager;
+use StoryBB\Routing\Behaviours\Routable;
 use Symfony\Component\Routing\RouteCollection;
 
 class File implements Routable

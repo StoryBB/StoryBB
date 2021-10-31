@@ -254,7 +254,6 @@ function sbb_main()
 		'notify' => ['Notify.php', 'Notify'],
 		'notifyboard' => ['Notify.php', 'BoardNotify'],
 		'notifytopic' => ['Notify.php', 'TopicNotify'],
-		'pages' => ['Pages.php', 'Pages'],
 		'pm' => ['PersonalMessage.php', 'MessageMain'],
 		'post' => ['Post.php', 'Post'],
 		'post2' => ['Post.php', 'Post2'],

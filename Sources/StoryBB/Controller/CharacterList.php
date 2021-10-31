@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller;
 
+use StoryBB\Routing\Behaviours\Routable;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 

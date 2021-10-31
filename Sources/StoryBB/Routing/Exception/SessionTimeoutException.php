@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base interface for any controller that indicates it can be called in guest-restricted mode.
+ * This is an exception relating to sessions in some fashion.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -10,8 +10,11 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller;
+namespace StoryBB\Routing\Exception;
 
-interface GuestAccessible
+/**
+ * This is an exception relating to sessions in some fashion.
+ */
+class SessionTimeoutException extends \StoryBB\Routing\Exception
 {
 }

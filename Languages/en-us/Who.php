@@ -28,9 +28,6 @@ $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 $txt['who_user_received_error'] = 'User received error message: %1$s';
 
-$txt['who_page'] = 'Viewing <a href="{scripturl}?action=pages;page=%1$s">%2$s</a>.';
-
-$txt['whorobot_login'] = 'Viewing the login page.';
 $txt['whorobot_signup'] = 'Viewing the registration page.';
 $txt['whorobot_reminder'] = 'Viewing the reminder page.';
 
@@ -42,14 +39,12 @@ $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_helpadmin'] = 'Viewing a help popup.';
 $txt['whoall_pm'] = 'Viewing their messages.';
-$txt['whoall_login'] = 'Logging into the forum.';
-$txt['whoall_logout'] = 'Logging out of the forum.';
 $txt['whoall_markasread'] = 'Marking topics read or unread.';
 $txt['whoall_news'] = 'Viewing the news.';
 $txt['whoall_notify'] = 'Changing their notification settings.';
 $txt['whoall_notifyboard'] = 'Changing their notification settings.';
 $txt['whoall_quickmod'] = 'Moderating a board.';
-$txt['whoall_recent'] = 'Viewing a <a href="{scripturl}?action=recent">list of recent topics</a>.';
+$txt['whoall_recent'] = 'Viewing a list of recent topics.';
 $txt['whoall_reminder'] = 'Requesting a password reminder.';
 $txt['whoall_reporttm'] = 'Reporting a topic to a moderator.';
 $txt['whoall_restoretopic'] = 'Restoring a topic.';
@@ -57,11 +52,15 @@ $txt['whoall_signup'] = 'Registering for an account on the forum.';
 $txt['whoall_signup2'] = 'Registering for an account on the forum.';
 $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
-$txt['whoall_who'] = 'Viewing <a href="{scripturl}?action=who">Who\'s Online</a>.';
+$txt['whoall_who'] = 'Viewing the list of online users.';
 
-$txt['whoroute_characters'] = 'Viewing the character list.';
+$txt['whoroute_character_list'] = 'Viewing the character list.';
 $txt['whoroute_help'] = 'Viewing the help pages.';
 $txt['whoroute_help_policy'] = 'Viewing the help pages.';
+$txt['whoroute_login'] = 'Viewing the login form.';
+$txt['whoroute_login_login'] = 'Logging into the site.';
+$txt['whoroute_logout'] = 'Logging out.';
+$txt['whoroute_pages'] = 'Viewing <a href="%1$s">%2$s</a>.';
 
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
 $txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';
@@ -100,9 +99,7 @@ $txt['whopost_quotefast'] = 'Quoting a post from &quot;<a href="{scripturl}?topi
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
-$txt['whoadmin_packages'] = 'Viewing the package manager.';
 $txt['whoadmin_permissions'] = 'Editing the forum permissions.';
-$txt['whoadmin_pgdownload'] = 'Downloading a package.';
 $txt['whoadmin_theme'] = 'Editing the theme settings.';
 
 $txt['whoallow_manageboards'] = 'Editing the board and category settings.';

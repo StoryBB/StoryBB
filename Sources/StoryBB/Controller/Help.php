@@ -17,6 +17,7 @@ use StoryBB\Dependency\Page;
 use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Helper\Parser;
 use StoryBB\Phrase;
+use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\Routing\LegacyTemplateResponse;
 use StoryBB\Routing\RenderResponse;
 use Symfony\Component\Routing\Route;
@@ -68,7 +69,7 @@ class Help implements Routable
 				$context['manual_sections']['page_' . $id_page] = [
 					'title' => $page['page_title'],
 					'desc' => '',
-					'link' => $scripturl . '?action=pages;page=' . $page['page_name'],
+					'link' => $url->generate('pages', ['page' => $page['page_name']]),
 				];
 			}
 		}

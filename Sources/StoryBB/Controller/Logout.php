@@ -14,9 +14,10 @@ namespace StoryBB\Controller;
 
 use StoryBB\App;
 use StoryBB\Container;
-use StoryBB\Controller\MaintenanceAccessible;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\Session;
+use StoryBB\Routing\Behaviours\MaintenanceAccessible;
+use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\Routing\ErrorResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;

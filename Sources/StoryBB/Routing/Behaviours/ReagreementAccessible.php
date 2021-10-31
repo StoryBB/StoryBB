@@ -10,7 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller;
+namespace StoryBB\Routing\Behaviours;
 
 interface ReagreementAccessible
 {

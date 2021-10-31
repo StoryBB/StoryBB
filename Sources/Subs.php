@@ -1957,7 +1957,7 @@ function setupMenuContext()
 		foreach (get_sidebar_page_items() as $page)
 		{
 			$context['sidebar']['page-' . $page['page_name']] = [
-				'url' => $scripturl . '?action=pages;page=' . $page['page_name'],
+				'url' => $urlgenerator->generate('pages', ['page' => $page['page_name']]),
 				'icon' => $page['sidebar_icon'] . ' fa-fw',
 				'label' => $page['page_title'],
 			];
@@ -2058,7 +2058,7 @@ function setupMenuContext()
 		foreach (get_sidebar_page_items() as $page)
 		{
 			$context['sidebar']['page-' . $page['page_name']] = [
-				'url' => $scripturl . '?action=pages;page=' . $page['page_name'],
+				'url' => $urlgenerator->generate('pages', ['page' => $page['page_name']]),
 				'icon' => $page['sidebar_icon'] . ' fa-fw',
 				'label' => $page['page_title'],
 			];
