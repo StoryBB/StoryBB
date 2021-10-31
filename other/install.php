@@ -326,12 +326,7 @@ function load_database()
 		$smcFunc['db']->connect($db_options);
 	}
 
-	App::start(__DIR__);
-	$container = Container::instance();
-	$container->inject('database', $smcFunc['db']);
-	$container->inject('filesystem', function() use ($container) {
-		return $container->instantiate('StoryBB\\Helper\\Filesystem');
-	});
+	App::start(__DIR__, new \StoryBB\App\Installer);
 }
 
 /**
