@@ -12,6 +12,7 @@
 
 namespace StoryBB\Helper\Bbcode;
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Helper\TLD;
 use StoryBB\Hook\Mutatable;
@@ -119,6 +120,9 @@ abstract class AbstractParser
 	public static function bbcode_definitions(): array
 	{
 		global $modSettings, $context, $sourcedir, $txt, $scripturl;
+
+		$current_user = App::container()->get('currentuser');
+		$current_user_id = $current_user ? $current_user->get_id() : 0;
 
 		/* The following bbc are formatted as an array, with keys as follows:
 
@@ -545,16 +549,16 @@ abstract class AbstractParser
 			],
 			[
 				'tag' => 'mature',
-				'before' => $context['user']['id'] ? '<details class="bbc_spoiler"><summary>' . $txt['mature_open'] . '</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
-				'after' => $context['user']['id'] ? '</details>' : '</sbb___strip>',
+				'before' => $current_user_id ? '<details class="bbc_spoiler"><summary>' . $txt['mature_open'] . '</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $current_user_id ? '</details>' : '</sbb___strip>',
 				'trim' => 'both',
 				'disallow_children' => ['spoiler', 'mature'],
 			],
 			[
 				'tag' => 'mature',
 				'type' => 'parsed_equals',
-				'before' => $context['user']['id'] ? '<details class="bbc_spoiler"><summary>$1</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
-				'after' => $context['user']['id'] ? '</details>' : '</sbb___strip>',
+				'before' => $current_user_id ? '<details class="bbc_spoiler"><summary>$1</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $current_user_id ? '</details>' : '</sbb___strip>',
 				'trim' => 'both',
 				'quoted' => 'optional',
 				'disallow_children' => ['spoiler', 'mature'],
