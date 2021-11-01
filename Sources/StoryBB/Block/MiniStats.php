@@ -78,7 +78,6 @@ class MiniStats extends AbstractBlock implements Block
 			'show_latest_member' => !empty($this->config['show_latest_member']),
 			'latest_member' => $context['common_stats']['latest_member'],
 			'latest_post' => !empty($latest_post) ? $latest_post : false,
-			'recent_posts_link' => $scripturl . '?action=recent',
 		]);
 		return $this->content;
 	}

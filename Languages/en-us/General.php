@@ -217,10 +217,6 @@ $txt['join_discord'] = 'Join us on Discord';
 $txt['location'] = 'Location';
 $txt['date_registered'] = 'Date Registered';
 
-$txt['recent_view'] = 'View the most recent posts on the forum.';
-$txt['recent_updated'] = 'is the most recently updated topic';
-$txt['is_recent_updated'] = '%1$s is the most recently updated topic';
-
 $txt['male'] = 'Male';
 $txt['female'] = 'Female';
 

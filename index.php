@@ -263,7 +263,6 @@ function sbb_main()
 		'quickmod2' => ['QuickInTopicModeration.php', 'QuickInTopicModeration'],
 		'reattributepost' => ['Profile-Chars.php', 'ReattributePost'],
 		'reagreement' => ['Reagreement.php', 'Reagreement'],
-		'recent' => ['Recent.php', 'RecentPosts'],
 		'reminder' => ['Reminder.php', 'RemindMe'],
 		'removepoll' => ['Poll.php', 'RemovePoll'],
 		'removetopic2' => ['RemoveTopic.php', 'RemoveTopic2'],
