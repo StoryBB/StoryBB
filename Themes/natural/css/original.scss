@@ -1737,7 +1737,7 @@ div#pollmoderation {
 	word-break: hyphenate;
 	word-wrap: break-word;
 	flex: 0 0 auto;
-	width: 220px;
+	width: calc(#{$avatar_max_width}px + 40px);
 	position: relative;
 }
 
