@@ -431,34 +431,7 @@ img.sort, .sort {
 /* 7# Buttons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button, .buttonrow > *, input[type="button"], input[type="submit"] {
-	display: inline-block;
-	cursor: pointer;
-	padding: 0.6rem 1.2rem;
-	color: $secondary-accent-contrast;
-	font-size: 0.9rem;
-	font-weight: 300;
-	background: $secondary-accent;
-}
-.button:hover, .buttonrow > :hover, input[type="button"]:hover, input[type="submit"]:hover {
-	text-decoration: none;
-	background: lighten($secondary-accent, 15%);
-	box-shadow: 6px 6px 2px rgba(0, 0, 0, 0.2);
-}
-.button.active, .buttonrow > .active, input[type="button"].active, input[type="submit"].active {
-	background: $primary-accent-dark;
-	border: 1px solid $primary-accent-dark;
-	color: $primary-accent-contrast;
-}
-.button.active:hover, .buttonrow > .active:hover, input[type="button"].active:hover, input[type="submit"].active:hover {
-	background: $primary-accent;
-	border: 1px solid $primary-accent;
-}
 
-.button, .button_submit, input[type="submit"], input[type="button"], input[type="submit"] {
-	text-transform: uppercase;
-}
 
 #frmLogin input[type="submit"], #guest_form input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
