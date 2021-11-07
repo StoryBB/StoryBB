@@ -1,69 +1,67 @@
 	<div class="main_section" id="whos_online">
-		<form action="{{{scripturl}}}?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">{{txt.who_title}}</h3>
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.who_title}}</h3>
+		</div>
+		<div id="mlist">
+			<div class="pagesection">
+				<div class="pagelinks">{{{context.page_index}}}</div>
 			</div>
-			<div id="mlist">
-				<div class="pagesection">
-					<div class="pagelinks">{{{context.page_index}}}</div>
-				</div>
 
-				{{> tab_bar tabs=context.navigation_tabs }}
+			{{> tab_bar tabs=context.navigation_tabs }}
 
-				<table class="table_grid">
-					<thead>
-						<tr class="cat_bar">
-							<th scope="col" class="lefttext" style="width: 40%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=user{{#if (and (eq context.sort_direction "down") (eq context.sort_by "user"))}};asc{{/if}}" rel="nofollow">{{txt.who_user}} {{#if (eq context.sort_by "user")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
-							<th scope="col" class="lefttext time" style="width: 10%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=time{{#if (and (eq context.sort_direction "down") (eq context.sort_by "time"))}};asc{{/if}}" rel="nofollow">{{txt.who_time}} {{#if (eq context.sort_by "time")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
-							<th scope="col" class="lefttext half_table">{{txt.who_action}}</th>
-						</tr>
-					</thead>
-					<tbody>
+			<table class="table_grid">
+				<thead>
+					<tr class="cat_bar">
+						<th scope="col" class="lefttext" style="width: 40%;"><a href="{{context.table_headers.user.link}}" rel="nofollow">{{context.table_headers.user.label}} {{#if (eq context.sort_by "user")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th scope="col" class="lefttext time" style="width: 10%;"><a href="{{context.table_headers.time.link}}" rel="nofollow">{{context.table_headers.time.label}} {{#if (eq context.sort_by "time")}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th scope="col" class="lefttext half_table">{{context.table_headers.action.label}}</th>
+					</tr>
+				</thead>
+				<tbody>
 
 {{#each context.members}}
-						<tr class="windowbg">
-							<td>
+					<tr class="windowbg">
+						<td>
 	{{#unless is_guest}}
-								<span class="contact_info floatright">
-									{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
-										
-									<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
+							<span class="contact_info floatright">
+								{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
+									
+								<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
 
-									{{#if ../context.can_send_pm}}</a>{{/if}}
-								</span>
+								{{#if ../context.can_send_pm}}</a>{{/if}}
+							</span>
 	{{/unless}}
-								<span class="member{{#if is_hidden}} hidden{{/if}}"{{#if title}} title="{{{title}}}"{{/if}}>
-									{{#if is_guest}}
-										{{#if link}}{{{link}}}{{else}}{{{name}}}{{/if}}
-									{{else}}
-										<a href="{{{href}}}" title="{{../txt.profile_of}} {{{name}}}"{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</a>
-									{{/if}}
-								</span>
+							<span class="member{{#if is_hidden}} hidden{{/if}}"{{#if title}} title="{{{title}}}"{{/if}}>
+								{{#if is_guest}}
+									{{#if link}}{{{link}}}{{else}}{{{name}}}{{/if}}
+								{{else}}
+									<a href="{{{href}}}" title="{{../txt.profile_of}} {{{name}}}"{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</a>
+								{{/if}}
+							</span>
 	{{#if ip}}
-								(<a href="{{../scripturl}}?action=admin;area=logs;sa=ip{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
+							(<a href="{{../scripturl}}?action=admin;area=logs;sa=ip{{#unless is_guest}};u={{id}}{{/unless}};searchip={{ip}}">{{ip}}</a>)
 	{{/if}}
-							</td>
-							<td class="time">{{time}}</td>
-							<td>{{{action}}}</td>
-						</tr>
+						</td>
+						<td class="time">{{time}}</td>
+						<td>{{{action}}}</td>
+					</tr>
 {{/each}}
 
 {{! No members? }}
 {{#unless context.members}}
-						<tr class="windowbg">
-							<td colspan="3">
-							{{#if (eq context.show_by "guests")}} {{txt.who_no_online_guests}} {{/if}}
-							{{#if (eq context.show_by "robots")}} {{txt.who_no_online_robots}} {{/if}}
-							{{#if (eq context.show_by "members")}} {{txt.who_no_online_members}} {{/if}}
-							</td>
-						</tr>
+					<tr class="windowbg">
+						<td colspan="3">
+						{{#if (eq context.show_by "guests")}} {{txt.who_no_online_guests}} {{/if}}
+						{{#if (eq context.show_by "robots")}} {{txt.who_no_online_robots}} {{/if}}
+						{{#if (eq context.show_by "members")}} {{txt.who_no_online_members}} {{/if}}
+						</td>
+					</tr>
 {{/unless}}
-					</tbody>
-				</table>
+				</tbody>
+			</table>
 
-				<div class="pagesection" id="lower_pagesection">
-					<div class="pagelinks">{{{context.page_index}}}</div>
-				</div>
+			<div class="pagesection" id="lower_pagesection">
+				<div class="pagelinks">{{{context.page_index}}}</div>
 			</div>
-		</form>
+		</div>
 	</div>

@@ -103,15 +103,6 @@ class InfoSummary extends AbstractProfileController
 		$context['member']['is_hidden'] = empty($user_profile[$memID]['show_online']);
 		$context['member']['show_last_login'] = allowedTo('admin_forum') || !$context['member']['is_hidden'];
 
-		if (!empty($modSettings['who_enabled']) && $context['member']['show_last_login'])
-		{
-			include_once($sourcedir . '/Who.php');
-			$action = determineActions($user_profile[$memID]['url']);
-
-			if ($action !== false)
-				$context['member']['action'] = $action;
-		}
-
 		// If the user is awaiting activation, and the viewer has permission - setup some activation context messages.
 		if ($context['member']['is_activated'] % 10 != 1 && allowedTo('moderate_forum'))
 		{

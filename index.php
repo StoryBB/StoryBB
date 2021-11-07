@@ -283,7 +283,6 @@ function sbb_main()
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'vote' => ['Poll.php', 'Vote'],
 		'viewquery' => ['ViewQuery.php', 'ViewQuery'],
-		'who' => ['Who.php', 'Who'],
 		'.xml' => ['News.php', 'ShowXmlFeed'],
 		'xmlhttp' => ['Xml.php', 'XMLhttpMain'],
 	];

@@ -28,9 +28,6 @@ $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 $txt['who_user_received_error'] = 'User received error message: %1$s';
 
-$txt['whorobot_signup'] = 'Viewing the registration page.';
-$txt['whorobot_reminder'] = 'Viewing the reminder page.';
-
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
 $txt['whoall_characters'] = 'Viewing the character list.';
@@ -45,14 +42,13 @@ $txt['whoall_notify'] = 'Changing their notification settings.';
 $txt['whoall_notifyboard'] = 'Changing their notification settings.';
 $txt['whoall_quickmod'] = 'Moderating a board.';
 $txt['whoall_recent'] = 'Viewing a list of recent topics.';
-$txt['whoall_reminder'] = 'Requesting a password reminder.';
+$txt['whoall_reminder'] = 'Viewing the reminder page.';
 $txt['whoall_reporttm'] = 'Reporting a topic to a moderator.';
 $txt['whoall_restoretopic'] = 'Restoring a topic.';
-$txt['whoall_signup'] = 'Registering for an account on the forum.';
-$txt['whoall_signup2'] = 'Registering for an account on the forum.';
+$txt['whoall_signup'] = 'Viewing the signup page.';
+$txt['whoall_signup2'] = 'Signing up for an account on the forum.';
 $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
-$txt['whoall_who'] = 'Viewing the list of online users.';
 
 $txt['whoroute_character_list'] = 'Viewing the character list.';
 $txt['whoroute_help'] = 'Viewing the help pages.';
@@ -61,12 +57,9 @@ $txt['whoroute_login'] = 'Viewing the login form.';
 $txt['whoroute_login_login'] = 'Logging into the site.';
 $txt['whoroute_logout'] = 'Logging out.';
 $txt['whoroute_pages'] = 'Viewing <a href="%1$s">%2$s</a>.';
+$txt['whoroute_whosonline'] = 'Viewing the who\'s online list.';
 
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
-$txt['whoall_.xml_recent'] = 'Viewing the recent posts RSS feed.';
-$txt['whoall_.xml_news'] = 'Viewing the recent topics RSS feed.';
-$txt['whoall_.xml_members'] = 'Viewing the new members RSS feed.';
-$txt['whoall_.xml_profile'] = 'Viewing the profile RSS feed.';
 
 $txt['whoall_collapse_collapse'] = 'Collapsing a category.';
 $txt['whoall_collapse_expand'] = 'Expanding a category.';
@@ -126,4 +119,3 @@ $txt['who_viewprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">%
 $txt['who_viewownprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">their own profile</a>.';
 $txt['who_profile'] = 'Editing the profile of <a href="{scripturl}?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="{scripturl}?board=%1$d.0">%2$s</a>.';
-$txt['who_poll'] = 'Posting a new poll in <a href="{scripturl}?board=%1$d.0">%2$s</a>.';

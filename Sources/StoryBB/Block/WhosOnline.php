@@ -13,6 +13,7 @@
 namespace StoryBB\Block;
 
 use StoryBB\Phrase;
+use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Model\Group;
 
 /**
@@ -20,6 +21,8 @@ use StoryBB\Model\Group;
  */
 class WhosOnline extends AbstractBlock implements Block
 {
+	use UrlGenerator;
+
 	protected $config;
 	protected $content;
 
@@ -50,6 +53,8 @@ class WhosOnline extends AbstractBlock implements Block
 		{
 			$this->content = '';
 		}
+
+		$url = $this->urlgenerator();
 
 		$stats = $this->get_online_numbers([
 			'sort' => 'log_time',
@@ -85,7 +90,7 @@ class WhosOnline extends AbstractBlock implements Block
 			'membergroups_links' => array_map(function ($x) {
 				return $x['link'];
 			}, $membergroups),
-			'whos_online_url' => $scripturl . '?action=who',
+			'whos_online_url' => $url->generate('whosonline'),
 			'last_active' => (int) $modSettings['lastActive'],
 			'show_links' => allowedTo('view_mlist'),
 		]);
