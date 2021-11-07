@@ -274,7 +274,6 @@ function sbb_main()
 		'signup' => ['Register.php', 'Register'],
 		'signup2' => ['Register.php', 'Register2'],
 		'splittopics' => ['SplitTopics.php', 'SplitTopics'],
-		'stats' => ['Stats.php', 'DisplayStats'],
 		'sticky' => ['Topic.php', 'Sticky'],
 		'theme' => ['Themes.php', 'ThemesMain'],
 		'topic' => ['Display.php', 'Display'],

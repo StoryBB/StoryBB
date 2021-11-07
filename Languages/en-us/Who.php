@@ -57,6 +57,7 @@ $txt['whoroute_login'] = 'Viewing the login form.';
 $txt['whoroute_login_login'] = 'Logging into the site.';
 $txt['whoroute_logout'] = 'Logging out.';
 $txt['whoroute_pages'] = 'Viewing <a href="%1$s">%2$s</a>.';
+$txt['whoroute_stats'] = 'Viewing the site statistics.';
 $txt['whoroute_whosonline'] = 'Viewing the who\'s online list.';
 
 $txt['whoall_.xml'] = 'Viewing an RSS feed';
@@ -108,7 +109,6 @@ $txt['whoallow_optimizetables'] = 'Optimizing the database tables.';
 $txt['whoallow_repairboards'] = 'Repairing the database tables.';
 $txt['whoallow_search'] = '<a href="{scripturl}?action=search">Searching</a> the forum.';
 $txt['whoallow_search2'] = 'Viewing the results of a search.';
-$txt['whoallow_stats'] = 'Viewing the <a href="{scripturl}?action=stats">forum stats</a>.';
 $txt['whoallow_viewErrorLog'] = 'Viewing the error log.';
 $txt['whoallow_viewmembers'] = 'Viewing a list of members.';
 
