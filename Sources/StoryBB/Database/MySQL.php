@@ -51,6 +51,9 @@ class MySQL implements DatabaseAdapter
 	/** @var int $db_port The port for the server for this connection */
 	protected $db_port = 0;
 
+	/** @var array $replacements Additional replacements for variables */
+	protected $replacements = [];
+
 	public function get_title()
 	{
 		return 'MySQL';
@@ -69,6 +72,8 @@ class MySQL implements DatabaseAdapter
 	public function set_prefix(string $db_prefix)
 	{
 		$this->db_prefix = $db_prefix;
+
+		$this->replacements['db_prefix'] = $db_prefix;
 	}
 
 	/**
@@ -725,26 +730,19 @@ class MySQL implements DatabaseAdapter
 		// Do the quoting and escaping
 		return preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', function($matches) use ($db_values)
 		{
-			global $user_info;
-
 			if (!is_object($this->connection))
 			{
 				display_db_error();
 			}
 
-			if ($matches[1] === 'db_prefix')
-			{
-				return $this->db_prefix;
-			}
-
-			if (strpos($matches[1], 'query_') !== false && !isset($matches[2]))
-			{
-				return isset($user_info[$matches[1]]) ? $user_info[$matches[1]] : '0=1';
-			}
-
 			if ($matches[1] === 'empty')
 			{
 				return '\'\'';
+			}
+
+			if (!isset($matches[2]) && isset($this->replacements[$matches[1]]))
+			{
+				return $this->replacements[$matches[1]];
 			}
 
 			if (!isset($matches[2]))
@@ -931,6 +929,11 @@ class MySQL implements DatabaseAdapter
 				$this->error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
 			}
 		}, $db_string);
+	}
+
+	public function register_replacement($src, $dest)
+	{
+		$this->replacements[$src] = $dest;
 	}
 
 	/**

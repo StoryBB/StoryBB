@@ -422,6 +422,9 @@ function loadUserSettings()
 	$user_info['query_see_board'] = $temp['query_see_board'];
 	$user_info['query_wanna_see_board'] = $temp['query_wanna_see_board'];
 
+	$db->register_replacement('query_see_board', $user_info['query_see_board']);
+	$db->register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
+
 	call_integration_hook('integrate_user_info');
 }
 
