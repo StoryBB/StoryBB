@@ -14,9 +14,6 @@ global $helptxt;
 
 $txt['close_window'] = 'Close window';
 
-$helptxt['adminlog'] = '<strong>Administration Log</strong><br>
-	This page allows members of the admin team to track some of the administrative actions that have occurred on the forum. Note that
-	clearing the log will be logged to prevent abuse.';
 $helptxt['userlog'] = '<strong>Profile Edits Log</strong><br>
 	This page allows members of the admin team to view changes users make to their profiles, and is available from inside a user\'s profile area.';
 $helptxt['warning_enable'] = '<strong>User Warning System</strong><br>

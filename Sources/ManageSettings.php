@@ -1806,7 +1806,6 @@ function ModifyLogSettings($return_config = false)
 	$context['page_title'] = $txt['log_settings'];
 
 	$config_vars = [
-			['check', 'adminlog_enabled', 'help' => 'adminlog'],
 			['check', 'userlog_enabled', 'help' => 'userlog'],
 			// The error log is a wonderful thing.
 			['title', 'errlog', 'desc' => $txt['error_log_desc']],
@@ -1860,7 +1859,6 @@ function ModifyLogSettings($return_config = false)
 
 		// Because of the excitement attached to combining pruning log items, we need to duplicate everything here.
 		$savevar = [
-			['check', 'adminlog_enabled'],
 			['check', 'userlog_enabled'],
 			['check', 'enableErrorLogging'],
 			['check', 'enableErrorQueryLogging'],

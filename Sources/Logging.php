@@ -442,8 +442,6 @@ function logActions($logs)
 	// Make sure this particular log is enabled first...
 	if (empty($modSettings['userlog_enabled']))
 		unset ($log_types['user']);
-	if (empty($modSettings['adminlog_enabled']))
-		unset ($log_types['admin']);
 
 	call_integration_hook('integrate_log_types', [&$log_types]);
 
