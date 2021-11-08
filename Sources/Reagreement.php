@@ -145,7 +145,7 @@ function Reagreement()
 	}
 
 	$txt['updated_agreement_desc'] = sprintf($txt['updated_agreement_desc'], $context['forum_name_html_safe']);
-	$txt['updated_agreement_contact_admin'] = sprintf($txt['updated_agreement_contact_admin'], $scripturl . '?action=contact');
+	$txt['updated_agreement_contact_admin'] = sprintf($txt['updated_agreement_contact_admin'], $url->generate('contact'));
 	$context['page_title'] = $txt['updated_agreement'];
 	$context['sub_template'] = 'reagreement';
 

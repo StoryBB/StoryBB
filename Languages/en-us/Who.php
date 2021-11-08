@@ -30,8 +30,6 @@ $txt['who_user_received_error'] = 'User received error message: %1$s';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
-$txt['whoall_characters'] = 'Viewing the character list.';
-$txt['whoall_contact'] = 'Posting on the contact form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_helpadmin'] = 'Viewing a help popup.';
@@ -51,6 +49,7 @@ $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 
 $txt['whoroute_character_list'] = 'Viewing the character list.';
+$txt['whoroute_contact'] = 'Viewing the contact form.';
 $txt['whoroute_help'] = 'Viewing the help pages.';
 $txt['whoroute_help_policy'] = 'Viewing the help pages.';
 $txt['whoroute_login'] = 'Viewing the login form.';

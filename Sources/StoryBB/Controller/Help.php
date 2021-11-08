@@ -154,7 +154,7 @@ class Help implements Routable
 		// Replace out some of the placeholders in our text.
 		$replacements = [
 			'{$forum_name}' => $context['forum_name_html_safe'],
-			'{$contact_url}' => $scripturl . '?action=contact',
+			'{$contact_url}' => $url->generate('contact'),
 			'{$cookiename}' => $cookiename,
 			'{$age}' => $modSettings['minimum_age'],
 			'{$cookiepolicy}' => $url->generate('help_policy', ['policy' => 'cookies']),

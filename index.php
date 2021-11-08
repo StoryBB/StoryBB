@@ -232,7 +232,6 @@ function sbb_main()
 		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
 		'characters' => ['Profile-Chars.php', 'CharacterList'],
-		'contact' => ['Contact.php', 'Contact'],
 		'deletemsg' => ['RemoveTopic.php', 'DeleteMessage'],
 		'dlattach' => ['ShowAttachments.php', 'showAttachment'],
 		'editpoll' => ['Poll.php', 'EditPoll'],
