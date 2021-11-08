@@ -200,7 +200,7 @@ $helptxt['membergroup_moderator'] = 'The Moderator membergroup is a special memb
 
 $helptxt['membergroup_badge'] = 'When people post, either in their account or their characters, it\'s possible to display an icon, or group of icons, next to their avatar as a visual guide as to special things on their account. For example, administrators usually have an icon by their avatar to show people that they are administrators. Moderators usually have something similar, too.<br>
 <br>
-Sometimes you just want a single interesting bagde to show, other times you might want to show 5 of the same icons like stars or pips to show off what rank someone is. Either way, here is where you set the number of times the badge should be shown for this group, and what badge to show.<br>
+Sometimes you just want a single interesting badge to show, other times you might want to show 5 of the same icons like stars or pips to show off what rank someone is. Either way, here is where you set the number of times the badge should be shown for this group, and what badge to show.<br>
 <br>
 You can always add new icons to this by uploading the images into the Themes/natural/images/membericons/ folder as .gif, .jpg or .png files and they will show up in this list. You can also have different images in different themes - just name the file with the same name and put it in the images/membericons/ folder of your theme.<br>
 <br>
