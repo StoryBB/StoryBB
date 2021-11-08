@@ -440,8 +440,6 @@ function logActions($logs)
 	];
 
 	// Make sure this particular log is enabled first...
-	if (empty($modSettings['modlog_enabled']))
-		unset ($log_types['moderate']);
 	if (empty($modSettings['userlog_enabled']))
 		unset ($log_types['user']);
 	if (empty($modSettings['adminlog_enabled']))

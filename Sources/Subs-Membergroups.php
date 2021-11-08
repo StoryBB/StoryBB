@@ -471,7 +471,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	(new Observable\Group\AccountsRemoved($members, $groups))->execute();
 
 	// Do the log.
-	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
+	if (!empty($log_inserts))
 	{
 		require_once($sourcedir . '/Logging.php');
 		foreach ($log_inserts as $extra)
@@ -626,7 +626,7 @@ function removeCharactersFromGroups($characters, $groups)
 	(new Observable\Group\CharactersRemoved($characters, $groups))->execute();
 
 	// Do the log.
-	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
+	if (!empty($log_inserts))
 	{
 		require_once($sourcedir . '/Logging.php');
 		foreach ($log_inserts as $extra)

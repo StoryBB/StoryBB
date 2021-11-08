@@ -615,7 +615,7 @@ function makeCustomFieldChanges($memID, $character = 0, $area, $sanitize = true,
 			$changes,
 			['id_field', 'id_character']
 		);
-		if (!empty($log_changes) && !empty($modSettings['modlog_enabled']))
+		if (!empty($log_changes))
 		{
 			require_once($sourcedir . '/Logging.php');
 			logActions($log_changes);

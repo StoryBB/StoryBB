@@ -14,9 +14,6 @@ global $helptxt;
 
 $txt['close_window'] = 'Close window';
 
-$helptxt['modlog'] = '<strong>Moderation Log</strong><br>
-	This page allows members of the moderation team to track all the moderation actions that the forum moderators have performed. Note that
-	clearing the log will be logged to prevent abuse.';
 $helptxt['adminlog'] = '<strong>Administration Log</strong><br>
 	This page allows members of the admin team to track some of the administrative actions that have occurred on the forum. Note that
 	clearing the log will be logged to prevent abuse.';

@@ -2020,7 +2020,7 @@ function setupMenuContext()
 					'modlog' => [
 						'title' => $txt['modlog_view'],
 						'url' => $scripturl . '?action=moderate;area=modlog',
-						'visible' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'visible' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
 					],
 					'poststopics' => [
 						'title' => $txt['mc_unapproved_poststopics'],
