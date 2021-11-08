@@ -474,7 +474,7 @@ VALUES
   (5, 0, 0, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\DailyDigest'),
   (6, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyDigest'),
   (7, 0, {$sched_task_offset}, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\FetchStoryBBFiles'),
-  (8, 0, 0, 1, 'd', 1, 'StoryBB\\Task\\Schuledable\\BirthdayNotify'),
+  (8, 0, 0, 1, 'd', 1, 'StoryBB\\Task\\Schedulable\\BirthdayNotify'),
   (9, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
   (11, 0, 120, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
