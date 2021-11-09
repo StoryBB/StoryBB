@@ -389,7 +389,7 @@ class OnlineAction
 			WHERE p.page_name IN ({array_string:page_name})',
 			[
 				'page_name' => array_keys($this->unresolved['page_ids']),
-				'groups' => array_values($current_user->get_groups()),
+				'groups' => array_values($currentuser->get_groups()),
 			]
 		);
 
