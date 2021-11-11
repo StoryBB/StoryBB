@@ -102,6 +102,7 @@ function ManageBoardsMain()
 			$context['categories'][$catid]['boards'][$boardid] = [
 				'id' => &$boards[$boardid]['id'],
 				'name' => &$boards[$boardid]['name'],
+				'url' => &$boards[$boardid]['url'],
 				'description' => &$boards[$boardid]['description'],
 				'child_level' => &$boards[$boardid]['level'],
 				'move' => $move_cat && ($boardid == $context['move_board'] || isChildOf($boardid, $context['move_board'])),

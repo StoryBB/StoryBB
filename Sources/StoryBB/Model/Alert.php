@@ -12,6 +12,7 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\App;
 use StoryBB\Model\Achievement;
 
 /**
@@ -224,6 +225,8 @@ class Alert
 	{
 		global $smcFunc, $txt, $scripturl, $memberContext;
 
+		$url = App::container()->get('urlgenerator');
+
 		$query_see_board = build_query_board($memID);
 		$query_see_board = $query_see_board['query_see_board'];
 
@@ -301,7 +304,7 @@ class Alert
 		if (!empty($boards))
 		{
 			$request = $smcFunc['db']->query('', '
-				SELECT id_board, name
+				SELECT id_board, name, slug
 				FROM {db_prefix}boards AS b
 				WHERE ' . $query_see_board . '
 					AND id_board IN ({array_int:boards})',
@@ -310,7 +313,7 @@ class Alert
 				]
 			);
 			while ($row = $smcFunc['db']->fetch_assoc($request))
-				$boards[$row['id_board']] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+				$boards[$row['id_board']] = '<a href="' . $url->generate('board', ['oard_slug' => $row['slug']]) . '">' . $row['name'] . '</a>';
 		}
 		if (!empty($topics))
 		{

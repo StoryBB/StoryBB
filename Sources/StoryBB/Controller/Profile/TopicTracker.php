@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
 
@@ -20,6 +21,8 @@ class TopicTracker
 	public function display_action()
 	{
 		global $context, $txt, $smcFunc, $scripturl;
+
+		$url = App::container()->get('urlgenerator');
 
 		$context['sub_template'] = 'profile_topic_tracker';
 
@@ -124,7 +127,7 @@ class TopicTracker
 		$topic_data = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked, t.finished,
+				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, b.slug AS board_slug, t.locked, t.finished,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
@@ -201,7 +204,7 @@ class TopicTracker
 				'board' => [
 					'id' => $row['id_board'],
 					'name' => $row['name'],
-					'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
+					'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				],
 				'subject' => $row['subject'],
 				'replies' => comma_format($row['num_replies']),
@@ -222,6 +225,7 @@ class TopicTracker
 				],
 				'last_post' => [
 					'id' => $row['id_last_msg'],
+					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_last_msg'] . '#msg' . $row['id_last_msg'],
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_last_msg'] . '#msg' . $row['id_last_msg'] . '">' . $row['subject'],
 					'time' => timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),

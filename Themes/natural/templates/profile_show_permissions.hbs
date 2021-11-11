@@ -19,7 +19,7 @@
 				{{{txt.showPermissions_restricted_boards_desc}}}:<br>
 
 				{{#each context.no_access_boards}}
-					<a href="{{scripturl}}?board={{id}}.0">{{{name}}}</a>{{#unless is_last}}, {{/unless}}
+					<a href="{{url}}">{{{name}}}</a>{{#unless is_last}}, {{/unless}}
 				{{/each}}
 			</div>
 	{{/if}}

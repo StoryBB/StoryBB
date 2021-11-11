@@ -48,6 +48,7 @@ $txt['whoall_signup2'] = 'Signing up for an account on the forum.';
 $txt['whoall_unread'] = 'Viewing unread topics since their last visit.';
 $txt['whoall_unwatchtopic'] = 'Unwatching a topic.';
 
+$txt['whoroute_board'] = 'Viewing the board <a href="%1$s">%2$s</a>.';
 $txt['whoroute_character_list'] = 'Viewing the character list.';
 $txt['whoroute_contact'] = 'Viewing the contact form.';
 $txt['whoroute_help'] = 'Viewing the help pages.';
@@ -112,9 +113,8 @@ $txt['whoallow_viewErrorLog'] = 'Viewing the error log.';
 $txt['whoallow_viewmembers'] = 'Viewing a list of members.';
 
 $txt['who_topic'] = 'Viewing the topic <a href="{scripturl}?topic=%1$d.0">%2$s</a>.';
-$txt['who_board'] = 'Viewing the board <a href="{scripturl}?board=%1$d.0">%2$s</a>.';
 $txt['who_index'] = 'Viewing the board listing.';
 $txt['who_viewprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">%2$s</a>\'s profile.';
 $txt['who_viewownprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">their own profile</a>.';
 $txt['who_profile'] = 'Editing the profile of <a href="{scripturl}?action=profile;u=%1$d">%2$s</a>.';
-$txt['who_post'] = 'Posting a new topic in <a href="{scripturl}?board=%1$d.0">%2$s</a>.';
+$txt['who_post'] = 'Posting a new topic in <a href="%1$s">%2$s</a>.';

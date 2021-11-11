@@ -33,7 +33,7 @@
 	
 	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
 	{{#if context.links.prev}}<link rel="prev" href="{{context.links.prev}}">{{/if}}
-	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
+	{{#if context.current_board_link}}<link rel="index" href="{{context.current_board_link}}">{{/if}}
 	{{{context.html_headers}}}
 </head>
 <body id="{{context.browser_body_id}}"{{#if settings.meta_theme_color}} data-theme-color="{{settings.meta_theme_color}}"{{/if}} class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">

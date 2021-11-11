@@ -12,6 +12,8 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\App;
+
 /**
  * This class handles bookmarks.
  */
@@ -94,10 +96,12 @@ class Bookmark
 	{
 		global $smcFunc, $scripturl, $user_info, $sourcedir;
 
+		$url = App::container()->get('urlgenerator');
+
 		// All the topics with notification on...
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name,
+				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, b.slug AS board_slug,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
@@ -145,7 +149,7 @@ class Bookmark
 				'updated' => timeformat($row['poster_time']),
 				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 				'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
-				'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+				'board_link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['name'] . '</a>',
 				'notify_pref' => isset($prefs['topic_notify_' . $row['id_topic']]) ? $prefs['topic_notify_' . $row['id_topic']] : (!empty($prefs['topic_notify']) ? $prefs['topic_notify'] : 0),
 				'unwatched' => $row['unwatched'],
 				'prefixes' => [],

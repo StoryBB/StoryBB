@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
 
 /**
@@ -1237,12 +1238,14 @@ function getBoardTree()
 	global $cat_tree, $boards, $boardList, $smcFunc;
 
 	$boardColumns = [
-		'COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name',
+		'COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name', 'b.slug AS board_slug',
 		'b.description', 'b.child_level', 'b.board_order', 'b.count_posts', 'b.member_groups',
 		'b.id_theme', 'b.override_theme', 'b.id_profile', 'b.redirect', 'b.num_posts', 'b.in_character',
 		'b.num_topics', 'b.deny_member_groups', 'b.board_sort', 'c.id_cat', 'c.name AS cat_name',
 		'c.description AS cat_desc', 'c.cat_order', 'c.can_collapse',
 	];
+
+	$url = App::container()->get('urlgenerator');
 
 	// Let mods add extra columns and parameters to the SELECT query
 	$extraBoardColumns = [];
@@ -1297,6 +1300,8 @@ function getBoardTree()
 				'level' => $row['child_level'],
 				'order' => $row['board_order'],
 				'name' => $row['board_name'],
+				'slug' => $row['board_slug'],
+				'url' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				'member_groups' => explode(',', $row['member_groups']),
 				'deny_groups' => explode(',', $row['deny_member_groups']),
 				'description' => $row['description'],

@@ -147,7 +147,7 @@ trait CategoryBoardFilter
 			$smcFunc['db']->free_result($request);
 
 			$this->feed['title'] = $board_info['name'] . ' - ' . $this->feed['title'];
-			$this->feed['source'] = $scripturl . '?board=' . $board . '.0';
+			$this->feed['source'] = $board_info['url'];
 
 			$this->query_this_board = 'b.id_board = ' . $board;
 

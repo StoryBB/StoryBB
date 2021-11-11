@@ -59,6 +59,10 @@ class OnlineAction
 	{
 		// Primary key is the route, params = [route parameter, entry in unresolved]
 		return [
+			'board' => [
+				'params' => ['board', 'board_ids'],
+				'phrase' => 'Who:whoroute_board',
+			],
 			'pages' => [
 				'params' => ['page', 'page_ids'],
 				'phrase' => 'Who:whoroute_pages',
@@ -284,7 +288,7 @@ class OnlineAction
 		foreach ($this->unresolved as $unresolved_type => $unresolved_vars)
 		{
 			$method = 'resolve_' . $unresolved_type;
-			if (empty($unresolved_vars) || !is_callable($this, $method))
+			if (empty($unresolved_vars) || !method_exists($this, $method))
 			{
 				continue;
 			}
@@ -315,9 +319,10 @@ class OnlineAction
 		}
 
 		$db = $this->db();
+		$url = $this->urlgenerator();
 
 		$result = $db->query('', '
-			SELECT b.id_board, b.name
+			SELECT b.id_board, b.name, b.slug
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
 				AND b.id_board IN ({array_int:board_list})
@@ -332,7 +337,7 @@ class OnlineAction
 			// Put the board name into the string for each member...
 			foreach ($this->unresolved['board_ids'][$row['id_board']] as $k => $session_text)
 			{
-				$this->data[$k] = sprintf($session_text, $row['id_board'], $row['name']);
+				$this->data[$k] = sprintf($session_text, $url->generate('board', ['board_slug' => $row['slug']]), $row['name']);
 			}
 		}
 		$db->free_result($result);

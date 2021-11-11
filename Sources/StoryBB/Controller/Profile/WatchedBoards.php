@@ -12,6 +12,8 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
+
 class WatchedBoards extends AbstractProfileController
 {
 	protected function get_token_name()
@@ -22,6 +24,8 @@ class WatchedBoards extends AbstractProfileController
 	public function display_action()
 	{
 		global $txt, $scripturl, $context, $modSettings, $sourcedir, $smcFunc;
+
+		$url = App::container()->get('urlgenerator');
 
 		$context['sub_template'] = 'profile_alerts_watchedboards';
 
@@ -43,7 +47,7 @@ class WatchedBoards extends AbstractProfileController
 			'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=watched_boards',
 			'default_sort_col' => 'board_name',
 			'get_items' => [
-				'function' => function($start, $items_per_page, $sort, $memID)
+				'function' => function($start, $items_per_page, $sort, $memID) use ($url)
 				{
 					global $smcFunc, $scripturl, $user_info, $sourcedir;
 
@@ -52,7 +56,7 @@ class WatchedBoards extends AbstractProfileController
 					$prefs = isset($prefs[$memID]) ? $prefs[$memID] : [];
 
 					$request = $smcFunc['db']->query('', '
-						SELECT b.id_board, b.name, COALESCE(lb.id_msg, 0) AS board_read, b.id_msg_updated
+						SELECT b.id_board, b.name, b.slug AS board_slug, COALESCE(lb.id_msg, 0) AS board_read, b.id_msg_updated
 						FROM {db_prefix}log_notify AS ln
 							INNER JOIN {db_prefix}boards AS b ON (b.id_board = ln.id_board)
 							LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
@@ -70,8 +74,8 @@ class WatchedBoards extends AbstractProfileController
 						$notification_boards[] = [
 							'id' => $row['id_board'],
 							'name' => $row['name'],
-							'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-							'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+							'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
+							'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['name'] . '</a>',
 							'new' => $row['board_read'] < $row['id_msg_updated'],
 							'notify_pref' => isset($prefs['board_notify_' . $row['id_board']]) ? $prefs['board_notify_' . $row['id_board']] : (!empty($prefs['board_notify']) ? $prefs['board_notify'] : 0),
 						];

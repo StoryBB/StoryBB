@@ -362,7 +362,7 @@ function Display()
 		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.0' : '',
 			'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic . '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
-			'up' => $scripturl . '?board=' . $board . '.0'
+			'up' => $board_info['url'],
 		];
 	}
 

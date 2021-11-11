@@ -844,6 +844,7 @@ function JumpTo(oJumpToOptions)
 					id: parseInt($(this).attr('id')),
 					isCategory: $(this).attr('type') == 'category',
 					name: this.firstChild.nodeValue.removeEntities(),
+					url: $(this).attr('url'),
 					is_current: false,
 					childLevel: parseInt($(this).attr('childlevel'))
 				}
@@ -865,7 +866,7 @@ JumpTo.prototype.showSelect = function ()
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	document.getElementById(this.opt.sContainerId).innerHTML = this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : '?board=' + this.opt.iCurBoardId + '.0') + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + sbb_prepareScriptUrl(sbb_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';">' : ''));
+	document.getElementById(this.opt.sContainerId).innerHTML = this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : (!!this.opt.sCurBoardUrl ? this.opt.sCurBoardUrl : sbb_scripturl)) + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + this.opt.sCurBoardUrl + '\';">' : ''));
 	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
 }
 
@@ -913,13 +914,13 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 		oOption = document.createElement('option');
 		oOption.appendChild(document.createTextNode((aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name));
 		if (!this.opt.bNoRedirect)
-			oOption.value = aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';
+			oOption.value = aBoardsAndCategories[i].isCategory ? sbb_scripturl + '#c' + aBoardsAndCategories[i].id : aBoardsAndCategories[i].url;
 		else
 		{
 			if (aBoardsAndCategories[i].isCategory)
 				oOption.disabled = 'disabled';
 			else
-				oOption.value = aBoardsAndCategories[i].id;
+				oOption.value = aBoardsAndCategories[i].aBoardsAndCategories[i].url;
 		}
 		oListFragment.appendChild(oOption);
 
@@ -934,7 +935,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	if (!this.opt.bNoRedirect)
 		this.dropdownList.onchange = function() {
 			if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
-				window.location.href = sbb_scripturl + this.options[this.selectedIndex].value.substr(sbb_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
+				window.location.href = this.options[this.selectedIndex].value;
 		}
 }
 

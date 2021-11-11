@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+
 /**
  * Generates the query to determine the list of available boards for a user
  * Executes the query and returns the list
@@ -20,6 +22,8 @@
 function getBoardList($boardListOptions = [])
 {
 	global $smcFunc, $sourcedir;
+
+	$url = App::container()->get('urlgenerator');
 
 	if (isset($boardListOptions['excluded_boards']) && isset($boardListOptions['included_boards']))
 		trigger_error('getBoardList(): Setting both excluded_boards and included_boards is not allowed.', E_USER_ERROR);
@@ -51,7 +55,7 @@ function getBoardList($boardListOptions = [])
 	}
 
 	$request = $smcFunc['db']->query('order_by_board_order', '
-		SELECT c.name AS cat_name, c.id_cat, b.id_board, b.name AS board_name, b.child_level
+		SELECT c.name AS cat_name, c.id_cat, b.id_board, b.name AS board_name, b.slug AS board_slug, b.child_level
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' . (empty($where) ? '' : '
 		WHERE ' . implode('
@@ -75,6 +79,7 @@ function getBoardList($boardListOptions = [])
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
 				'child_level' => $row['child_level'],
+				'url' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				'selected' => isset($boardListOptions['selected_board']) && $boardListOptions['selected_board'] == $row['id_board'],
 			];
 		}

@@ -66,10 +66,6 @@ if ($result && $result instanceof Response)
 
 // Load the settings from the settings table, and perform operations like optimizing.
 $context = [];
-reloadSettings();
-// Clean the request variables, add slashes, etc.
-cleanRequest();
-
 // @todo replace this hack at some point.
 if (!empty($result))
 {
@@ -79,6 +75,10 @@ else
 {
 	$context['routing'] = [];
 }
+
+reloadSettings();
+// Clean the request variables, add slashes, etc.
+cleanRequest();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -135,12 +135,6 @@ function sbb_main()
 		if (empty($board) && empty($topic))
 		{
 			$_REQUEST['action'] = !empty($modSettings['integrate_default_action']) ? $modSettings['integrate_default_action'] : 'forum';
-		}
-
-		// Topic is empty, and action is empty.... MessageIndex!
-		elseif (empty($topic))
-		{
-			$_REQUEST['action'] = 'board';
 		}
 
 		// Board is not empty... topic is not empty... action is empty.. Display!
@@ -228,7 +222,6 @@ function sbb_main()
 		'activate' => ['Register.php', 'Activate'],
 		'admin' => ['Admin.php', 'AdminMain'],
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
-		'board' => ['MessageIndex.php', 'MessageIndex'],
 		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
 		'characters' => ['Profile-Chars.php', 'CharacterList'],

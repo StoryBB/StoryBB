@@ -544,7 +544,7 @@ function updateSettings($changeArray, $update = false)
  *   setting to decide how to display the menu.
  *
  * an example is available near the function definition.
- * $pageindex = constructPageIndex($scripturl . '?board=' . $board, $_REQUEST['start'], $num_messages, $maxindex, true);
+ * $pageindex = constructPageIndex($scripturl . '?topic=' . $topic, $_REQUEST['start'], $num_messages, $maxindex, true);
  *
  * @param string $base_url The basic URL to be used for each link.
  * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitized to be so and the value will persist upon the function's return.

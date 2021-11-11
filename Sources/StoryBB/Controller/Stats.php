@@ -227,7 +227,7 @@ class Stats implements Routable
 
 		// Board top 10.
 		$boards_result = $smcFunc['db']->query('', '
-			SELECT id_board, name, num_posts
+			SELECT id_board, name, slug, num_posts
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 				AND b.id_board != {int:recycle_board}' : '') . '
@@ -251,8 +251,8 @@ class Stats implements Routable
 				'id' => $row_board['id_board'],
 				'name' => $row_board['name'],
 				'num' => $row_board['num_posts'],
-				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['name'] . '</a>'
+				'href' => $urlgenerator->generate('board', ['board_slug' => $row_board['slug']]),
+				'link' => '<a href="' . $urlgenerator->generate('board', ['board_slug' => $row_board['slug']]) . '">' . $row_board['name'] . '</a>'
 			];
 
 			if ($max_num_posts < $row_board['num_posts'])
@@ -291,7 +291,7 @@ class Stats implements Routable
 
 		// Topic replies top 10.
 		$topic_reply_result = $smcFunc['db']->query('', '
-			SELECT m.subject, t.num_replies, t.id_board, t.id_topic, b.name
+			SELECT m.subject, t.num_replies, t.id_board, t.id_topic, b.name, b.slug AS board_slug
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -322,8 +322,8 @@ class Stats implements Routable
 				'board' => [
 					'id' => $row_topic_reply['id_board'],
 					'name' => $row_topic_reply['name'],
-					'href' => $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0',
-					'link' => '<a href="' . $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0">' . $row_topic_reply['name'] . '</a>'
+					'href' => $urlgenerator->generate('board', ['board_slug' => $row_topic_reply['board_slug']]),
+					'link' => '<a href="' . $urlgenerator->generate('board', ['board_slug' => $row_topic_reply['board_slug']]) . '">' . $row_topic_reply['name'] . '</a>'
 				],
 				'subject' => $row_topic_reply['subject'],
 				'num' => $row_topic_reply['num_replies'],
@@ -365,7 +365,7 @@ class Stats implements Routable
 
 		// Topic views top 10.
 		$topic_view_result = $smcFunc['db']->query('', '
-			SELECT m.subject, t.num_views, t.id_board, t.id_topic, b.name
+			SELECT m.subject, t.num_views, t.id_board, t.id_topic, b.name, b.slug AS board_slug
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -396,8 +396,8 @@ class Stats implements Routable
 				'board' => [
 					'id' => $row_topic_views['id_board'],
 					'name' => $row_topic_views['name'],
-					'href' => $scripturl . '?board=' . $row_topic_views['id_board'] . '.0',
-					'link' => '<a href="' . $scripturl . '?board=' . $row_topic_views['id_board'] . '.0">' . $row_topic_views['name'] . '</a>'
+					'href' => $urlgenerator->generate('board', ['board_slug' => $row_topic_views['board_slug']]),
+					'link' => '<a href="' . $urlgenerator->generate('board', ['board_slug' => $row_topic_views['board_slug']]) . '">' . $row_topic_views['name'] . '</a>'
 				],
 				'subject' => $row_topic_views['subject'],
 				'num' => $row_topic_views['num_views'],

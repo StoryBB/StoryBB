@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\Model\TopicPrefix;
 
@@ -21,6 +22,8 @@ class ShowTopics extends AbstractProfileController
 	{
 		global $txt, $user_info, $scripturl, $modSettings;
 		global $context, $user_profile, $sourcedir, $smcFunc, $board;
+
+		$url = App::container()->get('urlgenerator');
 
 		// Some initial context.
 		$memID = $this->params['u'];
@@ -106,7 +109,7 @@ class ShowTopics extends AbstractProfileController
 		{
 			$request = $smcFunc['db']->query('', '
 				SELECT
-					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, t.id_member_started, t.id_first_msg, t.id_last_msg,
+					b.id_board, b.name AS bname, b.slug AS board_slug, c.id_cat, c.name AS cname, t.id_member_started, t.id_first_msg, t.id_last_msg,
 					t.approved, m.body, m.smileys_enabled, m.subject, m.poster_time, m.id_topic, m.id_msg
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -161,7 +164,8 @@ class ShowTopics extends AbstractProfileController
 				],
 				'board' => [
 					'name' => $row['bname'],
-					'id' => $row['id_board']
+					'id' => $row['id_board'],
+					'link' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				],
 				'topic' => $row['id_topic'],
 				'subject' => $row['subject'],

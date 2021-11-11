@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 use StoryBB\Model\TopicPrefix;
@@ -75,6 +76,8 @@ function UnreadTopics()
 {
 	global $board, $txt, $scripturl, $sourcedir;
 	global $user_info, $context, $settings, $modSettings, $smcFunc, $options;
+
+	$url = App::container()->get('urlgenerator');
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();
@@ -286,7 +289,7 @@ function UnreadTopics()
 
 	// This part is the same for each query.
 	$select_clause = '
-				ms.subject AS first_subject, ms.poster_time AS first_poster_time, ms.id_topic, t.id_board, b.name AS bname,
+				ms.subject AS first_subject, ms.poster_time AS first_poster_time, ms.id_topic, t.id_board, b.name AS bname, b.slug AS board_slug,
 				t.num_replies, t.num_views, ms.id_member AS id_first_member, ml.id_member AS id_last_member, charsl.avatar, meml.email_address, charss.avatar AS first_poster_avatar, mems.email_address AS first_poster_email, COALESCE(af.id_attach, 0) AS first_poster_id_attach, af.filename AS first_poster_filename, af.attachment_type AS first_poster_attach_type, COALESCE(al.id_attach, 0) AS last_poster_id_attach, al.filename AS last_poster_filename, al.attachment_type AS last_poster_attach_type,
 				ml.poster_time AS last_poster_time, COALESCE(charss.character_name, mems.real_name, ms.poster_name) AS first_poster_name,
 				COALESCE(charsl.character_name, meml.real_name, ml.poster_name) AS last_poster_name,
@@ -686,8 +689,8 @@ function UnreadTopics()
 			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['bname'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
+				'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['bname'] . '</a>'
 			],
 			'prefixes' => [],
 		];
