@@ -107,7 +107,7 @@ h3.titlebg, h4.titlebg, .titlebg, h3.subbg, h4.subbg, .subbg {
 	margin: -2em 3.1em 0 0;
 }
 /* This is a small fix for dropmenu icons */
-.dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
+.dropmenu .main_icons, .dropmenu img {
 	margin: 0 -4px 0 8px;
 }
 
@@ -621,14 +621,6 @@ span.pages {
 
 #userstatus .smalltext, .pm_icon {
 	margin: 0 20px 0 0 !important;
-}
-
-/* Profile drop it needs reverse on RTL */
-#profile_menu .profile_user_info {
-	margin: 3px 10px 5px 0;
-}
-#profile_menu .profile_user_avatar img {
-	margin: 5px 10px 0 0;
 }
 
 /* Code is a code do it LTR */

@@ -1877,7 +1877,6 @@ function setupMenuContext()
 	{
 		addInlineJavaScript('
 	var user_menus = new smc_PopupMenu();
-	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup", false, true);
 	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'", false, true);
 	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup", false, true);', true);
 		if ($context['allow_search'])
@@ -1925,6 +1924,12 @@ function setupMenuContext()
 	if ($context['user']['is_logged'])
 	{
 		$context['sidebar'] += [
+			'topictracker' => [
+				'url' => $urlgenerator->generate('topictracker'),
+				'icon' => 'fas fa-clipboard-check fa-fw',
+				'label' => $txt['topic_tracker'],
+				'position' => 'top',
+			],
 			'alerts' => [
 				'url' => $scripturl . '?action=profile;area=alerts;u=' . $context['user']['id'],
 				'icon' => 'far fa-bell fa-fw',
@@ -1938,6 +1943,7 @@ function setupMenuContext()
 				'icon' => 'far fa-comments fa-fw',
 				'label' => $txt['personal_messages'],
 				'popupmenu' => true,
+				'position' => 'top',
 				'amt' => $context['user']['unread_messages'],
 				'visible' => $context['allow_pm'],
 			],
@@ -2045,11 +2051,6 @@ function setupMenuContext()
 						'amt' => $context['open_member_reports'],
 					]
 				],
-			],
-			'logout' => [
-				'url' => $urlgenerator->generate('logout', ['t' => $context['session_id']]),
-				'icon' => 'fas fa-sign-out-alt fa-fw',
-				'label' => $txt['logout'],
 			],
 		];
 	}

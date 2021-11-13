@@ -87,7 +87,7 @@ h3.largetext {
 	height: 70px;
 	background: $secondary-accent;
 	position: fixed;
-	width: calc(100% - 70px);
+	width: 100%;
 	z-index: 100;
 }
 #top_info > li > a {
@@ -100,29 +100,11 @@ h3.largetext {
 	clear: both;
 }
 
-#profile_menu {
-	color: $default-color;
-	width: 30em;
-	padding: 10px;
-}
-#profile_menu.visible {
-	display: table-row;
-}
-#characters_menu {
-	color: $default-color;
-	padding-bottom: 10px;
-	width: 30em;
-}
-
-#profile_menu_top > img.avatar, #characters_menu_top > img.avatar {
+#characters_menu_top > img.avatar {
 	max-height: 64px;
 	max-width: 64px;
 	margin-right: 7px;
 	vertical-align: middle;
-}
-
-#profile_menu .profile_user {
-	display: table-cell;
 }
 
 /* The logo. */
@@ -602,11 +584,11 @@ a.button_submit {
 	background: $menu-bg;
 }
 
-.top_menu, #profile_menu, #characters_menu {
+.top_menu, #characters_menu {
 	color: $menu-fg;
 }
 
-.top_menu a, #profile_menu a, #characters_menu a:not(.button) {
+.top_menu a {
 	color: $menu-fg-link;
 	text-decoration: underline;
 
@@ -723,7 +705,7 @@ a.button_submit {
 
 /* User information. */
 @media screen and (max-width: 575px) {
-	#profile_menu_top, #characters_menu_top {
+	#characters_menu_top {
 		width: 70px;
 		text-align: center;
 
@@ -732,7 +714,7 @@ a.button_submit {
 	 	}
 
 		&::after {
-			content: 'OOC \25BC';
+			content: ' \25BC';
 		    position: absolute;
 		    right: 5px;
 		    top: 45px;
@@ -744,40 +726,11 @@ a.button_submit {
 			color: $sidebar-amt-fg;
 		}
 	}
-	#characters_menu_top::after {
-		content: 'IC \25BC';
-	}
 }
 @media screen and (min-width: 576px) {
-	#profile_menu_top::after, #characters_menu_top::after {
+	#characters_menu_top::after {
 		content: ' \25BC';
 	}
-}
-
-
-.profile_user_info, .profile_user_avatar {
-	display: inline-block;
-}
-
-.profile_username {
-	font-size: 150%;
-	display: block;
-}
-
-.profile_user_links {
-	display: table-cell;
-	vertical-align: top;
-}
-
-.profile_user_links ol {
-	margin: 0 9px;
-}
-
-.profile_user_links li {
-	display: inline-block;
-	margin-bottom: 4px;
-	margin-left: 1em;
-	min-width: 120px;
 }
 
 .top_menu.scrollable {
@@ -2853,40 +2806,9 @@ div#char_theme_wrapper, #char_theme_wrapper {
 	touch-action: none;
 }
 
-#my_characters {
-	margin-top: 10px;
-}
-
-.chars_container span.avatar {
-	width: 25px;
-	height: 25px;
-	display: inline-block;
-	text-align: center;
-}
-
-.chars_container span.avatar img {
-	max-width: 100%;
-	max-height: 100%;
-	margin-bottom: -7px;
-}
-
 img.avatar_small {
 	max-width: 40px;
 	max-height: 40px;
-}
-
-.chars_container li {
-	margin-top: 7px;
-}
-
-.chars_container .switch {
-	float: right;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-.chars_container .switch .button {
-	padding: 0 3px;
 }
 
 #current_sig_parsed, #sig_preview_parsed {

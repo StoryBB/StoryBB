@@ -66,13 +66,6 @@
 {{#if context.user.is_logged}}
 			<ul class="floatleft" id="top_info">
 				<li>
-					<a href="{{scripturl}}?action=profile"{{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
-						{{{user_info.ooc_avatar.image}}}
-						<span class="username">{{context.user.name}}</span>
-					</a>
-					<div id="profile_menu" class="top_menu"></div>
-				</li>{{! Forcing no whitespace here to make the CSS behave nicely.
-			}}<li>
 					<a href="{{scripturl}}?action=profile;area=characters" id="characters_menu_top" onclick="return false;">
 					{{{user_info.ic_avatar.image}}}
 					<span class="character_name">{{textTemplate txt.posting_as user_info.character_name}}</span></a>

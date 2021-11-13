@@ -720,7 +720,6 @@ $txt['visual_verification_request_new'] = 'Request another image';
 $txt['summary'] = 'Summary';
 $txt['account'] = 'Account Settings';
 $txt['theme'] = 'Look and Layout';
-$txt['forumprofile'] = 'Forum Profile';
 $txt['activate_changed_email_title'] = 'Email Address Changed';
 $txt['activate_changed_email_desc'] = 'You\'ve changed your email address. In order to validate this address you will receive an email. Click the link in that email to reactivate your account.';
 $txt['modSettings_title'] = 'Features and Options';
