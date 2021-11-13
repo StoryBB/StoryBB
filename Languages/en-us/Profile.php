@@ -18,7 +18,6 @@ $txt['profile_report_user'] = 'Report User';
 $txt['profile_show_drafts'] = 'Show Drafts';
 
 $txt['profiletab_characters'] = 'Characters';
-$txt['profile_topic_tracker'] = 'Topic Tracker';
 
 $txt['profiletab_notification_settings'] = 'Notification Settings';
 $txt['profile_bookmarks'] = 'Bookmarks';
@@ -26,7 +25,7 @@ $txt['profile_ignored_topics'] = 'Ignored Topics';
 $txt['profile_my_alerts'] = 'My Alerts';
 
 $txt['profiletab_preferences'] = 'Preferences';
-$txt['profile_ignored_boards'] = 'Ignored Boards';
+$txt['profile_ignored_boards'] = 'Ignore Boards';
 $txt['profile_buddy_list'] = 'Buddy List';
 $txt['profile_alert_preferences'] = 'Alert Preferences';
 $txt['profile_ignored_people'] = 'Ignored People';

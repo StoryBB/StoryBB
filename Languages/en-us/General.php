@@ -696,6 +696,7 @@ $txt['order_sticky_short'] = 'Re-Order Stickies';
 $txt['order_sticky'] = 'Re-Order Sticky Posts';
 
 $txt['alerts'] = 'Alerts';
+$txt['topic_tracker'] = 'Topic Tracker';
 
 $txt['pm_short'] = 'My Messages';
 $txt['pm_menu_read'] = 'Read your messages';
