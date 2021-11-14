@@ -129,6 +129,20 @@ input[type=checkbox], input[type=radio] {
 	box-shadow: none;
 }
 
+input[type=checkbox] {
+	appearance: none;
+
+	&::after {
+		font-family: "Font Awesome 5 Free";
+		content: "\f0c8";
+		color: $default-color;
+	}
+
+	&:checked::after {
+		content: "\f14a";
+	}
+}
+
 .valid_input {
 	background: #f5fff0;
 }
