@@ -251,18 +251,43 @@ function displayDebug()
 
 	$template_debug = StoryBB\Template::get_debug_info();
 
+	$collapser = function($title, $content)
+	{
+		if (is_array($content))
+		{
+			$content = implode(', ', $content);
+		}
+		if ($content)
+		{
+			return '<details><summary>' . $title . '</summary> <span>' . $content . '</span></details>';
+		}
+
+		return $title . '<br>';
+	};
+
+	if (!isset($context['debug']['hooks']))
+	{
+		$context['debug']['hooks'] = [];
+	}
+	if (!isset($context['debug']['instances']))
+	{
+		$context['debug']['instances'] = [];
+	}
+
 	echo preg_replace('~</body>\s*</html>~', '', $temp), '
-<div class="smalltext" style="text-align: left; margin: 1ex;">
+<div class="debug-info" style="display:none">
 	', $txt['debug_browser'], $context['browser_body_id'], ' <em>(', implode('</em>, <em>', array_reverse(array_keys($context['browser'], true))), ')</em><br>
-	', $txt['debug_templates'], count($template_debug['template']), ': <em>', implode('</em>, <em>', $template_debug['template']), '</em>.<br>
-	', $txt['debug_subtemplates'], count($template_debug['partial']), ': <em>', implode('</em>, <em>', $template_debug['partial']), '</em>.<br>
-	', $txt['debug_template_cache_hits'], count($template_debug['cache_hit']) . (!empty($template_debug['cache_hit']) ? ' - ' . implode(', ', $template_debug['cache_hit']) : '') . '<br>
-	', $txt['debug_template_cache_misses'], count($template_debug['cache_miss']) . (!empty($template_debug['cache_miss']) ? ' - ' . implode(', ', $template_debug['cache_miss']) : '') . '<br>
-	', $txt['debug_language_files'], count($context['debug']['language_files']), ': <em>', implode('</em>, <em>', $context['debug']['language_files']), '</em>.<br>
-	', $txt['debug_stylesheets'], count($context['debug']['sheets']), ': <em>', implode('</em>, <em>', $context['debug']['sheets']), '</em>.<br>
-	', $txt['debug_hooks'], empty($context['debug']['hooks']) ? 0 : count($context['debug']['hooks']) . ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_hooks\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_hooks" style="display: none;"><em>' . implode('</em>, <em>', $context['debug']['hooks']), '</em></span>)', '<br>
-	',(isset($context['debug']['instances']) ? ($txt['debug_instances'] . (empty($context['debug']['instances']) ? 0 : count($context['debug']['instances'])) . ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_instances\').style.display = \'inline\'; this.style.display = \'none\'; return false;">'. $txt['debug_show'] .'</a><span id="debug_instances" style="display: none;"><em>'. implode('</em>, <em>', array_keys($context['debug']['instances'])) .'</em></span>)'. '<br>') : ''),'
-	', $txt['debug_files_included'], count($files), ' - ', round($total_size / 1024), $txt['debug_kb'], ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_include_info\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_include_info" style="display: none;"><em>', implode('</em>, <em>', $files), '</em></span>)<br>';
+	', $collapser($txt['debug_templates'] . count($template_debug['template']), $template_debug['template']), '
+	', $collapser($txt['debug_subtemplates'] . count($template_debug['partial']), $template_debug['partial']), '
+	', $collapser($txt['debug_template_cache_hits'] . count($template_debug['cache_hit']), $template_debug['cache_hit']), '
+	', $collapser($txt['debug_template_cache_misses'] . count($template_debug['cache_miss']), $template_debug['cache_miss']), '
+	', $collapser($txt['debug_language_files'] . count($context['debug']['language_files']), $context['debug']['language_files']), '
+	', $collapser($txt['debug_stylesheets'] . count($context['debug']['sheets']), $context['debug']['sheets']), '
+	', $collapser($txt['debug_hooks'] . count($context['debug']['hooks']), $context['debug']['hooks']), '
+	', $collapser($txt['debug_instances'] . count($context['debug']['instances']), $context['debug']['instances']);
+
+	echo '<br>
+	', $collapser($txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'], $files);
 
 	if (function_exists('memory_get_peak_usage'))
 		echo $txt['debug_memory_use'], ceil(memory_get_peak_usage() / 1024), $txt['debug_kb'], '<br>';
@@ -290,7 +315,8 @@ function displayDebug()
 
 		echo '
 	', $txt['debug_cache_hits'], $cache_count, ': ', sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)), ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_cache_info\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_cache_info" style="display: none;"><em>', implode('</em>, <em>', $entries), '</em></span>)<br>
-	', $txt['debug_cache_misses'], $cache_count_misses, ': (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_cache_misses_info\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_cache_misses_info" style="display: none;"><em>', implode('</em>, <em>', $missed_entries), '</em></span>)<br>';
+	<details><summary>', $txt['debug_cache_misses'], $cache_count_misses, '</summary><em>', implode('</em>, <em>', $missed_entries), '</em>
+	</details><br>';
 	}
 
 	echo '
@@ -338,7 +364,11 @@ function displayDebug()
 
 	echo '
 	<a href="' . $scripturl . '?action=viewquery;sa=hide">', $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'], '</a>
-</div></body></html>';
+</div><script>
+$("footer .debug").on("click", function(e) {
+	reqDebugDiv(".debug-info");
+});
+</script></body></html>';
 }
 
 /**

@@ -1128,10 +1128,10 @@ tr.windowbg td, .table_grid tr td {
 	width: 480px;
 	z-index: 99;
 	padding: 0 6px 6px 6px;
-	border: 1px solid #777;
+	border: 1px solid $secondary-accent-light;
 	border-radius: 7px 7px 3px 3px;
 	overflow: visible !important;
-	background: #fff;
+	background: $secondary-accent;
 	top: 15%;
 	margin: 0 auto;
 }
@@ -1144,14 +1144,13 @@ tr.windowbg td, .table_grid tr td {
 }
 
 .popup_content {
-	color: #222;
+	color: $default-color;
 	line-height: 1.6em;
 	max-height: 30em;
 	overflow: auto;
 	margin: 0;
 	padding: 10px 8px;
-	border: 1px solid #bbb;
-	border-bottom: 1px solid $primary-border;
+	border: 1px solid $primary-border;
 	border-radius: 6px 6px 2px 2px;
 }
 
