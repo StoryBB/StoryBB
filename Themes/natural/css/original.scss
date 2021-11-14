@@ -2758,49 +2758,6 @@ div#char_theme_wrapper, #char_theme_wrapper {
 	margin-bottom: 6px;
 }
 
-.char_list_container {
-	text-align: center;
-}
-
-.char_list {
-	display: inline-block;
-	margin: 5px !important;
-}
-
-.char_list_name {
-	margin: 0 auto 5px auto;
-	max-width: 180px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-.char_list_avatar {
-	margin-left: auto;
-	margin-right: auto;
-
-	width: #{$avatar_max_width}px;
-	height: #{$avatar_max_height}px;
-}
-
-#filter_opts .filter_container {
-	width: 230px;
-	display: inline-block;
-	vertical-align: top;
-	margin: 10px;
-}
-
-#filter_opts label input {
-	float: left;
-	margin-top: 0;
-	margin-right: 5px;
-}
-
-.char_group_container .char_group {
-	display: inline-block;
-	width: 48%;
-}
-
 .ui-sortable-handle {
 	-ms-touch-action: none;
 	touch-action: none;
@@ -3486,51 +3443,4 @@ div#manage_boards dl dd textarea[name=desc] {
 
 .character_filter .character {
 	margin-top: 20px;
-}
-
-/** new character list **/
-.filterizr-filters li[data-multifilter] {
-	cursor: pointer;
-	display: inline-block;
-	margin: 10px;
-
-	&::before {
-		font-family: "Font Awesome 5 Free";
-		content: "\f0c8";
-		margin-right: 8px;
-	}
-
-	&.filter-active::before {
-		content: "\f14a";
-	}
-}
-
-.char_list_container.filter-container {
-	.windowbg {
-		width: 200px;
-		z-index: 10;
-	}
-	.filteredOut {
-		z-index: 5;
-	}
-}
-
-#other_ships {
-	.buttonlist {
-		.already_in_timeline {
-			display: none;
-		}
-		.add_to_timeline {
-			display: inline;
-		}
-	}
-
-	.already_in_timeline .buttonlist {
-		.already_in_timeline {
-			display: inline;
-		}
-		.add_to_timeline {
-			display: none;
-		}
-	}
 }
