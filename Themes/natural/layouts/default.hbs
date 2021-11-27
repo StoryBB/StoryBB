@@ -138,10 +138,17 @@
 						</dl>
 					</div>
 {{/if}}
-						{{>status_messages}}
-						{{{content}}}
 
-						{{block_region 'after-content'}}
+					<div class="block-container">{{!
+						}}{{block_region 'before-content'}}{{!
+							 }}<div class="block-middle">{{block_region 'left-sidebar'}}{{!
+								}}<div class="block-inner">{{block_region 'above-content'}}{{!
+									}}{{>status_messages}}{{!
+									}}<aside class="main-body-content">{{{content}}}</aside>{{!
+								}}{{block_region 'below-content'}}</div>{{!
+							}}{{block_region 'right-sidebar'}}</div>{{!
+						}}{{block_region 'after-content'}}{{!
+					}}</div>
 				</div>
 			</div>
 		</div><!-- #content_wrapper -->
