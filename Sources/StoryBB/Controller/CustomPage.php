@@ -60,6 +60,8 @@ class CustomPage implements Routable
 			'name' => $context['page']['page_title'],
 		];
 
+		$context['current_subaction'] = $context['page']['page_name'];
+
 		$context['page']['page_content'] = Parser::parse_bbc($context['page']['page_content'], true, 'page-' . $page_name);
 
 		if (!empty($context['page']['page_content']))

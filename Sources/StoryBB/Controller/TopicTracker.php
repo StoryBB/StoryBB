@@ -10,18 +10,43 @@
  * @version 1.0 Alpha 1
  */
 
-namespace StoryBB\Controller\Profile;
+namespace StoryBB\Controller;
 
+use StoryBB\App;
 use StoryBB\Model\TopicCollection;
 use StoryBB\Model\TopicPrefix;
+use StoryBB\Phrase;
+use StoryBB\Routing\Behaviours\Routable;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
-class TopicTracker
+class TopicTracker implements Routable
 {
-	public function display_action()
+	public static function register_own_routes(RouteCollection $routes): void
 	{
-		global $context, $txt, $smcFunc, $scripturl;
+		$routes->add('topictracker', (new Route('/topic-tracker', ['_function' => [static::class, 'display_action']])));
+	}
 
-		$context['sub_template'] = 'profile_topic_tracker';
+	public static function display_action()
+	{
+		global $context, $txt, $smcFunc, $scripturl, $memberContext;
+
+		is_not_guest();
+
+		loadLanguage('Profile');
+
+		loadMemberData($context['user']['id'], false, 'profile');
+		loadMemberContext($context['user']['id']);
+		$context['user']['characters'] = $memberContext[$context['user']['id']]['characters'];
+
+		$url = App::container()->get('urlgenerator');
+
+		$context['page_title'] = $txt['topic_tracker'];
+		$context['linktree'][] = [
+			'url' => $url->generate('topictracker'),
+			'name' => $txt['topic_tracker'],
+		];
+		$context['sub_template'] = 'topic_tracker';
 
 		$context['time_ago_options'] = [
 			'1week' => ['timestamp' => strtotime('-1 week'), 'label' => $txt['topic_tracker_last_post_1week']],
@@ -34,7 +59,7 @@ class TopicTracker
 
 		$character_ids = [];
 
-		foreach ($context['member']['characters'] as $character)
+		foreach ($context['user']['characters'] as $character)
 		{
 			if (empty($character['is_main']) && !$character['retired'])
 			{
@@ -49,7 +74,7 @@ class TopicTracker
 		}
 
 		// First, step through and set it up.
-		foreach ($context['member']['characters'] as $id_character => $character)
+		foreach ($context['user']['characters'] as $id_character => $character)
 		{
 			if (!empty($character['is_main']))
 			{
@@ -60,7 +85,7 @@ class TopicTracker
 				continue;
 			}
 
-			$context['member']['characters'][$id_character]['topics'] = [];
+			$context['user']['characters'][$id_character]['topics'] = [];
 		}
 
 		// Now get all the base topic information.
@@ -82,7 +107,7 @@ class TopicTracker
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$topic_ids[$row['id_topic']] = $row['id_topic'];
-			$context['member']['characters'][$row['id_character']]['topics'][$row['id_topic']] = [
+			$context['user']['characters'][$row['id_character']]['topics'][$row['id_topic']] = [
 				'id_topic' => $row['id_topic'],
 			];
 		}
@@ -124,7 +149,7 @@ class TopicTracker
 		$topic_data = [];
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, t.locked, t.finished,
+				COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, b.slug AS board_slug, t.locked, t.finished,
 				t.id_topic, ms.subject, ms.id_member, COALESCE(chars.character_name, ms.poster_name) AS real_name_col,
 				ml.id_msg_modified, ml.id_member AS id_member_updated,
 				COALESCE(chars2.character_name, ml.poster_name) AS last_real_name,
@@ -149,7 +174,7 @@ class TopicTracker
 			WHERE t.id_topic IN ({array_int:topic_ids})
 				AND b.in_character = {int:in_character}',
 			[
-				'current_member' => $context['user']['is_owner'] ? $context['user']['id'] : 0,
+				'current_member' => $context['user']['id'],
 				'is_approved' => 1,
 				'topic_ids' => $topic_ids,
 				'in_character' => 1,
@@ -168,7 +193,7 @@ class TopicTracker
 				$classes .= ' finished';
 			}
 
-			if ($row['id_member_updated'] == $context['member']['id'])
+			if ($row['id_member_updated'] == $context['user']['id'])
 			{
 				$classes .= ' lastme';
 			}
@@ -176,7 +201,7 @@ class TopicTracker
 			{
 				$classes .= ' lastnotme';
 			}
-			$classes .= ' lastupdated' . $row['id_member_updated'] . '-' . $context['member']['id'];
+			$classes .= ' lastupdated' . $row['id_member_updated'] . '-' . $context['user']['id'];
 
 			foreach ($context['time_ago_options'] as $class => $time)
 			{
@@ -201,7 +226,7 @@ class TopicTracker
 				'board' => [
 					'id' => $row['id_board'],
 					'name' => $row['name'],
-					'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
+					'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				],
 				'subject' => $row['subject'],
 				'replies' => comma_format($row['num_replies']),
@@ -222,6 +247,7 @@ class TopicTracker
 				],
 				'last_post' => [
 					'id' => $row['id_last_msg'],
+					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_last_msg'] . '#msg' . $row['id_last_msg'],
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_last_msg'] . '#msg' . $row['id_last_msg'] . '">' . $row['subject'],
 					'time' => timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),
@@ -239,7 +265,7 @@ class TopicTracker
 		$smcFunc['db']->free_result($request);
 
 		// Now to join it all together.
-		foreach ($context['member']['characters'] as $id_character => $character)
+		foreach ($context['user']['characters'] as $id_character => $character)
 		{
 			if (!isset($character['topics']))
 			{
@@ -250,11 +276,11 @@ class TopicTracker
 			{
 				if (!isset($topic_data[$character_topic_id]))
 				{
-					unset($context['member']['characters'][$id_character]['topics'][$character_topic_id]);
+					unset($context['user']['characters'][$id_character]['topics'][$character_topic_id]);
 					continue;
 				}
 
-				$context['member']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
+				$context['user']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
 			}
 		}
 
@@ -270,7 +296,7 @@ class TopicTracker
 				}
 
 				// If this character is already in the topic, skip it.
-				if (isset($context['member']['characters'][$id_character]['topics'][$character_topic_id]))
+				if (isset($context['user']['characters'][$id_character]['topics'][$character_topic_id]))
 				{
 					continue;
 				}
@@ -281,12 +307,12 @@ class TopicTracker
 					continue;
 				}
 
-				$context['member']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
-				$context['member']['characters'][$id_character]['topics'][$character_topic_id]['invite'] = true;
+				$context['user']['characters'][$id_character]['topics'][$character_topic_id] = $topic_data[$character_topic_id];
+				$context['user']['characters'][$id_character]['topics'][$character_topic_id]['invite'] = true;
 			}
 		}
 
-		foreach ($context['member']['characters'] as $id_character => $character)
+		foreach ($context['user']['characters'] as $id_character => $character)
 		{
 			if (empty($character['topics']))
 			{
@@ -294,7 +320,7 @@ class TopicTracker
 			}
 			foreach ($character['topics'] as $id_topic => $topic)
 			{
-				$context['member']['characters'][$id_character]['topics'][$id_topic]['css_class'] .= (!empty($topic['invite']) ? ' invitedtopic' : ' postedtopic');
+				$context['user']['characters'][$id_character]['topics'][$id_topic]['css_class'] .= (!empty($topic['invite']) ? ' invitedtopic' : ' postedtopic');
 			}
 		}
 	}

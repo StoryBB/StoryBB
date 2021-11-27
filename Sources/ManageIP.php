@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\IP;
 
 /**
@@ -50,12 +51,14 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 {
 	global $smcFunc, $scripturl;
 
+	$url = App::container()->get('urlgenerator');
+
 	// Get all the messages fitting this where clause.
 	// @todo SLOW This query is using a filesort.
 	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.id_msg, m.poster_ip, COALESCE(mem.real_name, m.poster_name) AS display_name, mem.id_member,
-			m.subject, m.poster_time, m.id_topic, m.id_board
+			m.subject, m.poster_time, m.id_topic, m.id_board, b.slug AS board_slug
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -75,7 +78,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
 			'board' => [
 				'id' => $row['id_board'],
-				'href' => $scripturl . '?board=' . $row['id_board']
+				'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 			],
 			'topic' => $row['id_topic'],
 			'id' => $row['id_msg'],

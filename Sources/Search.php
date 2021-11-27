@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
@@ -1602,7 +1603,7 @@ function PlushSearch2()
 				last_m.id_msg AS last_msg, last_m.poster_time AS last_poster_time, last_mem.id_member AS last_member_id,
 				COALESCE(char_l.character_name, last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.subject AS last_subject,
 				t.id_topic, t.is_sticky, t.locked, t.id_poll, t.num_replies, t.num_views,
-				b.id_board, b.name AS board_name, c.id_cat, c.name AS cat_name
+				b.id_board, b.name AS board_name, b.slug AS board_slug, c.id_cat, c.name AS cat_name
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -1693,6 +1694,12 @@ function prepareSearchContext($reset = false)
 	global $memberContext, $context, $settings, $options, $messages_request;
 	global $boards_can, $participants, $smcFunc;
 	static $recycle_board = null;
+
+	static $url = null;
+	if ($url === null)
+	{
+		$url = App::container()->get('urlgenerator');
+	}
 
 	if ($recycle_board === null)
 		$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0;
@@ -1853,8 +1860,8 @@ function prepareSearchContext($reset = false)
 		'board' => [
 			'id' => $message['id_board'],
 			'name' => $message['board_name'],
-			'href' => $scripturl . '?board=' . $message['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $message['id_board'] . '.0">' . $message['board_name'] . '</a>'
+			'href' => $url->generate('board', ['board_slug' => $message['board_slug']]),
+			'link' => '<a href="' . $url->generate('board', ['board_slug' => $message['board_slug']]) . '">' . $message['board_name'] . '</a>'
 		],
 		'category' => [
 			'id' => $message['id_cat'],

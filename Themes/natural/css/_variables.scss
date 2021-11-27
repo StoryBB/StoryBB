@@ -70,3 +70,18 @@ $navigation-divider-fg: lighten($primary-accent, 10%) !default;
 
 $quickbutton-link-fg: $default-color !default;
 $quickbutton-link-fg-hover: inherit !default;
+
+$button-bg: $secondary-accent !default;
+$button-fg: $secondary-accent-contrast !default;
+
+$button-hover-bg: lighten($secondary-accent, 15%) !default;
+$button-hover-fg: $secondary-accent-contrast !default;
+$button-hover-shadow: 6px 6px 2px rgba(0, 0, 0, 0.2) !default;
+
+$button-active-bg: $primary-accent-dark !default;
+$button-active-fg: $primary-accent-contrast !default;
+$button-active-border: 1px solid $primary-accent-dark !default;
+
+$button-active-hover-bg: $primary-accent !default;
+$button-active-hover-fg: $primary-accent-contrast !default;
+$button-active-hover-border: 1px solid $primary-accent !default;

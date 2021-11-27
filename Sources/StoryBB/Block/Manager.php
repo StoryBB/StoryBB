@@ -82,6 +82,14 @@ class Manager
 				continue;
 			}
 
+			if (!empty($visibility['routes']))
+			{
+				if (!$this->match_route($context['routing'] ?? null, $visibility['routes']))
+				{
+					continue;
+				}
+			}
+
 			$row['object'] = null;
 			if (!class_exists($row['class']))
 			{
@@ -93,6 +101,44 @@ class Manager
 			$this->page_blocks[$row['region']][$row['id_instance']] = $row;
 		}
 		$db->free_result($result);
+	}
+
+	protected function match_route(array $routing, array $visibility): bool
+	{
+		if (empty($routing['_route']))
+		{
+			return false;
+		}
+
+		foreach ($visibility as $possible_route)
+		{
+			if (empty($possible_route['route_params']))
+			{
+				// If there's no route parameters, we're just matching the route, that's easy.
+				if ($possible_route['route'] == $routing['_route'])
+				{
+					return true;
+				}
+			}
+			else
+			{
+				// Otherwise we're matching the route then all the parameters.
+				if ($possible_route['route'] == $routing['_route'])
+				{
+					foreach ($possible_route['route_params'] as $param => $value)
+					{
+						if (!isset($routing[$param]) || $routing[$param] != $value)
+						{
+							continue;
+						}
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public function render_region(string $region)

@@ -322,8 +322,8 @@ VALUES (-1, 1, 'poll_view'),
 #
 
 INSERT INTO {$db_prefix}boards
-  (id_board, id_cat, board_order, id_last_msg, id_msg_updated, name, description, num_topics, num_posts, member_groups)
-VALUES (1, 1, 1, 1, 1, '{$default_board_name}', '{$default_board_description}', 1, 1, '-1,0,2');
+  (id_board, id_cat, board_order, id_last_msg, id_msg_updated, name, slug, description, num_topics, num_posts, member_groups)
+VALUES (1, 1, 1, 1, 1, '{$default_board_name}', '{$default_board_slug}', '{$default_board_description}', 1, 1, '-1,0,2');
 # --------------------------------------------------------
 
 #
@@ -474,7 +474,7 @@ VALUES
   (5, 0, 0, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\DailyDigest'),
   (6, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyDigest'),
   (7, 0, {$sched_task_offset}, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\FetchStoryBBFiles'),
-  (8, 0, 0, 1, 'd', 1, 'StoryBB\\Task\\Schuledable\\BirthdayNotify'),
+  (8, 0, 0, 1, 'd', 1, 'StoryBB\\Task\\Schedulable\\BirthdayNotify'),
   (9, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
   (11, 0, 120, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
@@ -608,8 +608,6 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('warning_mute', '60'),
   ('last_mod_report_action', '0'),
   ('pruningOptions', '30,180,180,180,30'),
-  ('modlog_enabled', '1'),
-  ('adminlog_enabled', '1'),
   ('cache_enable', '1'),
   ('minimum_age', '16'),
   ('reg_verification', '1'),

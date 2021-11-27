@@ -10,7 +10,7 @@
 		<div class="windowbg">
 			<h5>
 				<strong>
-					{{#if topic.board_name}}<a href="{{scripturl}}?board={{topic.id_board}}.0">{{{topic.board_name}}}</a>{{else}}??{{/if}} / <a href="{{{topic.href}}}">{{{subject}}}</a>
+					{{#if topic.board_name}}<a href="{{topic.board_link}}">{{{topic.board_name}}}</a>{{else}}??{{/if}} / <a href="{{{topic.href}}}">{{{subject}}}</a>
 				</strong>
 				{{{../txt.mc_reportedp_by}}} <strong>{{{author.link}}}</strong>
 			</h5>

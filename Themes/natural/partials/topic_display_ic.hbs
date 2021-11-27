@@ -6,7 +6,7 @@
 						<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
 
 							{{#each prefixes}}
-								<a href="{{../scripturl}}?board={{../board.id}}.0;prefix={{id_prefix}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
+								<a href="{{{filter_link}}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
 							{{/each}}
 							<span id="msg_{{first_post.id}}">
 								{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{txt.awaiting_approval}})</em>{{/unless}}

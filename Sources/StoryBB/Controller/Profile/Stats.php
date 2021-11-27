@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Template;
 
 class Stats extends AbstractProfileController
@@ -19,6 +20,8 @@ class Stats extends AbstractProfileController
 	public function display_action()
 	{
 		global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
+
+		$url = App::container()->get('urlgenerator');
 
 		$memID = $this->params['u'];
 
@@ -81,7 +84,7 @@ class Stats extends AbstractProfileController
 		// Grab the board this member posted in most often.
 		$result = $smcFunc['db']->query('', '
 			SELECT
-				b.id_board, MAX(b.name) AS name, MAX(b.num_posts) AS num_posts, COUNT(*) AS message_count
+				b.id_board, MAX(b.name) AS name, MAX(b.slug) AS board_slug, MAX(b.num_posts) AS num_posts, COUNT(*) AS message_count
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 			WHERE m.id_member = {int:current_member}
@@ -101,8 +104,8 @@ class Stats extends AbstractProfileController
 			$context['popular_boards'][$row['id_board']] = [
 				'id' => $row['id_board'],
 				'posts' => $row['message_count'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+				'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['name'] . '</a>',
 				'posts_percent' => $user_profile[$memID]['posts'] == 0 ? 0 : ($row['message_count'] * 100) / $user_profile[$memID]['posts'],
 				'total_posts' => $row['num_posts'],
 				'total_posts_member' => $user_profile[$memID]['posts'],
@@ -113,7 +116,7 @@ class Stats extends AbstractProfileController
 		// Now get the 10 boards this user has most often participated in.
 		$result = $smcFunc['db']->query('profile_board_stats', '
 			SELECT
-				b.id_board, MAX(b.name) AS name, b.num_posts, COUNT(*) AS message_count,
+				b.id_board, MAX(b.name) AS name, MAX(b.slug) AS board_slug, b.num_posts, COUNT(*) AS message_count,
 				CASE WHEN COUNT(*) > MAX(b.num_posts) THEN 1 ELSE COUNT(*) / MAX(b.num_posts) END * 100 AS percentage
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -132,8 +135,8 @@ class Stats extends AbstractProfileController
 			$context['board_activity'][$row['id_board']] = [
 				'id' => $row['id_board'],
 				'posts' => $row['message_count'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+				'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['name'] . '</a>',
 				'percent' => comma_format((float) $row['percentage'], 2),
 				'posts_percent' => (float) $row['percentage'],
 				'total_posts' => $row['num_posts'],

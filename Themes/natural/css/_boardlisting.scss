@@ -1,5 +1,15 @@
 /** Board listings. */
 .board-display {
+	&:nth-of-type(even) {
+		background: $postarea-bg-even;
+	}
+	&:nth-of-type(odd) {
+		background: $postarea-bg-odd;
+	}
+	
+	margin-bottom: 2px;
+	overflow: hidden;
+
 	display: flex;
 	align-items: center;
 	flex-flow: row wrap;

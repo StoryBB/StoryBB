@@ -544,7 +544,7 @@ function updateSettings($changeArray, $update = false)
  *   setting to decide how to display the menu.
  *
  * an example is available near the function definition.
- * $pageindex = constructPageIndex($scripturl . '?board=' . $board, $_REQUEST['start'], $num_messages, $maxindex, true);
+ * $pageindex = constructPageIndex($scripturl . '?topic=' . $topic, $_REQUEST['start'], $num_messages, $maxindex, true);
  *
  * @param string $base_url The basic URL to be used for each link.
  * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitized to be so and the value will persist upon the function's return.
@@ -1877,7 +1877,6 @@ function setupMenuContext()
 	{
 		addInlineJavaScript('
 	var user_menus = new smc_PopupMenu();
-	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup", false, true);
 	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'", false, true);
 	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup", false, true);', true);
 		if ($context['allow_search'])
@@ -1925,6 +1924,12 @@ function setupMenuContext()
 	if ($context['user']['is_logged'])
 	{
 		$context['sidebar'] += [
+			'topictracker' => [
+				'url' => $urlgenerator->generate('topictracker'),
+				'icon' => 'fas fa-clipboard-check fa-fw',
+				'label' => $txt['topic_tracker'],
+				'position' => 'top',
+			],
 			'alerts' => [
 				'url' => $scripturl . '?action=profile;area=alerts;u=' . $context['user']['id'],
 				'icon' => 'far fa-bell fa-fw',
@@ -1938,6 +1943,7 @@ function setupMenuContext()
 				'icon' => 'far fa-comments fa-fw',
 				'label' => $txt['personal_messages'],
 				'popupmenu' => true,
+				'position' => 'top',
 				'amt' => $context['user']['unread_messages'],
 				'visible' => $context['allow_pm'],
 			],
@@ -2020,7 +2026,7 @@ function setupMenuContext()
 					'modlog' => [
 						'title' => $txt['modlog_view'],
 						'url' => $scripturl . '?action=moderate;area=modlog',
-						'visible' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'visible' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
 					],
 					'poststopics' => [
 						'title' => $txt['mc_unapproved_poststopics'],
@@ -2045,11 +2051,6 @@ function setupMenuContext()
 						'amt' => $context['open_member_reports'],
 					]
 				],
-			],
-			'logout' => [
-				'url' => $urlgenerator->generate('logout', ['t' => $context['session_id']]),
-				'icon' => 'fas fa-sign-out-alt fa-fw',
-				'label' => $txt['logout'],
 			],
 		];
 	}

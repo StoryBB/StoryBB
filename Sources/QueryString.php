@@ -28,7 +28,7 @@ use StoryBB\StringLibrary;
 
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context;
 
 	// Makes it easier to refer to things this way.
 	$scripturl = $boardurl . '/index.php';
@@ -121,18 +121,48 @@ function cleanRequest()
 	// Let's not depend on the ini settings... why even have COOKIE in there, anyway?
 	$_REQUEST = $_POST + $_GET;
 
+	// @todo this is a compatibility hack to make existing stuff still work.
+	if (isset($context['routing']['board']))
+	{
+		$_REQUEST['board'] = $context['routing']['board'];
+	}
+	if (isset($context['routing']['topic']))
+	{
+		$_REQUEST['topic'] = $context['routing']['topic'];
+	}
+	if (isset($context['routing']['board_slug']))
+	{
+		$request = $smcFunc['db']->query('', '
+			SELECT id_board, slug
+			FROM {db_prefix}boards
+			WHERE slug = {string:slug}',
+			[
+				'slug' => $context['routing']['board_slug'],
+			]
+		);
+		if ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$context['routing']['board'] = (int) $row['id_board'];
+			$_REQUEST['board'] = $context['routing']['board'];
+			if (isset($context['routing']['start']))
+			{
+				$_REQUEST['start'] = $context['routing']['start'];
+			}
+		}
+		else
+		{
+			unset ($context['routing']['board']);
+			unset ($_REQUEST['board'], $_GET['board'], $_POST['board']);
+		}
+		$smcFunc['db']->free_result($request);
+	}
+
 	// Make sure $board and $topic are numbers.
 	if (isset($_REQUEST['board']))
 	{
 		// Make sure its a string and not something else like an array
 		$_REQUEST['board'] = (string) $_REQUEST['board'];
 
-		// If there's a slash in it, we've got a start value! (old, compatible links.)
-		if (strpos($_REQUEST['board'], '/') !== false)
-			list ($_REQUEST['board'], $_REQUEST['start']) = explode('/', $_REQUEST['board']);
-		// Same idea, but dots.  This is the currently used format - ?board=1.0...
-		elseif (strpos($_REQUEST['board'], '.') !== false)
-			list ($_REQUEST['board'], $_REQUEST['start']) = explode('.', $_REQUEST['board']);
 		// Now make absolutely sure it's a number.
 		$board = (int) $_REQUEST['board'];
 		$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;

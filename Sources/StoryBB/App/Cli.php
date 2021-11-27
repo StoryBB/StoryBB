@@ -13,6 +13,7 @@
 namespace StoryBB\App;
 
 use StoryBB\App;
+use StoryBB\ClassManager;
 use StoryBB\Container;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Routing\Exception\InvalidRouteException;
@@ -22,6 +23,8 @@ use Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper;
 use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
 use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 
 class Cli
 {
@@ -69,8 +72,27 @@ class Cli
 			return $container->instantiate('StoryBB\\Helper\\Formatter');
 		});
 
-		$container->inject('compiled_matcher', function() use ($container) {
-			$compiled_routes = $container->get('cachedir') . '/compiled_matcher.php';
+		$container->inject('router_public', function() use ($container) {
+			$routes = new RouteCollection;
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Routing\\Behaviours\\Routable') as $controllable)
+			{
+				$controllable::register_own_routes($routes);
+			}
+
+			return $routes;
+		});
+		$container->inject('router_admin', function() use ($container) {
+			$routes = new RouteCollection;
+			foreach (ClassManager::get_classes_implementing('StoryBB\\Routing\\Behaviours\\Administrative') as $controllable)
+			{
+				$controllable::register_own_routes($routes);
+			}
+
+			return $routes;
+		});
+
+		$matcher = function($type = 'public') use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_' . $type . '_matcher.php';
 			if (file_exists($compiled_routes))
 			{
 				try
@@ -87,15 +109,15 @@ class Cli
 				}
 			}
 
-			$routes = $container->get('router_public');
+			$routes = $container->get('router_' . $type);
 			$compilation = (new CompiledUrlMatcherDumper($routes))->getCompiledRoutes();
 
 			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
 
 			return $compilation;
-		});
-		$container->inject('compiled_generator', function() use ($container) {
-			$compiled_routes = $container->get('cachedir') . '/compiled_generator.php';
+		};
+		$generator = function($type = 'public') use ($container) {
+			$compiled_routes = $container->get('cachedir') . '/compiled_' . $type . '_generator.php';
 			if (file_exists($compiled_routes))
 			{
 				try
@@ -112,13 +134,27 @@ class Cli
 				}
 			}
 
-			$routes = $container->get('router_public');
+			$routes = $container->get('router_' . $type);
 			$compilation = (new CompiledUrlGeneratorDumper($routes))->getCompiledRoutes();
 
 			file_put_contents($compiled_routes, '<?php return \'' . addcslashes(serialize($compilation), "\0" . '\\\'') . '\';');
 
 			return $compilation;
+		};
+
+		$container->inject('compiled_matcher', function() use ($matcher) {
+			return $matcher('public');
 		});
+		$container->inject('admin_matcher', function() use ($matcher) {
+			return $matcher('admin');
+		});
+		$container->inject('compiled_generator', function() use ($generator) {
+			return $generator('public');
+		});
+		$container->inject('admin_generator', function() use ($generator) {
+			return $generator('admin');
+		});
+
 		$container->inject('urlgenerator', function() use ($container) {
 			return new CompiledUrlGenerator($container->get('compiled_generator'), $container->get('requestcontext'));
 		});

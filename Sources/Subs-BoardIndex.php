@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\Model\TopicPrefix;
 
@@ -33,6 +34,8 @@ function getBoardIndex($boardIndexOptions)
 
 	require_once($sourcedir . '/Subs-Boards.php');
 
+	$url = App::container()->get('urlgenerator');
+
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
 		$latest_post = [
@@ -44,7 +47,7 @@ function getBoardIndex($boardIndexOptions)
 	$result_boards = $smcFunc['db']->query('', '
 		SELECT' . ($boardIndexOptions['include_categories'] ? '
 			c.id_cat, c.name AS cat_name, c.description AS cat_desc,' : '') . '
-			b.id_board, b.name AS board_name, b.description,
+			b.id_board, b.name AS board_name, b.slug AS board_slug, b.description,
 			CASE WHEN b.redirect != {string:blank_string} THEN 1 ELSE 0 END AS is_redirect,
 			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent,
 			COALESCE(m.poster_time, 0) AS poster_time, COALESCE(mem.member_name, m.poster_name) AS poster_name,
@@ -148,8 +151,8 @@ function getBoardIndex($boardIndexOptions)
 					'unapproved_topics' => $row_board['unapproved_topics'],
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
-					'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
+					'href' => $url->generate('board', ['board_slug' => $row_board['board_slug']]),
+					'link' => '<a href="' . $url->generate('board', ['board_slug' => $row_board['board_slug']]) . '">' . $row_board['board_name'] . '</a>',
 					'board_class' => 'off',
 					'css_class' => '',
 				];
@@ -191,8 +194,8 @@ function getBoardIndex($boardIndexOptions)
 				'unapproved_topics' => (int) $row_board['unapproved_topics'],
 				'unapproved_posts' => (int) $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
-				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
+				'href' => $url->generate('board', ['board_slug' => $row_board['board_slug']]),
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row_board['board_slug']]) . '">' . $row_board['board_name'] . '</a>'
 			];
 
 			// Counting child board posts is... slow :/.

@@ -1,0 +1,29 @@
+.char_list_container {
+	text-align: center;
+}
+
+.char_list_container.filter-container {
+	.windowbg {
+		width: calc(#{$avatar_max_width}px + 32px) !important;
+		z-index: 10;
+	}
+	.filteredOut {
+		z-index: 5;
+	}
+}
+
+.filterizr-filters li[data-multifilter] {
+	cursor: pointer;
+	display: inline-block;
+	margin: 10px;
+
+	&::before {
+		font-family: "Font Awesome 5 Free";
+		content: "\f0c8";
+		margin-right: 8px;
+	}
+
+	&.filter-active::before {
+		content: "\f14a";
+	}
+}

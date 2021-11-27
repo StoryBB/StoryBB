@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -33,6 +34,8 @@ class ShowDrafts extends AbstractProfileController
 		global $txt, $scripturl, $modSettings, $context, $smcFunc, $options;
 
 		loadLanguage('Drafts');
+
+		$url = App::container()->get('urlgenerator');
 
 		$memID = $this->params['u'];
 
@@ -105,7 +108,7 @@ class ShowDrafts extends AbstractProfileController
 		//           access to the board or if the topic moves to a board they can not see?
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				b.id_board, b.name AS bname,
+				b.id_board, b.name AS bname, b.slug AS board_slug,
 				ud.id_member, ud.id_draft, ud.body, ud.smileys_enabled, ud.subject, ud.poster_time, ud.id_topic, ud.locked, ud.is_sticky
 			FROM {db_prefix}user_drafts AS ud
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = ud.id_board AND {query_see_board})
@@ -148,7 +151,8 @@ class ShowDrafts extends AbstractProfileController
 				'counter' => $counter,
 				'board' => [
 					'name' => $row['bname'],
-					'id' => $row['id_board']
+					'id' => $row['id_board'],
+					'link' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				],
 				'topic' => [
 					'id' => $row['id_topic'],

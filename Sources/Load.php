@@ -422,6 +422,9 @@ function loadUserSettings()
 	$user_info['query_see_board'] = $temp['query_see_board'];
 	$user_info['query_wanna_see_board'] = $temp['query_wanna_see_board'];
 
+	$db->register_replacement('query_see_board', $user_info['query_see_board']);
+	$db->register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
+
 	call_integration_hook('integrate_user_info');
 }
 
@@ -440,6 +443,8 @@ function loadBoard()
 {
 	global $txt, $scripturl, $context, $modSettings;
 	global $board_info, $board, $topic, $user_info, $smcFunc;
+
+	$url = App::container()->get('urlgenerator');
 
 	// Assume they are not a moderator.
 	$user_info['is_mod'] = false;
@@ -514,7 +519,7 @@ function loadBoard()
 	{
 		$request = $smcFunc['db']->query('load_board_info', '
 			SELECT
-				c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups, b.deny_member_groups,
+				c.id_cat, b.name AS bname, b.slug AS bslug, b.description, b.num_topics, b.member_groups, b.deny_member_groups, COALESCE(p.slug, {empty}) AS parent_slug,
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
 				COALESCE(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.in_character,
@@ -523,6 +528,7 @@ function loadBoard()
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
+				LEFT JOIN {db_prefix}boards AS p ON (b.id_parent = p.id_board)
 				LEFT JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_board = {raw:board_link})
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = modgs.id_group)
 				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = {raw:board_link})
@@ -557,6 +563,8 @@ function loadBoard()
 					'name' => $row['cname']
 				],
 				'name' => $row['bname'],
+				'slug' => $row['bslug'],
+				'url' => $url->generate('board', ['board_slug' => $row['bslug']]),
 				'description' => Parser::parse_bbc($row['description'], '', 'brd' . $board),
 				'num_topics' => $row['num_topics'],
 				'unapproved_topics' => $row['unapproved_topics'],
@@ -564,6 +572,7 @@ function loadBoard()
 				'unapproved_user_topics' => 0,
 				'parent_boards' => getBoardParents($row['id_parent']),
 				'parent' => $row['id_parent'],
+				'parent_slug' => $row['parent_slug'],
 				'child_level' => $row['child_level'],
 				'theme' => $row['id_theme'],
 				'override_theme' => !empty($row['override_theme']),
@@ -576,6 +585,8 @@ function loadBoard()
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
 				'board_sort' => $row['board_sort'],
 			];
+
+			$context['current_board_link'] = $board_info['url'];
 
 			// Load the membergroups allowed, and check permissions.
 			$board_info['groups'] = $row['member_groups'] == '' ? [] : explode(',', $row['member_groups']);
@@ -673,7 +684,7 @@ function loadBoard()
 			]],
 			array_reverse($board_info['parent_boards']),
 			[[
-				'url' => $scripturl . '?board=' . $board . '.0',
+				'url' => $url->generate('board', ['board_slug' => $board_info['slug']]),
 				'name' => $board_info['name']
 			]]
 		);
@@ -1572,7 +1583,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// The theme was specified by REQUEST... previously.
 	elseif (!empty($_SESSION['id_theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
 		$id_theme = (int) $_SESSION['id_theme'];
-	// The theme is just the user's choice. (might use ?board=1;theme=0 to force board theme.)
+	// The theme is just the user's choice. (might use /board/xyz?theme=0 to force board theme.)
 	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']))
 		$id_theme = $user_info['theme'];
 	// The theme was specified by the board.
@@ -2509,6 +2520,8 @@ function getBoardParents($id_parent)
 {
 	global $scripturl, $smcFunc;
 
+	$url = App::container()->get('urlgenerator');
+
 	// First check if we have this cached already.
 	if (($boards = cache_get_data('board_parents-' . $id_parent, 480)) === null)
 	{
@@ -2520,7 +2533,7 @@ function getBoardParents($id_parent)
 		{
 			$result = $smcFunc['db']->query('', '
 				SELECT
-					b.id_parent, b.name, {int:board_parent} AS id_board, b.member_groups, b.deny_member_groups,
+					b.id_parent, b.name, b.slug, {int:board_parent} AS id_board, b.member_groups, b.deny_member_groups,
 					b.child_level, COALESCE(mem.id_member, 0) AS id_moderator, mem.real_name,
 					COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name
 				FROM {db_prefix}boards AS b
@@ -2542,7 +2555,7 @@ function getBoardParents($id_parent)
 				{
 					$id_parent = $row['id_parent'];
 					$boards[$row['id_board']] = [
-						'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
+						'url' => $url->generate('board', ['board_slug' => $row['slug']]),
 						'name' => $row['name'],
 						'level' => $row['child_level'],
 						'groups' => explode(',', $row['member_groups']),

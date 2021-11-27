@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\IP;
 use StoryBB\StringLibrary;
 
@@ -487,10 +488,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	}
 	$smcFunc['db']->free_result($result);
 
+	$url = App::container()->get('urlgenerator');
+
 	if (!empty($boards))
 	{
 		$request = $smcFunc['db']->query('', '
-			SELECT id_board, name
+			SELECT id_board, name, slug
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:board_list})
 			LIMIT {int:limit}',
@@ -503,13 +506,14 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		{
 			foreach ($boards[$row['id_board']] as $action)
 			{
+				$board_url = $url->generate('board', ['board_slug' => $row['slug']]);
 				// Make the board number into a link - dealing with moving too.
 				if (isset($entries[$action]['extra']['board_to']) && $entries[$action]['extra']['board_to'] == $row['id_board'])
-					$entries[$action]['extra']['board_to'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board_to'] = '<a href="' . $board_url . '">' . $row['name'] . '</a>';
 				elseif (isset($entries[$action]['extra']['board_from']) && $entries[$action]['extra']['board_from'] == $row['id_board'])
-					$entries[$action]['extra']['board_from'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board_from'] = '<a href="' . $board_url . '">' . $row['name'] . '</a>';
 				elseif (isset($entries[$action]['extra']['board']) && $entries[$action]['extra']['board'] == $row['id_board'])
-					$entries[$action]['extra']['board'] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
+					$entries[$action]['extra']['board'] = '<a href="' . $board_url . '">' . $row['name'] . '</a>';
 			}
 		}
 		$smcFunc['db']->free_result($request);

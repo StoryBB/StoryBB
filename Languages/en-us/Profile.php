@@ -18,7 +18,6 @@ $txt['profile_report_user'] = 'Report User';
 $txt['profile_show_drafts'] = 'Show Drafts';
 
 $txt['profiletab_characters'] = 'Characters';
-$txt['profile_topic_tracker'] = 'Topic Tracker';
 
 $txt['profiletab_notification_settings'] = 'Notification Settings';
 $txt['profile_bookmarks'] = 'Bookmarks';
@@ -26,7 +25,7 @@ $txt['profile_ignored_topics'] = 'Ignored Topics';
 $txt['profile_my_alerts'] = 'My Alerts';
 
 $txt['profiletab_preferences'] = 'Preferences';
-$txt['profile_ignored_boards'] = 'Ignored Boards';
+$txt['profile_ignored_boards'] = 'Ignore Boards';
 $txt['profile_buddy_list'] = 'Buddy List';
 $txt['profile_alert_preferences'] = 'Alert Preferences';
 $txt['profile_ignored_people'] = 'Ignored People';
@@ -58,11 +57,7 @@ $txt['profile_ban_account'] = 'Ban Account';
 $txt['profile_issue_warning'] = 'Issue Warning';
 
 // Some of the things from the popup need their own descriptions
-$txt['popup_summary'] = 'My Profile';
 $txt['popup_drafts'] = 'My Drafts';
-$txt['popup_showposts'] = 'My Posts';
-$txt['popup_ignore'] = 'Ignore People';
-$txt['popup_bookmarks'] = 'My Bookmarks';
 
 $txt['bookmark_profile'] = 'Bookmarks';
 $txt['bookmarks_ooc'] = 'Bookmarks in Out Of Character Boards';
@@ -635,7 +630,6 @@ $txt['theme_opt_display'] = 'Board and topic display';
 $txt['theme_opt_posting'] = 'Posting';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
 
-$txt['you_are_posting_as'] = 'You are posting as: %s';
 $txt['my_characters'] = 'My Characters';
 
 $txt['char_create'] = 'Create Character';
@@ -704,8 +698,6 @@ $txt['char_stats'] = 'Character Stats';
 $txt['char_templates_sel'] = 'Choose template:';
 $txt['you_can_add_later'] = 'You can change your character sheet later, and you can add an avatar and signature later from your character\'s profile.';
 
-$txt['main_char'] = 'OOC account';
-$txt['main_char_desc'] = 'This is your \'main\' account, and should be used for posting in the Out Of Character (OOC) areas.';
 $txt['char_created'] = 'Character created at: %s';
 $txt['char_sheet'] = 'Character Sheet';
 $txt['char_sheet_none_short'] = 'No character sheet';

@@ -12,7 +12,7 @@
 
 function QuickInTopicModeration()
 {
-	global $sourcedir, $topic, $board, $user_info, $smcFunc, $modSettings, $context;
+	global $sourcedir, $topic, $board, $board_info, $user_info, $smcFunc, $modSettings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -128,5 +128,5 @@ function QuickInTopicModeration()
 			logAction('delete', ['topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board]);
 	}
 
-	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);
+	redirectexit(!empty($topicGone) ? $board_info['url'] : 'topic=' . $topic . '.' . $_REQUEST['start']);
 }

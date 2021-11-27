@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Helper\IP;
 
 class ShowPermissions extends AbstractProfileController
@@ -20,6 +21,8 @@ class ShowPermissions extends AbstractProfileController
 	{
 		global $txt, $board;
 		global $user_profile, $context, $sourcedir, $smcFunc;
+
+		$url = App::container()->get('urlgenerator');
 
 		// Verify if the user has sufficient permissions.
 		isAllowedTo('manage_permissions');
@@ -49,7 +52,7 @@ class ShowPermissions extends AbstractProfileController
 
 		// Load a list of boards for the jump box - except the defaults.
 		$request = $smcFunc['db']->query('order_by_board_order', '
-			SELECT b.id_board, b.name, b.id_profile, b.member_groups, COALESCE(mods.id_member, modgs.id_group, 0) AS is_mod
+			SELECT b.id_board, b.name, b.slug AS board_slug, b.id_profile, b.member_groups, COALESCE(mods.id_member, modgs.id_group, 0) AS is_mod
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_board = b.id_board AND modgs.id_group IN ({array_int:current_groups}))
@@ -67,6 +70,7 @@ class ShowPermissions extends AbstractProfileController
 				$context['no_access_boards'][] = [
 					'id' => $row['id_board'],
 					'name' => $row['name'],
+					'url' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 					'is_last' => false,
 				];
 			elseif ($row['id_profile'] != 1 || $row['is_mod'])

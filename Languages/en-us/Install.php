@@ -43,6 +43,7 @@ $txt['user_refresh_install_desc'] = 'While installing, the installer found that 
 $txt['default_topic_subject'] = 'Welcome to StoryBB!';
 $txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to [url=https://storybb.org/]ask us for assistance[/url].<br><br>Thanks!<br>StoryBB';
 $txt['default_board_name'] = 'General Discussion';
+$txt['default_board_slug'] = 'general-discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_category_name'] = 'General Category';
 $txt['default_reserved_names'] = 'Admin\nWebmaster\nGuest\nroot';

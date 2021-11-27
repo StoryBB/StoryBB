@@ -1,71 +1,96 @@
-		<div id="posting_as">{{textTemplate txt.you_are_posting_as user_info.character_name}}</div>
-		<div id="my_account" class="chars_container">
-			<ul>
+		<div id="my_account" class="account-features before">
 
 {{#each context.current_characters}}
 	{{#if (eq is_main '1')}}
-				<li>
-					<div class="character">
-						<span class="avatar">
-							{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
-						</span>
-						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
-						(<abbr title="{{{../txt.main_char_desc}}}">{{{../txt.main_char}}}</abbr>)
+			<div class="avatar">
+				{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../settings.images_url}}/default.png" alt="">{{/if}}
+			</div>
+			<div class="account-name">
+				<a href="{{../scripturl}}?action=profile;area=summary;u={{../context.user.id}}">{{{character_name}}}</a>
+			</div>
+
+			<div class="account-buttons">
 
 		{{#if (neq @key ../user_info.id_character)}}
-						<span class="switch">
-							<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
-						</span>
+				<div class="ooc-switch-link">
+					<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" title="{{{../txt.switch_to_char}}}">
+						<i class="fas fa-random fa-fw"></i>
+					</span>
+				</div>
 		{{/if}}
+		{{#if ../context.profile_items.avatar_signature}}
+				<div class="ooc-avatar-link">
+					<a href="{{{../context.profile_items.avatar_signature.url}}}" title="{{{../context.profile_items.avatar_signature.title}}}"><i class="{{{../context.profile_items.avatar_signature.icon}}}"></i></a>
+				</div>
+		{{/if}}
+			</div>
 
-					</div>
-				</li>
+		<ul class="ooc-account-links">
+		{{#each ../context.profile_items}}
+			{{#unless (eq @key 'avatar_signature')}}
+			<li><a href="{{{url}}}">{{{title}}}</a></li>
+			{{/unless}}
+		{{/each}}
+		</ul>
+
 	{{/if}}
 {{/each}}
 
 			</ul>
 		</div>
-		<div class="clear centertext buttonlist">
-			<a class="button" href="{{scripturl}}?action=profile;u={{user_info.id}};area=bookmarks">{{{txt.bookmarks}}}</a>
-		</div>
 
-		<div id="my_characters">{{{txt.my_characters}}}</div>
-		<div id="chars_container" class="chars_container">
-			<ul>
+		<div id="my_characters" class="character-features">
+			<div id="chars_container" class="chars_container">
 
 {{#each context.current_characters}}
 	{{#if (and (neq is_main '1') (neq retired '1'))}}
-				<li>
-					<div class="character">
-						<span class="avatar">
-							{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
-						</span>
-						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
-
-						<span class="switch">
-							<a class="button" href="{{sheet_url}}">{{{../txt.char_sheet_link}}}</a>
-						</span>
+				<div class="character">
+					<div class="character-name">
+						<a href="{{../scripturl}}{{character_url}}">
+							<span class="avatar">
+								{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
+							</span>{{{character_name}}}
+						</a>
+					</div>
 
 		{{#if (neq @key ../user_info.id_character)}}
-							<span class="switch">
-								<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</span>
-							</span>
-		{{/if}}
+					<div class="character-switch-link">
+						<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" title="{{{../txt.switch_to_char}}}">
+							<i class="fas fa-random fa-fw"></i>
+						</span>
 					</div>
-				</li>
+		{{/if}}
+
+					<div class="character-sheet-link">
+						<a href="{{sheet_url}}" title="{{{../txt.char_sheet}}}">
+							<i class="far fa-file-alt fa-fw"></i>
+						</a>
+					</div>
+
+					<div class="character-avatar-link">
+						<a href="{{avatar_url}}" title="{{{../txt.profile_avatar_signature}}}">
+							<i class="far fa-images fa-fw"></i>
+						</a>
+					</div>
+				</div>
 	{{/if}}
 {{/each}}
-			</ul>
+
+				<div class="character create">
+					<div class="character-name">
+						<a href="{{scripturl}}?action=profile;u={{user_info.id}};area=character_create"><i class="fas fa-plus-circle fa-fw"></i>{{{txt.char_create}}}
+						</a>
+					</div>
+				</div>
+			</div>
 		</div>
-		<br>
-		<div class="clear centertext buttonlist">
-			<a class="button" href="{{scripturl}}?action=profile;u={{user_info.id}};area=character_create">{{{txt.char_create}}}</a>
-{{#if context.display_topic_tracker}}
-			<a class="button" href="{{scripturl}}?action=profile;area=topic_tracker;u={{user_info.id}}">{{{txt.profile_topic_tracker}}}</a>
-{{/if}}
+		<div class="account-features after">
+			<a class="" href="{{{buildlink 'logout' t=context.session_id}}}">
+				<i class="fas fa-sign-out-alt fa-fw"></i>{{{txt.logout}}}
+			</a>
 		</div>
 		<script>
-		$(".chars_container .switch span.button").on("click", function() {
+		$("#characters_menu span[data-href]").on("click", function() {
 			$.ajax({
 				url: $(this).data("href")
 			}).done(function( data ) {

@@ -1,7 +1,7 @@
 			<div class="cat_bar">
 				<h3 class="catbg">{{txt.contact_us}}</h3>
 			</div>
-			<form id="contactform" action="{{scripturl}}?action=contact" method="post" accept-charset="UTF-8">
+			<form id="contactform" action="{{buildlink 'contact'}}" method="post" accept-charset="UTF-8">
 				<div class="roundframe">
 
 {{#if context.contact.errors}}

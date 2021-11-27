@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Model\TopicPrefix;
 
 class WatchedTopics extends AbstractProfileController
@@ -24,6 +25,8 @@ class WatchedTopics extends AbstractProfileController
 	public function display_action()
 	{
 		global $txt, $scripturl, $context, $modSettings, $sourcedir, $smcFunc;
+
+		$url = App::container()->get('urlgenerator');
 
 		$context['sub_template'] = 'profile_alerts_watchedtopics';
 
@@ -46,7 +49,7 @@ class WatchedTopics extends AbstractProfileController
 			'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=watched_topics',
 			'default_sort_col' => 'last_post',
 			'get_items' => [
-				'function' => function($start, $items_per_page, $sort, $memID)
+				'function' => function($start, $items_per_page, $sort, $memID) use ($url)
 				{
 					global $smcFunc, $scripturl, $user_info, $sourcedir;
 
@@ -57,7 +60,7 @@ class WatchedTopics extends AbstractProfileController
 					// All the topics with notification on...
 					$request = $smcFunc['db']->query('', '
 						SELECT
-							COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name,
+							COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1 AS new_from, b.id_board, b.name, b.slug AS board_slug,
 							t.id_topic, ms.subject, ms.id_member, COALESCE(mem.real_name, ms.poster_name) AS real_name_col,
 							ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
 							COALESCE(mem2.real_name, ml.poster_name) AS last_real_name,
@@ -103,7 +106,7 @@ class WatchedTopics extends AbstractProfileController
 							'updated' => timeformat($row['poster_time']),
 							'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
 							'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['subject'] . '</a>',
-							'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+							'board_link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['name'] . '</a>',
 							'notify_pref' => isset($prefs['topic_notify_' . $row['id_topic']]) ? $prefs['topic_notify_' . $row['id_topic']] : (!empty($prefs['topic_notify']) ? $prefs['topic_notify'] : 0),
 							'unwatched' => $row['unwatched'],
 							'prefixes' => [],

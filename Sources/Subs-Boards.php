@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
 
 /**
@@ -220,7 +221,7 @@ function MarkRead()
 			['id_member', 'id_topic']
 		);
 
-		redirectexit('board=' . $board . '.0');
+		redirectexit($board_info['url']);
 	}
 	else
 	{
@@ -587,6 +588,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['board_name'] = $boardOptions['board_name'];
 	}
 
+	if (isset($boardOptions['board_name']))
+	{
+		$boardUpdates[] = 'slug = {string:board_slug}';
+		$boardUpdateParameters['board_slug'] = $boardOptions['board_slug'];
+	}
+
 	if (isset($boardOptions['board_description']))
 	{
 		$boardUpdates[] = 'description = {string:board_description}';
@@ -796,7 +803,7 @@ function createBoard($boardOptions)
 	global $boards, $smcFunc;
 
 	// Trigger an error if one of the required values is not set.
-	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']))
+	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']) || empty($boardOptions['board_slug']))
 		trigger_error('createBoard(): One or more of the required options is not set', E_USER_ERROR);
 
 	if (in_array($boardOptions['move_to'], ['child', 'before', 'after']) && !isset($boardOptions['target_board']))
@@ -815,11 +822,11 @@ function createBoard($boardOptions)
 		'dont_log' => true,
 	];
 	$board_columns = [
-		'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
+		'id_cat' => 'int', 'name' => 'string-255', 'slug' => 'string-255', 'description' => 'string', 'board_order' => 'int',
 		'member_groups' => 'string', 'redirect' => 'string', 'in_character' => 'int', 'board_sort' => 'string',
 	];
 	$board_parameters = [
-		$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
+		$boardOptions['target_category'], $boardOptions['board_name'], $boardOptions['board_slug'], '', 0,
 		'-1,0', '', $boardOptions['in_character'] ? 1 : 0, '',
 	];
 
@@ -1237,12 +1244,14 @@ function getBoardTree()
 	global $cat_tree, $boards, $boardList, $smcFunc;
 
 	$boardColumns = [
-		'COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name',
+		'COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name', 'b.slug AS board_slug',
 		'b.description', 'b.child_level', 'b.board_order', 'b.count_posts', 'b.member_groups',
 		'b.id_theme', 'b.override_theme', 'b.id_profile', 'b.redirect', 'b.num_posts', 'b.in_character',
 		'b.num_topics', 'b.deny_member_groups', 'b.board_sort', 'c.id_cat', 'c.name AS cat_name',
 		'c.description AS cat_desc', 'c.cat_order', 'c.can_collapse',
 	];
+
+	$url = App::container()->get('urlgenerator');
 
 	// Let mods add extra columns and parameters to the SELECT query
 	$extraBoardColumns = [];
@@ -1297,6 +1306,8 @@ function getBoardTree()
 				'level' => $row['child_level'],
 				'order' => $row['board_order'],
 				'name' => $row['board_name'],
+				'slug' => $row['board_slug'],
+				'url' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				'member_groups' => explode(',', $row['member_groups']),
 				'deny_groups' => explode(',', $row['deny_member_groups']),
 				'description' => $row['description'],

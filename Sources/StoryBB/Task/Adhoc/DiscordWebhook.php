@@ -35,6 +35,11 @@ class DiscordWebhook extends \StoryBB\Task\Adhoc
 			{
 				$posted_by = $this->get_character_details((int) $posted_by_ids['id_member'], (int) $posted_by_ids['id_character']);
 			}
+			else
+			{
+				// The message doesn't exist, send nothing.
+				return true;
+			}
 		}
 
 		$discord->send_webhook($this->_details['config']['webhook_url'], $this->_details['message'], $posted_by['username'], $posted_by['avatar'], $this->_details['embeds']);

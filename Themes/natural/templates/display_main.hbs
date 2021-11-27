@@ -7,9 +7,11 @@
 {{! New topic info }}
 <div id="display_head" class="information">
 	<h2 class="display_title">
+		<div class="prefix-container">
 		{{#each context.topicinfo.prefixes}}
 			<div class="{{{css_class}}}">{{{name}}}</div>
 		{{/each}}
+		</div>
 		<span id="top_subject">{{{context.subject}}}</span>
 		{{#if context.is_locked}}<span class="main_icons lock"></span>{{/if}}
 		{{#if context.is_sticky}}<span class="main_icons sticky"></span>{{/if}}
@@ -258,6 +260,7 @@
 				sContainerId: "display_jump_to",
 				sJumpToTemplate: "<label class=\"smalltext jump_to\" for=\"%select_id%\">{{context.jump_to.label}}<" + "/label> %dropdown_list%",
 				iCurBoardId: '{{context.current_board}}',
+				sCurBoardUrl: '{{context.current_board_link}}',
 				iCurBoardChildLevel: '{{context.jump_to.child_level}}',
 				sCurBoardName: "{{{context.jump_to.board_name}}}",
 				sBoardChildLevelIndicator: "==",

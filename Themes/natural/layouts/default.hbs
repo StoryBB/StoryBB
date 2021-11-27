@@ -33,10 +33,10 @@
 	
 	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
 	{{#if context.links.prev}}<link rel="prev" href="{{context.links.prev}}">{{/if}}
-	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
+	{{#if context.current_board_link}}<link rel="index" href="{{context.current_board_link}}">{{/if}}
 	{{{context.html_headers}}}
 </head>
-<body id="{{context.browser_body_id}}"{{#if settings.meta_theme_color}} data-theme-color="{{settings.meta_theme_color}}"{{/if}} class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
+<body id="{{context.browser_body_id}}"{{#if settings.meta_theme_color}} data-theme-color="{{settings.meta_theme_color}}"{{/if}} class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}} board_{{context.current_board}}{{/if}}{{#if context.current_subaction}} sa-{{context.current_subaction}}{{/if}}">
 	<div id="sidebar-bars">
 		<i class="fa-fw fas fa-bars"></i>
 	</div>
@@ -66,13 +66,6 @@
 {{#if context.user.is_logged}}
 			<ul class="floatleft" id="top_info">
 				<li>
-					<a href="{{scripturl}}?action=profile"{{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
-						{{{user_info.ooc_avatar.image}}}
-						<span class="username">{{context.user.name}}</span>
-					</a>
-					<div id="profile_menu" class="top_menu"></div>
-				</li>{{! Forcing no whitespace here to make the CSS behave nicely.
-			}}<li>
 					<a href="{{scripturl}}?action=profile;area=characters" id="characters_menu_top" onclick="return false;">
 					{{{user_info.ic_avatar.image}}}
 					<span class="character_name">{{textTemplate txt.posting_as user_info.character_name}}</span></a>
@@ -145,10 +138,17 @@
 						</dl>
 					</div>
 {{/if}}
-						{{>status_messages}}
-						{{{content}}}
 
-						{{block_region 'after-content'}}
+					<div class="block-container">{{!
+						}}{{block_region 'before-content'}}{{!
+							 }}<div class="block-middle">{{block_region 'left-sidebar'}}{{!
+								}}<div class="block-inner">{{block_region 'above-content'}}{{!
+									}}{{>status_messages}}{{!
+									}}<aside class="main-body-content">{{{content}}}</aside>{{!
+								}}{{block_region 'below-content'}}</div>{{!
+							}}{{block_region 'right-sidebar'}}</div>{{!
+						}}{{block_region 'after-content'}}{{!
+					}}</div>
 				</div>
 			</div>
 		</div><!-- #content_wrapper -->
@@ -156,7 +156,7 @@
 		<footer>
 			<ul>
 				<li class="contact">
-					<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
+					<a href="{{buildlink 'contact'}}">{{{txt.contact_us}}}</a>
 				</li>
 				<li class="help">
 					<a href="{{buildlink 'help'}}">{{txt.help}}</a>

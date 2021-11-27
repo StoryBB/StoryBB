@@ -5,7 +5,7 @@
 {{/if}}
 
 <div class="cat_bar">
-	<h3 class="catbg">{{{context.name}}}</h3>
+	<h3 class="catbg"><span>{{{context.name}}}</span></h3>
 	{{#if (or context.description context.moderators)}}
 	<div class="desc">
 		{{{context.description}}}&nbsp;
@@ -101,7 +101,7 @@
 			<div id="{{#unless context.is_character_board}}topic_container{{/unless}}" class="{{#if context.is_character_board}}topic-list{{/if}}">
 	{{#if context.prefix_filter}}
 				<div class="information">
-					{{txt.prefix_filter}}&nbsp; <span class="{{{context.prefix_filter.css_class}}}">{{{context.prefix_filter.name}}}</span> <a href="{{scripturl}}?board={{context.current_board}}.0"><span class="main_icons delete"></span></a>
+					{{txt.prefix_filter}}&nbsp; <span class="{{{context.prefix_filter.css_class}}}">{{{context.prefix_filter.name}}}</span> <a href="{{context.current_board_link}}"><span class="main_icons delete"></span></a>
 				</div>
 	{{/if}}
 	{{#if context.unapproved_posts_message}}
@@ -158,7 +158,7 @@
 								<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
 
 									{{#each prefixes}}
-										<a href="{{../../scripturl}}?board={{../../context.current_board}}.0;prefix={{id_prefix}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
+										<a href="{{{filter_link}}}"><span class="{{{css_class}}}">{{{name}}}</span></a>
 									{{/each}}
 									<span id="msg_{{first_post.id}}">
 										{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{../txt.awaiting_approval}})</em>{{/unless}}

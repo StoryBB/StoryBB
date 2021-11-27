@@ -66,10 +66,6 @@ if ($result && $result instanceof Response)
 
 // Load the settings from the settings table, and perform operations like optimizing.
 $context = [];
-reloadSettings();
-// Clean the request variables, add slashes, etc.
-cleanRequest();
-
 // @todo replace this hack at some point.
 if (!empty($result))
 {
@@ -79,6 +75,10 @@ else
 {
 	$context['routing'] = [];
 }
+
+reloadSettings();
+// Clean the request variables, add slashes, etc.
+cleanRequest();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -135,12 +135,6 @@ function sbb_main()
 		if (empty($board) && empty($topic))
 		{
 			$_REQUEST['action'] = !empty($modSettings['integrate_default_action']) ? $modSettings['integrate_default_action'] : 'forum';
-		}
-
-		// Topic is empty, and action is empty.... MessageIndex!
-		elseif (empty($topic))
-		{
-			$_REQUEST['action'] = 'board';
 		}
 
 		// Board is not empty... topic is not empty... action is empty.. Display!
@@ -228,11 +222,9 @@ function sbb_main()
 		'activate' => ['Register.php', 'Activate'],
 		'admin' => ['Admin.php', 'AdminMain'],
 		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
-		'board' => ['MessageIndex.php', 'MessageIndex'],
 		'bookmark' => ['Bookmark.php', 'Bookmark'],
 		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
 		'characters' => ['Profile-Chars.php', 'CharacterList'],
-		'contact' => ['Contact.php', 'Contact'],
 		'deletemsg' => ['RemoveTopic.php', 'DeleteMessage'],
 		'dlattach' => ['ShowAttachments.php', 'showAttachment'],
 		'editpoll' => ['Poll.php', 'EditPoll'],
@@ -263,7 +255,6 @@ function sbb_main()
 		'quickmod2' => ['QuickInTopicModeration.php', 'QuickInTopicModeration'],
 		'reattributepost' => ['Profile-Chars.php', 'ReattributePost'],
 		'reagreement' => ['Reagreement.php', 'Reagreement'],
-		'recent' => ['Recent.php', 'RecentPosts'],
 		'reminder' => ['Reminder.php', 'RemindMe'],
 		'removepoll' => ['Poll.php', 'RemovePoll'],
 		'removetopic2' => ['RemoveTopic.php', 'RemoveTopic2'],
@@ -275,7 +266,6 @@ function sbb_main()
 		'signup' => ['Register.php', 'Register'],
 		'signup2' => ['Register.php', 'Register2'],
 		'splittopics' => ['SplitTopics.php', 'SplitTopics'],
-		'stats' => ['Stats.php', 'DisplayStats'],
 		'sticky' => ['Topic.php', 'Sticky'],
 		'theme' => ['Themes.php', 'ThemesMain'],
 		'topic' => ['Display.php', 'Display'],
@@ -284,7 +274,6 @@ function sbb_main()
 		'verificationcode' => ['Register.php', 'VerificationCode'],
 		'vote' => ['Poll.php', 'Vote'],
 		'viewquery' => ['ViewQuery.php', 'ViewQuery'],
-		'who' => ['Who.php', 'Who'],
 		'.xml' => ['News.php', 'ShowXmlFeed'],
 		'xmlhttp' => ['Xml.php', 'XMLhttpMain'],
 	];

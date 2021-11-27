@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 
 /**
@@ -48,6 +49,8 @@ function PostModerationMain()
 function UnapprovedPosts()
 {
 	global $txt, $scripturl, $context, $user_info, $smcFunc, $options, $modSettings;
+
+	$url = App::container()->get('urlgenerator');
 
 	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
@@ -239,7 +242,7 @@ function UnapprovedPosts()
 	$request = $smcFunc['db']->query('', '
 		SELECT m.id_msg, m.id_topic, m.id_board, m.subject, m.body, m.id_member,
 			COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.smileys_enabled,
-			t.id_member_started, t.id_first_msg, b.name AS board_name, c.id_cat, c.name AS cat_name
+			t.id_member_started, t.id_first_msg, b.name AS board_name, b.slug AS board_slug, c.id_cat, c.name AS cat_name
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -292,7 +295,7 @@ function UnapprovedPosts()
 			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>',
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['board_name'] . '</a>',
 			],
 			'category' => [
 				'id' => $row['id_cat'],

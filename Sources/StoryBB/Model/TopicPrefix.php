@@ -12,6 +12,8 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\App;
+
 /**
  * This class handles topic prefixes.
  */
@@ -34,6 +36,8 @@ class TopicPrefix
 	{
 		global $smcFunc;
 
+		$url = App::container()->get('urlgenerator');
+
 		$prefixes = [];
 
 		$topics = static::sanitise_ints($topics);
@@ -44,9 +48,11 @@ class TopicPrefix
 		}
 
 		$request = $smcFunc['db']->query('', '
-			SELECT tpp.id_topic, tp.id_prefix, tp.name, tp.css_class
+			SELECT tpp.id_topic, tp.id_prefix, tp.name, tp.css_class, b.slug AS board_slug
 			FROM {db_prefix}topic_prefixes tp
 			INNER JOIN {db_prefix}topic_prefix_topics tpp ON (tpp.id_prefix = tp.id_prefix)
+			INNER JOIN {db_prefix}topics AS t ON (tpp.id_topic = t.id_topic)
+			INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
 			WHERE tpp.id_topic IN ({array_int:topics})
 			ORDER BY tpp.id_topic, tp.sort_order',
 			[
@@ -56,6 +62,7 @@ class TopicPrefix
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
 			$row['css_class'] .= ' prefix-id-' . $row['id_prefix'];
+			$row['filter_link'] = $url->generate('board', ['board_slug' => $row['board_slug'], 'prefix' => $row['id_prefix']]);
 			$prefixes[$row['id_topic']][$row['id_prefix']] = $row;
 		}
 		$smcFunc['db']->free_result($request);

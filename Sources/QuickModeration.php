@@ -11,9 +11,13 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+
 function QuickModeration()
 {
-	global $sourcedir, $board, $user_info, $modSettings, $smcFunc, $context;
+	global $sourcedir, $board, $board_info, $user_info, $modSettings, $smcFunc, $context;
+
+	$url = App::container()->get('urlgenerator');
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -49,7 +53,7 @@ function QuickModeration()
 			'approve_posts' => allowedTo('approve_posts') ? [$board] : [],
 		];
 
-		$redirect_url = 'board=' . $board . '.' . $_REQUEST['start'];
+		$redirect_url = $url->generate('board', ['board_slug' => $board_info['slug'], 'start' => $_REQUEST['start']]);
 	}
 	else
 	{

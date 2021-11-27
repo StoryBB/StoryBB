@@ -213,17 +213,6 @@ function Profile()
 
 		$section = $characters->add_section(new NavSection('meta_character', ''));
 
-		if (count($context['member']['characters']) > 1)
-		{
-			// If we have more than one, we have something beyond just the OOC...
-			$section->add_item(new NavItem(
-				'topic_tracker',
-				$txt['profile_topic_tracker'],
-				['area' => 'topic_tracker', 'u' => $memID],
-				'StoryBB\\Controller\\Profile\\TopicTracker',
-				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
-			));
-		}
 		$section->add_item(new NavItem(
 			'create_character',
 			$txt['char_create'],
@@ -426,13 +415,6 @@ function Profile()
 	// This 'tab' is for the things we want to route from here but that we don't want to ever explicitly show on a tab.
 	$hidden = $navigation->add_tab(new NavTabHidden('hidden'));
 	$section = $hidden->add_section(new NavSection('hidden', ''));
-	$section->add_item(new NavItem(
-		'profile_popup',
-		'',
-		['area' => 'popup', 'u' => $memID],
-		'StoryBB\\Controller\\Profile\\ProfilePopup',
-		$context['user']['is_owner'] ? ['is_not_guest'] : []
-	));
 	$section->add_item(new NavItem(
 		'alerts_popup',
 		'',

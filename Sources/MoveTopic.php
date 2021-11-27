@@ -11,6 +11,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\StringLibrary;
 
 /**
@@ -131,8 +132,10 @@ function MoveTopic()
  */
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $sourcedir, $context;
+	global $txt, $board_info, $topic, $scripturl, $sourcedir, $context;
 	global $board, $language, $user_info, $smcFunc;
+
+	$url = App::container()->get('urlgenerator');
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -179,7 +182,7 @@ function MoveTopic2()
 
 	// Make sure they can see the board they are trying to move to (and get whether posts count in the target board).
 	$request = $smcFunc['db']->query('', '
-		SELECT b.count_posts, b.name, m.subject
+		SELECT b.count_posts, b.name, b.slug, m.subject
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -195,7 +198,7 @@ function MoveTopic2()
 	);
 	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	list ($pcounter, $board_name, $subject) = $smcFunc['db']->fetch_row($request);
+	list ($pcounter, $board_name, $board_slug, $subject) = $smcFunc['db']->fetch_row($request);
 	$smcFunc['db']->free_result($request);
 
 	// Remember this for later.
@@ -267,7 +270,7 @@ function MoveTopic2()
 
 		// Add a URL onto the message.
 		$_POST['reason'] = strtr($_POST['reason'], [
-			$txt['movetopic_auto_board'] => '[url=' . $scripturl . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
+			$txt['movetopic_auto_board'] => '[url=' . $url->generate('board', ['board_slug' => $board_slug]) . ']' . $board_name . '[/url]',
 			$txt['movetopic_auto_topic'] => '[iurl]' . $scripturl . '?topic=' . $topic . '.0[/iurl]'
 		]);
 
@@ -353,7 +356,7 @@ function MoveTopic2()
 
 	// Why not go back to the original board in case they want to keep moving?
 	if (!isset($_REQUEST['goback']))
-		redirectexit('board=' . $board . '.0');
+		redirectexit($board_info['url']);
 	else
 		redirectexit('topic=' . $topic . '.0');
 }
@@ -685,6 +688,8 @@ function moveTopicConcurrence()
 {
 	global $board, $topic, $smcFunc, $scripturl;
 
+	$url = App::container()->get('urlgenerator');
+
 	if (isset($_GET['current_board']))
 		$move_from = (int) $_GET['current_board'];
 
@@ -696,7 +701,7 @@ function moveTopicConcurrence()
 	else
 	{
 		$request = $smcFunc['db']->query('', '
-			SELECT m.subject, b.name
+			SELECT m.subject, b.name, b.slug
 			FROM {db_prefix}topics as t
 				LEFT JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
 				LEFT JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
@@ -706,9 +711,9 @@ function moveTopicConcurrence()
 				'topic_id' => $topic,
 			]
 		);
-		list($topic_subject, $board_name) = $smcFunc['db']->fetch_row($request);
+		list($topic_subject, $board_name, $board_slug) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
-		$board_link = '<a href="' . $scripturl . '?board=' . $board . '.0">' . $board_name . '</a>';
+		$board_link = '<a href="' . $url->generate('board', ['board_slug' => $board_slug]) . '">' . $board_name . '</a>';
 		$topic_link = '<a href="' . $scripturl . '?topic=' . $topic . '.0">' . $topic_subject . '</a>';
 		fatal_lang_error('topic_already_moved', false, [$topic_link, $board_link]);
 	}

@@ -23,7 +23,7 @@ class DeleteAccount extends AbstractProfileController
 
 	public function display_action()
 	{
-		global $txt, $context, $modSettings, $cur_profile, $scripturl;
+		global $txt, $context, $modSettings, $cur_profile;
 
 		if (!$context['user']['is_owner'])
 			isAllowedTo('profile_remove_any');
@@ -32,6 +32,8 @@ class DeleteAccount extends AbstractProfileController
 
 		createToken($this->get_token_name(), 'post');
 		$context['token_check'] = $this->get_token_name();
+
+		$url = App::container()->get('urlgenerator');
 
 		// Permissions for removing stuff...
 		$context['can_delete_posts'] = !$context['user']['is_owner'] && allowedTo('moderate_forum');
@@ -43,7 +45,7 @@ class DeleteAccount extends AbstractProfileController
 		$context['needs_approval'] = $context['user']['is_owner'] && !allowedTo('moderate_forum');
 		$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
 		$context['sub_template'] = 'profile_delete';
-		$context['delete_account_posts_advice'] = sprintf($txt['delete_account_posts_advice'], $scripturl . '?action=contact');
+		$context['delete_account_posts_advice'] = sprintf($txt['delete_account_posts_advice'], $url->generate('contact'));
 	}
 
 	public function post_action()

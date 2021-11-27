@@ -51,7 +51,7 @@ class Navigation extends RawMinkContext implements Context
 
 		// Find the board id from its name.
 		$request = $smcFunc['db']->query('', '
-			SELECT id_board
+			SELECT id_board, board_slug
 			FROM {db_prefix}boards
 			WHERE name = {string:board}',
 			[
@@ -68,10 +68,10 @@ class Navigation extends RawMinkContext implements Context
 			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Board "' . $boardname . '" matched multiple boards; cannot disambiguate', $this->getSession());
 		}
-		list ($id_board) = $smcFunc['db']->fetch_row($request);
+		list ($id_board, $board_slug) = $smcFunc['db']->fetch_row($request);
 		$smcFunc['db']->free_result($request);
 
-		$this->visitPath('index.php?board=' . $id_board . '.0');
+		$this->visitPath('index.php/board/' . $board_slug);
 	}
 
 	/**

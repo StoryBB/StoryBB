@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 use StoryBB\Model\TopicPrefix;
@@ -24,12 +25,14 @@ function getLastPosts($latestPostOptions)
 {
 	global $scripturl, $modSettings, $smcFunc;
 
+	$url = App::container()->get('urlgenerator');
+
 	// Find all the posts.  Newer ones will have higher IDs.  (assuming the last 20 * number are accessible...)
 	// @todo SLOW This query is now slow, NEEDS to be fixed.  Maybe break into two?
 	$request = $smcFunc['db']->query('substring', '
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg,
-			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, t.id_board, b.name AS board_name,
+			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, t.id_board, b.name AS board_name, b.slug AS board_slug,
 			SUBSTRING(m.body, 1, 385) AS body, m.smileys_enabled, chars.is_main, chars.id_character
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
@@ -67,8 +70,8 @@ function getLastPosts($latestPostOptions)
 			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>'
+				'href' => $url->generate('board', ['board_slug' => $row['board_slug']]),
+				'link' => '<a href="' . $url->generate('board', ['board_slug' => $row['board_slug']]) . '">' . $row['board_name'] . '</a>'
 			],
 			'topic' => $row['id_topic'],
 			'poster' => [

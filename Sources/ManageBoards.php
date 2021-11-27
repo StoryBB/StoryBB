@@ -10,8 +10,10 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\Model\Board;
 use StoryBB\StringLibrary;
 
 /**
@@ -102,6 +104,7 @@ function ManageBoardsMain()
 			$context['categories'][$catid]['boards'][$boardid] = [
 				'id' => &$boards[$boardid]['id'],
 				'name' => &$boards[$boardid]['name'],
+				'url' => &$boards[$boardid]['url'],
 				'description' => &$boards[$boardid]['description'],
 				'child_level' => &$boards[$boardid]['level'],
 				'move' => $move_cat && ($boardid == $context['move_board'] || isChildOf($boardid, $context['move_board'])),
@@ -655,6 +658,18 @@ function EditBoard2()
 		// Do not allow HTML tags. Parse the string.
 		$boardOptions['board_name'] = StringLibrary::escape($_POST['board_name'], ENT_QUOTES);
 		$boardOptions['board_description'] = StringLibrary::escape($_POST['desc'] ?? '', ENT_QUOTES);
+
+		$boardOptions['board_slug'] = preg_replace('/[^a-z0-9_-]+/i', '', $_POST['board_slug']);
+		if (empty($boardOptions['board_slug']))
+		{
+			fatal_lang_error('invalid_board_slug', false);
+		}
+
+		if ((App::make(Board::class))->slug_exists($boardOptions['board_slug'], isset($_POST['boardid']) ? (int) $_POST['boardid'] : 0))
+		{
+			fatal_lang_error('slug_exists', false, $boardOptions['board_slug']);
+		}
+
 		preparsecode($boardOptions['board_description']);
 
 		if (isset($_POST['moderators']) && is_array($_POST['moderators']))

@@ -13,6 +13,8 @@
 $txt['boards_and_cats'] = 'Manage Boards and Categories';
 $txt['order'] = 'Order';
 $txt['full_name'] = 'Full name';
+$txt['board_slug'] = 'Board slug';
+$txt['board_slug_desc'] = 'This is the part of the URL that contains the board name, e.g. general-discussion to make the URL yoursite.com/board/general-discussion';
 $txt['name_on_display'] = 'This is the name that will be displayed.';
 $txt['boards_and_cats_desc'] = 'Edit your categories and boards here. List multiple moderators as <em>&quot;username&quot;, &quot;username&quot;</em>. (these must be usernames and *not* display names)<br>To create a new board, click the Add Board button. To make the new board a sub-board of a current board, select "Sub-board of..." from the Order drop down menu when creating the board.';
 $txt['parent_members_only'] = 'Regular Members';

@@ -217,10 +217,6 @@ $txt['join_discord'] = 'Join us on Discord';
 $txt['location'] = 'Location';
 $txt['date_registered'] = 'Date Registered';
 
-$txt['recent_view'] = 'View the most recent posts on the forum.';
-$txt['recent_updated'] = 'is the most recently updated topic';
-$txt['is_recent_updated'] = '%1$s is the most recently updated topic';
-
 $txt['male'] = 'Male';
 $txt['female'] = 'Female';
 
@@ -700,6 +696,7 @@ $txt['order_sticky_short'] = 'Re-Order Stickies';
 $txt['order_sticky'] = 'Re-Order Sticky Posts';
 
 $txt['alerts'] = 'Alerts';
+$txt['topic_tracker'] = 'Topic Tracker';
 
 $txt['pm_short'] = 'My Messages';
 $txt['pm_menu_read'] = 'Read your messages';
@@ -723,7 +720,6 @@ $txt['visual_verification_request_new'] = 'Request another image';
 $txt['summary'] = 'Summary';
 $txt['account'] = 'Account Settings';
 $txt['theme'] = 'Look and Layout';
-$txt['forumprofile'] = 'Forum Profile';
 $txt['activate_changed_email_title'] = 'Email Address Changed';
 $txt['activate_changed_email_desc'] = 'You\'ve changed your email address. In order to validate this address you will receive an email. Click the link in that email to reactivate your account.';
 $txt['modSettings_title'] = 'Features and Options';

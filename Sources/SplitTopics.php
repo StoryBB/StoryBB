@@ -12,6 +12,7 @@
  * Original module by Mach8 - We'll never forget you.
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -1173,6 +1174,8 @@ function MergeExecute($topics = [])
 		fatal_lang_error('no_board');
 	$smcFunc['db']->free_result($request);
 
+	$context['boards'] = [];
+
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] == 'options')
 	{
 		if (count($polls) > 1)
@@ -1737,7 +1740,7 @@ function MergeExecute($topics = [])
 	call_integration_hook('integrate_merge_topic', [$merged_topic, $updated_topics, $deleted_topics, $deleted_polls]);
 
 	// Send them to the all done page.
-	redirectexit('action=mergetopics;sa=done;to=' . $id_topic . ';targetboard=' . $target_board);
+	redirectexit('action=mergetopics;sa=done;to=' . $id_topic);
 }
 
 /**
@@ -1747,11 +1750,33 @@ function MergeExecute($topics = [])
  */
 function MergeDone()
 {
-	global $txt, $context;
+	global $txt, $context, $smcFunc;
+
+	$target_topic = (int) ($_GET['to'] ?? 0);
+
+	$request = $smcFunc['db']->query('', '
+		SELECT t.id_topic, b.id_board, b.slug
+		FROM {db_prefix}topics AS t
+		INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
+		WHERE id_topic = {int:target}',
+		[
+			'target' => $target_topic,
+		]
+	);
+	$row = $smcFunc['db']->fetch_assoc($request);
+	$smcFunc['db']->free_result($request);
+
+	if (!$row)
+	{
+		fatal_lang_error('topic_gone', false);
+	}
+
+	$url = App::container()->get('urlgenerator');
 
 	// Make sure the template knows everything...
-	$context['target_board'] = (int) $_GET['targetboard'];
-	$context['target_topic'] = (int) $_GET['to'];
+	$context['target_board'] = $row['id_board'];
+	$context['target_board_url'] = $url->generate('board', ['board_slug' => $row['slug']]);
+	$context['target_topic'] = $row['id_topic'];
 
 	$context['page_title'] = $txt['merge'];
 	$context['sub_template'] = 'topic_merge_done';

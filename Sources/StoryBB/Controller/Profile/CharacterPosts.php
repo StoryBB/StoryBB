@@ -12,6 +12,7 @@
 
 namespace StoryBB\Controller\Profile;
 
+use StoryBB\App;
 use StoryBB\Helper\Parser;
 use StoryBB\Model\TopicPrefix;
 
@@ -23,6 +24,8 @@ class CharacterPosts extends AbstractProfileController
 	{
 		global $txt, $user_info, $scripturl, $modSettings;
 		global $context, $smcFunc, $board;
+
+		$url = App::container()->get('urlgenerator');
 
 		$this->init_character();
 
@@ -110,7 +113,7 @@ class CharacterPosts extends AbstractProfileController
 		{
 			$request = $smcFunc['db']->query('', '
 				SELECT
-					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, m.id_topic, m.id_msg,
+					b.id_board, b.name AS bname, b.slug AS board_slug, c.id_cat, c.name AS cname, m.id_topic, m.id_msg,
 					t.id_member_started, t.id_first_msg, t.id_last_msg, m.body, m.smileys_enabled,
 					m.subject, m.poster_time, m.approved
 				FROM {db_prefix}messages AS m
@@ -164,7 +167,8 @@ class CharacterPosts extends AbstractProfileController
 				],
 				'board' => [
 					'name' => $row['bname'],
-					'id' => $row['id_board']
+					'id' => $row['id_board'],
+					'link' => $url->generate('board', ['board_slug' => $row['board_slug']]),
 				],
 				'topic' => $row['id_topic'],
 				'subject' => $row['subject'],

@@ -2227,7 +2227,9 @@ function Post2()
 		redirectexit('topic=' . $topic . '.new#new', isBrowser('ie'));
 	// Dut-dut-duh-duh-DUH-duh-dut-duh-duh!  *dances to the Final Fantasy Fanfare...*
 	else
-		redirectexit('board=' . $board . '.0');
+	{
+		redirectexit($board_info['url']);
+	}
 }
 
 /**

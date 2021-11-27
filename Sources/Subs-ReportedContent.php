@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
 
@@ -180,6 +181,8 @@ function getReports($closed = 0)
 {
 	global $smcFunc, $context, $user_info, $scripturl, $txt;
 
+	$url = App::container()->get('urlgenerator');
+
 	// Lonely, standalone var.
 	$reports = [];
 
@@ -284,7 +287,7 @@ function getReports($closed = 0)
 		$report_boards_ids = array_unique($report_boards_ids);
 		$board_names = [];
 		$request = $smcFunc['db']->query('', '
-			SELECT id_board, name
+			SELECT id_board, name, slug
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:boards})',
 			[
@@ -293,13 +296,18 @@ function getReports($closed = 0)
 		);
 
 		while ($row = $smcFunc['db']->fetch_assoc($request))
-			$board_names[$row['id_board']] = $row['name'];
+		{
+			$board_names[$row['id_board']] = $row;
+		}
 
 		$smcFunc['db']->free_result($request);
 
 		foreach ($reports as $id_report => $report)
 			if (!empty($board_names[$report['topic']['id_board']]))
-				$reports[$id_report]['topic']['board_name'] = $board_names[$report['topic']['id_board']];
+			{
+				$reports[$id_report]['topic']['board_link'] = $url->generate('board', ['board_slug' => $board_names[$report['topic']['id_board']]['slug']]);
+				$reports[$id_report]['topic']['board_name'] = $board_names[$report['topic']['id_board']]['name'];
+			}
 	}
 
 	// Now get all the people who reported it.

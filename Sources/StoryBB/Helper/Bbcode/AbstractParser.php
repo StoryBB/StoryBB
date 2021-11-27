@@ -12,6 +12,7 @@
 
 namespace StoryBB\Helper\Bbcode;
 
+use StoryBB\App;
 use StoryBB\Container;
 use StoryBB\Helper\TLD;
 use StoryBB\Hook\Mutatable;
@@ -119,6 +120,9 @@ abstract class AbstractParser
 	public static function bbcode_definitions(): array
 	{
 		global $modSettings, $context, $sourcedir, $txt, $scripturl;
+
+		$current_user = App::container()->get('currentuser');
+		$current_user_id = $current_user ? $current_user->get_id() : 0;
 
 		/* The following bbc are formatted as an array, with keys as follows:
 
@@ -544,6 +548,22 @@ abstract class AbstractParser
 				'block_level' => true,
 			],
 			[
+				'tag' => 'mature',
+				'before' => $current_user_id ? '<details class="bbc_spoiler"><summary>' . $txt['mature_open'] . '</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $current_user_id ? '</details>' : '</sbb___strip>',
+				'trim' => 'both',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
+				'tag' => 'mature',
+				'type' => 'parsed_equals',
+				'before' => $current_user_id ? '<details class="bbc_spoiler"><summary>$1</summary>' : '<div class="noticebox">' . $txt['mature_restricted'] . '</div><sbb___strip>',
+				'after' => $current_user_id ? '</details>' : '</sbb___strip>',
+				'trim' => 'both',
+				'quoted' => 'optional',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
 				'tag' => 'me',
 				'type' => 'unparsed_equals',
 				'before' => '<div class="meaction">* $1 ',
@@ -662,6 +682,22 @@ abstract class AbstractParser
 					$sizes = [1 => 0.7, 2 => 1.0, 3 => 1.35, 4 => 1.45, 5 => 2.0, 6 => 2.65, 7 => 3.95];
 					$data = $sizes[$data] . 'em';
 				},
+			],
+			[
+				'tag' => 'spoiler',
+				'before' => '<details class="bbc_spoiler"><summary>' . $txt['spoiler_open'] . '</summary>',
+				'after' => '</details>',
+				'trim' => 'both',
+				'disallow_children' => ['spoiler', 'mature'],
+			],
+			[
+				'tag' => 'spoiler',
+				'type' => 'parsed_equals',
+				'before' => '<details class="bbc_spoiler"><summary>$1</summary>',
+				'after' => '</details>',
+				'trim' => 'both',
+				'quoted' => 'optional',
+				'disallow_children' => ['spoiler', 'mature'],
 			],
 			[
 				'tag' => 'sub',
