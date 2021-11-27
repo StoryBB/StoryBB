@@ -1,6 +1,6 @@
 {{! Display a board on the board/message index }}
 
-		<div id="board_{{id}}" class="up_contain {{#if css_class}}{{{css_class}}}{{/if}} board-display">
+		<div id="board_{{id}}" class="{{#if css_class}}{{{css_class}}}{{/if}} board-display">
 			<div class="board_icon">
 				<a href="{{#if (or is_redirect context.user.is_guest)}}{{href}}{{else}}{{scripturl}}?action=unread;board={{id}}.0;children{{/if}}" class="board_{{board_class}}"{{#if board_tooltip}} title="{{board_tooltip}}"{{/if}}></a>
 			</div>
