@@ -588,6 +588,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['board_name'] = $boardOptions['board_name'];
 	}
 
+	if (isset($boardOptions['board_name']))
+	{
+		$boardUpdates[] = 'slug = {string:board_slug}';
+		$boardUpdateParameters['board_slug'] = $boardOptions['board_slug'];
+	}
+
 	if (isset($boardOptions['board_description']))
 	{
 		$boardUpdates[] = 'description = {string:board_description}';
@@ -797,7 +803,7 @@ function createBoard($boardOptions)
 	global $boards, $smcFunc;
 
 	// Trigger an error if one of the required values is not set.
-	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']))
+	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']) || empty($boardOptions['board_slug']))
 		trigger_error('createBoard(): One or more of the required options is not set', E_USER_ERROR);
 
 	if (in_array($boardOptions['move_to'], ['child', 'before', 'after']) && !isset($boardOptions['target_board']))
@@ -816,11 +822,11 @@ function createBoard($boardOptions)
 		'dont_log' => true,
 	];
 	$board_columns = [
-		'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
+		'id_cat' => 'int', 'name' => 'string-255', 'slug' => 'string-255', 'description' => 'string', 'board_order' => 'int',
 		'member_groups' => 'string', 'redirect' => 'string', 'in_character' => 'int', 'board_sort' => 'string',
 	];
 	$board_parameters = [
-		$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
+		$boardOptions['target_category'], $boardOptions['board_name'], $boardOptions['board_slug'], '', 0,
 		'-1,0', '', $boardOptions['in_character'] ? 1 : 0, '',
 	];
 

@@ -66,7 +66,14 @@
 						<span class="smalltext">{{{txt.name_on_display}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="board_name" value="{{{context.board.name}}}" size="30">
+						<input type="text" name="board_name" value="{{{context.board.name}}}" size="30" required>
+					</dd>
+					<dt>
+						<strong>{{{txt.board_slug}}}:</strong><br>
+						<span class="smalltext">{{{txt.board_slug_desc}}}</span>
+					</dt>
+					<dd>
+						<input type="text" name="board_slug" value="{{{context.board.slug}}}" size="30" required>
 					</dd>
 					<dt>
 						<strong>{{{txt.mboards_description}}}:</strong><br>
