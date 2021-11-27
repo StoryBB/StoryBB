@@ -519,7 +519,7 @@ function loadBoard()
 	{
 		$request = $smcFunc['db']->query('load_board_info', '
 			SELECT
-				c.id_cat, b.name AS bname, b.slug AS bslug, b.description, b.num_topics, b.member_groups, b.deny_member_groups,
+				c.id_cat, b.name AS bname, b.slug AS bslug, b.description, b.num_topics, b.member_groups, b.deny_member_groups, COALESCE(p.slug, {empty}) AS parent_slug,
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
 				COALESCE(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.in_character,
@@ -528,6 +528,7 @@ function loadBoard()
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
+				LEFT JOIN {db_prefix}boards AS p ON (b.id_parent = p.id_board)
 				LEFT JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_board = {raw:board_link})
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = modgs.id_group)
 				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = {raw:board_link})
@@ -571,6 +572,7 @@ function loadBoard()
 				'unapproved_user_topics' => 0,
 				'parent_boards' => getBoardParents($row['id_parent']),
 				'parent' => $row['id_parent'],
+				'parent_slug' => $row['parent_slug'],
 				'child_level' => $row['child_level'],
 				'theme' => $row['id_theme'],
 				'override_theme' => !empty($row['override_theme']),

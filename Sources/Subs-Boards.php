@@ -221,7 +221,7 @@ function MarkRead()
 			['id_member', 'id_topic']
 		);
 
-		redirectexit('board=' . $board . '.0');
+		redirectexit($board_info['url']);
 	}
 	else
 	{

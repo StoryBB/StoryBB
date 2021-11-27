@@ -25,7 +25,7 @@ use StoryBB\Model\TopicPrefix;
  */
 function RemoveTopic2()
 {
-	global $user_info, $topic, $board, $sourcedir, $smcFunc, $modSettings;
+	global $user_info, $topic, $board, $board_info, $sourcedir, $smcFunc, $modSettings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
@@ -77,7 +77,7 @@ function RemoveTopic2()
 	if (allowedTo('remove_any') || (allowedTo('remove_own') && $starter == $user_info['id']))
 		logAction('remove', [(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $board ? 'topic' : 'old_topic_id') => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board]);
 
-	redirectexit('board=' . $board . '.0');
+	redirectexit($board_info['url']);
 }
 
 /**
@@ -86,7 +86,7 @@ function RemoveTopic2()
  */
 function DeleteMessage()
 {
-	global $user_info, $topic, $board, $modSettings, $smcFunc;
+	global $user_info, $topic, $board, $board_info, $modSettings, $smcFunc;
 
 	checkSession('get');
 
@@ -145,7 +145,7 @@ function DeleteMessage()
 	elseif (isset($_REQUEST['profile'], $_REQUEST['start'], $_REQUEST['u']))
 		redirectexit('action=profile;u=' . $_REQUEST['u'] . ';area=posts;start=' . $_REQUEST['start']);
 	elseif ($full_topic)
-		redirectexit('board=' . $board . '.0');
+		redirectexit($board_info['url']);
 	else
 		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
