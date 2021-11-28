@@ -104,12 +104,22 @@
 	}
 }
 
-.blocktype_multiblock .sub_bar {
-	border-top: 1px solid $primary-border;
-}
+.blocktype_multiblock {
+	.sub_bar {
+		border-top: 1px solid $primary-border;
+	}
 
-.blocktype_multiblock .block:first-of-type .sub_bar {
-	border-top: 0;
+	& .roundframe {
+		padding: 0;
+
+		& > .block_title_container {
+			margin-top: 0;
+		}
+	}
+
+	.block:first-of-type .sub_bar {
+		border-top: 0;
+	}
 }
 
 .blocktype_discordserver {
