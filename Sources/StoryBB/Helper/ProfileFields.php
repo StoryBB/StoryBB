@@ -12,6 +12,7 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
 
 class ProfileFields
