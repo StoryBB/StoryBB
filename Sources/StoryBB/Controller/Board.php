@@ -536,7 +536,7 @@ class Board implements Routable
 					$topic_ids[] = $row['id_topic'];
 
 				// Reference the main color class.
-				$colorClass = 'windowbg';
+				$colorClass = '';
 
 				// Does the theme support message previews?
 				if (!empty($modSettings['preview_characters']))
