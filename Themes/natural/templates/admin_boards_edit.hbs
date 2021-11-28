@@ -330,7 +330,7 @@
 						<dd>
 							<select name="board_sort">
 {{#each context.board_sort_options}}
-								<option value="{{@key}}"{{#if (eq context.board.board_sort @key)}} selected{{/if}}>{{{.}}}</option>
+								<option value="{{@key}}"{{#if (eq ../context.board.board_sort @key)}} selected{{/if}}>{{{.}}}</option>
 {{/each}}
 							</select>
 						</dd>
