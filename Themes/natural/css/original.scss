@@ -584,10 +584,6 @@ a.button_submit {
 	background: $menu-bg;
 }
 
-.top_menu, #characters_menu {
-	color: $menu-fg;
-}
-
 .top_menu a {
 	color: $menu-fg-link;
 	text-decoration: underline;
@@ -733,19 +729,6 @@ a.button_submit {
 	}
 }
 
-.top_menu.scrollable {
-	max-height: 30em;
-}
-
-.pm_unread, .alerts_unread {
-	margin-top: 5px;
-	border-top: 1px solid $primary-border;
-}
-
-.top_menu.scrollable .unread {
-	border-bottom: 1px solid $primary-border;
-}
-
 .top_menu.scrollable .no_unread {
 	margin-top: 5px;
 	text-align: center;
@@ -753,10 +736,6 @@ a.button_submit {
 
 .top_menu.scrollable .unread:hover {
 	background: $menu-bg-dark;
-}
-
-.top_menu.scrollable .unread:last-of-type {
-	border-bottom: none;
 }
 
 .top_menu.scrollable .sender, #alerts .windowbg .sender {
@@ -780,27 +759,6 @@ a.button_submit {
 
 #alerts .windowbg .avatar {
 	margin: 0;
-}
-
-.top_menu.scrollable .details {
-	max-width: 80%;
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 5px;
-}
-
-.top_menu .alerts_unread .unread {
-	position: relative;
-}
-
-.top_menu .alerts_unread .unread button {
-	position: absolute;
-	bottom: 3px;
-	right: 3px;
-	cursor: pointer;
-    border-radius: 50px;
-    padding: 3px;
-    background: secondary-accent-light;
 }
 
 #pm_menu .subject {

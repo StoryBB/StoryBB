@@ -12,18 +12,20 @@
 		<div class="alerts_unread">
 
 {{#if context.unread_alerts}}
+			<div class="scrollable">
 	{{#each context.unread_alerts}}
-			<div class="unread">
-				<div class="sender">{{#if sender}}{{{sender.avatar.image}}}{{/if}}</div>
-				<div class="details">
-					{{#if icon}}{{{icon}}}{{/if}}
-					<span>{{{text}}}</span> - {{{time}}}
+				<div class="unread">
+					<div class="sender">{{#if sender}}{{{sender.avatar.image}}}{{/if}}</div>
+					<div class="details">
+						{{#if icon}}{{{icon}}}{{/if}}
+						<span>{{{text}}}</span> - {{{time}}}
+					</div>
+					<button class="read_alert" data-url="{{../scripturl}}?action=profile;u={{../context.user.id}};area=alerts_popup;markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
 				</div>
-				<button class="read_alert" data-url="{{../scripturl}}?action=profile;u={{../context.user.id}};area=alerts_popup;markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
-			</div>
 	{{/each}}
+			</div>
 {{else}}
-		<div class="no_unread">{{{txt.alerts_no_unread}}}</div>
+			<div class="no_unread">{{{txt.alerts_no_unread}}}</div>
 {{/if}}
 
 		</div>
