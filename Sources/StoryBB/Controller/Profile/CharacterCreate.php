@@ -38,18 +38,7 @@ class CharacterCreate extends AbstractProfileController
 		{
 			$context['character'] = [
 				'character_name' => '',
-				'sheet' => '',
 			];
-
-			// Attempt to load any drafts we have.
-			$drafts = LoadCharacterSheetDrafts(0);
-			if (!empty($drafts))
-			{
-				$draft = array_pop($drafts);
-				$context['id_draft'] = $draft['id_draft'];
-				$context['character']['character_name'] = $draft['subject'];
-				$context['character']['sheet'] = $draft['body'];
-			}
 		}
 
 		if (!isset($context['form_errors']))
@@ -60,40 +49,6 @@ class CharacterCreate extends AbstractProfileController
 		// Make an editor box
 		require_once($sourcedir . '/Subs-Post.php');
 		require_once($sourcedir . '/Subs-Editor.php');
-
-		// Now create the editor.
-		$context['drafts_charsheet_save'] = !empty($modSettings['drafts_charsheet_enabled']);
-		$context['drafts_autosave'] = $context['drafts_charsheet_save'] && !empty($modSettings['drafts_autosave_enabled']);
-
-		$editorOptions = [
-			'id' => 'message',
-			'value' => un_preparsecode($context['character']['sheet']),
-			'labels' => [
-				'post_button' => $txt['char_create'],
-			],
-			// add height and width for the editor
-			'height' => '500px',
-			'width' => '80%',
-			'preview_type' => 0,
-			'required' => true,
-		];
-		create_control_richedit($editorOptions);
-
-		Character::load_sheet_templates();
-
-		addInlineJavascript('
-		var sheet_templates = ' . json_encode($context['sheet_templates']) . ';
-		$("#insert_char_template").on("click", function (e) {
-			e.preventDefault();
-			var tmpl = $("#char_sheet_template").val();
-			if (sheet_templates.hasOwnProperty(tmpl))
-			{
-				var template = sheet_templates[tmpl].body;
-				var char_name = $("#char_name").val().trim() != "" ? $("#char_name").val().trim() : ' . json_encode(StringLibrary::toUpper($txt['character_name_title'])) . ';
-				template = template.replace("{$character_name}", char_name);
-				$("#message").data("sceditor").InsertText(template);
-			}
-		});', true);
 
 		$this->load_custom_fields(true);
 		foreach ($context['character']['custom_fields'] as $key => $value)
@@ -114,9 +69,6 @@ class CharacterCreate extends AbstractProfileController
 		require_once($sourcedir . '/Drafts.php');
 
 		$context['character']['character_name'] = !empty($_POST['char_name']) ? StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES) : '';
-		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
-		preparsecode($message);
-		$context['character']['sheet'] = $message;
 
 		$context['form_errors'] = [];
 
@@ -148,13 +100,6 @@ class CharacterCreate extends AbstractProfileController
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
 		}
 
-		if (!empty($modSettings['drafts_charsheet_enabled']) && isset($_POST['save_draft']))
-		{
-			SaveCharSheetDraft($context['form_errors']);
-			// If we fall through to here, something went wrong with saving.
-			fatal_error(implode('<br>', $context['form_errors']), false);
-		}
-
 		if (!empty($context['form_errors']))
 		{
 			return $this->display_action();
@@ -179,25 +124,6 @@ class CharacterCreate extends AbstractProfileController
 		trackStats(['chars' => '+']);
 
 		makeCustomFieldChanges($context['id_member'], $context['character']['id_character'], 'char');
-
-		if (!empty($context['character']['sheet']))
-		{
-			// Also gotta insert this.
-			$smcFunc['db']->insert('insert',
-				'{db_prefix}character_sheet_versions',
-				['sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
-					'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'],
-				[$context['character']['sheet'], $context['character']['id_character'], $context['id_member'],
-					time(), 0, 0, 0],
-				['id_version']
-			);
-		}
-
-		if (!empty($_POST['id_draft']))
-		{
-			$draft = (int) $_POST['id_draft'];
-			DeleteDraft($draft, true, 2);
-		}
 
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 	}
