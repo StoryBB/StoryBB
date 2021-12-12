@@ -92,6 +92,11 @@ class Navigation
 
 		if ($result)
 		{
+			$display_active = $result->display_routing();
+			if (!empty($display_active))
+			{
+				$this->set_visible_menu_item($display_active);
+			}
 			$instance = $result->instantiate($this, $params);
 			if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST' && is_callable([$instance, 'post_action']))
 			{
@@ -148,7 +153,7 @@ class Navigation
 
 						foreach ($section->items as $item)
 						{
-							if ($item->is_visible())
+							if ($item->is_displayable())
 							{
 								$this_section['links'][] = [
 									'label' => $item->label,

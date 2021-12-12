@@ -59,6 +59,16 @@ class Item
 		return allowedTo($this->permissions);
 	}
 
+	public function is_displayable(): bool
+	{
+		return $this->is_visible();
+	}
+
+	public function display_routing(): array
+	{
+		return [];
+	}
+
 	public function get_url(array $base_params): string
 	{
 		global $scripturl;
