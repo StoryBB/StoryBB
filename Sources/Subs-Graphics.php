@@ -261,15 +261,6 @@ function checkImagick()
  */
 function imageMemoryCheck($sizes)
 {
-	global $modSettings;
-
-	// doing the old 'set it and hope' way?
-	if (empty($modSettings['attachment_thumb_memory']))
-	{
-		App::setMemoryLimit('256M');
-		return true;
-	}
-
 	// Determine the memory requirements for this image, note: if you want to use an image formula W x H x bits/8 x channels x Overhead factor
 	// you will need to account for single bit images as GD expands them to an 8 bit and will greatly overun the calculated value.  The 5 is
 	// simply a shortcut of 8bpp, 3 channels, 1.66 overhead
@@ -486,68 +477,6 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 	}
 }
 
-/**
- * Copy image.
- * Used when imagecopyresample() is not available.
-
- * @param resource $dst_img The destination image - a GD image resource
- * @param resource $src_img The source image - a GD image resource
- * @param int $dst_x The "x" coordinate of the destination image
- * @param int $dst_y The "y" coordinate of the destination image
- * @param int $src_x The "x" coordinate of the source image
- * @param int $src_y The "y" coordinate of the source image
- * @param int $dst_w The width of the destination image
- * @param int $dst_h The height of the destination image
- * @param int $src_w The width of the destination image
- * @param int $src_h The height of the destination image
- */
-function imagecopyresamplebicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h)
-{
-	$palsize = imagecolorstotal($src_img);
-	for ($i = 0; $i < $palsize; $i++)
-	{
-		$colors = imagecolorsforindex($src_img, $i);
-		imagecolorallocate($dst_img, $colors['red'], $colors['green'], $colors['blue']);
-	}
-
-	$scaleX = ($src_w - 1) / $dst_w;
-	$scaleY = ($src_h - 1) / $dst_h;
-
-	$scaleX2 = (int) $scaleX / 2;
-	$scaleY2 = (int) $scaleY / 2;
-
-	for ($j = $src_y; $j < $dst_h; $j++)
-	{
-		$sY = (int) $j * $scaleY;
-		$y13 = $sY + $scaleY2;
-
-		for ($i = $src_x; $i < $dst_w; $i++)
-		{
-			$sX = (int) $i * $scaleX;
-			$x34 = $sX + $scaleX2;
-
-			$color1 = imagecolorsforindex($src_img, imagecolorat($src_img, $sX, $y13));
-			$color2 = imagecolorsforindex($src_img, imagecolorat($src_img, $sX, $sY));
-			$color3 = imagecolorsforindex($src_img, imagecolorat($src_img, $x34, $y13));
-			$color4 = imagecolorsforindex($src_img, imagecolorat($src_img, $x34, $sY));
-
-			$red = ($color1['red'] + $color2['red'] + $color3['red'] + $color4['red']) / 4;
-			$green = ($color1['green'] + $color2['green'] + $color3['green'] + $color4['green']) / 4;
-			$blue = ($color1['blue'] + $color2['blue'] + $color3['blue'] + $color4['blue']) / 4;
-
-			$color = imagecolorresolve($dst_img, $red, $green, $blue);
-			if ($color == -1)
-			{
-				if ($palsize++ < 256)
-					imagecolorallocate($dst_img, $red, $green, $blue);
-				$color = imagecolorclosest($dst_img, $red, $green, $blue);
-			}
-
-			imagesetpixel($dst_img, $i + $dst_x - $src_x, $j + $dst_y - $src_y, $color);
-		}
-	}
-}
-
 if (!function_exists('imagecreatefrombmp'))
 {
 	/**
@@ -711,33 +640,6 @@ if (!function_exists('imagecreatefrombmp'))
 
 		return $dst_img;
 	}
-}
-
-/**
- * Writes a gif file to disk as a png file.
-
- * @param resource $gif A gif image resource
- * @param string $lpszFileName The name of the file
- * @param int $background_color The background color
- * @return boolean Whether the operation was successful
- */
-function gif_outputAsPng($gif, $lpszFileName, $background_color = -1)
-{
-	if (!isset($gif) || @get_class($gif) != 'cgif' || !$gif->loaded || $lpszFileName == '')
-		return false;
-
-	$fd = $gif->get_png_data($background_color);
-	if (strlen($fd) <= 0)
-		return false;
-
-	if (!($fh = @fopen($lpszFileName, 'wb')))
-		return false;
-
-	@fwrite($fh, $fd, strlen($fd));
-	@fflush($fh);
-	@fclose($fh);
-
-	return true;
 }
 
 /**
