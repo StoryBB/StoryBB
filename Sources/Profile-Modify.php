@@ -16,6 +16,7 @@ use StoryBB\Container;
 use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Image;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\ProfileFields;
 use StoryBB\Hook\Observable;
@@ -1230,10 +1231,10 @@ function profileSaveAvatarData(&$value)
 		elseif (substr($profile_vars['avatar'], 0, 7) != 'http://' && substr($profile_vars['avatar'], 0, 8) != 'https://')
 			return 'bad_avatar_invalid_url';
 		// Should we check dimensions?
-		elseif (!empty($modSettings['avatar_max_height']) || !empty($modSettings['avatar_max_width']))
+		elseif (!empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_max_width']))
 		{
 			// Now let's validate the avatar.
-			$sizes = url_image_size($profile_vars['avatar']);
+			$sizes = Image::get_size_from_url($profile_vars['avatar']);
 
 			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width'] && !empty($modSettings['avatar_max_width'])) || ($sizes[1] > $modSettings['avatar_max_height'] && !empty($modSettings['avatar_max_height']))))
 			{
@@ -1528,7 +1529,7 @@ function profileValidateSignature(&$value)
 					// If the dimensions are still not fixed - we need to check the actual image.
 					if (($width == -1 && $sig_limits[5]) || ($height == -1 && $sig_limits[6]))
 					{
-						$sizes = url_image_size($matches[7][$key]);
+						$sizes = Image::get_size_from_url($matches[7][$key]);
 						if (is_array($sizes))
 						{
 							// Too wide?

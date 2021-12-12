@@ -13,6 +13,7 @@
  */
 
 use StoryBB\Helper\Bbcode\AbstractParser;
+use StoryBB\Helper\Image;
 use StoryBB\Helper\Parser;
 use StoryBB\StringLibrary;
 
@@ -327,7 +328,7 @@ function fixTags(&$message)
 	}, $message);
 
 	// Limit the size of images posted?
-	if (!empty($modSettings['max_image_width']) || !empty($modSettings['max_image_height']))
+	if (!empty($modSettings['max_image_width']) && !empty($modSettings['max_image_height']))
 	{
 		// Find all the img tags - with or without width and height.
 		preg_match_all('~\[img(\s+width=\d+)?(\s+height=\d+)?(\s+width=\d+)?\](.+?)\[/img\]~is', $message, $matches, PREG_PATTERN_ORDER);
@@ -345,7 +346,7 @@ function fixTags(&$message)
 			// One was omitted, or both.  We'll have to find its real size...
 			if (empty($desired_width) || empty($desired_height))
 			{
-				list ($width, $height) = url_image_size(un_htmlspecialchars($matches[4][$match]));
+				[$width, $height] = Image::get_size_from_url(un_htmlspecialchars($matches[4][$match])) ?? [$modSettings['max_image_width'], $modSettings['max_image_height']];
 
 				// They don't have any desired width or height!
 				if (empty($desired_width) && empty($desired_height))

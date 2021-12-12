@@ -13,6 +13,7 @@
 
 use StoryBB\App;
 use StoryBB\Helper\Bbcode\AbstractParser;
+use StoryBB\Helper\Image;
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
 use StoryBB\Model\Theme;
@@ -641,7 +642,7 @@ function ModifySignatureSettings($return_config = false)
 							// If the dimensions are still not fixed - we need to check the actual image.
 							if (($width == -1 && $sig_limits[5]) || ($height == -1 && $sig_limits[6]))
 							{
-								$sizes = url_image_size($matches[7][$key]);
+								$sizes = Image::get_size_from_url($matches[7][$key]);
 								if (is_array($sizes))
 								{
 									// Too wide?
