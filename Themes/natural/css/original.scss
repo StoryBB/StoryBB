@@ -2664,39 +2664,6 @@ div#char_theme_wrapper, #char_theme_wrapper {
 	margin-top: 10px;
 }
 
-#detailedinfo .character_list {
-	margin-top: 12px;
-	margin-bottom: 12px;
-	padding-top: 12px;
-	border-top: 1px solid $post-divider-fg;
-}
-
-#detailedinfo .char_avatar {
-	display: table-cell;
-	width: 50px;
-	height: 50px;
-	text-align: center;
-}
-
-#detailedinfo dt .smalltext {
-	font-weight: normal;
-}
-
-#detailedinfo .char_avatar img {
-	max-width: 50px;
-	max-height: 50px;
-}
-
-#detailedinfo .char_name {
-	width: 300px;
-}
-
-#detailedinfo .char_name, #detailedinfo .char_group {
-	display: table-cell;
-	padding-left: 20px;
-	vertical-align: middle;
-}
-
 #detailedinfo dl.char_sheet_text {
 	border-bottom: none !important;
 	margin-bottom: 0;
@@ -2704,10 +2671,6 @@ div#char_theme_wrapper, #char_theme_wrapper {
 
 #detailedinfo .create_char_editor {
 	width: 75%;
-}
-
-#detailedinfo .char_created {
-	font-size: 80%;
 }
 
 #detailedinfo ul.characters li {

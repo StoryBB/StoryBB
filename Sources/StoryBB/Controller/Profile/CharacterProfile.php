@@ -74,6 +74,22 @@ class CharacterProfile extends AbstractProfileController
 		else
 			$context['character']['posts_per_day'] = comma_format($context['character']['posts'] / $context['character']['days_registered'], 2);
 
+		// Number of topics started.
+		$result = $smcFunc['db']->query('', '
+			SELECT COUNT(*)
+			FROM {db_prefix}topics AS t
+			INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+			WHERE m.id_character = {int:id_character}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+				AND t.id_board != {int:recycle_board}' : ''),
+			[
+				'id_character' => $context['character']['id_character'],
+				'recycle_board' => $modSettings['recycle_board'],
+			]
+		);
+		list ($context['num_topics']) = $smcFunc['db']->fetch_row($result);
+		$smcFunc['db']->free_result($result);
+		$context['character']['num_topics'] = comma_format($context['num_topics']);
+
 		$context['sub_template'] = 'profile_character_summary';
 
 		$this->load_custom_fields();

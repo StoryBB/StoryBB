@@ -1,6 +1,10 @@
-	<div id="profileview" class="flow_auto noup">
-		<div id="basicinfo">
-
+	<div class="profile cat_bar">
+		<h3 class="catbg">
+			{{{context.member.name}}}
+		</h3>
+	</div>
+	<div class="profile profile-summary">
+		<div class="user-summary">
 {{! Are there any custom profile fields for above the name? }}
 {{#if context.print_custom_fields.above_member}}
 			<div class="custom_fields_above_name">
@@ -12,196 +16,97 @@
 					{{/each}}
 				</ul>
 			</div>
-			<br>
 {{/if}}
 
-			{{! The user's name, group, avatar }}
-			<div class="username clear">
-				<h4>{{{context.member.name}}}</h4>
-			</div>
-			<div class="badges">{{{context.member.badges}}}</div>
-			<div class="position">{{{context.member.group}}}</div>
-			{{{context.member.avatar.image}}}
+			<ul class="user_info">
+				<li class="avatar">{{{context.member.avatar.image}}}</li>
+				<li class="icons">{{{context.member.badges}}}</li>
+				<li class="membergroup">{{{context.member.group}}}</li>
+
+{{#if member.custom_fields.after_membergroup}}
+				<li class="custom_fields_after_membergroup">
+					<ul class="nolist">
+					{{#each member.custom_fields.after_membergroup}}
+						<li class="custom {{col_name}}">{{{value}}}</li>
+					{{/each}}
+					</ul>
+				</li>
+{{/if}}
+
+				<li class="profile-online">
+					<span class="{{#if context.member.online.is_online}}on{{else}}off{{/if}}" title="{{{context.member.online.text}}}"></span>
+					<span class="smalltext">{{{context.member.online.label}}}</span>
+				</li>
 
 {{! Are there any custom profile fields for below the avatar? }}
 {{#if context.print_custom_fields.below_avatar}}
-			<div class="custom_fields_below_avatar">
-				<ul>
-					{{#each context.print_custom_fields.below_avatar}}
-						{{#if output_html}}
-							<li>{{output_html}}</li>
-						{{/if}}
-					{{/each}}
-				</ul>
-			</div>
-			<br>
+				<li class="custom_fields_below_avatar">
+					<ul>
+						{{#each context.print_custom_fields.below_avatar}}
+							{{#if output_html}}
+								<li>{{output_html}}</li>
+							{{/if}}
+						{{/each}}
+					</ul>
+				</li>
 {{/if}}
 
-			<ul class="clear">
-{{! Email is only visible if it's your profile or you have the moderate_forum permission @todo remove? }}
-{{#if context.member.show_email}}
-				<li><a href="mailto:{{{context.member.email}}}" title="{{context.member.email}}" rel="nofollow" class="main_icons mail"></a></li>
+				<li class="user-actions">
+{{! What about sending them a PM? }}
+{{#if (and context.can_send_pm (not context.user.is_owner))}}
+					<a href="{{scripturl}}?action=pm;sa=send;u={{context.id_member}}" class="send-pm" title="{{{txt.profile_sendpm_short}}}"><i class="fa-fw far fa-comments"></i></a>
 {{/if}}
-
-{{! Are there any custom profile fields as icons? }}
-{{#each context.print_custom_fields.icons}}
-				{{#if output_html}}
-					<li class="custom_field">{{{output_html}}}</li>
-				{{/if}}
-{{/each}}
-			</ul>
-
-			<span id="userstatus">
-
-{{#if context.can_send_pm}}
-					<a href="{{{context.member.online.href}}}" title="{{{context.member.online.text}}}" rel="nofollow">
-						<span class="{{#if context.member.online.is_online}}on{{else}}off{{/if}}" title="{{{context.member.online.text}}}"></span>
-					</a>
-{{else}}
-					<span class="{{#if context.member.online.is_online}}on{{else}}off{{/if}}" title="{{{context.member.online.text}}}"></span>
-{{/if}}
-				<span class="smalltext">{{{context.member.online.label}}}</span>
-			</span>
 
 {{! Can they add this member as a buddy? }}
 {{#if (and context.can_have_buddy (not context.user.is_owner))}}
-			<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{session_url}}">[{{#if context.member.is_buddy}}{{txt.buddy_remove}}{{else}}{{txt.buddy_add}}{{/if}}]</a>
+	{{#if context.member.is_buddy}}
+					<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{session_url}}" title="{{txt.buddy_remove}}"><i class="fa-fw fas fa-user-minus"></i></a>
+	{{else}}
+					<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{session_url}}" title="{{txt.buddy_add}}"><i class="fa-fw fas fa-user-plus"></i></a>
+	{{/if}}
 {{/if}}
 
-{{! What about sending them a PM? }}
-{{#if (and context.can_send_pm (not context.user.is_owner))}}
-			<a href="{{scripturl}}?action=pm;sa=send;u={{context.id_member}}" class="infolinks">{{{txt.profile_sendpm_short}}}</a>
-{{/if}}
+				</li>
+			</ul>
 
-			{{! Link to see their posts }}
-			<a href="{{scripturl}}?action=profile;area=posts;u={{context.id_member}}" class="infolinks">{{{txt.showPosts}}}</a>
-
-			{{! Link to the user's statistics}}
-			<a href="{{scripturl}}?action=profile;area=stats;u={{context.id_member}}" class="infolinks">{{{txt.statPanel}}}</a><br><br>
-
-{{! Are there any custom profile fields for bottom? }}
-{{#if context.print_custom_fields.bottom_poster}}
-			<div class="custom_fields_bottom">
-				<ul>
-					{{#each context.print_custom_fields.bottom_poster}}
-						{{#if output_html}}
-							<li>{{output_html}}</li>
-						{{/if}}
-					{{/each}}
-				</ul>
-			</div>
-{{/if}}
 		</div>
 
-		<div id="detailedinfo">
+		<div class="user-details">
+			<h5>{{txt.activity}}</h5>
 			<dl>
-
-{{#if (or context.user.is_owner context.user.is_admin)}}
-				<dt>{{{txt.username}}}</dt>
-				<dd>{{{context.member.username}}}</dd>
-{{/if}}
-
 {{#if (not context.disabled_fields.posts)}}
 				<dt>{{{txt.profile_posts}}}</dt>
 				<dd>{{{context.member.posts}}} ({{{context.member.posts_per_day}}} {{{txt.posts_per_day}}})</dd>
 {{/if}}
-
-{{#if context.member.show_email}}
-				<dt>{{{txt.email}}}</dt>
-				<dd><a href="mailto:{{{context.member.email}}}">{{{context.member.email}}}</a></dd>
-{{/if}}
-
-{{#if context.member.show_birth}}
-			<dt>{{{txt.dob}}}</dt>
-			<dd>
-				{{{context.member.formatted_birthdate}}}
-				{{#if context.member.age}}
-				{{{context.member.age}}}
-				{{/if}}
-				{{#if context.member.today_is_birthday}}
-					&nbsp; <img src="{{{settings.images_url}}}/cake.png" alt="">
-				{{/if}}
-			</dd>
-{{/if}}
-			</dl>
-
-{{! Are there any custom profile fields for standard? }}
-{{#if context.print_custom_fields.standard}}
-			<dl>
-				{{#each context.print_custom_fields.standard}}
-					{{#if output_html}}
-						<dt>{{name}}</dt>
-						<dd>{{output_html}}</dd>
-					{{/if}}
-				{{/each}}
-			</dl>
-{{/if}}
-
-			<dl class="noborder">
-
-{{! Can they view/issue a warning? }}
-{{#if (and context.can_view_warning context.member.warning)}}
-				<dt>{{{txt.profile_warning_level}}}</dt>
-				<dd>
-					<a href="{{scripturl}}?action=profile;u={{context.id_member}};area={{#if (and context.can_issue_warning (not context.user.is_owner))}}issue_warning{{else}}view_warnings{{/if}}">{{context.member.warning}}%</a>
-					{{#if context.warning_status}}
-						<span class="smalltext">({{{context.warning_status}}})</span>
-					{{/if}}
-				</dd>
-{{/if}}
-
-{{! Does the account require activation?}}
-{{#if context.activate_message}}
-				<dt class="clear">
-					<span class="alert">{{{context.activate_message}}}</span>
-					&nbsp; (<a href="{{{context.activate_link}}}"{{#if eq 4 context.activate_type}} class="you_sure" data-confirm="{{{txt.profileConfirm}}}"{{/if}}>{{{context.activate_link_text}}}</a>)
-				</dt>
-{{/if}}
-
-{{#if context.member.bans}}
-				<dt class="clear">
-					<span class="alert">{{{txt.user_is_banned}}}</span>
-					&nbsp; [<a href="#" onclick="$('#ban_info').toggle();return false;">{{{txt.view_ban}}}</a>]
-				</dt>
-				<dt class="clear" id="ban_info" style="display:none">
-					<strong>{{{txt.user_banned_by_following}}}:</strong>
-					{{#each context.member.bans}}
-						<br><span class="smalltext">{{explanation}}</span>
-					{{/each}}
-				</dt>
-{{/if}}
-
 				<dt>{{{txt.date_registered}}}</dt>
 				<dd>{{{context.member.registered}}}</dd>
-
-{{! If the person looking is allowed, they can check the member's IP address and hostname}}
-{{#if context.can_see_ip}}
-	{{#if context.member.ip}}
-				<dt>{{txt.ip}}</dt>
-				<dd>
-					<a href="{{scripturl}}?action=admin;area=logs;sa=ip;searchip={{context.member.ip}};u={{context.member.id}}">{{context.member.ip}}</a>
-				</dd>
-	{{/if}}
-	{{#if (and context.member.ip (not modSettings.disableHostnameLookup))}}
-				<dt>{{{txt.hostname}}}</dt>
-				<dd>{{{context.member.hostname}}}</dd>
-	{{/if}}
-{{/if}}
-
 				<dt>{{{txt.local_time}}}</dt>
 				<dd>{{{context.member.local_time}}}</dd>
-
-{{#if (and modSettings.userLanguage context.member.language)}}
-				<dt>{{{txt.language}}}</dt>
-				<dd>{{{context.member.language}}}</dd>
-{{/if}}
-
 {{#if context.member.show_last_login}}
 				<dt>{{{txt.lastLoggedIn}}}</dt>
 				<dd>
 					{{{context.member.last_login}}}
 					{{#if context.member.is_hidden}} ({{txt.hidden}}){{/if}}
 				</dd>
+{{/if}}
+{{#if context.member.show_birth}}
+				<dt>{{{txt.dob}}}</dt>
+				<dd>
+					{{{context.member.formatted_birthdate}}}
+					{{#if context.member.age}}
+					{{{context.member.age}}}
+					{{/if}}
+				</dd>
+{{/if}}
+
+{{! Are there any custom profile fields for standard? }}
+{{#if context.print_custom_fields.standard}}
+				{{#each context.print_custom_fields.standard}}
+					{{#if output_html}}
+						<dt>{{name}}</dt>
+						<dd>{{output_html}}</dd>
+					{{/if}}
+				{{/each}}
 {{/if}}
 			</dl>
 
@@ -240,29 +145,74 @@
 			</div>
 {{/if}}
 
+{{#if (or context.can_see_ip context.activate_message context.member.bans (and context.member.ip (not modSettings.disableHostnameLookup)))}}
+			<h5>{{txt.administrative}}</h5>
+			<dl>
+	{{! If the person looking is allowed, they can check the member's IP address and hostname}}
+	{{#if context.can_see_ip}}
+		{{#if context.member.ip}}
+				<dt>{{txt.ip}}</dt>
+				<dd>
+					<a href="{{scripturl}}?action=admin;area=logs;sa=ip;searchip={{context.member.ip}};u={{context.member.id}}">{{context.member.ip}}</a>
+				</dd>
+		{{/if}}
+		{{#if (and context.member.ip (not modSettings.disableHostnameLookup))}}
+				<dt>{{{txt.hostname}}}</dt>
+				<dd>{{{context.member.hostname}}}</dd>
+		{{/if}}
+	{{/if}}
+	{{! Can they view/issue a warning? }}
+	{{#if (and context.can_view_warning context.member.warning)}}
+				<dt>{{{txt.profile_warning_level}}}</dt>
+				<dd>
+					<a href="{{scripturl}}?action=profile;u={{context.id_member}};area={{#if (and context.can_issue_warning (not context.user.is_owner))}}issue_warning{{else}}view_warnings{{/if}}">{{context.member.warning}}%</a>
+					{{#if context.warning_status}}
+						<span class="smalltext">({{{context.warning_status}}})</span>
+					{{/if}}
+				</dd>
+	{{/if}}
+
+	{{! Does the account require activation?}}
+	{{#if context.activate_message}}
+				<dt class="full-width">
+					<span class="alert">{{{context.activate_message}}}</span>
+					&nbsp; (<a href="{{{context.activate_link}}}"{{#if eq 4 context.activate_type}} class="you_sure" data-confirm="{{{txt.profileConfirm}}}"{{/if}}>{{{context.activate_link_text}}}</a>)
+				</dt>
+	{{/if}}
+
+	{{#if context.member.bans}}
+				<dt class="full-width">
+					<span class="alert">{{{txt.user_is_banned}}}</span>
+					&nbsp; [<a href="#" onclick="$('#ban_info').toggle();return false;">{{{txt.view_ban}}}</a>]
+				</dt>
+				<dt class="full-width" id="ban_info" style="display:none">
+					<strong>{{{txt.user_banned_by_following}}}:</strong>
+					{{#each context.member.bans}}
+						<br><span class="smalltext">{{explanation}}</span>
+					{{/each}}
+				</dt>
+	{{/if}}
+			</dl>
+{{/if}}
+
 {{! Are there any characters to display? }}
 {{#if (and context.member.characters (gt (count context.member.characters) 1))}}
-			<div class="character_list">
-				<h5 id="user_char_list">{{{txt.my_characters}}}:</h5>
-			</div>
+			<h5>{{{txt.characters}}}</h5>
 			<ul class="characters">
 
 	{{#each context.member.characters}}
 		{{#unless is_main}}
 				<li>
-					<div class="char_avatar">
-						<img alt="" src="{{#if avatar}}{{{avatar}}}{{else}}{{../settings.images_url}}/default.png{{/if}}">
+					<div class="character-avatar">
+						<img alt="{{{character_name}}}" src="{{{avatar}}}">
 					</div>
-					<div class="char_name">
+					<div class="character-name">
 						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
 						{{#if retired}}({{{../txt.char_retired}}}){{/if}}
-						<div class="char_created">
-							{{textTemplate ../txt.char_created (timeformat date_created)}}
+
+						<div class="char_group">
+							{{{display_group}}}
 						</div>
-					</div>
-					<div class="char_group">
-						{{{display_group}}}
-						<div class="char_created">&nbsp;</div>
 					</div>
 				</li>
 		{{/unless}}
@@ -271,4 +221,3 @@
 {{/if}}
 		</div>
 	</div>
-<div class="clear"></div>
