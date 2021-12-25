@@ -167,6 +167,13 @@ class Cli
 			$baseurl = $sitesettings->drop_index_php ? $boardurl : $boardurl . '/index.php';
 			return (new RequestContext('/'))->setBaseUrl($baseurl);
 		});
+		$container->inject('current_theme_id', function() use ($container) {
+			$site_settings = $container->get('sitesettings');
+			return (int) $site_settings->theme_guests;
+		});
+		$container->inject('current_theme', function() use ($container) {
+			return $container->instantiate('StoryBB\\Model\\Theme', $container->get('current_theme_id'));
+		});
 
 		return $container;
 	}
