@@ -14,6 +14,7 @@ namespace StoryBB\Block;
 
 use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
+use Exception;
 
 /**
  * The recent posts block.
@@ -61,25 +62,33 @@ class DiscordServer extends AbstractBlock implements Block
 
 		$server_url = 'https://discord.com/api/guilds/' . $this->config['server'] . '/widget.json';
 		$client = new Client();
-		$http_request = $client->get($server_url);
 
-		switch ($http_request->getStatusCode())
+		try
 		{
-			case 200:
-				$contents = (string) $http_request->getBody();
-				break;
-			case 403:
-				// Widget not configured.
-				return $this->content;
-				break;
-			case 429:
-				// Widget rate-limited.
-				return $this->content;
-				break;
-			default:
-				// Something else went wrong.
-				return $this->content;
-				break;
+			$http_request = $client->get($server_url);
+
+			switch ($http_request->getStatusCode())
+			{
+				case 200:
+					$contents = (string) $http_request->getBody();
+					break;
+				case 403:
+					// Widget not configured.
+					return $this->content;
+					break;
+				case 429:
+					// Widget rate-limited.
+					return $this->content;
+					break;
+				default:
+					// Something else went wrong.
+					return $this->content;
+					break;
+			}
+		}
+		catch (Exception $e)
+		{
+			return $this->content;
 		}
 
 		if (empty($contents))
