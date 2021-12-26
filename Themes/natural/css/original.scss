@@ -647,7 +647,7 @@ a.button_submit {
 }
 
 .dropmenu li li a:hover, .dropmenu li li a:focus {
-	color: #333;
+	color: $menu-fg-link;
 	text-decoration: none;
 	background: rgba(0, 0, 0, 0.2);
 }
