@@ -65,6 +65,13 @@
 	padding-left: 0.3%;
 }
 
+@media screen and (max-width: 576px) {
+	.half_content {
+		width: 100%;
+		display: block;
+	}
+}
+
 .block {
 	display: block;
 	margin: 0 0 5px 0;
