@@ -55,6 +55,15 @@
 	padding: 12px 0 12px 12px;
 }
 
+.topic-ic, .topic-ooc {
+	&.even {
+		background: $topic-bg-even;
+	}
+	&.odd {
+		background: $topic-bg-odd;
+	}
+}
+
 .topic-ic, .topic-header {
 	display: grid;
 	grid-template-columns: 40% 70px 100px 25% 1fr 50px;

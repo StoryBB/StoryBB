@@ -183,7 +183,7 @@ class TopicTracker implements Routable
 
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
-			$classes = 'windowbg topic-ic';
+			$classes = 'topic-ic';
 			if (!empty($row['locked']))
 			{
 				$classes .= ' locked';

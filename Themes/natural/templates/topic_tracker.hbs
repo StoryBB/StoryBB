@@ -77,7 +77,7 @@
 		$('.topic-list .character').each(function () {
 			$(this).find('div.roundframe.centertext').remove();
 
-			$(this).find('.windowbg').show();
+			$(this).find('.topic-ic').show();
 			for (key in filters) {
 				if (filters.hasOwnProperty(key)) {
 					if (!filters[key]) {
@@ -86,12 +86,12 @@
 				}
 			}
 
-			if ($(this).find('.windowbg:visible').length == 0) {
+			if ($(this).find('.topic-ic:visible').length == 0) {
 				$(this).append('<div class="roundframe centertext">' + no_replies + '</div>');
 			} else {
-				$(this).find('.windowbg:visible').removeClass('odd even');
-				$(this).find('.windowbg:visible:even').addClass('even');
-				$(this).find('.windowbg:visible:odd').addClass('odd');
+				$(this).find('.topic-ic:visible').removeClass('odd even');
+				$(this).find('.topic-ic:visible:even').addClass('even');
+				$(this).find('.topic-ic:visible:odd').addClass('odd');
 			}
 		});
 	}
