@@ -1054,7 +1054,10 @@ function Display()
 			foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
 			{
 				if ($char_id == $user_info['id_character'])
+				{
 					$context['current_avatar'] = $character['avatar'];
+					$context['current_groups'] = get_labels_and_badges(array_merge([$character['main_char_group']], explode(',', $character['char_groups'])));
+				}
 			}
 		}
 	}
