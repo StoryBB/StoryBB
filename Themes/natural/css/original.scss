@@ -485,28 +485,42 @@ a.button_submit {
 
 .jump_buttons {
 	position: fixed;
-	right: 10px;
-	bottom: 7px;
-	width: 21px;
-}
-.jump_buttons a {
-	background-image: url("#{$images_url}/icons/main_icons_sprite.png"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
-	background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
-	background-position: -159px -3px;
-	border-radius: 3px;
-	border: 1px solid #bbb;
-	width: 21px;
-	height: 21px;
-	display: inline-block;
-}
-.jump_buttons a:hover {
-	border-color: $secondary-accent-light;
-}
-.jump_buttons a.go_down {
-	background-position: -211px -3px;
-}
-.jump_buttons.bottom .go_down, .jump_buttons.top .go_up {
-	display: none;
+	right: 20px;
+	bottom: 15px;
+	width: 40px;
+
+	a {
+		height: 40px;
+		background: $primary-accent;
+		color: $primary-accent-contrast;
+		display: inline-block;
+		margin-top: 5px;
+
+		&:hover {
+			background: $secondary-accent;
+		}
+
+		&.go_up::before, &.go_down::before {
+			width: 40px;
+			height: 40px;
+			font-size: 30px;
+			line-height: 40px;
+			display: inline-block;
+			text-align: center;
+
+			content: "\f106";
+			font-family: "Font Awesome 5 Free";
+			font-weight: 700;
+		}
+
+		&.go_down::before {
+			content: "\f107";
+		}
+	}
+
+	&.bottom .go_down, &.top .go_up {
+		display: none;
+	}
 }
 
 /* 8# Menus and dropdown menus
