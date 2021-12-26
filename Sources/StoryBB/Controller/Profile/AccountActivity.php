@@ -153,6 +153,10 @@ class AccountActivity extends AbstractProfileController
 		$context['ips'] = [];
 		while ($row = $smcFunc['db']->fetch_assoc($request))
 		{
+			if (empty($row['poster_ip']))
+			{
+				continue;
+			}
 			$context['ips'][] = '<a href="' . $scripturl . '?action=admin;area=logs;sa=ip;searchip=' . IP::format($row['poster_ip']) . ';u=' . $memID . '">' . IP::format($row['poster_ip']) . '</a>';
 			$ips[] = IP::format($row['poster_ip']);
 		}

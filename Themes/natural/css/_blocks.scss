@@ -104,12 +104,22 @@
 	}
 }
 
-.blocktype_multiblock .sub_bar {
-	border-top: 1px solid $primary-border;
-}
+.blocktype_multiblock {
+	.sub_bar {
+		border-top: 1px solid $primary-border;
+	}
 
-.blocktype_multiblock .block:first-of-type .sub_bar {
-	border-top: 0;
+	& .roundframe {
+		padding: 0;
+
+		& > .block_title_container {
+			margin-top: 0;
+		}
+	}
+
+	.block:first-of-type .sub_bar {
+		border-top: 0;
+	}
 }
 
 .blocktype_discordserver {
@@ -148,43 +158,6 @@
 		}
 	}
 }
-
-/*
-.block-container {
-	display: grid;
-	grid-template-columns: minmax(0px 1fr) 1fr minmax(0px 1fr);
-	grid-template-rows: auto;
-	grid-gap: 0 10px;
-	grid-template-areas: 
-		"before-content before-content before-content"
-		"left-sidebar above-content right-sidebar"
-		"left-sidebar main-body-content right-sidebar"
-		"left-sidebar below-content right-sidebar"
-		"after-content after-content after-content";
-
-	.block-region-before-content {
-		grid-area: before-content;
-	}
-	.block-region-left-sidebar {
-		grid-area: left-sidebar;
-	}
-	.block-region-right-sidebar {
-		grid-area: right-sidebar;
-	}
-	.block-region-above-content {
-		grid-area: above-content;
-	}
-	.main-body-content {
-		grid-area: main-body-content;
-	}
-	.block-region-below-content {
-		grid-area: below-content;
-	}
-	.block-region-after-content {
-		grid-area: after-content;
-	}
-}
-*/
 
 .block-container {
 	display: flex;

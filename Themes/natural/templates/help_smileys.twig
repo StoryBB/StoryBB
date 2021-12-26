@@ -13,7 +13,7 @@
 				{% for smiley in smileys %}
 				<tr>
 					<td>
-						<img src="{{ smiley.image }}" alt="{{ smiley.text|striptags }}">
+						<img class="smiley" src="{{ smiley.image }}" alt="{{ smiley.text|striptags }}">
 					</td>
 					<td>{{ smiley.text|striptags }}</td>
 					<td>

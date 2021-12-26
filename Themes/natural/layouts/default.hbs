@@ -75,7 +75,7 @@
 		{{#if (eq position 'top')}}
 				<li class="navigation-item" id="btn-{{@key}}">
 					<a href="{{{url}}}"{{#if label}} title="{{{label}}}"{{/if}}{{#if popup}} onclick="return reqOverlayDiv(this.href, {{{jsEscape popup}}});"{{/if}}{{#if (or popupmenu subitems)}} id="{{@key}}_menu_top"{{/if}}><i class="{{icon}}"></i>{{#if amt}}<span class="amt">{{amt}}</span>{{/if}}</a>
-					{{#if popupmenu}}<div id="{{@key}}_menu" class="top_menu scrollable"></div>{{/if}}
+					{{#if popupmenu}}<div id="{{@key}}_menu" class="top_menu"></div>{{/if}}
 					{{#if subitems}}
 						<div id="{{@key}}_menu" class="top_menu scrollable subitems">
 							<ul class="btn-subitems">

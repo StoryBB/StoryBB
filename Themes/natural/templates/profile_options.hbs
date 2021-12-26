@@ -36,84 +36,81 @@
 		<p class="information">{{{context.page_desc}}}</p>
 {{/if}}
 
-		<div class="roundframe">
-
 {{#if context.profile_prehtml}}
-			<div>{{{context.profile_prehtml}}}</div>
+		<div>{{{context.profile_prehtml}}}</div>
 {{/if}}
 
-			<dl class="settings">
+		<dl class="settings">
 
 {{#each context.profile_fields}}
 	{{#if (eq type 'hr')}}
-			</dl>
-			<hr>
-			<dl class="settings">
+		</dl>
+		<hr>
+		<dl class="settings">
 	{{else}}
 		{{#if (eq type 'callback')}}
-				{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+			{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
 		{{else}}
-				{{> profile_setting_dt_container key=@key field=.}}
-				<dd>
-					{{#if preinput}}{{{preinput}}}{{/if}}
+			{{> profile_setting_dt_container key=@key field=.}}
+			<dd>
+				{{#if preinput}}{{{preinput}}}{{/if}}
 
-					{{#if (eq type 'select')}}{{> profile_setting_select key=@key field=.}}{{/if}}
-					{{#if (eq type 'label')}}{{> profile_setting_label key=@key field=.}}{{/if}}
-					{{#if (eq type 'check')}}{{> profile_setting_check key=@key field=.}}{{/if}}
+				{{#if (eq type 'select')}}{{> profile_setting_select key=@key field=.}}{{/if}}
+				{{#if (eq type 'label')}}{{> profile_setting_label key=@key field=.}}{{/if}}
+				{{#if (eq type 'check')}}{{> profile_setting_check key=@key field=.}}{{/if}}
 
-					{{#if (eq type 'number')}}{{> profile_setting_int key=@key field=.}}{{/if}}
-					{{#if (eq type 'int')}}{{> profile_setting_int key=@key field=.}}{{/if}}
-					{{#if (eq type 'float')}}{{> profile_setting_float key=@key field=.}}{{/if}}
+				{{#if (eq type 'number')}}{{> profile_setting_int key=@key field=.}}{{/if}}
+				{{#if (eq type 'int')}}{{> profile_setting_int key=@key field=.}}{{/if}}
+				{{#if (eq type 'float')}}{{> profile_setting_float key=@key field=.}}{{/if}}
 
-					{{#if (eq type 'text')}}{{> profile_setting_text key=@key field=.}}{{/if}}
-					{{#if (eq type 'password')}}{{> profile_setting_password key=@key field=.}}{{/if}}
-					{{#if (eq type 'email')}}{{> profile_setting_email key=@key field=.}}{{/if}}
-					{{#if (eq type 'url')}}{{> profile_setting_url key=@key field=.}}{{/if}}
+				{{#if (eq type 'text')}}{{> profile_setting_text key=@key field=.}}{{/if}}
+				{{#if (eq type 'password')}}{{> profile_setting_password key=@key field=.}}{{/if}}
+				{{#if (eq type 'email')}}{{> profile_setting_email key=@key field=.}}{{/if}}
+				{{#if (eq type 'url')}}{{> profile_setting_url key=@key field=.}}{{/if}}
 
-					{{#if (eq type 'date')}}{{> profile_setting_date key=@key field=.}}{{/if}}
-					{{#if (eq type 'datetime')}}{{> profile_setting_datetime key=@key field=.}}{{/if}}
+				{{#if (eq type 'date')}}{{> profile_setting_date key=@key field=.}}{{/if}}
+				{{#if (eq type 'datetime')}}{{> profile_setting_datetime key=@key field=.}}{{/if}}
 
-					{{#if postinput}}{{{postinput}}}{{/if}}
-				</dd>
+				{{#if postinput}}{{{postinput}}}{{/if}}
+			</dd>
 		{{/if}}
 	{{/if}}
 {{/each}}
 
 {{#each context.custom_fields}}
-				<dt>
-					<strong>{{{name}}}: </strong><br>
-					<span class="smalltext">{{{desc}}}</span>
-				</dt>
-				<dd>
-					{{{input_html}}}
-				</dd>
+			<dt>
+				<strong>{{{name}}}: </strong><br>
+				<span class="smalltext">{{{desc}}}</span>
+			</dt>
+			<dd>
+				{{{input_html}}}
+			</dd>
 {{/each}}
 
-			</dl>
+		</dl>
 
 {{#if context.profile_posthtml}}
-			<div>{{{context.profile_posthtml}}}</div>
+		<div>{{{context.profile_posthtml}}}</div>
 {{/if}}
 
 {{#if context.require_password}}
-			<dl class="settings">
-				<dt>
-					<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>
-						<label for="oldpasswrd">{{{txt.current_password}}}: </label>
-					</strong><br>
-					<span class="smalltext">{{{txt.required_security_reasons}}}</span>
-				</dt>
-				<dd>
-					<input type="password" name="oldpasswrd" id="oldpasswrd" size="20" style="margin-right: 4ex;">
-				</dd>
-			</dl>
+		<dl class="settings">
+			<dt>
+				<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>
+					<label for="oldpasswrd">{{{txt.current_password}}}: </label>
+				</strong><br>
+				<span class="smalltext">{{{txt.required_security_reasons}}}</span>
+			</dt>
+			<dd>
+				<input type="password" name="oldpasswrd" id="oldpasswrd" size="20" style="margin-right: 4ex;">
+			</dd>
+		</dl>
 {{/if}}
 
-			<button type="submit" name="save" class="active button" value="save">{{#if context.submit_button_text}}{{{context.submit_button_text}}}{{else}}{{{txt.change_profile}}}{{/if}}</button>
+		<button type="submit" name="save" class="active button" value="save">{{#if context.submit_button_text}}{{{context.submit_button_text}}}{{else}}{{{txt.change_profile}}}{{/if}}</button>
 
-			{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
-			{{session_form}}
-			<input type="hidden" name="u" value="{{context.id_member}}">
-			<input type="hidden" name="sa" value="{{context.menu_item_selected}}">
-		</div>
+		{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
+		{{session_form}}
+		<input type="hidden" name="u" value="{{context.id_member}}">
+		<input type="hidden" name="sa" value="{{context.menu_item_selected}}">
 	</form>

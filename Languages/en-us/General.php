@@ -797,7 +797,7 @@ $txt['notify_topic_0'] = 'Not Following';
 $txt['notify_topic_1'] = 'No Alerts or Emails';
 $txt['notify_topic_2'] = 'Receive Alerts';
 $txt['notify_topic_3'] = 'Receive Emails and Alerts';
-$txt['notify_topic_0_desc'] = 'You will not receive any emails or alerts for this topic and it will also not show up in your unread replies and topics list. You will still receive @mentions for this topic.';
+$txt['notify_topic_0_desc'] = 'You will not receive any emails or alerts for this topic and it will also not show up in your unread topics list. You will still receive @mentions for this topic.';
 $txt['notify_topic_1_desc'] = 'You will not receive any emails or alerts but only @mentions by other members.';
 $txt['notify_topic_2_desc'] = 'You will receive alerts for this topic.';
 $txt['notify_topic_3_desc'] = 'You will receive both alerts and e-mails for this topic.';
@@ -816,8 +816,6 @@ $txt['characters_none'] = 'No characters found.';
 $txt['char_no_group'] = 'Just starting out...';
 $txt['char_unknown'] = '[Unknown]';
 
-$txt['filter_characters'] = 'Filter Characters by Group';
-$txt['characters_in_no_groups'] = '(characters in no groups)';
 $txt['apply_filter'] = 'Apply Filter';
 
 $txt['no_primary_character_group'] = '(no primary character group)';

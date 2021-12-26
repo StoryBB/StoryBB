@@ -1,0 +1,57 @@
+#pm_menu {
+	background: $popup-pm-meta-bg;
+	color: $default-color;
+	width: 30em;
+	padding: 0;
+	border: none;
+
+	.loading {
+		padding: 10px;
+	}
+
+	.scrollable {
+		max-height: 25em;
+		display: block;
+	}
+
+	.pm_bar {
+		background: $popup-pm-meta-bg;
+		padding: 8px 8px 15px 8px;
+	}
+
+	.pm_unread {
+		background: $popup-pm-content-bg;
+		padding: 8px;
+
+		.sender {
+			width: 40px;
+			height: 40px;
+			text-align: center;
+			display: inline-block;
+
+			.avatar, #alerts {
+				margin: 4px;
+				max-width: 40px;
+				max-height: 40px;
+				display: inline-block;
+				vertical-align: middle;
+			}
+		}
+
+		.details {
+			max-width: 80%;
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 5px;
+		}
+	}
+
+	a:not(.button), span[data-href] {
+		color: $default-color;
+
+		&:hover {
+			cursor: pointer;
+			color: $link-color;
+		}
+	}
+}

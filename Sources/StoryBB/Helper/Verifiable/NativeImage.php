@@ -19,7 +19,6 @@ use StoryBB\StringLibrary;
 class NativeImage extends AbstractVerifiable implements Verifiable
 {
 	protected $id;
-	protected $use_graphic_library;
 	protected $image_href;
 	protected $text_value;
 
@@ -28,7 +27,6 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 		global $scripturl;
 		parent::__construct($id);
 
-		$this->use_graphic_library = in_array('gd', get_loaded_extensions());
 		$this->image_href = $scripturl . '?action=verificationcode;vid=' . $this->id . ';rand=' . md5(mt_rand());
 		$this->text_value = !empty($_REQUEST[$this->id . '_vv']['code']) ? StringLibrary::escape($_REQUEST[$this->id . '_vv']['code']) : '';
 	}
@@ -85,13 +83,12 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 
 		loadJavaScriptFile('captcha.js', [], 'sbb_captcha');
 		addInlineJavaScript('
-			var verification' . $this->id . 'Handle = new sbbCaptcha("' . $this->image_href . '", "' . $this->id . '", ' . ($this->use_graphic_library ? 1 : 0) . ');', true);
+			var verification' . $this->id . 'Handle = new sbbCaptcha("' . $this->image_href . '", "' . $this->id . '");', true);
 
 		$template = \StoryBB\Template::load_partial('control_verification_nativeimage');
 		$phpStr = \StoryBB\Template::compile($template, [], 'control_verification_nativeimage-' . \StoryBB\Template::get_theme_id('partials', 'control_verification_nativeimage'));
 		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
 			'verify_id' => $this->id,
-			'use_graphic_library' => $this->use_graphic_library,
 			'image_href' => $this->image_href,
 			'text_value' => $this->text_value,
 			'txt' => $txt,
@@ -114,30 +111,20 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 		$_SESSION['visual_verification_code'] = $this->generate_code();
 
 		// Some javascript for CAPTCHA.
-		if ($this->use_graphic_library)
+		addInlineJavaScript('
+		function refreshImages()
 		{
-			addInlineJavaScript('
-			function refreshImages()
-			{
-				var imageType = document.getElementById(\'visual_verification_type\').value;
-				document.getElementById(\'verification_image\').src = \'' . $this->image_href . ';type=\' + imageType;
-			}', true);
-		}
+			var imageType = document.getElementById(\'visual_verification_type\').value;
+			document.getElementById(\'verification_image\').src = \'' . $this->image_href . ';type=\' + imageType;
+		}', true);
 
 		// Show the image itself, or text saying we can't.
-		if ($this->use_graphic_library)
-		{
-			$type = !empty($modSettings['visual_verification_type']) ? $modSettings['visual_verification_type'] : 0;
-			$postinput = '<br><img src="' . $this->image_href . ';type=' . $type . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image"><br>';
-		}
-		else
-		{
-			$postinput = '<br><span class="smalltext">' . $txt['setting_image_verification_nogd'] . '</span>';
-		}
+		$type = !empty($modSettings['visual_verification_type']) ? $modSettings['visual_verification_type'] : 0;
+		$postinput = '<br><img src="' . $this->image_href . ';type=' . $type . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image"><br>';
 
 		return [
 			['titledesc', 'configure_verification_means'],
-			'vv' => ['select', 'visual_verification_type', $choices, 'subtext' => $txt['setting_visual_verification_type_desc'], 'onchange' => $this->use_graphic_library ? 'refreshImages();' : '', 'postinput' => $postinput],
+			'vv' => ['select', 'visual_verification_type', $choices, 'subtext' => $txt['setting_visual_verification_type_desc'], 'onchange' => 'refreshImages();', 'postinput' => $postinput],
 		];
 	}
 }

@@ -34,13 +34,30 @@ class App
 	const SOFTWARE_YEAR = 2021;
 	const SOFTWARE_VERSION = '1.0 Alpha 1';
 
+	/** @var array $global_config The storage for the global configuration. */
 	protected static $global_config = [];
+
+	/** @var string $storybb_root The path to the application instance. */
 	protected static $storybb_root = '';
+
+	/** @var string $storybb_sources The path to the Sources folder. */
 	protected static $storybb_sources = '';
+
+	/** @var string $storybb_languages The path to the Languages folder. */
 	protected static $storybb_languages = '';
+
+	/** @var object $app The App object that is the basis of the DI container. */
 	protected static $app = null;
+
+	/** @var object $container The DI container. */
 	protected static $container = null;
 
+	/**
+	 * Initialises the application.
+	 *
+	 * @param string $path The absolute path to the root of the platform.
+	 * @param mixed $app An object in StoryBB\App that defines the container configuration.
+	 */
 	public static function start($path, $app)
 	{
 		static::$storybb_root = $path;
@@ -80,48 +97,96 @@ class App
 		static::$container = $app->build_container();
 	}
 
+	/**
+	 * Returns the root path to the current installation.
+	 *
+	 * @return string The absolute path to the current install of StoryBB.
+	 */
 	public static function get_root_path(): string
 	{
 		return static::$storybb_root;
 	}
 
+	/**
+	 * Returns the path to the Sources folder of the current install.
+	 *
+	 * @return string Absolute path to the Sources/ folder.
+	 */
 	public static function get_sources_path(): string
 	{
 		return static::$storybb_sources;
 	}
 
+	/**
+	 * Returns the path to the Languages folder of the current install.
+	 *
+	 * @return string Absolute path to the Languages/ folder.
+	 */
 	public static function get_languages_path(): string
 	{
 		return static::$storybb_languages;
 	}
 
+	/**
+	 * Returns an item from global configuration (i.e. Settings.php)
+	 *
+	 * @param string $key The item desired from global configuration.
+	 * @return mixed The configuration value, null if not known.
+	 */
 	public static function get_global_config_item(string $key)
 	{
 		return static::$global_config[$key] ?? null;
 	}
 
+	/**
+	 * Returns the entire global configuration (i.e. Settings.php)
+	 *
+	 * @return array The configuration values.
+	 */
 	public static function get_global_config()
 	{
 		return static::$global_config;
 	}
 
-	public static function in_maintenance()
+	/**
+	 * Returns whether the site is in any kind of maintenance mode.
+	 *
+	 * @return bool True if the site is in *some* kind of maintenance.
+	 */
+	public static function in_maintenance(): bool
 	{
 		return static::$global_config['maintenance'] > 0;
 	}
 
-	public static function in_hard_maintenance()
+	/**
+	 * Returns whether the site is in hard maintenance mode.
+	 *
+	 * In hard maintenance mode all actions to the site are disabled,
+	 * cron is suspended and only some command line functions work.
+	 *
+	 * @return bool True if in hard maintenance.
+	 */
+	public static function in_hard_maintenance(): bool
 	{
 		return static::$global_config['maintenance'] == 2;
 	}
 
-	public static function set_base_environment()
+	/**
+	 * Sets some initial environment settings.
+	 */
+	public static function set_base_environment(): void
 	{
 		ignore_user_abort(true);
 
 		static::setMemoryLimit('128M');
 	}
 
+	/**
+	 * Attempts to match the current request to a route and return its response.
+	 *
+	 * @todo Make return type nullable Response.
+	 * @return mixed Response object if matched, false if not.
+	 */
 	public static function dispatch_request()
 	{
 		$container = Container::instance();
@@ -238,6 +303,12 @@ class App
 		}
 	}
 
+	/**
+	 * Facade for creating something from the DI container.
+	 *
+	 * @param string $class The fully qualified class name.
+	 * @param array $args Arguments to be passed in to the constructor.
+	 */
 	public static function make($class, ...$args)
 	{
 		if (empty(static::$container))
@@ -247,6 +318,11 @@ class App
 		return static::$container->instantiate($class, ...$args);
 	}
 
+	/**
+	 * Returns the current instance of the DI container.
+	 *
+	 * @return object Current DI container.
+	 */
 	public static function container()
 	{
 		if (empty(static::$container))
@@ -263,7 +339,7 @@ class App
 	 *
 	 * @param string $needed The amount of memory to request, if needed, like 256M
 	 * @param bool $in_use Set to true to account for current memory usage of the script
-	 * @return boolean True if we have at least the needed memory
+	 * @return bool True if we have at least the needed memory
 	 */
 	public static function setMemoryLimit(string $needed, bool $in_use = false): bool
 	{
@@ -292,12 +368,14 @@ class App
 	 * Helper function to convert memory string settings to bytes
 	 *
 	 * @param string $val The byte string, like 256M or 1G
-	 * @return integer The string converted to a proper integer in bytes
+	 * @return int The string converted to a proper integer in bytes
 	 */
-	public static function memoryReturnBytes($val)
+	public static function memoryReturnBytes($val): int
 	{
 		if (is_integer($val))
+		{
 			return $val;
+		}
 
 		// Separate the number from the designator
 		$val = trim($val);

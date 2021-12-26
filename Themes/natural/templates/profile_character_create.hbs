@@ -1,5 +1,5 @@
 	{{! The form for creating a character }}
-	<div class="cat_bar">
+	<div class="cat_bar profile">
 		<h3 class="catbg">{{{txt.char_create}}}</h3>
 	</div>
 
@@ -32,34 +32,12 @@
 	{{/each}}
 {{/if}}
 				</dl>
-				<div class="noticebox">{{{txt.char_sheet_warning}}}</div>
-				<dl class="char_sheet_text">
-					<dt>{{{txt.char_sheet}}}</dt>
-
-{{#if context.sheet_templates}}
-					<dd>
-						{{{txt.char_templates_sel}}}
-						<select id="char_sheet_template">
-							<option>-- {{{txt.char_templates}}} --</option>
-							{{#each context.sheet_templates}}
-							<option value="{{@key}}">{{name}}</option>
-							{{/each}}
-						</select>
-						<a href="#" class="button" id="insert_char_template">{{{txt.char_templates_add}}}</a>
-					</dd>
-{{/if}}
-
-				</dl>
-				<div class="create_char_editor">
-					{{{richtexteditor 'message' '' 'bbcBox'}}}
-				</div>
 				<br>
 				<div class="smalltext">{{{txt.you_can_add_later}}}</div>
 				<input type="hidden" name="u" value="{{context.id_member}}">
-				<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
-				<span id="post_confirm_buttons" class="buttonlist">
-					{{{richtextbuttons 'message'}}}
-				</span>
+				<div class="buttonlist righttext">
+					<button type="submit" name="create_char" value="create_char" class="active button">{{{txt.char_create}}}</button>
+				</div>
 				{{session_form}}
 			</form>
 		</div>

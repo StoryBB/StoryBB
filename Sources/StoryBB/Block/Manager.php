@@ -84,7 +84,7 @@ class Manager
 
 			if (!empty($visibility['routes']))
 			{
-				if (!$this->match_route($context['routing'] ?? null, $visibility['routes']))
+				if (!$this->match_route($context['routing'] ?? [], $visibility['routes']))
 				{
 					continue;
 				}

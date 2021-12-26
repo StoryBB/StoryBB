@@ -14,6 +14,7 @@ namespace StoryBB\Helper;
 
 use StoryBB\Container;
 use StoryBB\Helper\Bbcode\AbstractParser;
+use StoryBB\Helper\Image;
 use StoryBB\Helper\TLD;
 use StoryBB\Hook\Mutatable;
 use StoryBB\StringLibrary;
@@ -211,7 +212,7 @@ class Parser
 							// Check if the image is larger than allowed.
 							if (!empty($modSettings['max_image_width']) && !empty($modSettings['max_image_height']))
 							{
-								list ($width, $height) = url_image_size($imgtag);
+								[$width, $height] = Image::get_size_from_url($imgtag) ?? [$modSettings['max_image_width'], $modSettings['max_image_height']];
 
 								if (!empty($modSettings['max_image_width']) && $width > $modSettings['max_image_width'])
 								{

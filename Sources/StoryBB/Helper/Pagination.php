@@ -102,11 +102,17 @@ class Pagination
 			'current_page' => $this->start / $this->num_per_page,
 			'current_page_display' => $this->start / $this->num_per_page + 1,
 			'actually_on_current_page' => !$this->start_invalid,
+			'first_page_link' => '',
+			'last_page_link' => '',
 		];
 
 		$data['current_page_link'] = $url->generate($this->route, $this->routeparams + [$this->start_param => $this->start]);
-		$data['first_page_link'] = $url->generate($this->route, $this->routeparams + [$this->start_param => 0]);
-		$data['last_page_link'] = $url->generate($this->route, $this->routeparams + [$this->start_param => ($data['max_pages'] - 1) * $this->num_per_page]);
+
+		if ($data['max_pages'] > 1)
+		{
+			$data['first_page_link'] = $url->generate($this->route, $this->routeparams + [$this->start_param => 0]);
+			$data['last_page_link'] = $url->generate($this->route, $this->routeparams + [$this->start_param => ($data['max_pages'] - 1) * $this->num_per_page]);
+		}
 
 		// Make some data available to the template: whether there are previous/next pages.
 		if ($this->prevnext)

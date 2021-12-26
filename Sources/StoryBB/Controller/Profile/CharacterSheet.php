@@ -517,7 +517,7 @@ class CharacterSheet extends AbstractProfileController
 		{
 			foreach ($drafts as $id_draft => $draft)
 			{
-				if (!empty($context['character']['sheet_details']['created_time']) && $context['character']['sheet_details']['created_time'] > $drafts['poster_time'])
+				if (!empty($context['character']['sheet_details']['created_time']) && $context['character']['sheet_details']['created_time'] > $draft['poster_time'])
 				{
 					// The saved version is newer than the draft, get rid of the draft.
 					DeleteDraft($draft['id_draft'], true, 2);

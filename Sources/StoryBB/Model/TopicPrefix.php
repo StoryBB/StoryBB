@@ -168,7 +168,7 @@ class TopicPrefix
 		if (isset($conditions['groups']))
 		{
 			$conditions['groups'] = array_filter(array_map('intval', $conditions['groups']), function ($x) {
-				return $x >= 0; // Regular Member is group id 0, so must account for that.
+				return $x == -1 || $x >= 0; // Guest is group -1, Regular Member is group 0, so must account for that.
 			});
 
 			// Apply the condition for groups only if admin (group 1) isn't in the list.

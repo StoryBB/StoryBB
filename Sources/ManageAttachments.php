@@ -161,8 +161,6 @@ function ManageAttachmentSettings($return_config = false)
 			['check', 'attachmentShowImages'],
 			['check', 'attachmentThumbnails'],
 			['check', 'attachment_thumb_png'],
-			['check', 'attachment_thumb_memory'],
-			['warning', 'attachment_thumb_memory_note'],
 			['text', 'attachmentThumbWidth', 6],
 			['text', 'attachmentThumbHeight', 6],
 		'',

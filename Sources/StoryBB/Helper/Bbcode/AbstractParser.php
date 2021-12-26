@@ -779,7 +779,7 @@ abstract class AbstractParser
 		{
 			if (isset($code['autolink']) && !$code['autolink'])
 			{
-				$no_autolink_tags[$bbcode] = true;
+				$no_autolink_tags[$code['tag']] = true;
 			}
 		}
 		$no_autolink_tags = array_keys($no_autolink_tags);

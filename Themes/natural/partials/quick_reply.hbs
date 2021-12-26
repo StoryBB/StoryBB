@@ -20,8 +20,11 @@
 										<img class="avatar" src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
 									</li>
 					{{/if}}
-					{{#if member.group}}
-									<li class="membergroup">{{member.group}}</li>
+					{{#if context.current_groups.badges}}
+									<li class="icons">{{{context.current_groups.badges}}}
+					{{/if}}
+					{{#if context.current_groups.title}}
+									<li class="membergroup">{{{context.current_groups.title}}}</li>
 					{{/if}}
 								</ul>
 							</div>

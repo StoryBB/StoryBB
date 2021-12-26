@@ -20,8 +20,7 @@
 			<h4>
 
 {{#if (not member.is_guest)}}
-				{{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
-				<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
+				<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>
 {{/if}}
 
 				{{{member.link}}}
@@ -69,31 +68,12 @@
 				<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
 	{{/if}}
 
-	{{#if (and ../modSettings.show_blurb member.blurb)}}
-				<li class="blurb">{{member.blurb}}</li>
-	{{/if}}
-
 	{{#if member.custom_fields.icons}}
 				<li class="im_icons">
 					<ol>
 					{{#each member.custom_fields.icons}}
 						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
-					</ol>
-				</li>
-	{{/if}}
-
-	{{#if member.show_profile_buttons}}
-				<li class="profile">
-					<ol class="profile_icons">
-
-		{{#if ../context.can_send_pm}}
-						<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}" class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon"></a></li>
-		{{/if}}
-
-		{{#if (and member.show_email member.email)}}
-						<li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
-		{{/if}}
 					</ol>
 				</li>
 	{{/if}}
@@ -139,7 +119,7 @@
 					</span>
 					{{! Show "<< Last Edit: Time by Person >>" if this post was edited. But we need the div even if it wasn't modified! 
 					 Because we insert into it through AJAX and we don't want to stop themers moving it around if they so wish so they can put it where they want it. }}
-					<span class="smalltext modified floatright {{#if (and ../modSettings.show_modify modified.name)}} mvisible{{/if}}" id="modified_{{id}}">
+					<span class="smalltext modified floatright" id="modified_{{id}}">
 						{{#if (and ../modSettings.show_modify modified.name)}}{{{modified.last_edit_text}}}{{/if}}
 					</span>
 				</h5>

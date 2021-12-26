@@ -14,6 +14,7 @@ use StoryBB\App;
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Random;
 use StoryBB\Model\Attachment;
+use StoryBB\Model\Character;
 use StoryBB\Model\Policy;
 use StoryBB\Hook\Observable;
 use StoryBB\StringLibrary;
@@ -152,40 +153,8 @@ function deleteMembers($users, $check_not_admin = false)
 	// 2. Step through each of these and update them.
 	foreach ($characters as $id_character => $character_name)
 	{
-		$smcFunc['db']->query('', '
-			UPDATE {db_prefix}messages
-			SET id_character = 0,
-				id_member = 0,
-				id_creator = 0,
-				poster_name = {string:character_name},
-				poster_email = {empty}
-			WHERE id_character = {int:id_character}',
-			[
-				'id_character' => $id_character,
-				'character_name' => $character_name,
-			]
-		);
+		Character::delete_character($id_character);
 	}
-
-	if (!empty($characters))
-	{
-		$smcFunc['db']->query('', '
-			DELETE FROM {db_prefix}custom_field_values
-			WHERE id_character IN ({array_int:characters})',
-			[
-				'characters' => array_keys($characters),
-			]
-		);
-	}
-
-	// Then delete their characters.
-	$smcFunc['db']->query('', '
-		DELETE FROM {db_prefix}characters
-		WHERE id_member IN ({array_int:users})',
-		[
-			'users' => $users,
-		]
-	);
 
 	// And any alerts they may have accrued.
 	$smcFunc['db']->query('', '
@@ -396,13 +365,6 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		]
 	);
-
-	// Delete avatar.
-	require_once($sourcedir . '/ManageAttachments.php');
-	foreach ($characters as $id_character => $character_name)
-	{
-		removeAttachments(['id_character' => $id_character, 'attachment_type' => Attachment::ATTACHMENT_AVATAR]);
-	}
 
 	// It's over, no more moderation for you.
 	$smcFunc['db']->query('', '

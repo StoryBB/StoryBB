@@ -6,6 +6,7 @@
 	.windowbg {
 		width: calc(#{$avatar_max_width}px + 32px) !important;
 		z-index: 10;
+		overflow: visible;
 	}
 	.filteredOut {
 		z-index: 5;

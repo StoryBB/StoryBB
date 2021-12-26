@@ -1,0 +1,72 @@
+#alerts_menu {
+	background: $profile-alerts-meta-bg;
+	color: $default-color;
+	width: 30em;
+	padding: 0;
+	border: none;
+
+	.loading {
+		padding: 10px;
+	}
+
+	.alert_bar {
+		background: $profile-alerts-meta-bg;
+		padding: 8px 8px 15px 8px;
+	}
+
+	.scrollable {
+		max-height: 25em;
+		display: block;
+	}
+
+	.alerts_unread {
+		background: $profile-alerts-content-bg;
+		padding: 8px;
+
+		.sender {
+			width: 40px;
+			height: 40px;
+			text-align: center;
+			display: inline-block;
+
+			.avatar, #alerts {
+				margin: 4px;
+				max-width: 40px;
+				max-height: 40px;
+				display: inline-block;
+				vertical-align: middle;
+			}
+		}
+
+		.details {
+			max-width: 80%;
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 5px;
+		}
+	}
+
+	a:not(.button), span[data-href] {
+		color: $default-color;
+
+		&:hover {
+			cursor: pointer;
+			color: $link-color;
+		}
+	}
+}
+
+
+.top_menu .alerts_unread .unread {
+	position: relative;
+}
+
+.top_menu .alerts_unread .unread button {
+	position: absolute;
+	bottom: 3px;
+	right: 3px;
+	cursor: pointer;
+    border-radius: 50px;
+    padding: 3px;
+    background: secondary-accent-light;
+}

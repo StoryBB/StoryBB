@@ -14,6 +14,7 @@
 
 use StoryBB\Helper\Navigation\Navigation;
 use StoryBB\Helper\Navigation\Item as NavItem;
+use StoryBB\Helper\Navigation\HiddenItem as NavHiddenItem;
 use StoryBB\Helper\Navigation\Section as NavSection;
 use StoryBB\Helper\Navigation\Tab as NavTab;
 use StoryBB\Helper\Navigation\HiddenTab as NavTabHidden;
@@ -221,6 +222,11 @@ function Profile()
 			$context['user']['is_owner'] ? ['is_not_guest'] : []
 		));
 
+		if (count($context['member']['characters']) > 1)
+		{
+			$section = $characters->add_section(new NavSection('characters', $txt['characters']));
+		}
+
 		foreach ($context['member']['characters'] as $id_character => $character)
 		{
 			// Skip the OOC 'character'.
@@ -228,41 +234,39 @@ function Profile()
 			{
 				continue;
 			}
-			$section = $characters->add_section(new NavSection('character_' . $id_character, $character['character_name']));
 			$section->add_item(new NavItem(
 				'character_profile_' . $id_character,
-				$txt['char_profile'],
+				$character['character_name'],
 				['area' => 'characters', 'u' => $memID, 'char' => $id_character],
 				'StoryBB\\Controller\\Profile\\CharacterProfile',
 				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
 			));
-			$section->add_item(new NavItem(
+			$section->add_item(new NavHiddenItem(
 				'character_sheet_' . $id_character,
-				$txt['char_sheet'],
+				$character['character_name'] . ' - ' . $txt['char_sheet'],
 				['area' => 'character_sheet', 'u' => $memID, 'char' => $id_character],
 				'StoryBB\\Controller\\Profile\\CharacterSheet',
-				!empty($character['char_sheet']) || $char_sheet_override ? ['is_not_guest', 'profile_view'] : ['admin_forum']
+				!empty($character['char_sheet']) || $char_sheet_override ? ['is_not_guest', 'profile_view'] : ['admin_forum'],
+				'',
+				['area' => 'characters', 'u' => $memID, 'char' => $id_character]
 			));
-			$section->add_item(new NavItem(
-				'character_stats_' . $id_character,
-				$txt['char_stats'],
-				['area' => 'character_stats', 'u' => $memID, 'char' => $id_character],
-				'StoryBB\\Controller\\Profile\\CharacterStats',
-				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
-			));
-			$section->add_item(new NavItem(
+			$section->add_item(new NavHiddenItem(
 				'character_posts_' . $id_character,
-				$txt['showPosts_char'],
+				$character['character_name'] . ' - ' . $txt['showMessages'],
 				['area' => 'character_posts', 'u' => $memID, 'char' => $id_character],
 				'StoryBB\\Controller\\Profile\\CharacterPosts',
-				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view'],
+				'',
+				['area' => 'characters', 'u' => $memID, 'char' => $id_character]
 			));
-			$section->add_item(new NavItem(
+			$section->add_item(new NavHiddenItem(
 				'character_topics_' . $id_character,
-				$txt['showTopics_char'],
+				$character['character_name'] . ' - ' . $txt['showTopics'],
 				['area' => 'character_topics', 'u' => $memID, 'char' => $id_character],
 				'StoryBB\\Controller\\Profile\\CharacterTopics',
-				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view']
+				$context['user']['is_owner'] ? ['is_not_guest'] : ['profile_view'],
+				'',
+				['area' => 'characters', 'u' => $memID, 'char' => $id_character]
 			));
 		}
 	}

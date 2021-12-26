@@ -50,6 +50,14 @@ $postarea-bg-odd: $secondary-list-bg !default;
 $poster-bg-even: $menu-bg !default;
 $poster-bg-odd: $menu-bg !default;
 
+$board-bg-even: $menu-bg !default;
+$board-bg-odd: $menu-bg !default;
+$board-outline: none;
+
+$topic-bg-even: $menu-bg !default;
+$topic-bg-odd: $menu-bg !default;
+$topic-outline: none;
+
 $error-color: red !default;
 
 $warning-color: yellow !default;
@@ -85,3 +93,12 @@ $button-active-border: 1px solid $primary-accent-dark !default;
 $button-active-hover-bg: $primary-accent !default;
 $button-active-hover-fg: $primary-accent-contrast !default;
 $button-active-hover-border: 1px solid $primary-accent !default;
+
+$profile-menu-account-bg: $content-subject-accent !default;
+$profile-menu-character-bg: $button-bg !default;
+
+$profile-alerts-meta-bg: $content-subject-accent !default;
+$profile-alerts-content-bg: $button-bg !default;
+
+$popup-pm-meta-bg: $content-subject-accent !default;
+$popup-pm-content-bg: $button-bg !default;

@@ -288,7 +288,7 @@ $txt['profile_of_username'] = 'Profile of %1$s';
 $txt['profileInfo'] = 'Profile Info';
 $txt['showPosts'] = 'Show Posts';
 $txt['showPosts_help'] = 'This section allows you to view all posts made by this member. Note that you can only see posts made in areas you currently have access to.';
-$txt['showMessages'] = 'Messages';
+$txt['showMessages'] = 'Posts';
 $txt['showTopics'] = 'Topics';
 $txt['showUnwatched'] = 'Unwatched topics';
 $txt['showAttachments'] = 'Attachments';
@@ -312,7 +312,7 @@ $txt['notification_info'] = 'StoryBB allows you to be notified of replies to pos
 $txt['groupmembership'] = 'Group Membership';
 $txt['groupMembership_info'] = 'In this section of your profile you can change which groups you belong to.';
 $txt['ignoreboards'] = 'Ignore Boards';
-$txt['ignoreboards_info'] = 'This page lets you ignore particular boards. When a board is ignored, the new post indicator will not show up on the board index. New posts will not show up using the "unread post" search link (when searching it will not look in those boards) however, ignored boards will still appear on the board index and upon entering will show which topics have new posts. When using the "unread replies" link, new posts in an ignored board will still be shown.';
+$txt['ignoreboards_info'] = 'This page lets you ignore particular boards. When a board is ignored, the new post indicator will not show up on the board index. New posts will not show up using the "unread post" search link (when searching it will not look in those boards) however, ignored boards will still appear on the board index and upon entering will show which topics have new posts.';
 $txt['alerts_show'] = 'Show Alerts';
 
 $txt['profileAction'] = 'Actions';
@@ -630,7 +630,10 @@ $txt['theme_opt_display'] = 'Board and topic display';
 $txt['theme_opt_posting'] = 'Posting';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
 
+$txt['characters'] = 'Characters';
 $txt['my_characters'] = 'My Characters';
+$txt['administrative'] = 'Administrative';
+$txt['activity'] = 'Activity';
 
 $txt['char_create'] = 'Create Character';
 $txt['date_created'] = 'Date Created:';
@@ -650,6 +653,7 @@ $txt['character_updated_else'] = 'The character, %s, has been updated.';
 
 $txt['move_char_account'] = 'Move to another account';
 $txt['move_char_action'] = 'Move character';
+$txt['move_char_link'] = 'Move';
 $txt['move_char_account_desc'] = 'From here you can migrate this character into another account, moving all the posts across.';
 $txt['move_char_to'] = 'Which account do you want to move this one into?';
 $txt['move_are_you_sure'] = 'Are you sure you want to move %1$s (plus all the posts) into %2$s\'s account?';
@@ -678,12 +682,14 @@ $txt['char_error_avatar_oversize'] = 'That avatar is too big - it is %1$sx%2$s p
 $txt['max_avatar_size'] = 'Maximum size: %1$sx%2$s pixels';
 
 $txt['char_retired'] = 'Retired';
-$txt['char_retire_char'] = 'Retire Character';
-$txt['char_unretire_char'] = 'Unretire Character';
+$txt['char_retire_char'] = 'Retire';
+$txt['char_unretire_char'] = 'Unretire';
 
 $txt['switch_to_char'] = 'Switch to this character';
 $txt['edit_char'] = 'Edit this character';
+$txt['edit_char_link'] = 'Settings';
 $txt['delete_char'] = 'Delete this character';
+$txt['delete_char_link'] = 'Delete';
 $txt['are_you_sure_delete_char'] = 'Are you sure you want to delete this character?';
 $txt['this_character_cannot_delete_posts'] = 'This character cannot be deleted; they have made one or more posts.';
 $txt['this_character_cannot_delete_main'] = 'This character is a main character, it cannot be deleted.';
@@ -693,7 +699,6 @@ $txt['showPosts_help_char'] = 'This section allows you to view all posts made by
 $txt['showPosts_char'] = 'Character Posts';
 $txt['showTopics_char'] = 'Character Topics';
 $txt['char_profile'] = 'Character Profile';
-$txt['char_stats'] = 'Character Stats';
 
 $txt['char_templates_sel'] = 'Choose template:';
 $txt['you_can_add_later'] = 'You can change your character sheet later, and you can add an avatar and signature later from your character\'s profile.';
@@ -708,6 +713,7 @@ $txt['char_sheet_waiting_approval'] = '(Currently waiting for approval)';
 $txt['char_sheet_send_for_approval'] = 'Send For Approval';
 $txt['char_sheet_edit'] = 'Edit Sheet';
 $txt['char_sheet_history'] = 'Edit History';
+$txt['char_sheet_history_title'] = 'Character Sheet History';
 $txt['char_sheet_approve'] = 'Approve';
 $txt['char_sheet_reject'] = 'Reject';
 $txt['char_sheet_approve_are_you_sure'] = 'Are you sure you want to approve this character sheet?';

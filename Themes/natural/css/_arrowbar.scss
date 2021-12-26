@@ -57,3 +57,38 @@
 		color: $tertiary-accent-contrast;
 	}
 }
+
+@media screen and (max-width: 767px) {
+	.arrowbar {
+		input ~ .arrow {
+			display:none;
+		}
+
+		.arrow:first-of-type {
+			display:block;
+		}
+
+		input:checked ~ .arrow {
+			display: block;
+		}
+
+		input {
+			position: absolute;
+		}
+
+		input[type="checkbox"]::after {
+			content: "\f0c9";
+			font-family: "Font Awesome 5 Free";
+			font-weight: 900;
+		}
+
+		.arrow {
+			padding-left: 50px;
+		}
+	}
+}
+@media screen and (min-width: 768px) {
+	.arrowbar input {
+		display: none;
+	}
+}

@@ -485,28 +485,42 @@ a.button_submit {
 
 .jump_buttons {
 	position: fixed;
-	right: 10px;
-	bottom: 7px;
-	width: 21px;
-}
-.jump_buttons a {
-	background-image: url("#{$images_url}/icons/main_icons_sprite.png"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
-	background-image: url("#{$images_url}/icons/main_icons_sprite.png.webp"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
-	background-position: -159px -3px;
-	border-radius: 3px;
-	border: 1px solid #bbb;
-	width: 21px;
-	height: 21px;
-	display: inline-block;
-}
-.jump_buttons a:hover {
-	border-color: $secondary-accent-light;
-}
-.jump_buttons a.go_down {
-	background-position: -211px -3px;
-}
-.jump_buttons.bottom .go_down, .jump_buttons.top .go_up {
-	display: none;
+	right: 20px;
+	bottom: 15px;
+	width: 40px;
+
+	a {
+		height: 40px;
+		background: $primary-accent;
+		color: $primary-accent-contrast;
+		display: inline-block;
+		margin-top: 5px;
+
+		&:hover {
+			background: $secondary-accent;
+		}
+
+		&.go_up::before, &.go_down::before {
+			width: 40px;
+			height: 40px;
+			font-size: 30px;
+			line-height: 40px;
+			display: inline-block;
+			text-align: center;
+
+			content: "\f106";
+			font-family: "Font Awesome 5 Free";
+			font-weight: 700;
+		}
+
+		&.go_down::before {
+			content: "\f107";
+		}
+	}
+
+	&.bottom .go_down, &.top .go_up {
+		display: none;
+	}
 }
 
 /* 8# Menus and dropdown menus
@@ -584,10 +598,6 @@ a.button_submit {
 	background: $menu-bg;
 }
 
-.top_menu, #characters_menu {
-	color: $menu-fg;
-}
-
 .top_menu a {
 	color: $menu-fg-link;
 	text-decoration: underline;
@@ -637,7 +647,7 @@ a.button_submit {
 }
 
 .dropmenu li li a:hover, .dropmenu li li a:focus {
-	color: #333;
+	color: $menu-fg-link;
 	text-decoration: none;
 	background: rgba(0, 0, 0, 0.2);
 }
@@ -733,19 +743,6 @@ a.button_submit {
 	}
 }
 
-.top_menu.scrollable {
-	max-height: 30em;
-}
-
-.pm_unread, .alerts_unread {
-	margin-top: 5px;
-	border-top: 1px solid $primary-border;
-}
-
-.top_menu.scrollable .unread {
-	border-bottom: 1px solid $primary-border;
-}
-
 .top_menu.scrollable .no_unread {
 	margin-top: 5px;
 	text-align: center;
@@ -753,10 +750,6 @@ a.button_submit {
 
 .top_menu.scrollable .unread:hover {
 	background: $menu-bg-dark;
-}
-
-.top_menu.scrollable .unread:last-of-type {
-	border-bottom: none;
 }
 
 .top_menu.scrollable .sender, #alerts .windowbg .sender {
@@ -780,27 +773,6 @@ a.button_submit {
 
 #alerts .windowbg .avatar {
 	margin: 0;
-}
-
-.top_menu.scrollable .details {
-	max-width: 80%;
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 5px;
-}
-
-.top_menu .alerts_unread .unread {
-	position: relative;
-}
-
-.top_menu .alerts_unread .unread button {
-	position: absolute;
-	bottom: 3px;
-	right: 3px;
-	cursor: pointer;
-    border-radius: 50px;
-    padding: 3px;
-    background: secondary-accent-light;
 }
 
 #pm_menu .subject {
@@ -933,7 +905,6 @@ h3.catbg .icon {
 .title_bar {
 	background: $secondary-accent-light;
 	color: $secondary-accent-contrast;
-	border: 1px solid $primary-border;
 	padding: 8px;
 	margin: 5px 0 0 0;
 
@@ -947,7 +918,6 @@ h3.catbg .icon {
 }
 
 .sub_bar {
-	border-bottom: 1px solid $primary-border;
 	background: $primary-accent;
 	clear: both;
 }
@@ -1205,12 +1175,12 @@ body#help_popup {
 	    vertical-align: middle;
 	}
 	&.previous_page {
-		border-right-color: $primary-accent;
+		border-right-color: $poster-fg;
 		margin-left: -5px;
 		margin-right: 5px;
 	}
 	&.next_page {
-		border-left-color: $primary-accent;
+		border-left-color: $poster-fg;
 		margin-left: 5px;
 		margin-right: -5px;
 	}
@@ -1710,7 +1680,8 @@ div#pollmoderation {
 
 /* The visible stuff below the avatar. */
 .user_info > li {
-	margin: 3px 0 0 0;
+	margin: 3px auto 0 auto;
+	width: #{$avatar_max_width}px;
 }
 
 .user_info > li.avatar {
@@ -1779,10 +1750,11 @@ div#pollmoderation {
 				li.avatar {
 					margin: 0 0 10px 0;
 					display: inline-block;
+					width: 50px;
+					height: 50px;
 
 					a {
-						width: 50px;
-						height: 50px;
+
 						text-align: center;
 						display: inline-block;
 
@@ -1885,18 +1857,10 @@ div#pollmoderation {
 }
 
 .keyinfo h5 .modified {
-	color: #333;
+	color: $link-color;
 	font-weight: normal;
 	font-style: italic;
 	padding: 2px 4px 0 4px;
-}
-
-.mvisible::before {
-	content: '« ';
-}
-
-.mvisible::after {
-	content: ' »';
 }
 
 #reason::before {
@@ -2706,39 +2670,6 @@ div#char_theme_wrapper, #char_theme_wrapper {
 	margin-top: 10px;
 }
 
-#detailedinfo .character_list {
-	margin-top: 12px;
-	margin-bottom: 12px;
-	padding-top: 12px;
-	border-top: 1px solid $post-divider-fg;
-}
-
-#detailedinfo .char_avatar {
-	display: table-cell;
-	width: 50px;
-	height: 50px;
-	text-align: center;
-}
-
-#detailedinfo dt .smalltext {
-	font-weight: normal;
-}
-
-#detailedinfo .char_avatar img {
-	max-width: 50px;
-	max-height: 50px;
-}
-
-#detailedinfo .char_name {
-	width: 300px;
-}
-
-#detailedinfo .char_name, #detailedinfo .char_group {
-	display: table-cell;
-	padding-left: 20px;
-	vertical-align: middle;
-}
-
 #detailedinfo dl.char_sheet_text {
 	border-bottom: none !important;
 	margin-bottom: 0;
@@ -2746,10 +2677,6 @@ div#char_theme_wrapper, #char_theme_wrapper {
 
 #detailedinfo .create_char_editor {
 	width: 75%;
-}
-
-#detailedinfo .char_created {
-	font-size: 80%;
 }
 
 #detailedinfo ul.characters li {
@@ -3371,10 +3298,6 @@ div#manage_boards dl dd textarea[name=desc] {
     		}
 		}
 	}
-}
-
-.boardindex_table.sub_boards .cat_bar {
-	background: $secondary-accent-light;
 }
 
 #admin_content .up_contain {

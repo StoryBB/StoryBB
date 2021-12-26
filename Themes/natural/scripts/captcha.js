@@ -1,11 +1,7 @@
 // This file contains javascript associated with the captcha visual verification stuffs.
 
-function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
+function sbbCaptcha(imageURL, uniqueID)
 {
-	// By default the letter count is five.
-	if (!letterCount)
-		letterCount = 5;
-
 	uniqueID = uniqueID ? '_' + uniqueID : '';
 	autoCreate();
 
@@ -39,15 +35,9 @@ function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 		for(var i = 0; i < 32; i++)
 			new_url = new_url + hexstr.substr(Math.floor(Math.random() * 16), 1);
 
-		if (useLibrary && document.getElementById("verification_image" + uniqueID))
+		if (document.getElementById("verification_image" + uniqueID))
 		{
 			document.getElementById("verification_image" + uniqueID).src = new_url;
-		}
-		else if (document.getElementById("verification_image" + uniqueID))
-		{
-			for (i = 1; i <= letterCount; i++)
-				if (document.getElementById("verification_image" + uniqueID + "_" + i))
-					document.getElementById("verification_image" + uniqueID + "_" + i).src = new_url + ";letter=" + i;
 		}
 
 		return false;

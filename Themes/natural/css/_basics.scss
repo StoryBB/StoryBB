@@ -55,8 +55,8 @@ h1, h2, h3, h4, h5, h6 {
 hr {
 	border: none;
 	margin: 12px 0;
-	height: 2px;
-	background: #fff;
+	height: 1px;
+	background: $post-divider-fg;
 }
 
 ul.normallist {
