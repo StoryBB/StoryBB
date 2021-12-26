@@ -1940,21 +1940,6 @@ function setupMenuContext()
 				'label' => $page['page_title'],
 			];
 		}
-
-		$context['sidebar'] += [
-			'login' => [
-				'url' => $urlgenerator->generate('login'),
-				'icon' => 'fas fa-sign-in-alt fa-fw',
-				'label' => $txt['login'],
-				'popup' => $txt['login'],
-			],
-			'register' => [
-				'url' => $scripturl . '?action=signup',
-				'icon' => 'fas fa-user-plus fa-fw',
-				'label' => $txt['register'],
-				'visible' => $context['can_register'],
-			],
-		];
 	}
 
 	(new Mutatable\SidebarMenu($context['sidebar']))->execute();
