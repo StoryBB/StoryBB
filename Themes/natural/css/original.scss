@@ -1857,18 +1857,10 @@ div#pollmoderation {
 }
 
 .keyinfo h5 .modified {
-	color: #333;
+	color: $link-color;
 	font-weight: normal;
 	font-style: italic;
 	padding: 2px 4px 0 4px;
-}
-
-.mvisible::before {
-	content: '« ';
-}
-
-.mvisible::after {
-	content: ' »';
 }
 
 #reason::before {
