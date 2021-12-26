@@ -1682,7 +1682,8 @@ div#pollmoderation {
 
 /* The visible stuff below the avatar. */
 .user_info > li {
-	margin: 3px 0 0 0;
+	margin: 3px auto 0 auto;
+	width: #{$avatar_max_width}px;
 }
 
 .user_info > li.avatar {
@@ -1751,10 +1752,11 @@ div#pollmoderation {
 				li.avatar {
 					margin: 0 0 10px 0;
 					display: inline-block;
+					width: 50px;
+					height: 50px;
 
 					a {
-						width: 50px;
-						height: 50px;
+
 						text-align: center;
 						display: inline-block;
 
