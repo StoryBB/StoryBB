@@ -34,9 +34,12 @@ footer .copyright {
 #cookie_footer {
 	position: fixed;
 	bottom: 0;
-	background: #e2e9f3;
+	background: $primary-accent;
+	color: $primary-accent-contrast;
 	width: 100%;
 	text-align: center;
+	z-index: 10;
+	border-top: 3px solid lighten($primary-accent, 20%);
 }
 
 #cookie_footer .cookie_content {
