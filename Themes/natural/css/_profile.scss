@@ -78,3 +78,15 @@
 		}
 	}
 }
+
+@media screen and (max-width: 767px) {
+	.profile {
+		&.profile-summary {
+			.user-summary {
+				flex-basis: calc(#{$avatar_max_width}px + 100px);
+				margin-left: auto;
+				margin-right: auto;
+			}
+		}
+	}
+}
