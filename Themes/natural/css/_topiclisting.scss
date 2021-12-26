@@ -419,7 +419,16 @@
 			grid-row-end: 2;
 			text-align: right;
 			width: inherit;
-			margin-right: 20px;
+		}
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.topic-ic {
+		.topic-subject {
+			span span a {
+				display: inline-block;
+			}
 		}
 	}
 }
