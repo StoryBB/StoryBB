@@ -448,12 +448,105 @@ class Character
 	{
 		global $smcFunc, $sourcedir;
 
+		$result = $smcFunc['db']->query('', '
+			SELECT id_character, character_name
+			FROM {db_prefix}characters
+			WHERE id_character = {int:character_id}',
+			[
+				'character_id' => $character_id,
+			]
+		);
+		$row = $smcFunc['db']->fetch_row($result);
+		if (empty($row))
+		{
+			return;
+		}
+		[$character_name] = $row;
+		$smcFunc['db']->free_result($result);
+
+		// Fix their messages.
+		$smcFunc['db']->query('', '
+			UPDATE {db_prefix}messages
+			SET id_character = 0,
+				id_member = 0,
+				id_creator = 0,
+				poster_name = {string:character_name},
+				poster_email = {empty}
+			WHERE id_character = {int:id_character}',
+			[
+				'id_character' => $character_id,
+				'character_name' => $character_name,
+			]
+		);
+
+		// And their avatar.
 		require_once($sourcedir . '/ManageAttachments.php');
 		removeAttachments(['id_character' => $character_id, 'attachment_type' => Attachment::ATTACHMENT_AVATAR]);
 
 		// And their custom fields.
 		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}custom_field_values
+			WHERE id_character = {int:char}',
+			[
+				'char' => $character_id,
+			]
+		);
+
+		// And any topic invites they got.
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}topic_invites
+			WHERE id_character = {int:char}',
+			[
+				'char' => $character_id,
+			]
+		);
+
+		// See if they're in any ships.
+		$result = $smcFunc['db']->query('', '
+			SELECT id_ship
+			FROM {db_prefix}shipper
+			WHERE first_character = {int:first_char}
+				OR second_character = {int:second_char}',
+			[
+				'first_char' => $character_id,
+				'second_char' => $character_id,
+			]
+		);
+		$ships = [];
+		while ($row = $smcFunc['db']->fetch_assoc($result))
+		{
+			$ships[$row['id_ship']] = $row['id_ship'];
+		}
+		$smcFunc['db']->free_result($result);
+
+		if (!empty($ships))
+		{
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}shipper_timeline
+				WHERE id_ship IN ({array_int:ships})',
+				[
+					'ships' => $ships,
+				]
+			);
+			$smcFunc['db']->query('', '
+				DELETE FROM {db_prefix}shipper
+				WHERE id_ship IN ({array_int:ships})',
+				[
+					'ships' => $ships,
+				]
+			);
+		}
+
+		// And clean up character sheets.
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}character_sheet_versions
+			WHERE id_character = {int:char}',
+			[
+				'char' => $character_id,
+			]
+		);
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}character_sheet_comments
 			WHERE id_character = {int:char}',
 			[
 				'char' => $character_id,
