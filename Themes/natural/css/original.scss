@@ -1175,12 +1175,12 @@ body#help_popup {
 	    vertical-align: middle;
 	}
 	&.previous_page {
-		border-right-color: $primary-accent;
+		border-right-color: $poster-fg;
 		margin-left: -5px;
 		margin-right: 5px;
 	}
 	&.next_page {
-		border-left-color: $primary-accent;
+		border-left-color: $poster-fg;
 		margin-left: 5px;
 		margin-right: -5px;
 	}
