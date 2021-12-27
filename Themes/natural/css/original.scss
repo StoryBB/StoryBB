@@ -1023,9 +1023,10 @@ tr.windowbg td, .table_grid tr td {
 }
 
 .errorbox {
-	background-color: #fee;
-	border-top: 2px solid #c34;
-	border-bottom: 2px solid #c34;
+	background-color: $error-alert-bg;
+	border-top: 2px solid $error-alert-border;
+	border-bottom: 2px solid $error-alert-border;
+	color: $error-alert-fg;
 }
 
 .errorbox h3 {
@@ -1060,17 +1061,17 @@ tr.windowbg td, .table_grid tr td {
 }
 
 .noticebox {
-	color: #666;
-	background: #fff6ca;
-	border-top: 1px solid #ffd324;
-	border-bottom: 1px solid #ffd324;
+	color: $warning-alert-fg;
+	background: $warning-alert-bg;
+	border-top: 1px solid $warning-alert-border;
+	border-bottom: 1px solid $warning-alert-border;
 }
 
 .infobox {
-	color: #222;
-	background: #cfc;
-	border-top: 1px solid green;
-	border-bottom: 1px solid green;
+	color: $info-alert-fg;
+	background: $info-alert-bg;
+	border-top: 1px solid $info-alert-border;
+	border-bottom: 1px solid $info-alert-border;
 }
 
 .descbox {

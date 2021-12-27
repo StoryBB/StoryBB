@@ -102,3 +102,15 @@ $profile-alerts-content-bg: $button-bg !default;
 
 $popup-pm-meta-bg: $content-subject-accent !default;
 $popup-pm-content-bg: $button-bg !default;
+
+$error-alert-bg: #fee !default;
+$error-alert-fg: #444 !default;
+$error-alert-border: #c34 !default;
+
+$warning-alert-bg: #fff6ca !default;
+$warning-alert-fg: #666 !default;
+$warning-alert-border: #ffd324 !default;
+
+$info-alert-bg: #cfc !default;
+$info-alert-fg: #222 !default;
+$info-alert-border: green !default;
