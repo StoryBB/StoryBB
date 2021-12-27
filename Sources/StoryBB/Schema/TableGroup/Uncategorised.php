@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tables relating to direct messages in the StoryBB schema.
+ * Uncategorised tables in the StoryBB schema.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -17,6 +17,9 @@ use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
 use StoryBB\Schema\Constraint;
 
+/**
+ * Uncategories tables in the StoryBB schema.
+ */
 class Uncategorised
 {
 	/**

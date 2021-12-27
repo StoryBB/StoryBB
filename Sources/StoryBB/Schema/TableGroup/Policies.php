@@ -17,6 +17,9 @@ use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
 use StoryBB\Schema\Constraint;
 
+/**
+ * Tables relating to policies in the StoryBB schema.
+ */
 class Policies
 {
 	/**
