@@ -1106,7 +1106,7 @@ function EditMembergroup()
 	}
 
 	// Get a list of all the image formats we can select.
-	$imageExts = ['png', 'jpg', 'jpeg', 'bmp', 'gif'];
+	$imageExts = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
 
 	// Scan the directory.
 	$context['possible_icons'] = [];
