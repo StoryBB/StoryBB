@@ -8,7 +8,7 @@
   </transformer>
   <files>
     <directory>.</directory>
-    <ignore>./docs/code/cache/*</ignore>
-    <ignore>./docs/code/vendor/*</ignore>
+    <ignore>cache</ignore>
+    <ignore>vendor</ignore>
   </files>
 </phpdoc>
