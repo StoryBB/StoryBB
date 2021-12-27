@@ -1,0 +1,45 @@
+name: Build docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docs_build:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['7.4']
+
+    steps:
+      - name: Install GraphViz
+        run: |
+          sudo apt install graphviz
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          path: 'docs/code'
+      - name: Build docs
+        run: |
+          curl -OL https://github.com/phpDocumentor/phpDocumentor/releases/download/v3.1.2/phpDocumentor.phar
+          php phpDocumentor.phar -d docs/code
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_REGION: ${{ secrets.DOCS_BUILD_AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.DOCS_BUILD_AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_BUILD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_BUILD_AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: './docs/docs'
+      - name: Clear CloudFront cache
+        uses: awact/cloudfront-action@master
+        env:
+          AWS_REGION: ${{ secrets.DOCS_BUILD_AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_BUILD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_BUILD_AWS_SECRET_ACCESS_KEY }}
+          DISTRIBUTION_ID: ${{ secrets.DOCS_BUILD_CF_DISTRIBUTION }}
