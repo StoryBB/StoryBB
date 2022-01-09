@@ -220,6 +220,14 @@ abstract class AbstractParser
 				'disabled_after' => ' ($1)',
 			],
 			[
+				'tag' => 'align',
+				'type' => 'parsed_equals',
+				'test' => '(left|center|right)\]',
+				'before' => '<div style="text-align: $1">',
+				'after' => '</div>',
+				'block_level' => true,
+			],
+			[
 				'tag' => 'anchor',
 				'type' => 'unparsed_equals',
 				'test' => '[#]?([A-Za-z][A-Za-z0-9_\-]*)\]',
