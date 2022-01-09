@@ -322,10 +322,6 @@ abstract class AbstractParser
 					{
 						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
-
-						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
-						if ($context['browser']['is_opera'])
-							$data .= '&nbsp;';
 					}
 				},
 				'block_level' => true,
