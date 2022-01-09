@@ -44,9 +44,9 @@ blockquote cite::before {
 	display: block;
 	font-family: "DejaVu Sans Mono", Monaco, Consolas, monospace;
 	font-size: 0.75em;
-	background: #f3f3f3;
-	border: 2px solid #ababab;
-	border-radius: 2px;
+	background: $quote-bg;
+	color: $default-color;
+	border: 2px solid $quote-border;
 	margin: 1px 0 6px 0;
 	padding: 3px 12px;
 	overflow: auto;
