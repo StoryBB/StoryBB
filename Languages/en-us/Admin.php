@@ -509,7 +509,6 @@ $txt['generate_reports'] = 'Reports';
 $txt['generate_reports_index'] = 'Reports List';
 $txt['gr_type_board_perms'] = 'Board Permissions';
 $txt['gr_type_member_groups'] = 'Membergroups';
-$txt['gr_type_group_perms'] = 'Group Permissions';
 $txt['gr_type_staff'] = 'Staff';
 
 $txt['update_available'] = 'Update Available';
