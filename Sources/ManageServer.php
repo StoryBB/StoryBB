@@ -152,7 +152,6 @@ function ModifyGeneralSettings($return_config = false)
 		['mmessage', $txt['maintenance_message'], 'file', 'text', 36],
 		'',
 		['debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'],
-		['disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'],
 		'',
 		['force_ssl', $txt['force_ssl'], 'db', 'select', [$txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']], 'force_ssl', 'disabled' => $disable_force_ssl],
 		['image_proxy_enabled', $txt['image_proxy_enabled'], 'file', 'check', null, 'image_proxy_enabled'],

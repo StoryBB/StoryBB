@@ -193,16 +193,6 @@ function is_not_banned($forceCheck = false)
 				continue;
 			$ban_query[] = ' {inet:' . $ip_number . '} BETWEEN bi.ip_low and bi.ip_high';
 			$ban_query_vars[$ip_number] = $user_info[$ip_number];
-			// IP was valid, maybe there's also a hostname...
-			if (empty($modSettings['disableHostnameLookup']) && $user_info[$ip_number] != 'unknown')
-			{
-				$hostname = IP::get_host($user_info[$ip_number]);
-				if (strlen($hostname) > 0)
-				{
-					$ban_query[] = '({string:hostname' . $ip_number . '} LIKE bi.hostname)';
-					$ban_query_vars['hostname' . $ip_number] = $hostname;
-				}
-			}
 		}
 
 		// Is their email address banned?
@@ -544,7 +534,7 @@ function isBannedEmail($email, $restriction, $error)
 	if (empty($email) || trim($email) == '')
 		return;
 
-	// Let's start with the bans based on your IP/hostname/memberID...
+	// Let's start with the bans based on your IP/memberID...
 	$ban_ids = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['ids'] : [];
 	$ban_reason = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['reason'] : '';
 

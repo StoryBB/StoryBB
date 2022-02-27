@@ -181,11 +181,10 @@ $txt['ban_email'] = 'Email banning: (e.g. badguy@somewhere.com) - one entry per 
 $txt['ban_username'] = 'User name banning: (e.g. l33tuser) - one entry per line';
 
 $txt['ban_errors_detected'] = 'The following error or errors occurred while saving or editing the ban';
-$txt['ban_description'] = 'Here you can ban troublesome people either by IP, hostname, username, or email.';
+$txt['ban_description'] = 'Here you can ban troublesome people either by IP, username, or email.';
 $txt['ban_add_new'] = 'Add new ban';
 $txt['ban_banned_entity'] = 'Banned entity';
 $txt['ban_on_ip'] = 'Ban on IP (e.g. 192.168.10-20.*)';
-$txt['ban_on_hostname'] = 'Ban on Hostname (e.g. *.mil)';
 $txt['ban_on_email'] = 'Ban on Email Address (e.g. *@badsite.com)';
 $txt['ban_on_username'] = 'Ban on Username';
 $txt['ban_notes'] = 'Notes';
@@ -214,7 +213,7 @@ $txt['ban_modify'] = 'Modify';
 $txt['ban_name'] = 'Ban name';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_edit'] = 'Edit ban';
-$txt['ban_add_notes'] = '<strong>Note</strong>: after creating the above ban, you can add additional entries that trigger the ban, like IP addresses, hostnames and email addresses.';
+$txt['ban_add_notes'] = '<strong>Note</strong>: after creating the above ban, you can add additional entries that trigger the ban, like IP addresses and email addresses.';
 $txt['ban_expired'] = 'Expired / disabled';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_restriction_empty'] = 'No restriction selected.';
@@ -231,7 +230,7 @@ $txt['ban_no_entries'] = 'There are currently no bans in effect.';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_remove_selected_triggers_confirm'] = 'Are you sure you want to remove the selected ban triggers?';
 $txt['ban_trigger_browse'] = 'Browse Ban Triggers';
-$txt['ban_trigger_browse_description'] = 'This screen shows all banned entities grouped by IP address, hostname, email address and username.';
+$txt['ban_trigger_browse_description'] = 'This screen shows all banned entities grouped by IP address, email address and username.';
 
 $txt['ban_log'] = 'Ban Log';
 $txt['ban_log_description'] = 'The ban log shows all attempts to enter the forum by banned users (\'full ban\' and \'cannot register\' ban only).';

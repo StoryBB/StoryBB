@@ -925,18 +925,6 @@ function MembersAwaitingActivation()
 					'reverse' => 'member_ip DESC',
 				],
 			],
-			'hostname' => [
-				'header' => [
-					'value' => $txt['hostname'],
-				],
-				'data' => [
-					'function' => function($rowData)
-					{
-						return IP::get_host(IP::format($rowData['member_ip']));
-					},
-					'class' => 'smalltext',
-				],
-			],
 			'date_registered' => [
 				'header' => [
 					'value' => $context['current_filter'] == 4 ? $txt['viewmembers_online'] : $txt['date_registered'],
@@ -1020,10 +1008,6 @@ function MembersAwaitingActivation()
 		unset($listOptions['columns']['email']);
 	else
 		unset($listOptions['columns']['duplicates']);
-
-	// Only show hostname on duplicates as it takes a lot of time.
-	if (!$context['show_duplicates'] || !empty($modSettings['disableHostnameLookup']))
-		unset($listOptions['columns']['hostname']);
 
 	// Is there any need to show filters?
 	if (isset($context['available_filters']) && count($context['available_filters']) > 1)

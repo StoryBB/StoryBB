@@ -62,7 +62,6 @@ $txt['modlog_ac_ban_remove'] = 'Removed ban triggers:';
 $txt['modlog_ac_ban_trigger_member'] = ' <em>Member:</em> {member}';
 $txt['modlog_ac_ban_trigger_email'] = ' <em>Email:</em> {email}';
 $txt['modlog_ac_ban_trigger_ip_range'] = ' <em>IP:</em> {ip_range}';
-$txt['modlog_ac_ban_trigger_hostname'] = ' <em>Hostname:</em> {hostname}';
 
 $txt['modlog_admin_log'] = 'Administration Log';
 $txt['modlog_admin_log_desc'] = 'Below is a list of administration actions which have been logged on your forum.';
