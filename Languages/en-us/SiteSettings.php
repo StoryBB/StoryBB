@@ -13,4 +13,5 @@
  */
 
 $txt['allow_guestAccess'] = 'Allow users to visit the site without immediately logging in';
+$txt['enable_shipper'] = 'Enable the automatic shippers list';
 $txt['forum_name'] = 'Name of the site';
