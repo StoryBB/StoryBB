@@ -106,7 +106,6 @@ function ModifyBasicSettings($return_config = false)
 			['check', 'enable_mentions'],
 			['check', 'enable_buddylist'],
 			['check', 'allow_hideOnline'],
-			['check', 'topic_move_any'],
 			['int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999],
 			// Pagination stuff.
 			['int', 'defaultMaxMembers'],
