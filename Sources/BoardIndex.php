@@ -35,7 +35,7 @@ function BoardIndex()
 		'base_level' => 0,
 		'parent_id' => 0,
 		'set_latest_post' => true,
-		'countChildPosts' => !empty($modSettings['countChildPosts']),
+		'countChildPosts' => true,
 	];
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
