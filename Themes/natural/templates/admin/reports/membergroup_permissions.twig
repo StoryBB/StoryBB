@@ -39,22 +39,6 @@
 						{% endfor %}
 					</tr>
 				{% endfor %}
-				<tr>
-					<td class="board-title" colspan="{{ data.total_group_count }}">{{ phrase('Reports:board_access') }}</td>
-				</tr>
-				{% for board_id, board_name in data.boards %}
-					<tr>
-						<td>{{ board_name }}</td>
-						{% for group_id, group in data.groups %}
-							{% if data.boards_matrix[board_id][group_id] > 0 %}
-								<td>{{ phrase('Reports:board_perms_allow') }}</td>
-							{% elseif data.boards_matrix[board_id][group_id] < 0 %}
-								<td>{{ phrase('Reports:board_perms_deny') }}</td>
-							{% else %}
-								<td>-</td>
-							{% endif %}
-						{% endfor %}
-				{% endfor %}
 			</tbody>
 		</table>
 	{% endautoescape %}

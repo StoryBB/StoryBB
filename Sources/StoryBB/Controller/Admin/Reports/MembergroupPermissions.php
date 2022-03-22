@@ -102,55 +102,9 @@ class MembergroupPermissions extends AbstractAdminController implements Administ
 			}
 		}
 
-		// Now sort out boards.
-		$data['boards'] = [];
-		$data['boards_matrix'] = [];
-		$result = $db->query('', '
-			SELECT id_board, name, member_groups, deny_member_groups
-			FROM {db_prefix}boards
-			ORDER BY board_order');
-		while ($row = $db->fetch_assoc($result))
-		{
-			$data['boards'][$row['id_board']] = $row['name'];
-
-			$member_groups = $this->get_group_ids($row['member_groups']);
-			$deny_member_groups = $this->get_group_ids($row['deny_member_groups']);
-			foreach ($group_ids as $group_id)
-			{
-				$data['boards_matrix'][$row['id_board']][$group_id] = 0;
-				if (in_array($group_id, $deny_member_groups)) {
-					$data['boards_matrix'][$row['id_board']][$group_id] = -1;
-				} elseif (in_array($group_id, $member_groups)) {
-					$data['boards_matrix'][$row['id_board']][$group_id] = 1;
-				}
-			}
-		}
-		$db->free_result($result);
-
-		$data['total_group_count'] = count($data['group_counts']['account']) + count($data['group_counts']['character']);
 		$rendercontext['data'] = $data;
 
 		return $this->render('admin/reports/membergroup_permissions.twig', 'reports/membergroup_permissions', $rendercontext);
-	}
-
-	public function get_group_ids(string $group_string): array
-	{
-		$groups = [];
-		foreach (explode(',', $group_string) as $group)
-		{
-			if ($group === '0')
-			{
-				$groups[] = 0;
-				continue;
-			}
-
-			if (!trim($group))
-			{
-				continue;
-			}
-			$groups[] = (int) $group;
-		}
-		return $groups;
 	}
 
 	public function get_permission_name(string $permission)

@@ -71,6 +71,7 @@ $txt['board_perms_group_read_only'] = 'This board does not allow posting';
 
 // Membergroup info!
 $txt['member_group_color'] = 'Color';
+$txt['member_group_item_none_set'] = 'None set';
 $txt['member_group_max_messages'] = 'Max Personal Messages';
 $txt['member_group_icons'] = 'Icons';
 $txt['member_group_settings'] = 'Settings';
@@ -78,7 +79,13 @@ $txt['member_group_access'] = 'Board Access';
 $txt['member_group_level'] = 'Group level';
 $txt['member_group_level_account'] = 'Account';
 $txt['member_group_level_char'] = 'Character';
-$txt['member_group_postcount'] = 'Post-count';
+
+$txt['member_group_type'] = 'Type';
+$txt['member_group_type_automatic'] = 'Automatic';
+$txt['member_group_type_private'] = 'Private';
+$txt['member_group_type_protected'] = 'Protected';
+$txt['member_group_type_requestable'] = 'Requestable';
+$txt['member_group_type_joinable'] = 'Joinable';
 
 // Board info.
 $txt['none'] = 'None';
