@@ -495,6 +495,9 @@ INSERT INTO {$db_prefix}settings
   (variable, value)
 VALUES ('sbbVersion', '{$sbb_version}'),
   ('forum_name', '{$default_forum_name}'),
+  ('maintenance_mode', '0'),
+  ('maintenance_mode_subject', '{$default_maintenance_mode_subject}'),
+  ('maintenance_mode_body', '{$default_maintenance_mode_body}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
   ('attachmentSizeLimit', '128'),

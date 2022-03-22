@@ -147,10 +147,6 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = [
-		['maintenance', $txt['admin_maintain'], 'file', 'check'],
-		['mtitle', $txt['maintenance_subject'], 'file', 'text', 36],
-		['mmessage', $txt['maintenance_message'], 'file', 'text', 36],
-		'',
 		['debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'],
 		'',
 		['force_ssl', $txt['force_ssl'], 'db', 'select', [$txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']], 'force_ssl', 'disabled' => $disable_force_ssl],
@@ -832,7 +828,6 @@ function saveSettings(&$config_vars)
 
 	// All the strings to write.
 	$config_strs = [
-		'mtitle', 'mmessage',
 		'language', 'boardurl',
 		'cookiename',
 		'db_name', 'db_user', 'db_server', 'db_prefix',
@@ -848,7 +843,7 @@ function saveSettings(&$config_vars)
 	];
 
 	// All the checkboxes
-	$config_bools = ['db_persist', 'maintenance', 'image_proxy_enabled'];
+	$config_bools = ['db_persist', 'image_proxy_enabled'];
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = [];

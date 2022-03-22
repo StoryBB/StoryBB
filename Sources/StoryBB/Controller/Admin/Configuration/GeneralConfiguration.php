@@ -42,6 +42,11 @@ class GeneralConfiguration extends AbstractSettingsPageController implements Adm
 				'allow_guestAccess' => [Element\Checkbox::class],
 				'enable_shipper' => [Element\Checkbox::class],
 			],
+			'Admin:maintenance_mode' => [
+				'maintenance_mode' => [Element\Checkbox::class],
+				'maintenance_mode_subject' => [Element\Text::class, 'required' => true],
+				'maintenance_mode_body' => [Element\Text::class, 'required' => true],
+			],
 		];
 	}
 }

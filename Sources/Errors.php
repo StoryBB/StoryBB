@@ -361,33 +361,6 @@ function setup_fatal_error_context($error_message, $error_code = null)
 }
 
 /**
- * Show a message for the (full block) maintenance mode.
- * It shows a complete page independent of language files or themes.
- * It is used only if in hard maintenance in Settings.php.
- * It stops further execution of the script.
- */
-function display_maintenance_message()
-{
-	global $mtitle, $mmessage;
-
-	set_fatal_error_headers();
-
-	echo '<!DOCTYPE html>
-<html>
-	<head>
-		<meta name="robots" content="noindex">
-		<title>', $mtitle, '</title>
-	</head>
-	<body>
-		<h3>', $mtitle, '</h3>
-		', $mmessage, '
-	</body>
-</html>';
-
-	die();
-}
-
-/**
  * Show an error message for the connection problems.
  * It shows a complete page independent of language files or themes.
  * It is used only if there's no way to connect to the database.
@@ -445,8 +418,7 @@ function display_loadavg_error()
 
 /**
  * Small utility function for fatal error pages.
- * Used by {@link display_db_error()}, {@link display_loadavg_error()},
- * {@link display_maintenance_message()}
+ * Used by {@link display_db_error()}, {@link display_loadavg_error()}
  */
 function set_fatal_error_headers()
 {

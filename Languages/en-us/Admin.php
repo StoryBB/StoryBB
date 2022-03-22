@@ -15,6 +15,7 @@ $txt['configuration'] = 'Configuration';
 $txt['overview'] = 'Overview';
 $txt['dashboard'] = 'Dashboard';
 $txt['general_configuration'] = 'General Configuration';
+$txt['maintenance_mode'] = 'Maintenance Mode';
 $txt['contact_form'] = 'Contact Form';
 $txt['affiliates'] = 'Affiliates';
 $txt['integrations'] = 'Integrations';
@@ -87,7 +88,6 @@ $txt['admin_template_edit'] = 'Edit your forum template';
 $txt['admin_server_settings'] = 'Server Settings';
 
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
-$txt['admin_maintain'] = 'Enable Maintenance Mode';
 $txt['webmaster_email'] = 'Webmaster email address';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
@@ -271,9 +271,6 @@ $txt['log_settings_desc'] = 'Use these options to configure how logging works on
 $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
-
-$txt['maintenance_subject'] = 'Subject for display';
-$txt['maintenance_message'] = 'Message for display';
 
 $txt['errlog_desc'] = 'The error log tracks every error encountered by your forum. To delete any errors from the database, mark the checkbox, and click the %1$s button at the bottom of the page.';
 $txt['errlog_no_entries'] = 'There are currently no error log entries.';

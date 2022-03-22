@@ -67,9 +67,6 @@ class App
 		require($path . '/Settings.php');
 
 		static::$global_config = [
-			'maintenance' => $maintenance ?? 0,
-			'maintenance_title' => $mtitle ?? '',
-			'maintenance_message' => $mmessage ?? '',
 			'language' => $language ?? 'en-us',
 			'boardurl' => $boardurl ?? 'http://localhost/',
 			'cookiename' => $cookiename ?? 'SBBCookie123',
@@ -155,7 +152,8 @@ class App
 	 */
 	public static function in_maintenance(): bool
 	{
-		return static::$global_config['maintenance'] > 0;
+		$site_settings = static::container()->get('sitesettings');
+		return $site_settings->maintenance_mode;
 	}
 
 	/**
@@ -168,7 +166,45 @@ class App
 	 */
 	public static function in_hard_maintenance(): bool
 	{
-		return static::$global_config['maintenance'] == 2;
+		$cachedir = static::container()->get('cachedir');
+		return file_exists($cachedir . '/maintenance.html');
+	}
+
+	/**
+	 * Displays the hard maintenance message.
+	 */
+	public static function show_hard_maintenance_message()
+	{
+		$cachedir = static::container()->get('cachedir');
+		$message = file_get_contents($cachedir . '/maintenance.html');
+
+		// Don't cache this page!
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Cache-Control: no-cache');
+
+		// Send the right error codes.
+		header('HTTP/1.1 503 Service Temporarily Unavailable');
+		header('Status: 503 Service Temporarily Unavailable');
+		header('Retry-After: 3600');
+		if ($message)
+		{
+			die($message);
+		}
+		else
+		{
+			die('<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="robots" content="noindex">
+		<title>Maintenance Mode</title>
+	</head>
+	<body>
+		<h3>Maintenance Mode</h3>
+		This site is currently in maintenance mode.
+	</body>
+</html>');
+		}
 	}
 
 	/**

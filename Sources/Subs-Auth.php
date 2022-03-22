@@ -49,7 +49,7 @@ function KickGuest()
  */
 function InMaintenance()
 {
-	global $txt, $mtitle, $mmessage, $context;
+	global $txt, $context;
 
 	loadLanguage('Login');
 	createToken('login');
@@ -62,11 +62,12 @@ function InMaintenance()
 	$form = $container->instantiate('StoryBB\\Form\\General\\Login', $urlgenerator->generate('login_login'));
 
 	$context['form'] = $form->render();
+	$site_settings = $container->get('sitesettings');
 
 	// Basic template stuff..
 	$context['sub_template'] = 'login_maintenance';
-	$context['title'] = StringLibrary::escape($mtitle);
-	$context['description'] = &$mmessage;
+	$context['title'] = StringLibrary::escape($site_settings->maintenance_mode_subject);
+	$context['description'] = StringLibrary::escape($site_settings->maintenance_mode_body);
 	$context['page_title'] = $txt['maintain_mode'];
 }
 
