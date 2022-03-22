@@ -100,6 +100,8 @@ $txt['board_is_ic'] = 'In character';
 $txt['board_is_ooc'] = 'Out of character';
 
 // Group Permissions.
+$txt['general_permissions'] = 'Permissions';
+$txt['board_access'] = 'Board access';
 $txt['group_perms_name_access_mod_center'] = 'Access Moderation Center';
 $txt['group_perms_name_admin_forum'] = 'Admin forum';
 $txt['group_perms_name_issue_warning'] = 'Issue warnings';
