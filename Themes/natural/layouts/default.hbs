@@ -2,9 +2,6 @@
 <html{{#if context.right_to_left}} dir="rtl"{{/if}} lang="{{context.locale}}">
 <head>
 	<meta charset="UTF-8">
-	{{#if modSettings.analytics_google_id}}
-		{{> analytics_google ga_measurement_id=modSettings.analytics_google_id}}
-	{{/if}}
 	
 	{{{css}}}
 	{{{javascript deferred=0}}}
