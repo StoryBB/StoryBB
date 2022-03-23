@@ -47,7 +47,6 @@ function ReportsMain()
 	// These are the types of reports which exist - and the functions to generate them.
 	$context['report_types'] = [
 		'board_perms' => 'BoardPermissionsReport',
-		'member_groups' => 'MemberGroupsReport',
 		'staff' => 'StaffReport',
 	];
 
@@ -290,127 +289,6 @@ function BoardPermissionsReport()
 			// Now add the data for this permission.
 			addData($curData);
 		}
-	}
-}
-
-/**
- * Show what the membergroups are made of.
- * functions ending with "Report" are responsible for generating data
- * for reporting.
- * they are all called from ReportsMain.
- * never access the context directly, but use the data handling
- * functions to do so.
- */
-function MemberGroupsReport()
-{
-	global $txt, $settings, $smcFunc;
-
-	// Fetch all the board names.
-	$request = $smcFunc['db']->query('', '
-		SELECT id_board, name, member_groups, id_profile, deny_member_groups
-		FROM {db_prefix}boards',
-		[
-		]
-	);
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-	{
-		if (trim($row['member_groups']) == '')
-			$groups = [1];
-		else
-			$groups = array_merge([1], explode(',', $row['member_groups']));
-
-		if (trim($row['deny_member_groups']) == '')
-			$denyGroups = [];
-		else
-			$denyGroups = explode(',', $row['deny_member_groups']);
-
-		$boards[$row['id_board']] = [
-			'id' => $row['id_board'],
-			'name' => $row['name'],
-			'profile' => $row['id_profile'],
-			'groups' => $groups,
-			'deny_groups' => $denyGroups,
-		];
-	}
-	$smcFunc['db']->free_result($request);
-
-	// Standard settings.
-	$mgSettings = [
-		'name' => '',
-		'#sep#1' => $txt['member_group_settings'],
-		'color' => $txt['member_group_color'],
-		'max_messages' => $txt['member_group_max_messages'],
-		'icons' => $txt['member_group_icons'],
-		'group_level' => $txt['member_group_level'],
-		'#sep#2' => $txt['member_group_access'],
-	];
-
-	// Add on the boards!
-	foreach ($boards as $board)
-		$mgSettings['board_' . $board['id']] = $board['name'];
-
-	// Add all the membergroup settings, plus we'll be adding in columns!
-	setKeys('cols', $mgSettings);
-
-	// Only one table this time!
-	newTable($txt['gr_type_member_groups'], '-', 'all', 100, 'center', 200, 'left');
-
-	// Get the shaded column in.
-	addData($mgSettings);
-
-	// Now start cycling the membergroups!
-	$request = $smcFunc['db']->query('', '
-		SELECT mg.id_group, mg.group_name, mg.online_color, mg.max_messages, mg.icons, mg.is_character,
-			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
-		FROM {db_prefix}membergroups AS mg
-			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {string:moderate_board})
-		ORDER BY mg.group_name',
-		[
-			'admin_group' => 1,
-			'default_profile' => 1,
-			'newbie_group' => 4,
-			'moderate_board' => 'moderate_board',
-		]
-	);
-
-	// Cache them so we get regular members too.
-	$rows = [
-		[
-			'id_group' => -1,
-			'group_name' => $txt['membergroups_guests'],
-			'online_color' => '',
-			'max_messages' => null,
-			'icons' => ''
-		],
-		[
-			'id_group' => 0,
-			'group_name' => $txt['membergroups_members'],
-			'online_color' => '',
-			'max_messages' => null,
-			'icons' => ''
-		],
-	];
-	while ($row = $smcFunc['db']->fetch_assoc($request))
-		$rows[] = $row;
-	$smcFunc['db']->free_result($request);
-
-	foreach ($rows as $row)
-	{
-		$row['icons'] = explode('#', $row['icons']);
-
-		$group = [
-			'name' => $row['group_name'],
-			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . ';">' . $row['online_color'] . '</span>',
-			'max_messages' => $row['max_messages'],
-			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
-			'group_level' => !empty($row['is_character']) ? $txt['member_group_level_char'] : $txt['member_group_level_account'],
-		];
-
-		// Board permissions.
-		foreach ($boards as $board)
-			$group['board_' . $board['id']] = in_array($row['id_group'], $board['groups']) ? '<span class="success">' . $txt['board_perms_allow'] . '</span>' : (in_array($row['id_group'], $board['deny_groups']) ? '<span class="alert">' . $txt['board_perms_deny'] . '</span>' : 'x');
-
-		addData($group);
 	}
 }
 
