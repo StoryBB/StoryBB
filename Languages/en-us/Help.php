@@ -55,7 +55,7 @@ $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls 
 		from the topic listing. You can choose to continue to show the regular topic without their polls by selecting
 		&quot;Show Existing Polls as Topics&quot;.<br><br>To choose who can post polls, view polls, and similar, you
 		can allow and disallow those permissions. Remember this if polls are not working.';
-$helptxt['debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
+$helptxt['enable_debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
 
 $helptxt['enableErrorLogging'] = 'This will log any errors, like a failed login, so you can see what went wrong.';
 $helptxt['enableErrorQueryLogging'] = 'This will include the full query sent to the database in the error log. It requires error logging to be turned on.<br><br><strong>Note:  This will affect the ability to filter the error log by the error message.</strong>';

@@ -146,8 +146,6 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = [
-		['debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'],
-		'',
 		['force_ssl', $txt['force_ssl'], 'db', 'select', [$txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']], 'force_ssl', 'disabled' => $disable_force_ssl],
 		['image_proxy_enabled', $txt['image_proxy_enabled'], 'file', 'check', null, 'image_proxy_enabled'],
 		['image_proxy_secret', $txt['image_proxy_secret'], 'file', 'text', 30, 'image_proxy_secret'],

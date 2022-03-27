@@ -27,7 +27,7 @@ class Cache
 	public static function is_enabled(): bool
 	{
 		global $modSettings;
-		return empty($modSettings['debug_templates']);
+		return empty($modSettings['enable_debug_templates']);
 	}
 
 	/**

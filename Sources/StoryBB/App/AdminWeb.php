@@ -272,7 +272,7 @@ class AdminWeb
 
 			$sitesettings = $container->get('sitesettings');
 			$options = [];
-			if (!$sitesettings->debug_templates)
+			if (!$sitesettings->enable_debug_templates)
 			{
 				$options['cache'] = $container->get('cachedir') . '/template/admin';
 			}

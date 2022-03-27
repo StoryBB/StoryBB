@@ -116,6 +116,7 @@ function ModifyBasicSettings($return_config = false)
 			// css and js minification.
 			['check', 'minimize_css'],
 			['check', 'minimize_js'],
+			['check', 'enable_debug_templates'],
 		'',
 			// SEO stuff
 			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],
