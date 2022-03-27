@@ -146,7 +146,6 @@ trait AdminNavigation
 						'label' => new Phrase('Admin:system_settings'),
 						'items' => [
 							'system/security' => ['security_settings'],
-							'system/cache' => ['cache_settings'],
 							'system/phpinfo' => ['php_info'],
 						],
 					],

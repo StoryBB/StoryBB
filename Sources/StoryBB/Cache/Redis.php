@@ -182,20 +182,6 @@ class Redis extends API
 	}
 
 	/**
-	 * Specify custom settings that the cache API supports.
-	 *
-	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
-	 * @return void No return is needed.
-	 */
-	public function cacheSettings(array &$config_vars)
-	{
-		global $txt;
-
-		$config_vars[] = $txt['cache_redis_settings'];
-		$config_vars[] = array('cache_redis', $txt['cache_redis_server'], 'file', 'text', 0, 'cache_redis', 'postinput' => '<br /><div class="smalltext"><em>' . $txt['cache_redis_server_subtext'] . '</em></div>');
-	}
-
-	/**
 	 * Return the version of the Memcached client.
 	 *
 	 * @return string Version number

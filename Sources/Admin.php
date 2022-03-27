@@ -344,7 +344,6 @@ function AdminMain()
 					'subsections' => [
 						'general' => [$txt['general_settings']],
 						'security' => [$txt['security_settings']],
-						'cache' => [$txt['caching_settings']],
 					],
 				],
 				'maintain' => [
@@ -597,7 +596,6 @@ function AdminSearchInternal()
 		['EditSearchSettings', 'area=managesearch;sa=settings'],
 		['ModifyGeneralSettings', 'area=serversettings;sa=general'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
-		['ModifyCacheSettings', 'area=serversettings;sa=cache'],
 		['ModifyRegistrationSettings', 'area=regcenter;sa=settings'],
 		['ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'],
 		['ModifyLogSettings', 'area=logs;sa=settings'],

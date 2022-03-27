@@ -142,31 +142,6 @@ class Sqlite extends API
 	}
 
 	/**
-	 * Specify custom settings that the cache API supports.
-	 *
-	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
-	 * @return void No return is needed.
-	 */
-	public function cacheSettings(array &$config_vars)
-	{
-		global $context, $txt;
-
-		$config_vars[] = $txt['cache_sqlite_settings'];
-		$config_vars[] = array('cachedir_sqlite', $txt['cachedir_sqlite'], 'file', 'text', 36, 'cache_sqlite_cachedir');
-
-		if (!isset($context['settings_post_javascript']))
-		{
-			$context['settings_post_javascript'] = '';
-		}
-
-		$context['settings_post_javascript'] .= '
-			$("#cache_accelerator").change(function (e) {
-				var cache_type = e.currentTarget.value;
-				$("#cachedir_sqlite").prop("disabled", cache_type != "sqlite");
-			});';
-	}
-
-	/**
 	 * Sets the $cachedir or uses the StoryBB default $cachedir..
 	 *
 	 * @param string $dir A valid path

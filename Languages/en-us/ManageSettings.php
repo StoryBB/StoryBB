@@ -83,32 +83,6 @@ $txt['enable_likes'] = 'Enable likes';
 // Mention settings.
 $txt['enable_mentions'] = 'Enable mentions';
 
-$txt['caching_information'] = 'StoryBB supports caching through the following: APCu, Memcache, Redis, SQLite, and Zend Platform/Performance Suite, as well as an internal file-based cache.';
-$txt['detected_no_caching'] = '<strong class="alert">StoryBB has not been able to detect a compatible accelerator on your server. File based caching can be used instead.</strong>';
-$txt['detected_accelerators'] = '<strong class="success">StoryBB has detected the following accelerators: %1$s</strong>';
-
-
-$txt['cache_enable'] = 'Caching Level';
-$txt['cache_off'] = 'No caching';
-$txt['cache_level1'] = 'Level 1 Caching (Recommended)';
-$txt['cache_level2'] = 'Level 2 Caching';
-$txt['cache_level3'] = 'Level 3 Caching (Not Recommended)';
-$txt['cache_accelerator'] = 'Caching Accelerator';
-$txt['sbb_cache'] = 'StoryBB file based caching';
-$txt['sqlite_cache'] = 'SQLite3 database based caching';
-$txt['cachedir_sqlite'] = 'SQLite3 database cache directory';
-$txt['memcache_cache'] = 'Memcache';
-$txt['memcached_cache'] = 'Memcached';
-$txt['zend_cache'] = 'Zend Platform/Performance Suite';
-$txt['cache_sbb_settings'] = 'StoryBB file based caching settings';
-$txt['cache_sqlite_settings'] = 'SQLite3 database caching settings';
-$txt['cache_memcache_settings'] = 'Memcache(d) settings';
-$txt['cache_memcache_servers'] = 'Memcache(d) servers';
-$txt['cache_memcache_servers_subtext'] = 'Example: 127.0.0.1:11211,127.0.0.2';
-$txt['cache_redis_settings'] = 'Redis settings';
-$txt['cache_redis_server'] = 'Redis server';
-$txt['cache_redis_server_subtext'] = 'Example: 127.0.0.1:6379 or 127.0.0.1:6379:password if a password is needed';
-
 $txt['setting_password_strength'] = 'Required strength for user passwords';
 $txt['setting_password_strength_low'] = 'Low - 4 character minimum';
 $txt['setting_password_strength_medium'] = 'Medium - cannot contain username';

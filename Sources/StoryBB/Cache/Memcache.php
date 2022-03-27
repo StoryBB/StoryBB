@@ -150,29 +150,6 @@ class Memcache extends API
 	}
 
 	/**
-	 * Specify custom settings that the cache API supports.
-	 *
-	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
-	 * @return void No return is needed.
-	 */
-	public function cacheSettings(array &$config_vars)
-	{
-		global $context, $txt;
-
-		$config_vars[] = $txt['cache_memcache_settings'];
-		$config_vars[] = array('cache_memcached', $txt['cache_memcache_servers'], 'file', 'text', 0, 'cache_memcached', 'postinput' => '<br /><div class="smalltext"><em>' . $txt['cache_memcache_servers_subtext'] . '</em></div>');
-
-		if (!isset($context['settings_post_javascript']))
-			$context['settings_post_javascript'] = '';
-
-		$context['settings_post_javascript'] .= '
-			$("#cache_accelerator").change(function (e) {
-				var cache_type = e.currentTarget.value;
-				$("#cache_memcached").prop("disabled", cache_type != "memcache");
-			});';
-	}
-
-	/**
 	 * Return the version of the Memcache server.
 	 *
 	 * @return string Version number

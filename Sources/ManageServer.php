@@ -94,7 +94,6 @@ function ModifySettings()
 	$subActions = [
 		'general' => 'ModifyGeneralSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
-		'cache' => 'ModifyCacheSettings',
 	];
 
 	// By default we're editing the core settings
@@ -366,97 +365,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 	$context['settings_title'] = $txt['security_settings'];
 
 	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Simply modifying cache functions
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyCacheSettings($return_config = false)
-{
-	global $context, $scripturl, $txt;
-
-	// Detect all available optimizers
-	$detected = StoryBB\Cache::list_available();
-
-	// set our values to show what, if anything, we found
-	if (empty($detected))
-	{
-		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . $txt['detected_no_caching'];
-		$cache_level = [$txt['cache_off']];
-		$detected['none'] = $txt['cache_off'];
-	}
-	else
-	{
-		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . sprintf($txt['detected_accelerators'], implode(', ', $detected));
-		$cache_level = [$txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3']];
-	}
-
-	// Define the variables we want to edit.
-	$config_vars = [
-		// Only a few settings, but they are important
-		['cache_enable', $txt['cache_enable'], 'file', 'select', $cache_level, 'cache_enable'],
-		['cache_accelerator', $txt['cache_accelerator'], 'file', 'select', $detected],
-	];
-
-	// some javascript to enable / disable certain settings if the option is not selected
-	$context['settings_post_javascript'] = '
-		$(document).ready(function() {
-			$("#cache_accelerator").change();
-		});';
-
-	settings_integration_hook('integrate_modify_cache_settings', [&$config_vars]);
-
-	// Maybe we have some additional settings from the selected accelerator.
-	if (!empty($detected))
-	{
-		foreach ($detected as $tryCache => $dummy)
-		{
-			$cache_class_name = 'StoryBB\\Cache\\' . $tryCache;
-
-			if (is_callable([$cache_class_name, 'cacheSettings']))
-			{
-				$testAPI = new $cache_class_name();
-				call_user_func_array([$testAPI, 'cacheSettings'], [&$config_vars]);
-			}
-		}
-	}
-	if ($return_config)
-		return [$txt['caching_settings'], $config_vars];
-
-	// Saving again?
-	if (isset($_GET['save']))
-	{
-		settings_integration_hook('integrate_save_cache_settings');
-
-		saveSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-
-		// We need to save the $cache_enable to $modSettings as well
-		updatesettings(['cache_enable' => (int) $_POST['cache_enable']]);
-
-		// exit so we reload our new settings on the page
-		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	loadLanguage('ManageMaintenance');
-	createToken('admin-maint');
-
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cache;save';
-	$context['settings_title'] = $txt['caching_settings'];
-
-	// Changing cache settings won't have any effect if Settings.php is not writeable.
-	$context['save_disabled'] = $context['settings_not_writable'];
-
-	// Decide what message to show.
-	if (!$context['save_disabled'])
-		$context['settings_message'] = $txt['cache_settings_message'];
-
-	// Prepare the template.
-	prepareServerSettingsContext($config_vars);
-	StoryBB\Template::add('admin_clean_cache_button');
 }
 
 /**
