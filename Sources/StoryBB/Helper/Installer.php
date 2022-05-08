@@ -113,44 +113,6 @@ class Installer
 		return 1;
 	}
 
-	public function add_admin_blocks(): int
-	{
-		$db = $this->db();
-
-		$visibility = [
-			'action' => ['admin'],
-		];
-
-		$blocks = [
-			[
-				'StoryBB\\Block\\StoryBBNews',
-				json_encode($visibility),
-				json_encode([]),
-				'admin-home',
-				1,
-				1,
-			],
-			[
-				'StoryBB\\Block\\SupportInformation',
-				json_encode($visibility),
-				json_encode([]),
-				'admin-home',
-				2,
-				1,
-			]
-		];
-
-		$db->insert(DatabaseAdapter::INSERT_INSERT,
-			'{db_prefix}block_instances',
-			['class' => 'string', 'visibility' => 'string', 'configuration' => 'string', 'region' => 'string', 'position' => 'int', 'active' => 'int'],
-			$blocks,
-			['id_instance'],
-			DatabaseAdapter::RETURN_NOTHING
-		);
-
-		return 1;
-	}
-
 	public function add_default_user_preferences(): int
 	{
 		$db = $this->db();

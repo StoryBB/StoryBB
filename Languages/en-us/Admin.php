@@ -146,7 +146,6 @@ $txt['attachment_file_size'] = 'File Size';
 $txt['attachmentdir_size_not_set'] = 'No maximum directory size is currently set';
 $txt['attachmentdir_files_not_set'] = 'No directory file limit is currently set';
 $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
-$txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 
@@ -299,9 +298,6 @@ $txt['member_characters_in_these_groups'] = 'Member has characters with these me
 $txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 
-$txt['support_title'] = 'Support Information';
-$txt['support_versions_current'] = 'Current StoryBB version';
-$txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
 $txt['support_versions_db'] = 'Database version';
 $txt['support_versions_server'] = 'Server version';

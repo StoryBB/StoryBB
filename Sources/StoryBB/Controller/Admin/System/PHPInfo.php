@@ -12,7 +12,9 @@
 
 namespace StoryBB\Controller\Admin\System;
 
+use StoryBB\App;
 use StoryBB\Phrase;
+use StoryBB\Cache;
 use StoryBB\Controller\Admin\AbstractAdminController;
 use StoryBB\Routing\Behaviours\Administrative;
 use StoryBB\Routing\Behaviours\MaintenanceAccessible;
@@ -73,8 +75,12 @@ class PHPInfo extends AbstractAdminController implements Administrative, Mainten
 		foreach ($pinfo as $area => $php_area)
 		{
 			$id = str_replace(' ', '_', $area);
+			if (empty($id))
+			{
+				$id = 'PHP';
+			}
 			$rendercontext['phpinfo'][$id] = [
-				'name' => $area,
+				'name' => $area ?: 'PHP',
 				'col2' => [],
 				'col2' => [],
 			];
@@ -83,6 +89,106 @@ class PHPInfo extends AbstractAdminController implements Administrative, Mainten
 				$rendercontext['phpinfo'][$id][is_array($setting) ? 'col3' : 'col2'][$key] = $setting;
 			}
 		}
+
+		$rendercontext['server_versions'] = $this->get_other_versions();
+
 		return $this->render('admin/phpinfo.twig', 'system/phpinfo', $rendercontext);
+	}
+
+	protected function get_other_versions(): array
+	{
+		$db = App::container()->get('database');
+		$versions = [
+			'php' => [
+				'title' => new Phrase('Admin:support_versions_php'),
+				'version' => PHP_VERSION,
+			],
+			'server' => [
+				'title' => new Phrase('Admin:support_versions_server'),
+				'version' => $_SERVER['SERVER_SOFTWARE'],
+			],
+		];
+
+		if ($db->connection_active())
+		{
+			$versions['db_server'] = [
+				'title' => new Phrase('Admin:support_versions_db'),
+				'version' => $db->get_server() . ' ' . $db->get_version(),
+			];
+		}
+
+		// Is GD available?  If it is, we should show version information for it too.
+		if (function_exists('gd_info'))
+		{
+			$temp = gd_info();
+			$versions['gd'] = [
+				'title' => new Phrase('Admin:support_versions_gd'),
+				'version' => $temp['GD Version'],
+			];
+		}
+
+		// Why not have a look at ImageMagick? If it's installed, we should show version information for it too.
+		if (class_exists('Imagick') || function_exists('MagickGetVersionString'))
+		{
+			if (class_exists('Imagick'))
+			{
+				$temp = New Imagick;
+				$temp2 = $temp->getVersion();
+				$im_version = $temp2['versionString'];
+				$extension_version = 'Imagick ' . phpversion('Imagick');
+			}
+			else
+			{
+				$im_version = MagickGetVersionString();
+				$extension_version = 'MagickWand ' . phpversion('MagickWand');
+			}
+
+			// We already know it's ImageMagick and the website isn't needed...
+			$im_version = str_replace(['ImageMagick ', ' https://www.imagemagick.org'], '', $im_version);
+			$versions['imagemagick'] = ['title' => new Phrase('Admin:support_versions_imagemagick'), 'version' => $im_version . ' (' . $extension_version . ')'];
+		}
+
+		// Check to see if we have any accelerators installed...
+		if (isset($_PHPA, $_PHPA['VERSION']))
+		{
+			$versions['phpa'] = [
+				'title' => 'ionCube PHP-Accelerator',
+				'version' => $_PHPA['VERSION'],
+			];
+		}
+
+		$caches = [
+			'apcu' => Cache\Apcu::class,
+			'memcache' => Cache\Memcache::class,
+			'memcached' => Cache\Memcached::class,
+			'redis' => Cache\Redis::class,
+		];
+
+		foreach ($caches as $cache_name => $cache_class)
+		{
+			$cache = new $cache_class;
+			if ($cache->isSupported(true))
+			{
+				$versions[$cache_name] = [
+					'title' => $cache->getName(),
+					'version' => '',
+				];
+				if ($client_version = $cache->getClientVersion())
+				{
+					$versions[$cache_name]['version'] = $client_version . ' (client)';
+				}
+				if ($cache->isSupported() && $server_version = $cache->getServerVersion())
+				{
+					$versions[$cache_name]['version'] .= ' ' . $server_version . ' (server)';
+				}
+
+				if (!trim($versions[$cache_name]['version']))
+				{
+					$versions[$cache_name]['version'] = '???';
+				}
+			}
+		}
+
+		return $versions;
 	}
 }

@@ -4,6 +4,18 @@
 {% block title %}{{ phrase('Admin:php_info') }}{% endblock %}
 
 {% block content %}
+	<h5>{{ phrase('Admin:support_versions') }}</h5>
+	<table class="table_grid">
+		<tbody>
+			{% for component in server_versions %}
+			<tr>
+				<td>{{component.title}}</td>
+				<td>{{component.version}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
 	{% for sectionid, section in phpinfo %}
 		<h5 id="phpinfo-{{ sectionid }}">{{ section.name }}</h5>
 		<table id="{{ sectionid }}" class="table_grid">

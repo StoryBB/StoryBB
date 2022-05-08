@@ -1115,7 +1115,6 @@ function DatabasePopulation()
 
 	// 3. Blocks.
 	$incontext['sql_results']['inserts'] += $installer->add_standard_blocks();
-	$incontext['sql_results']['inserts'] += $installer->add_admin_blocks();
 
 	// 4. User preferences
 	$incontext['sql_results']['inserts'] += $installer->add_default_user_preferences();
