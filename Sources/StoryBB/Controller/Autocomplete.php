@@ -54,6 +54,11 @@ class Autocomplete implements Routable, Unloggable
 			$autocomplete->set_search_term($term);
 		}
 
+		if (empty($autocomplete))
+		{
+			return new JsonResponse(['results' => []]);
+		}
+
 		if ($autocomplete->can_paginate())
 		{
 			$perpage = 10;
