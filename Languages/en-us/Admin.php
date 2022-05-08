@@ -68,7 +68,10 @@ $txt['mail_queue'] = 'Mail Queue';
 $txt['tasks'] = 'Tasks';
 $txt['scheduled_tasks'] = 'Scheduled Tasks';
 $txt['adhoc_tasks'] = 'Adhoc Tasks';
-
+$txt['maintenance'] = 'Maintenance';
+$txt['routine_maintenance'] = 'Routine Maintenance';
+$txt['plugins'] = 'Plugins';
+$txt['plugin_manager'] = 'Plugin Manager';
 
 $txt['settings_saved'] = 'The settings were successfully saved';
 $txt['settings_not_saved'] = 'Your changes were not saved because: %1$s';
