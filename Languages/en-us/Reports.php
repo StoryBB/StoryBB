@@ -149,7 +149,6 @@ $txt['group_perms_name_view_warning_any'] = 'View any warnings';
 $txt['group_perms_name_view_warning_own'] = 'View own warnings';
 $txt['group_perms_name_who_view'] = 'See who\'s online';
 
-$txt['report_error_too_many_staff'] = 'You have too many staff members. The report will not work with more than 300 staff members.';
 $txt['report_staff_position'] = 'Position';
 $txt['report_staff_moderates'] = 'Moderates';
 $txt['report_staff_posts'] = 'Posts';

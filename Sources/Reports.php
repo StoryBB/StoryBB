@@ -106,39 +106,11 @@ function BoardPermissionsReport()
 	// Get as much memory as possible as this can be big.
 	App::setMemoryLimit('256M');
 
-	if (isset($_REQUEST['boards']))
-	{
-		if (!is_array($_REQUEST['boards']))
-			$_REQUEST['boards'] = explode(',', $_REQUEST['boards']);
-		foreach ($_REQUEST['boards'] as $k => $dummy)
-			$_REQUEST['boards'][$k] = (int) $dummy;
-
-		$board_clause = 'id_board IN ({array_int:boards})';
-	}
-	else
-		$board_clause = '1=1';
-
-	if (isset($_REQUEST['groups']))
-	{
-		if (!is_array($_REQUEST['groups']))
-			$_REQUEST['groups'] = explode(',', $_REQUEST['groups']);
-		foreach ($_REQUEST['groups'] as $k => $dummy)
-			$_REQUEST['groups'][$k] = (int) $dummy;
-
-		$group_clause = 'id_group IN ({array_int:groups})';
-	}
-	else
-		$group_clause = '1=1';
-
 	// Fetch all the board names.
 	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name, id_profile
 		FROM {db_prefix}boards
-		WHERE ' . $board_clause . '
-		ORDER BY id_board',
-		[
-			'boards' => isset($_REQUEST['boards']) ? $_REQUEST['boards'] : [],
-		]
+		ORDER BY id_board'
 	);
 	$profiles = [];
 	while ($row = $smcFunc['db']->fetch_assoc($request))
@@ -156,10 +128,7 @@ function BoardPermissionsReport()
 	// Limit it to any boards and/or groups we're looking at
 	$request = $smcFunc['db']->query('', '
 		SELECT id_board, id_group
-		FROM {db_prefix}moderator_groups
-		WHERE ' . $board_clause . ' AND ' . $group_clause,
-		[
-		]
+		FROM {db_prefix}moderator_groups'
 	);
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
@@ -171,20 +140,18 @@ function BoardPermissionsReport()
 	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
-		WHERE ' . $group_clause . '
-			AND id_group != {int:admin_group}
+		WHERE id_group != {int:admin_group}
 		ORDER BY group_name',
 		[
 			'admin_group' => 1,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		]
 	);
-	if (!isset($_REQUEST['groups']) || in_array(-1, $_REQUEST['groups']) || in_array(0, $_REQUEST['groups']))
-		$member_groups = ['col' => '', -1 => $txt['membergroups_guests'], 0 => $txt['membergroups_members']];
-	else
-		$member_groups = ['col' => ''];
+	$member_groups = ['col' => '', -1 => $txt['membergroups_guests'], 0 => $txt['membergroups_members']];
+
 	while ($row = $smcFunc['db']->fetch_assoc($request))
+	{
 		$member_groups[$row['id_group']] = $row['group_name'];
+	}
 	$smcFunc['db']->free_result($request);
 
 	// Make sure that every group is represented - plus in rows!
@@ -202,21 +169,25 @@ function BoardPermissionsReport()
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
-			AND ' . $group_clause . '
 		ORDER BY id_profile, permission',
 		[
 			'profile_list' => $profiles,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		]
 	);
 	while ($row = $smcFunc['db']->fetch_assoc($request))
 	{
 		if (in_array($row['permission'], $disabled_permissions))
+		{
 			continue;
+		}
 
 		foreach ($boards as $id => $board)
+		{
 			if ($board['profile'] == $row['id_profile'])
+			{
 				$board_permissions[$id][$row['id_group']][$row['permission']] = $row['add_deny'];
+			}
+		}
 
 		// Make sure we get every permission.
 		if (!isset($permissions[$row['permission']]))
@@ -252,7 +223,9 @@ function BoardPermissionsReport()
 			{
 				// Don't overwrite the key column!
 				if ($id_group === 'col')
+				{
 					continue;
+				}
 
 				$group_permissions = isset($groups[$id_group]) ? $groups[$id_group] : [];
 
@@ -363,10 +336,6 @@ function StaffReport()
 
 	// Make sure everyone is there once - no admin less important than any other!
 	$allStaff = array_unique($allStaff);
-
-	// This is a bit of a cop out - but we're protecting their forum, really!
-	if (count($allStaff) > 300)
-		fatal_lang_error('report_error_too_many_staff');
 
 	// Get all the possible membergroups!
 	$request = $smcFunc['db']->query('', '
