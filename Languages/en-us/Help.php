@@ -203,15 +203,12 @@ Of course, you don\'t have to have a badge - just untick the box and no badge wi
 <br>
 For best results, images should probably be no larger than 150 pixels wide and 100 pixels high.';
 
-$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself. They are, generally, in the same place as StoryBB under the avatars directory.<br>As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
-$helptxt['avatar_external'] = 'With this enabled, your members can type in a URL to their own avatar. The downside of this is that, in some cases, they may use avatars that are overly large or portray images you don\'t want on your forum.';
 $helptxt['avatar_action_too_large'] = 'This allows you to choose what to do with over-sized avatars that users put in as a URL.<br>
 <ul class="normallist">
 	<li>Don\'t allow it and tell the user - users have to put in a different avatar that is smaller</li>
 	<li>Resize it in the users\'s browser - doesn\'t take up any server space, but might be slow for people on slow connections especially with big images</li>
 	<li>Download it to the server - downloads it, resizes it to fit the maximum allowed size, and uses it; means images won\'t be very big (e.g. if someone tried to use a large photo as their avatar) but means it comes out of the forum\'s storage space</li>
 </ul>';
-$helptxt['avatar_upload'] = 'This setting is much like &quot;Allow members to select an external avatar&quot;, except that you have better control over the avatars, a better time resizing them, and your members do not have to have somewhere to put avatars.<br><br>However, the downside is that it can take a lot of space on your server.';
 $helptxt['avatar_download_png'] = 'PNGs are larger, but offer better quality compression. If this is unchecked, JPEG will be used instead - which is often smaller, but also of lesser or blurry quality.';
 
 $helptxt['whytwoip'] = 'StoryBB uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case StoryBB logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
