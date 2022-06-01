@@ -14,7 +14,7 @@ namespace StoryBB\Block;
 
 use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
-use Exception;
+use Throwable;
 
 /**
  * The recent posts block.
@@ -86,7 +86,7 @@ class DiscordServer extends AbstractBlock implements Block
 					break;
 			}
 		}
-		catch (Exception $e)
+		catch (Throwable $e)
 		{
 			return $this->content;
 		}
