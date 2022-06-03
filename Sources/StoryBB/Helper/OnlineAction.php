@@ -446,7 +446,7 @@ class OnlineAction
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:member_list})
-				LIMIT ' . count($profile_ids),
+				LIMIT ' . count($this->unresolved['profile_ids']),
 				[
 					'member_list' => array_keys($this->unresolved['profile_ids']),
 				]
