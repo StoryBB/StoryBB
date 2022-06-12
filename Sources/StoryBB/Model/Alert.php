@@ -313,7 +313,7 @@ class Alert
 				]
 			);
 			while ($row = $smcFunc['db']->fetch_assoc($request))
-				$boards[$row['id_board']] = '<a href="' . $url->generate('board', ['oard_slug' => $row['slug']]) . '">' . $row['name'] . '</a>';
+				$boards[$row['id_board']] = '<a href="' . $url->generate('board', ['board_slug' => $row['slug']]) . '">' . $row['name'] . '</a>';
 		}
 		if (!empty($topics))
 		{
