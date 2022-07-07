@@ -67,7 +67,7 @@ trait CharacterTrait
 				continue;
 			}
 
-			$row['raw_value'] = $context['character']['cfraw'][$row['id_field']] ?? '';
+			$row['raw_value'] = $context['character']['cfraw'][$row['id_field']] ?? null;
 			$row += $this->get_custom_field_html($row, $row['raw_value']);
 
 			$context['character']['custom_fields'][] = $row;
@@ -80,6 +80,7 @@ trait CharacterTrait
 		global $txt, $settings, $scripturl;
 
 		// HTML for the input form.
+		$exists = $value !== null;
 		$output_html = $value;
 		if ($custom['field_type'] == 'check')
 		{
