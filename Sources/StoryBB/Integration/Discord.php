@@ -164,6 +164,11 @@ class Discord implements Integration
 				'default' => $txt['integration_discord_new_character'],
 				'type' => 'text',
 			],
+			'embed_colour' => [
+				'label' => $txt['integration_discord_embed_colour'],
+				'default' => '',
+				'type' => 'color',
+			],
 		];
 	}
 
@@ -174,7 +179,22 @@ class Discord implements Integration
 		$message = $config['message'] ?? $txt['integration_discord_new_character'];
 		$message = str_replace(['{$character_name}', '{$character_link}', '{$character_sheet_link}'], [$integration->character['username'], $integration->character['url'], $integration->character_sheet], $message);
 
-		return $this->send_webhook($config['webhook_url'], $message, $context['forum_name'], $this->get_icon_url());
+		$embeds = [
+			[
+				'title' => $integration->character['username'],
+				'url' => $integration->character['url'],
+				'description' => $this->preview_post_content($integration->sheet_body, 200),
+				'thumbnail' => [
+					'url' => $integration->character['avatar'],
+				],
+			]
+		];
+		if (!empty($config['embed_colour']))
+		{
+			$embeds[0]['color'] = hexdec(substr($config['embed_colour'], 1));
+		}
+
+		return $this->send_webhook($config['webhook_url'], $message, $context['forum_name'], $this->get_icon_url(), $embeds);
 	}
 
 	protected function check_board_rules(Integratable $integration, array $config): bool
@@ -273,12 +293,12 @@ class Discord implements Integration
 		return $embeds;
 	}
 
-	protected static function preview_post_content(string $content): string
+	protected static function preview_post_content(string $content, int $preview_length = 300): string
 	{
 		$content = strip_tags(preg_replace('/<br ?\/?>/i', "\n", Parser::parse_bbc($content)));
 		$content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
 
-		return shorten_subject($content, 300);
+		return shorten_subject($content, $preview_length);
 	}
 
 	public function get_icon_url(): ?string

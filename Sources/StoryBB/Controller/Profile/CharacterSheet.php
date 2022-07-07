@@ -924,9 +924,20 @@ class CharacterSheet extends AbstractProfileController
 		);
 		updateMemberData($context['id_member'], ['alerts' => '+']);
 
+		$request = $smcFunc['db']->query('', '
+			SELECT sheet_text, created_time
+			FROM {db_prefix}character_sheet_versions
+			WHERE id_version = {int:highest}',
+			[
+				'highest' => $version,
+			]
+		);
+		$sheet = $smcFunc['db']->fetch_assoc($request);
+		$smcFunc['db']->free_result($request);
+
 		if ($first_approval)
 		{
-			(new Integratable\Character\Approved((int) $context['id_member'], (int) $context['character']['id_character']))->execute();
+			(new Integratable\Character\Approved((int) $context['id_member'], (int) $context['character']['id_character'], $sheet['sheet_text']))->execute();
 		}
 
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=character_sheet;char=' . $context['character']['id_character']);
