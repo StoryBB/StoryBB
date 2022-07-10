@@ -263,6 +263,11 @@ smc_PopupMenu.prototype.open = function (sItem)
 	this.opt.menus[sItem].itemObj.closest('div').addClass('open');
 	this.opt.menus[sItem].open = true;
 
+	var pos = this.opt.menus[sItem].menuObj.offset();
+	if (pos && pos.left && pos.left < 0) {
+		this.opt.menus[sItem].menuObj.css({position: 'fixed', left: 0});
+	}
+
 	// Now set up closing the menu if we click off.
 	$(document).on('click.menu', {obj: this}, function(e) {
 		if ($(e.target).closest(e.data.obj.opt.menus[sItem].menuObj.parent()).length)
