@@ -300,6 +300,12 @@ abstract class AbstractParser
 				'after' => '</strong>',
 			],
 			[
+				'tag' => 'brclear',
+				'type' => 'closed',
+				'content' => '<br class="clear">',
+				'block_level' => true,
+			],
+			[
 				'tag' => 'center',
 				'before' => '<div class="centertext">',
 				'after' => '</div>',
