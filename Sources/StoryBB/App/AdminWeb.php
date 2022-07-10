@@ -298,6 +298,9 @@ class AdminWeb
 				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
 				return trim($string, '-');
 			}));
+			$twig->addFunction(new TwigFunction('session', function ($sess) use ($container) {
+				return $container->get('session')->get($sess);
+			}));
 
 			return $twig;
 		});
