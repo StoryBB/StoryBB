@@ -1722,7 +1722,7 @@ div#pollmoderation {
 .postarea {
 	flex: 1 1 auto;
 	padding: 12px;
-	width: calc(100% - 200px)
+	width: calc(100% - 200px - 70px); /* 50px for the avatar + 10px padding either side. */
 }
 
 .postarea div.flow_hidden {
