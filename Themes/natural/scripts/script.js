@@ -1261,15 +1261,29 @@ $(function()
 	});
 
 	// Generic event for sbbSelectText()
-	$('.sbb_select_text').on('click', function(e) {
+	if (navigator.clipboard) {
+		$('.sbb_select_text').css({'visibility': 'visible'}).on('click', function(e) {
+			e.preventDefault();
 
-		e.preventDefault();
+			// Keep original selection if any.
+			var selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
 
-		// Do you want to target yourself?
-		var actOnElement = $(this).attr('data-actonelement');
+			// Do you want to target yourself?
+			var actOnElement = $(this).attr('data-actonelement');
+			typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
 
-		return typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
-	});
+			if (document.getSelection().rangeCount > 0) {
+				navigator.clipboard.writeText(document.getSelection().getRangeAt(0));
+			}
+
+			$(this).parent().find('.sbb_copied_text').css({'display': 'inline'}).delay(5000).fadeOut();
+
+			if (selected) {
+				document.getSelection().removeAllRanges();
+				document.getSelection().addRange(selected);
+			}
+		});
+	}
 
 	// Cookie notice
 	$('#cookie_footer a[data-value]').on('click', function(e) {

@@ -61,6 +61,13 @@ blockquote cite::before {
 	font-size: 0.9em;
 	padding: 0 2px;
 }
+.codeheader .sbb_select_text {
+	visibility: hidden;
+	margin: 0 8px;
+}
+.codeheader .sbb_copied_text {
+	display: none;
+}
 
 /* For links to change the code stuff... */
 .codeoperation {

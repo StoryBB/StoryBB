@@ -314,7 +314,7 @@ abstract class AbstractParser
 			[
 				'tag' => 'code',
 				'type' => 'unparsed_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation sbb_select_text">' . $txt['code_copy'] . '</a><span class="sbb_copied_text">' . $txt['code_copied'] . '</span></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -329,7 +329,7 @@ abstract class AbstractParser
 			[
 				'tag' => 'code',
 				'type' => 'unparsed_equals_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation sbb_select_text">' . $txt['code_copy'] . '</a><span class="sbb_copied_text">' . $txt['code_copied'] . '</span></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => isset($disabled['code']) ? null : function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -337,10 +337,6 @@ abstract class AbstractParser
 					{
 						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);
-
-						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
-						if ($context['browser']['is_opera'])
-							$data[0] .= '&nbsp;';
 					}
 				},
 				'block_level' => true,
