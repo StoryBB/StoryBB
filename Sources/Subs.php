@@ -971,6 +971,8 @@ function redirectexit($setLocation = '', $permanent = false)
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', [&$setLocation, &$permanent]);
 
+	flush_response_headers_bucket();
+
 	// Set the header.
 	header('Location: ' . str_replace(' ', '%20', $setLocation), true, $permanent ? 301 : 302);
 
@@ -1275,25 +1277,8 @@ function setupThemeContext($forceload = false)
 	call_integration_hook('integrate_theme_context');
 }
 
-/**
- * The header template
- */
-function template_header()
+function flush_response_headers_bucket()
 {
-	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
-
-	setupThemeContext();
-
-	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
-	if (empty($context['no_last_modified']))
-	{
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	}
-
-	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
-
-	// Add any more things from the response header.
 	$container = Container::instance();
 	$response_headers = $container->get('response_headers');
 	if (!empty($response_headers))
@@ -1316,6 +1301,28 @@ function template_header()
 			header($header . ':' . $value, true);
 		}
 	}
+}
+
+/**
+ * The header template
+ */
+function template_header()
+{
+	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
+
+	setupThemeContext();
+
+	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
+	if (empty($context['no_last_modified']))
+	{
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+	}
+
+	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
+
+	// Add any more things from the response header.
+	flush_response_headers_bucket();
 
 	$show_warnings = empty($context['layout_loaded']) || $context['layout_loaded'] == 'default';
 	$show_warnings &= allowedTo('admin_forum');

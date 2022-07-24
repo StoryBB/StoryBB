@@ -263,6 +263,11 @@ smc_PopupMenu.prototype.open = function (sItem)
 	this.opt.menus[sItem].itemObj.closest('div').addClass('open');
 	this.opt.menus[sItem].open = true;
 
+	var pos = this.opt.menus[sItem].menuObj.offset();
+	if (pos && pos.left && pos.left < 0) {
+		this.opt.menus[sItem].menuObj.css({position: 'fixed', left: 0});
+	}
+
 	// Now set up closing the menu if we click off.
 	$(document).on('click.menu', {obj: this}, function(e) {
 		if ($(e.target).closest(e.data.obj.opt.menus[sItem].menuObj.parent()).length)
@@ -1261,15 +1266,29 @@ $(function()
 	});
 
 	// Generic event for sbbSelectText()
-	$('.sbb_select_text').on('click', function(e) {
+	if (navigator.clipboard) {
+		$('.sbb_select_text').css({'visibility': 'visible'}).on('click', function(e) {
+			e.preventDefault();
 
-		e.preventDefault();
+			// Keep original selection if any.
+			var selected = document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
 
-		// Do you want to target yourself?
-		var actOnElement = $(this).attr('data-actonelement');
+			// Do you want to target yourself?
+			var actOnElement = $(this).attr('data-actonelement');
+			typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
 
-		return typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
-	});
+			if (document.getSelection().rangeCount > 0) {
+				navigator.clipboard.writeText(document.getSelection().getRangeAt(0));
+			}
+
+			$(this).parent().find('.sbb_copied_text').css({'display': 'inline'}).delay(5000).fadeOut();
+
+			if (selected) {
+				document.getSelection().removeAllRanges();
+				document.getSelection().addRange(selected);
+			}
+		});
+	}
 
 	// Cookie notice
 	$('#cookie_footer a[data-value]').on('click', function(e) {

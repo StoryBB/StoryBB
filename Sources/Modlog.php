@@ -467,7 +467,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		if ($row['action'] == 'ban' || $row['action'] == 'banremove')
 		{
 			$row['action_text'] = $txt['modlog_ac_ban' . ($row['action'] == 'banremove' ? '_remove' : '')];
-			foreach (['member', 'email', 'ip_range', 'hostname'] as $type)
+			foreach (['member', 'email', 'ip_range'] as $type)
 				if (isset($row['extra'][$type]))
 					$row['action_text'] .= $txt['modlog_ac_ban_trigger_' . $type];
 		}

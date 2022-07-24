@@ -16,29 +16,14 @@ use StoryBB\StringLibrary;
 // Start things rolling by getting StoryBB alive...
 define('STORYBB', 'BACKGROUND');
 
-global $time_start, $maintenance, $msubject, $mmessage, $language;
+global $time_start, $language;
 global $boardurl, $boarddir, $sourcedir;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
-// Just being safe...
-foreach (['cachedir'] as $variable)
-	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
-
-// Get the forum's settings for database and file paths.
-require_once(dirname(__FILE__) . '/Settings.php');
-
-// Make absolutely sure the cache directory is defined.
-if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-	$cachedir = $boarddir . '/cache';
-
-// Don't do john didley if the forum's been shut down competely.
-if ($maintenance == 2)
-	die($mmessage);
-
-require_once($boarddir . '/vendor/autoload.php');
+require_once(__DIR__ . '/vendor/autoload.php');
+App::start(__DIR__, new \StoryBB\App\Web);
 
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
@@ -47,10 +32,13 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/ManagePaid.php');
 require_once($sourcedir . '/Subs-Admin.php');
 
-$smcFunc = [];
+// If we're in hard maintenance, we're upgrading or something.
+if (App::in_hard_maintenance())
+{
+	App::show_hard_maintenance_message();
+}
 
 unset ($db_show_debug);
-loadDatabase();
 reloadSettings();
 
 loadLanguage('ManagePaid');

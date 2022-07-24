@@ -270,23 +270,26 @@ class Shippers implements Routable
 					}
 				}
 
-				foreach ($custom_ships[$existing_ship]['topics'] as $topic => $position)
+				if (isset($custom_ships[$existing_ship]['topics']))
 				{
-					if (!isset($ship['topics'][$topic]) && isset($topics[$topic]))
+					foreach ($custom_ships[$existing_ship]['topics'] as $topic => $position)
 					{
-						$ship['topics'][$topic] = [
-							'subject' => $topics[$topic]['subject'],
-							'position' => !empty($custom_ships[$existing_ship]['topics'][$topic]) ? (int) $custom_ships[$existing_ship]['topics'][$topic] : 10000 + $topics[$topic]['first_msg'],
-							'topic_href' => $scripturl . '?topic=' . $topic . '.0',
-							'prefixes' => $prefixes[$topic] ?? [],
-							'extra_characters' => [],
-						];
-						$extras = array_diff(array_keys($topics[$topic]['characters']), $participants);
-						foreach ($extras as $extra)
+						if (!isset($ship['topics'][$topic]) && isset($topics[$topic]))
 						{
-							if (!empty($characters[$extra]))
+							$ship['topics'][$topic] = [
+								'subject' => $topics[$topic]['subject'],
+								'position' => !empty($custom_ships[$existing_ship]['topics'][$topic]) ? (int) $custom_ships[$existing_ship]['topics'][$topic] : 10000 + $topics[$topic]['first_msg'],
+								'topic_href' => $scripturl . '?topic=' . $topic . '.0',
+								'prefixes' => $prefixes[$topic] ?? [],
+								'extra_characters' => [],
+							];
+							$extras = array_diff(array_keys($topics[$topic]['characters']), $participants);
+							foreach ($extras as $extra)
 							{
-								$ship['topics'][$topic]['extra_characters'][] = $characters[$extra]['character_name'];
+								if (!empty($characters[$extra]))
+								{
+									$ship['topics'][$topic]['extra_characters'][] = $characters[$extra]['character_name'];
+								}
 							}
 						}
 					}

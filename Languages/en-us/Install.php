@@ -40,6 +40,8 @@ $txt['install_all_lovely'] = 'We\'ve completed some initial tests on your server
 $txt['user_refresh_install'] = 'Forum Refreshed';
 $txt['user_refresh_install_desc'] = 'While installing, the installer found that (with the details you provided) one or more of the tables this installer might create already existed.<br>Any missing tables in your installation have been recreated with the default data, but no data was deleted from existing tables.';
 
+$txt['default_maintenance_mode_subject'] = 'Maintenance Mode';
+$txt['default_maintenance_mode_body'] = 'We are currently performing some maintenance, the site will be repoened shortly.';
 $txt['default_topic_subject'] = 'Welcome to StoryBB!';
 $txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to [url=https://storybb.org/]ask us for assistance[/url].<br><br>Thanks!<br>StoryBB';
 $txt['default_board_name'] = 'General Discussion';

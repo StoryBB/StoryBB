@@ -30,6 +30,7 @@ class OnlineAction
 		'profile_ids' => [],
 		'board_ids' => [],
 		'page_ids' => [],
+		'char_ids' => [],
 	];
 
 	protected $data;
@@ -188,6 +189,19 @@ class OnlineAction
 					if (empty($actions['u']))
 					{
 						$actions['u'] = $url['id_member'];
+					}
+					if (!empty($actions['char']) && is_numeric($actions['char']))
+					{
+						$area = $actions['area'] ?? '';
+						switch ($area)
+						{
+							case 'characters':
+							case 'character_sheet':
+							case 'character_posts':
+							case 'character_topics':
+								$this->unresolved['char_ids'][$actions['char']][$k] = new Phrase('Who:who_profile_' . $area);
+								break;
+						}
 					}
 
 					$this->unresolved['profile_ids'][(int) $actions['u']][$k] = ($actions['u'] == $url['id_member']) ? new Phrase('Who:who_viewownprofile') : new Phrase('Who:who_viewprofile');
@@ -446,7 +460,7 @@ class OnlineAction
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:member_list})
-				LIMIT ' . count($profile_ids),
+				LIMIT ' . count($this->unresolved['profile_ids']),
 				[
 					'member_list' => array_keys($this->unresolved['profile_ids']),
 				]
@@ -461,6 +475,45 @@ class OnlineAction
 				foreach ($this->unresolved['profile_ids'][$row['id_member']] as $k => $session_text)
 				{
 					$this->data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
+				}
+			}
+			$db->free_result($result);
+		}
+	}
+
+	protected function resolve_char_ids(): void
+	{
+		if (empty($this->unresolved['char_ids']))
+		{
+			return;
+		}
+
+		$currentuser = $this->currentuser();
+		$db = $this->db();
+
+		$allow_view_own = $currentuser->is_authenticated();
+		$allow_view_any = $currentuser->can('profile_view');
+		if ($allow_view_any || $allow_view_own)
+		{
+			$result = $db->query('', '
+				SELECT id_character, id_member, character_name
+				FROM {db_prefix}characters
+				WHERE id_character IN ({array_int:character_list})
+				LIMIT ' . count($this->unresolved['char_ids']),
+				[
+					'character_list' => array_keys($this->unresolved['char_ids']),
+				]
+			);
+			while ($row = $db->fetch_assoc($result))
+			{
+				// If they aren't allowed to view this person's profile, skip it.
+				if (!$allow_view_any && ($currentuser->get_id() != $row['id_member']))
+					continue;
+
+				// Set their action on each - session/text to sprintf.
+				foreach ($this->unresolved['char_ids'][$row['id_character']] as $k => $session_text)
+				{
+					$this->data[$k] = sprintf($session_text, $row['id_member'], $row['id_character'], $row['character_name']);
 				}
 			}
 			$db->free_result($result);

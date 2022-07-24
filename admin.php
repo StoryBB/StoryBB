@@ -54,7 +54,9 @@ require_once($sourcedir . '/Load.php');
 
 // If we're in hard maintenance, we're upgrading or something.
 if (App::in_hard_maintenance())
-	display_maintenance_message();
+{
+	App::show_hard_maintenance_message();
+}
 
 $result = App::dispatch_request();
 

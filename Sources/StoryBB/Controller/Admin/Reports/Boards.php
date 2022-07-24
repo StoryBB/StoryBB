@@ -155,6 +155,6 @@ class Boards extends AbstractAdminController implements Administrative, Maintena
 
 		$db->free_result($request);
 
-		return $this->render('admin/report_2col.twig', 'reports/boards', $rendercontext);
+		return $this->render('admin/reports/2_columns.twig', 'reports/boards', $rendercontext);
 	}
 }

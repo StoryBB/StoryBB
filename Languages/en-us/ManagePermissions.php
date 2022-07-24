@@ -127,7 +127,7 @@ $txt['permissionhelp_manage_membergroups'] = 'This permission allows a user to e
 $txt['permissionname_manage_permissions'] = 'Manage permissions';
 $txt['permissionhelp_manage_permissions'] = 'This permission allows a user to edit all permissions of a membergroup, globally or for individual boards.';
 $txt['permissionname_manage_bans'] = 'Manage ban list';
-$txt['permissionhelp_manage_bans'] = 'This permission allows a user to add or remove usernames, IP addresses, hostnames and email addresses to a list of banned users. It also allows a user to view and remove log entries of banned users that attempted to login.';
+$txt['permissionhelp_manage_bans'] = 'This permission allows a user to add or remove usernames, IP addresses and email addresses to a list of banned users. It also allows a user to view and remove log entries of banned users that attempted to login.';
 $txt['permissionname_issue_warning'] = 'Issue warnings to members';
 $txt['permissionhelp_issue_warning'] = 'Issue a warning to members of the forum and change that members\' warning level. Requires the warning system to be enabled.';
 

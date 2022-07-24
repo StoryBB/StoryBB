@@ -108,7 +108,7 @@ class Datetime
 		$priority_tzids = [];
 		foreach ($priority_countries as $country)
 		{
-			$country_tzids = @timezone_identifiers_list(DateTimeZone::PER_COUNTRY, strtoupper(trim($country)));
+			$country_tzids = @timezone_identifiers_list(\DateTimeZone::PER_COUNTRY, strtoupper(trim($country)));
 			if (!empty($country_tzids))
 				$priority_tzids = array_merge($priority_tzids, $country_tzids);
 		}

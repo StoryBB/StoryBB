@@ -344,7 +344,6 @@ function AdminMain()
 					'subsections' => [
 						'general' => [$txt['general_settings']],
 						'security' => [$txt['security_settings']],
-						'cache' => [$txt['caching_settings']],
 					],
 				],
 				'maintain' => [
@@ -387,8 +386,6 @@ function AdminMain()
 					'subsections' => [
 						'list' => [$txt['generate_reports_index'], 'admin_forum'],
 						'board_perms' => [$txt['gr_type_board_perms'], 'admin_forum'],
-						'member_groups' => [$txt['gr_type_member_groups'], 'admin_forum'],
-						'group_perms' => [$txt['gr_type_group_perms'], 'admin_forum'],
 						'staff' => [$txt['gr_type_staff'], 'admin_forum'],
 					],
 				],
@@ -599,7 +596,6 @@ function AdminSearchInternal()
 		['EditSearchSettings', 'area=managesearch;sa=settings'],
 		['ModifyGeneralSettings', 'area=serversettings;sa=general'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
-		['ModifyCacheSettings', 'area=serversettings;sa=cache'],
 		['ModifyRegistrationSettings', 'area=regcenter;sa=settings'],
 		['ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'],
 		['ModifyLogSettings', 'area=logs;sa=settings'],

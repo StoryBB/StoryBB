@@ -20,7 +20,7 @@
 						<dd>
 
 {{#if context.user.is_guest}}
-							<input type="text" name="name" value="" required>
+							<input type="text" name="name" value="{{{context.contact.name}}}" required>
 {{else}}
 							{{{context.user.name}}}
 {{/if}}
@@ -29,15 +29,15 @@
 						<dd>
 
 {{#if context.user.is_guest}}
-							<input type="email" name="email" value="" required>
+							<input type="email" name="email" value="{{{context.contact.email}}}" required>
 {{else}}
 							{{{context.user.email}}}
 {{/if}}
 						</dd>
 						<dt>{{{txt.subject}}}:</dt>
-						<dd><input type="text" name="subject" value="" required></dd>
+						<dd><input type="text" name="subject" value="{{{context.contact.subject}}}" required></dd>
 						<dt>{{{txt.message}}}:</dt>
-						<dd><textarea name="message" required></textarea></dd>
+						<dd><textarea name="message" required>{{{context.contact.message}}}</textarea></dd>
 
 {{#if context.visual_verification}}
 						<dt>{{{txt.verification}}}:</dt>

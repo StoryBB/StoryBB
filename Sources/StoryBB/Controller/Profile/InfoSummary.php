@@ -86,18 +86,7 @@ class InfoSummary extends AbstractProfileController
 			}
 		}
 
-		if (allowedTo('moderate_forum'))
-		{
-			// Make sure it's a valid ip address; otherwise, don't bother...
-			if (IP::is_valid_ipv4($memberContext[$memID]['ip']) && empty($modSettings['disableHostnameLookup']))
-				$context['member']['hostname'] = IP::get_host($memberContext[$memID]['ip']);
-			else
-				$context['member']['hostname'] = '';
-
-			$context['can_see_ip'] = true;
-		}
-		else
-			$context['can_see_ip'] = false;
+		$context['can_see_ip'] = allowedTo('moderate_forum');
 
 		// Are they hidden?
 		$context['member']['is_hidden'] = empty($user_profile[$memID]['show_online']);
@@ -117,7 +106,7 @@ class InfoSummary extends AbstractProfileController
 			$context['token_check'] = 'profile-aa' . $memID;
 			createToken($context['token_check'], 'get');
 
-			$context['activate_link'] = $scripturl . '?action=profile;area=activat_eaccount;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';' . $context[$context['token_check'] . '_token_var'] . '=' . $context[$context['token_check'] . '_token'];
+			$context['activate_link'] = $scripturl . '?action=profile;area=activate_account;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';' . $context[$context['token_check'] . '_token_var'] . '=' . $context[$context['token_check'] . '_token'];
 		}
 
 		// Is the signature even enabled on this forum?
@@ -137,12 +126,6 @@ class InfoSummary extends AbstractProfileController
 			$ban_query[] = 'id_member = ' . $context['member']['id'];
 			$ban_query[] = ' {inet:ip} BETWEEN bi.ip_low and bi.ip_high';
 			$ban_query_vars['ip'] = $memberContext[$memID]['ip'];
-			// Do we have a hostname already?
-			if (!empty($context['member']['hostname']))
-			{
-				$ban_query[] = '({string:hostname} LIKE hostname)';
-				$ban_query_vars['hostname'] = $context['member']['hostname'];
-			}
 			// Check their email as well...
 			if (strlen($context['member']['email']) != 0)
 			{

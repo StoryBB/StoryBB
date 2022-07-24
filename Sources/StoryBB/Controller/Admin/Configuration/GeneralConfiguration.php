@@ -40,6 +40,12 @@ class GeneralConfiguration extends AbstractSettingsPageController implements Adm
 			'Admin:general_configuration' => [
 				'forum_name' => [Element\Text::class, 'required' => true],
 				'allow_guestAccess' => [Element\Checkbox::class],
+				'enable_shipper' => [Element\Checkbox::class],
+			],
+			'Admin:maintenance_mode' => [
+				'maintenance_mode' => [Element\Checkbox::class],
+				'maintenance_mode_subject' => [Element\Text::class, 'required' => true],
+				'maintenance_mode_body' => [Element\Text::class, 'required' => true],
 			],
 		];
 	}

@@ -1,0 +1,45 @@
+{% extends '@layouts/admin.twig' %}
+{% import '@partials/admin/panels.twig' as panel %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		<table class="membergroup-report">
+			<thead>
+				<tr>
+					<th></th>
+					<th colspan="{{ data.group_counts.account }}">{{ phrase('ManageMembers:membergroups_regular') }}</th>
+					{% if data.group_counts.character > 0 %}
+						<th colspan="{{ data.group_counts.character }}">{{ phrase('ManageMembers:membergroups_character') }}</th>
+					{% endif %}
+				</tr>
+				<tr>
+					<th></th>
+					{% for group in data.groups %}
+						<th class="group-name" title="{{ group }}">{{ group }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="general-permissions-title" colspan="{{ data.total_group_count }}">{{ phrase('Reports:general_permissions') }}</td>
+				</tr>
+				{% for permission, permission_title in data.permissions %}
+					<tr>
+						<td>{{ permission_title }}</td>
+						{% for group_id, group in data.groups %}
+							{% if data.permissions_matrix[permission][group_id] > 0 %}
+								<td>{{ phrase('Reports:board_perms_allow') }}</td>
+							{% elseif data.permissions_matrix[permission][group_id] < 0 %}
+								<td>{{ phrase('Reports:board_perms_deny') }}</td>
+							{% else %}
+								<td>-</td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endautoescape %}
+{% endblock %}

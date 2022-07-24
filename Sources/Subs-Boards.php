@@ -337,14 +337,14 @@ function MarkRead()
 			if (empty($board))
 				redirectexit();
 			else
-				redirectexit('board=' . $board . '.0');
+				redirectexit($board_info['url']);
 		}
 		else
 		{
 			if (empty($board_info['parent']))
 				redirectexit();
 			else
-				redirectexit('board=' . $board_info['parent'] . '.0');
+				redirectexit($board_info['parent_url'] ?: '');
 		}
 	}
 }

@@ -105,9 +105,7 @@ function ModifyBasicSettings($return_config = false)
 			['check', 'enable_likes'],
 			['check', 'enable_mentions'],
 			['check', 'enable_buddylist'],
-			['check', 'enable_shipper'],
 			['check', 'allow_hideOnline'],
-			['check', 'topic_move_any'],
 			['int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999],
 			// Pagination stuff.
 			['int', 'defaultMaxMembers'],
@@ -118,6 +116,7 @@ function ModifyBasicSettings($return_config = false)
 			// css and js minification.
 			['check', 'minimize_css'],
 			['check', 'minimize_js'],
+			['check', 'enable_debug_templates'],
 		'',
 			// SEO stuff
 			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],
@@ -151,8 +150,6 @@ function ModifyBasicSettings($return_config = false)
 			// Alerts stuff
 			['check', 'enable_ajax_alerts'],
 		'',
-			['text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']],
-		'',
 			['check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'],
 			['int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10],
 	];
@@ -185,12 +182,6 @@ function ModifyBasicSettings($return_config = false)
 		// Prevent absurd boundaries here - make it a day tops.
 		if (isset($_POST['lastActive']))
 			$_POST['lastActive'] = min((int) $_POST['lastActive'], 1440);
-
-		// Just to try to cut down obvious problems...
-		if (isset($_POST['analytics_google_id']))
-		{
-			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
-		}
 
 		$new_minimize_css = !empty($_POST['minimize_css']);
 		$old_minimize_css = !empty($modSettings['minimize_css']);

@@ -59,7 +59,7 @@ class Image
 
 			if (in_array($response_code, [200, 206]) && !empty($body))
 			{
-				return static::get_image_size_from_string($body);
+				return static::get_size_from_string($body);
 			}
 			else
 			{

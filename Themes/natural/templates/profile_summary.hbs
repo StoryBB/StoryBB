@@ -145,20 +145,16 @@
 			</div>
 {{/if}}
 
-{{#if (or context.can_see_ip context.activate_message context.member.bans (and context.member.ip (not modSettings.disableHostnameLookup)))}}
+{{#if (or context.can_see_ip context.activate_message context.member.bans)}}
 			<h5>{{txt.administrative}}</h5>
 			<dl>
-	{{! If the person looking is allowed, they can check the member's IP address and hostname}}
+	{{! If the person looking is allowed, they can check the member's IP address}}
 	{{#if context.can_see_ip}}
 		{{#if context.member.ip}}
 				<dt>{{txt.ip}}</dt>
 				<dd>
 					<a href="{{scripturl}}?action=admin;area=logs;sa=ip;searchip={{context.member.ip}};u={{context.member.id}}">{{context.member.ip}}</a>
 				</dd>
-		{{/if}}
-		{{#if (and context.member.ip (not modSettings.disableHostnameLookup))}}
-				<dt>{{{txt.hostname}}}</dt>
-				<dd>{{{context.member.hostname}}}</dd>
 		{{/if}}
 	{{/if}}
 	{{! Can they view/issue a warning? }}

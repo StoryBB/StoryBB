@@ -44,9 +44,9 @@ blockquote cite::before {
 	display: block;
 	font-family: "DejaVu Sans Mono", Monaco, Consolas, monospace;
 	font-size: 0.75em;
-	background: #f3f3f3;
-	border: 2px solid #ababab;
-	border-radius: 2px;
+	background: $quote-bg;
+	color: $default-color;
+	border: 2px solid $quote-border;
 	margin: 1px 0 6px 0;
 	padding: 3px 12px;
 	overflow: auto;
@@ -60,6 +60,13 @@ blockquote cite::before {
 	color: #666;
 	font-size: 0.9em;
 	padding: 0 2px;
+}
+.codeheader .sbb_select_text {
+	visibility: hidden;
+	margin: 0 8px;
+}
+.codeheader .sbb_copied_text {
+	display: none;
 }
 
 /* For links to change the code stuff... */

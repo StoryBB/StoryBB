@@ -354,7 +354,7 @@ class Web
 
 			$sitesettings = $container->get('sitesettings');
 			$options = [];
-			if (!$sitesettings->debug_templates)
+			if (!$sitesettings->enable_debug_templates)
 			{
 				$options['cache'] = $container->get('cachedir') . '/template/' . $theme->id;
 			}
@@ -379,6 +379,9 @@ class Web
 				$string = strtolower($string);
 				$string = preg_replace('/[^a-z0-9]+/i', '-', $string);
 				return trim($string, '-');
+			}));
+			$twig->addFunction(new TwigFunction('session', function ($sess) use ($container) {
+				return $container->get('session')->get($sess);
 			}));
 
 			return $twig;

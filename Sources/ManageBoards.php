@@ -810,7 +810,6 @@ function EditBoardSettings($return_config = false)
 	// Here and the board settings...
 	$config_vars = [
 			// Other board settings.
-			['check', 'countChildPosts'],
 			['check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'],
 			['select', 'recycle_board', $recycle_boards],
 			['check', 'allow_ignore_boards'],

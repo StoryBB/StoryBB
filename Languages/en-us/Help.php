@@ -55,11 +55,8 @@ $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls 
 		from the topic listing. You can choose to continue to show the regular topic without their polls by selecting
 		&quot;Show Existing Polls as Topics&quot;.<br><br>To choose who can post polls, view polls, and similar, you
 		can allow and disallow those permissions. Remember this if polls are not working.';
-$helptxt['debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
-$helptxt['cache_enable'] = 'StoryBB performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent retrieving cached information. If caching is available on your machine it is recommended that you try caching at level 1 first.';
-$helptxt['cache_memcached'] = 'If you are using memcached you need to provide the server details. This should be entered as a comma separated list as shown in the example below:<br><br>	&quot;server1,server2,server3:port,server4&quot;<br><br>Note that if no port is specified StoryBB will use port 11211 unless the host contains a slash, then it is assumed to be an alternative transport and the port will be set to 0. StoryBB will attempt to perform rough/random load balancing across the specified servers.';
-$helptxt['cache_cachedir'] = 'This setting is only for the StoryBB file-based cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
-$helptxt['cache_sqlite_cachedir'] = 'This setting is only for the SQLite database cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
+$helptxt['enable_debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
+
 $helptxt['enableErrorLogging'] = 'This will log any errors, like a failed login, so you can see what went wrong.';
 $helptxt['enableErrorQueryLogging'] = 'This will include the full query sent to the database in the error log. It requires error logging to be turned on.<br><br><strong>Note:  This will affect the ability to filter the error log by the error message.</strong>';
 $helptxt['log_ban_hits'] = 'If enabled, every time a banned user tries to access the site, this will be logged in the error log. If you do not care whether, or how often, banned users attempt to access the site, you can turn this off for a performance boost.';
@@ -142,7 +139,6 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';
 
 $helptxt['who_enabled'] = 'This setting allows you to turn on or off the ability for users to see who is browsing the forum and what they are doing.';
@@ -207,18 +203,13 @@ Of course, you don\'t have to have a badge - just untick the box and no badge wi
 <br>
 For best results, images should probably be no larger than 150 pixels wide and 100 pixels high.';
 
-$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself. They are, generally, in the same place as StoryBB under the avatars directory.<br>As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
-$helptxt['avatar_external'] = 'With this enabled, your members can type in a URL to their own avatar. The downside of this is that, in some cases, they may use avatars that are overly large or portray images you don\'t want on your forum.';
 $helptxt['avatar_action_too_large'] = 'This allows you to choose what to do with over-sized avatars that users put in as a URL.<br>
 <ul class="normallist">
 	<li>Don\'t allow it and tell the user - users have to put in a different avatar that is smaller</li>
 	<li>Resize it in the users\'s browser - doesn\'t take up any server space, but might be slow for people on slow connections especially with big images</li>
 	<li>Download it to the server - downloads it, resizes it to fit the maximum allowed size, and uses it; means images won\'t be very big (e.g. if someone tried to use a large photo as their avatar) but means it comes out of the forum\'s storage space</li>
 </ul>';
-$helptxt['avatar_upload'] = 'This setting is much like &quot;Allow members to select an external avatar&quot;, except that you have better control over the avatars, a better time resizing them, and your members do not have to have somewhere to put avatars.<br><br>However, the downside is that it can take a lot of space on your server.';
 $helptxt['avatar_download_png'] = 'PNGs are larger, but offer better quality compression. If this is unchecked, JPEG will be used instead - which is often smaller, but also of lesser or blurry quality.';
-
-$helptxt['disableHostnameLookup'] = 'This disables host name lookups, which on some servers are very slow. Note that this will make banning less effective.';
 
 $helptxt['whytwoip'] = 'StoryBB uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case StoryBB logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
 
@@ -264,8 +255,6 @@ $helptxt['custom_mask'] = 'The input mask is important for your forum\'s securit
 		\ - Escapes the next character.<br>
 	</div><br><br>
 	More information and advanced techniques may be found on the Internet.';
-
-$helptxt['topic_move_any'] = 'If checked, users will be allowed to move topics to any board they can see. Otherwise, they will only be able to move them to boards where they can post new topics.';
 
 $helptxt['alert_pm_new'] = 'Notifications of new personal messages do not appear in the Alerts pane, but appear in the "My Messages" list instead.';
 

@@ -10,28 +10,6 @@
  * @version 1.0 Alpha 1
  */
 
-/********* Maintenance *********/
-/**
- * The maintenance "mode"
- * Set to 1 to enable Maintenance Mode, 2 to make the forum untouchable. (you'll have to make it 0 again manually!)
- * 0 is default and disables maintenance mode.
- * @var int 0, 1, 2
- * @global int $maintenance
- */
-$maintenance = 0;
-/**
- * Title for the Maintenance Mode message.
- * @var string
- * @global int $mtitle
- */
-$mtitle = 'Maintenance Mode';
-/**
- * Description of why the forum is in maintenance mode.
- * @var string
- * @global string $mmessage
- */
-$mmessage = 'Okay faithful users...we\'re attempting to restore an older backup of the database...news will be posted once we\'re back!';
-
 /********* Forum Info *********/
 /**
  * The default language file set for the forum.

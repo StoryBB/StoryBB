@@ -181,3 +181,37 @@
 		width: 100%;
 	}
 }
+
+@media screen and (max-width: 767px) {
+	.block-container {
+		.block-region-left-sidebar {
+			order: 2;
+			width: 100%;
+		}
+		.block-middle {
+			flex-direction: column;
+
+			.block-inner {
+				order: 1;
+
+				aside {
+					width: 100%;
+
+					&.main-body-content {
+						order: 1;
+					}
+					&.block-region-above-content {
+						order: 2;
+					}
+					&.block-region-below-content {
+						order: 3;
+					}
+				}
+			}
+		}
+		.block-region-right-sidebar {
+			order: 3;
+			width: 100%;
+		}
+	}
+}

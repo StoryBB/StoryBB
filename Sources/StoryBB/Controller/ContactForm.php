@@ -50,6 +50,7 @@ class ContactForm implements Routable
 		{
 			checkSession();
 			validateToken('contact');
+			loadLanguage('Errors');
 
 			if (!$context['user']['is_guest'])
 			{
@@ -85,6 +86,12 @@ class ContactForm implements Routable
 					{
 						$context['contact']['errors'][] = isset($txt['error_' . $error]) ? $txt['error_' . $error] : $error;
 					}
+				}
+
+				require_once($sourcedir . '/Subs-Members.php');
+				if (isReservedName($_POST['name'], 0, true, false))
+				{
+					$context['contact']['errors'][] = $txt['error_contact_no_name'];
 				}
 			}
 

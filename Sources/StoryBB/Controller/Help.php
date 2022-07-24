@@ -124,6 +124,11 @@ class Help implements Routable
 			redirectexit($url->generate('help'));
 		}
 
+		if (!isset($policies[$context['routing']['policy']]))
+		{
+			redirectexit($url->generate('help'));
+		}
+
 
 		$context['canonical_url'] = $url->generate('help_policy', ['policy' => $context['routing']['policy']]);
 

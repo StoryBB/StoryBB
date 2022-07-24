@@ -112,22 +112,3 @@ function getLastPosts($latestPostOptions)
 
 	return $posts;
 }
-
-/**
- * Callback-function for the cache for getLastPosts().
- *
- * @param array $latestPostOptions
- */
-function cache_getLastPosts($latestPostOptions)
-{
-	return [
-		'data' => getLastPosts($latestPostOptions),
-		'expires' => time() + 60,
-		'post_retri_eval' => '
-			foreach ($cache_block[\'data\'] as $k => $post)
-			{
-				$cache_block[\'data\'][$k][\'time\'] = timeformat($post[\'raw_timestamp\']);
-				$cache_block[\'data\'][$k][\'timestamp\'] = forum_time(true, $post[\'raw_timestamp\']);
-			}',
-	];
-}

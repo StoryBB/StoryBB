@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tables relating to direct messages in the StoryBB schema.
+ * Uncategorised tables in the StoryBB schema.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2021 StoryBB and individual contributors (see contributors.txt)
@@ -17,6 +17,9 @@ use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
 use StoryBB\Schema\Constraint;
 
+/**
+ * Uncategories tables in the StoryBB schema.
+ */
 class Uncategorised
 {
 	/**
@@ -105,7 +108,6 @@ class Uncategorised
 					'id_ban_group' => Column::smallint(),
 					'ip_low' => Column::varbinary(16)->nullable(),
 					'ip_high' => Column::varbinary(16)->nullable(),
-					'hostname' => Column::varchar(255),
 					'email_address' => Column::varchar(255),
 					'id_member' => Column::mediumint(),
 					'hits' => Column::mediumint(),

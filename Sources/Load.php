@@ -573,6 +573,7 @@ function loadBoard()
 				'parent_boards' => getBoardParents($row['id_parent']),
 				'parent' => $row['id_parent'],
 				'parent_slug' => $row['parent_slug'],
+				'parent_url' => $row['parent_slug'] ? $url->generate('board', ['board_slug' => $row['parent_slug']]) : '',
 				'child_level' => $row['child_level'],
 				'theme' => $row['id_theme'],
 				'override_theme' => !empty($row['override_theme']),

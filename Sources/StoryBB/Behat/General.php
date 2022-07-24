@@ -82,7 +82,7 @@ class General extends RawMinkContext implements Context
 	 */
 	protected function create_users(TableNode $table)
 	{
-		global $user_info, $sourcedir, $smcFunc, $context, $mtitle;
+		global $user_info, $sourcedir, $smcFunc, $context;
 		// We need to fudge the details to be able to call registerMember - but this won't affect running state.
 		// This only applies inside the test runner - not in any of the things prodded by the tests themselves.
 		$user_info['is_guest'] = false;
@@ -94,7 +94,7 @@ class General extends RawMinkContext implements Context
 		$user_info['query_see_board'] = '1=1';
 		$user_info['query_wanna_see_board'] = '1=1';
 		require_once($sourcedir . '/Subs-Members.php');
-		$context['forum_name_html_safe'] = $mtitle;
+		$context['forum_name_html_safe'] = 'Behat';
 
 		foreach ($table->getHash() as $user_to_register)
 		{

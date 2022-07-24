@@ -176,6 +176,11 @@ class CustomPage implements Routable
 						}
 					}
 				}
+
+				if (!empty($context['page']['custom_fields']))
+				{
+					ksort($context['page']['custom_fields']);
+				}
 			}
 		}
 

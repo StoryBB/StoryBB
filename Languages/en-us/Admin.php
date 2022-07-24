@@ -15,6 +15,7 @@ $txt['configuration'] = 'Configuration';
 $txt['overview'] = 'Overview';
 $txt['dashboard'] = 'Dashboard';
 $txt['general_configuration'] = 'General Configuration';
+$txt['maintenance_mode'] = 'Maintenance Mode';
 $txt['contact_form'] = 'Contact Form';
 $txt['affiliates'] = 'Affiliates';
 $txt['integrations'] = 'Integrations';
@@ -61,14 +62,16 @@ $txt['log_settings'] = 'Log Settings';
 $txt['system'] = 'System';
 $txt['system_settings'] = 'System Settings';
 $txt['security_settings'] = 'Security Settings';
-$txt['cache_settings'] = 'Cache Settings';
 $txt['php_info'] = 'PHP Info';
 $txt['mail_settings'] = 'Mail Settings';
 $txt['mail_queue'] = 'Mail Queue';
 $txt['tasks'] = 'Tasks';
 $txt['scheduled_tasks'] = 'Scheduled Tasks';
 $txt['adhoc_tasks'] = 'Adhoc Tasks';
-
+$txt['maintenance'] = 'Maintenance';
+$txt['routine_maintenance'] = 'Routine Maintenance';
+$txt['plugins'] = 'Plugins';
+$txt['plugin_manager'] = 'Plugin Manager';
 
 $txt['settings_saved'] = 'The settings were successfully saved';
 $txt['settings_not_saved'] = 'Your changes were not saved because: %1$s';
@@ -87,9 +90,7 @@ $txt['admin_template_edit'] = 'Edit your forum template';
 $txt['admin_server_settings'] = 'Server Settings';
 
 $txt['admin_basic_settings'] = 'This page allows you to change the basic settings for your forum. Be very careful with these settings, as they may render the forum dysfunctional.';
-$txt['admin_maintain'] = 'Enable Maintenance Mode';
 $txt['webmaster_email'] = 'Webmaster email address';
-$txt['cachedir'] = 'Cache Directory';
 $txt['admin_guest_post'] = 'Enable guest posting';
 $txt['admin_manage_members'] = 'Members';
 $txt['admin_plugins'] = 'Plugins';
@@ -148,7 +149,6 @@ $txt['attachment_file_size'] = 'File Size';
 $txt['attachmentdir_size_not_set'] = 'No maximum directory size is currently set';
 $txt['attachmentdir_files_not_set'] = 'No directory file limit is currently set';
 $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
-$txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 
@@ -181,11 +181,10 @@ $txt['ban_email'] = 'Email banning: (e.g. badguy@somewhere.com) - one entry per 
 $txt['ban_username'] = 'User name banning: (e.g. l33tuser) - one entry per line';
 
 $txt['ban_errors_detected'] = 'The following error or errors occurred while saving or editing the ban';
-$txt['ban_description'] = 'Here you can ban troublesome people either by IP, hostname, username, or email.';
+$txt['ban_description'] = 'Here you can ban troublesome people either by IP, username, or email.';
 $txt['ban_add_new'] = 'Add new ban';
 $txt['ban_banned_entity'] = 'Banned entity';
 $txt['ban_on_ip'] = 'Ban on IP (e.g. 192.168.10-20.*)';
-$txt['ban_on_hostname'] = 'Ban on Hostname (e.g. *.mil)';
 $txt['ban_on_email'] = 'Ban on Email Address (e.g. *@badsite.com)';
 $txt['ban_on_username'] = 'Ban on Username';
 $txt['ban_notes'] = 'Notes';
@@ -214,7 +213,7 @@ $txt['ban_modify'] = 'Modify';
 $txt['ban_name'] = 'Ban name';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_edit'] = 'Edit ban';
-$txt['ban_add_notes'] = '<strong>Note</strong>: after creating the above ban, you can add additional entries that trigger the ban, like IP addresses, hostnames and email addresses.';
+$txt['ban_add_notes'] = '<strong>Note</strong>: after creating the above ban, you can add additional entries that trigger the ban, like IP addresses and email addresses.';
 $txt['ban_expired'] = 'Expired / disabled';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_restriction_empty'] = 'No restriction selected.';
@@ -231,7 +230,7 @@ $txt['ban_no_entries'] = 'There are currently no bans in effect.';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['ban_remove_selected_triggers_confirm'] = 'Are you sure you want to remove the selected ban triggers?';
 $txt['ban_trigger_browse'] = 'Browse Ban Triggers';
-$txt['ban_trigger_browse_description'] = 'This screen shows all banned entities grouped by IP address, hostname, email address and username.';
+$txt['ban_trigger_browse_description'] = 'This screen shows all banned entities grouped by IP address, email address and username.';
 
 $txt['ban_log'] = 'Ban Log';
 $txt['ban_log_description'] = 'The ban log shows all attempts to enter the forum by banned users (\'full ban\' and \'cannot register\' ban only).';
@@ -273,9 +272,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
 
-$txt['maintenance_subject'] = 'Subject for display';
-$txt['maintenance_message'] = 'Message for display';
-
 $txt['errlog_desc'] = 'The error log tracks every error encountered by your forum. To delete any errors from the database, mark the checkbox, and click the %1$s button at the bottom of the page.';
 $txt['errlog_no_entries'] = 'There are currently no error log entries.';
 
@@ -305,9 +301,6 @@ $txt['member_characters_in_these_groups'] = 'Member has characters with these me
 $txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 
-$txt['support_title'] = 'Support Information';
-$txt['support_versions_current'] = 'Current StoryBB version';
-$txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
 $txt['support_versions_db'] = 'Database version';
 $txt['support_versions_server'] = 'Server version';
@@ -461,8 +454,6 @@ $txt['avatar_download_png'] = 'Use PNG for resized avatars';
 $txt['avatar_img_enc_warning'] = 'Neither the GD module nor the Imagick or MagickWand extensions are currently installed. Some avatar features are disabled.';
 $txt['avatar_external'] = 'Users adding an avatar just by its URL';
 $txt['avatar_upload'] = 'Users uploading an avatar';
-$txt['avatar_server_stored'] = 'Server-stored avatars';
-$txt['avatar_server_stored_groups'] = 'Membergroups allowed to select a server stored avatar';
 $txt['avatar_upload_groups'] = 'Membergroups allowed to upload an avatar to the server';
 $txt['avatar_external_url_groups'] = 'Membergroups allowed to select an external URL';
 $txt['avatar_select_permission'] = 'Select permissions for each group';
@@ -508,8 +499,6 @@ $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 $txt['generate_reports_index'] = 'Reports List';
 $txt['gr_type_board_perms'] = 'Board Permissions';
-$txt['gr_type_member_groups'] = 'Membergroups';
-$txt['gr_type_group_perms'] = 'Group Permissions';
 $txt['gr_type_staff'] = 'Staff';
 
 $txt['update_available'] = 'Update Available';

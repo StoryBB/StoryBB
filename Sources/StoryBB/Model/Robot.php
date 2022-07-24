@@ -37,6 +37,7 @@ class Robot
 			'applebot' => 'applebot',
 			'archive.org_bot' => 'archive.org',
 			'ask jeeves' => 'teoma',
+			'awariosmartbot' => 'awario',
 			'baiduspider' => 'baidu',
 			'barkrowler' => 'babbar',
 			'bingbot' => 'bing',
@@ -44,6 +45,7 @@ class Robot
 			'bingpreview' => 'bingpreview',
 			'blexbot' => 'webmeup',
 			'bw/1' => 'builtwith',
+			'chrome-lighthouse' => 'pagespeed',
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
 			'dotbot' => 'moz.com_dotbot',
@@ -58,6 +60,7 @@ class Robot
 			'geliyoobot' => 'geliyoo',
 			'gigabot' => 'gigablast',
 			'go http package' => 'go',
+			'go-http-client' => 'go',
 			'google-sa' => 'googlesearchappliance',
 			'googlebot' => 'google',
 			'google favicon' => 'google',
@@ -89,6 +92,7 @@ class Robot
 			'pinterestbot' => 'pinterest',
 			'proximic' => 'proximic',
 			'python-requests' => 'python-requests',
+			'redditbot' => 'reddit',
 			'rogerbot' => 'moz.com_rogerbot',
 			'scoutjet' => 'scoutjet',
 			'scrapy' => 'scrapy',
@@ -105,6 +109,7 @@ class Robot
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
 			'twitterbot' => 'twitter',
+			'ubermetrics' => 'ubermetrics',
 			'uptimerobot' => 'uptimerobot',
 			'validator.nu' => 'w3c_validator_nu',
 			'w3c-checklink' => 'w3c_checklink',
@@ -172,6 +177,10 @@ class Robot
 			'aspiegel' => [
 				'title' => 'Aspiegel (PetalBot)',
 				'link' => 'https://aspiegel.com/petalbot',
+			],
+			'awario' => [
+				'title' => 'AwarioSmartBot',
+				'link' => 'https://awario.com/bots.html',
 			],
 			'babbar' => [
 				'title' => 'Babbar',
@@ -314,6 +323,10 @@ class Robot
 				'title' => 'node-fetch',
 				'link' => 'https://github.com/node-fetch/node-fetch',
 			],
+			'pagespeed' => [
+				'title' => 'PageSpeed Insights',
+				'link' => 'https://pagespeed.web.dev/',
+			],
 			'paperlibot' => [
 				'title' => 'PaperLiBot',
 				'link' => 'https://support.paper.li/hc/en-us/articles/360006695637-PaperLiBot',
@@ -332,6 +345,10 @@ class Robot
 			],
 			'python-requests' => [
 				'title' => 'Python bot (using requests)',
+			],
+			'reddit' => [
+				'title' => 'Reddit',
+				'link' => 'https://www.reddit.com/',
 			],
 			'scrapy' => [
 				'title' => 'Scrapy',
@@ -387,6 +404,10 @@ class Robot
 			],
 			'twitter' => [
 				'title' => 'Twitter',
+			],
+			'ubermetrics' => [
+				'title' => 'Ubermetrics Technologies',
+				'link' => 'https://www.ubermetrics-technologies.com/',
 			],
 			'uptimerobot' => [
 				'title' => 'UptimeRobot',

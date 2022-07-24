@@ -343,7 +343,7 @@ $txt['search_for'] = 'Search for';
 $txt['search_match'] = 'Match';
 
 $txt['forum_in_maintenance'] = 'Your forum is in Maintenance Mode. Only administrators can currently log in.';
-$txt['maintenance_page'] = 'You can turn off Maintenance Mode from the <a href="%1$s">Server Settings</a> area.';
+$txt['maintenance_page'] = 'You can turn off Maintenance Mode in the admin area.';
 
 $txt['read_times'] = [
 	1 => 'Read once',
@@ -517,7 +517,6 @@ $txt['settings'] = 'Settings';
 $txt['never'] = 'Never';
 $txt['more'] = 'more';
 
-$txt['hostname'] = 'Hostname';
 $txt['you_are_post_banned'] = 'Sorry %1$s, you are banned from posting and sending personal messages on this forum.';
 $txt['ban_reason'] = 'Reason';
 

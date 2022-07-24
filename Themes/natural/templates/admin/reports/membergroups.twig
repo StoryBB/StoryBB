@@ -1,0 +1,114 @@
+{% extends '@layouts/admin.twig' %}
+{% import '@partials/admin/panels.twig' as panel %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		<table class="membergroup-report">
+			<thead>
+				<tr>
+					<th colspan="{{ data.account_group_columns }}">{{ phrase('ManageMembers:membergroups_regular') }}</th>
+				</tr>
+				<tr>
+					<th></th>
+					{% for group in data.account_groups %}
+						<th>{{ group.name }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="{{ data.account_group_columns }}"><em>{{ phrase('Reports:member_group_settings') }}:</em></td>
+				</tr>
+				<tr>
+					<td>{{ phrase('Reports:member_group_color') }}</td>
+					{% for group in data.account_groups %}
+						{% if group.color %}
+							<td><span class="color-preview" style="--preview-color: {{ group.color }}">{{ group.color }}</span></td>
+						{% else %}
+							<td><em>{{ phrase('Reports:member_group_item_none_set') }}</em></td>
+						{% endif %}
+					{% endfor %}
+				</tr>
+				<tr>
+					<td>{{ phrase('Reports:member_group_type') }}</td>
+					{% for group in data.account_groups %}
+						<td>{{ group.type }}</td>
+					{% endfor %}
+				</tr>
+				<tr>
+					<td class="board-title" colspan="{{ data.account_group_columns }}"><em>{{ phrase('Reports:board_access') }}</em></td>
+				</tr>
+				{% for board_id, board_name in data.boards %}
+					<tr>
+						<td>{{ board_name }}</td>
+						{% for group_id, group in data.account_groups %}
+							{% if data.boards_matrix_accounts[board_id][group_id] > 0 %}
+								<td>{{ phrase('Reports:board_perms_allow') }}</td>
+							{% elseif data.boards_matrix_accounts[board_id][group_id] < 0 %}
+								<td>{{ phrase('Reports:board_perms_deny') }}</td>
+							{% else %}
+								<td>-</td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		{% if data.character_groups %}
+			<table class="membergroup-report">
+				<thead>
+					<tr>
+						<th colspan="{{ data.character_group_columns }}">{{ phrase('ManageMembers:membergroups_character') }}</th>
+					</tr>
+					<tr>
+						<th></th>
+						{% for group in data.character_groups %}
+							<th>{{ group.name }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="{{ data.character_group_columns }}"><em>{{ phrase('Reports:member_group_settings') }}:</em></td>
+					</tr>
+					<tr>
+						<td>{{ phrase('Reports:member_group_color') }}</td>
+						{% for group in data.character_groups %}
+							{% if group.color %}
+								<td><span class="color-preview" data-color="{{ group.color }}">{{ group.color }}</span></td>
+							{% else %}
+								<td><em>{{ phrase('Reports:member_group_item_none_set') }}</em></td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+					<tr>
+						<td>{{ phrase('Reports:member_group_type') }}</td>
+						{% for group in data.character_groups %}
+							<td>{{ group.type }}</td>
+						{% endfor %}
+					</tr>
+					<tr>
+						<td class="board-title" colspan="{{ data.account_group_columns }}"><em>{{ phrase('Reports:board_access') }}</em></td>
+					</tr>
+					{% for board_id, board_name in data.boards %}
+						<tr>
+							<td>{{ board_name }}</td>
+							{% for group_id, group in data.character_groups %}
+								{% if data.boards_matrix_characters[board_id][group_id] > 0 %}
+									<td>{{ phrase('Reports:board_perms_allow') }}</td>
+								{% elseif data.boards_matrix_characters[board_id][group_id] < 0 %}
+									<td>{{ phrase('Reports:board_perms_deny') }}</td>
+								{% else %}
+									<td>-</td>
+								{% endif %}
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+	{% endautoescape %}
+{% endblock %}

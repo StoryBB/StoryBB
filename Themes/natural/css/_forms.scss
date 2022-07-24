@@ -95,6 +95,29 @@ fieldset legend {
 	border: none;
 }
 
+.login form {
+	fieldset {
+		padding: 0;
+
+		dl {
+			margin-bottom: 25px;
+		}
+
+		legend {
+			display: block;
+			width: 100%;
+			background: $primary-accent;
+			color: $primary-accent-contrast;
+			padding: 6px 12px;
+			margin-bottom: 25px;
+		}
+
+		&:last-of-type dl {
+			margin-bottom: 0;
+		}
+	}
+}
+
 /* Mostly for legacy purposes, e.g. new login form. */
 .roundframe {
 	fieldset {

@@ -747,7 +747,7 @@ class MySQL implements DatabaseAdapter
 
 			if (!isset($matches[2]))
 			{
-				$this->error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+				$this->error_backtrace('Invalid value inserted or no type specified. (' . StringLibrary::escape($matches[1]) . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			}
 
 			if ($matches[1] === 'literal')

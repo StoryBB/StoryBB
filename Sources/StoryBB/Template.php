@@ -228,7 +228,7 @@ class Template
 			'helpicon' => self::load_partial('helpicon'),
 		];
 
-		if (!empty($modSettings['debug_templates'])) {
+		if (!empty($modSettings['enable_debug_templates'])) {
 			if (!isset($options['flags'])) {
 				$options['flags'] = LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL;
 			}

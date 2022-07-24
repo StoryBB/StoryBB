@@ -282,7 +282,7 @@ class Board implements Routable
 			'base_level' => $board_info['child_level'] + 1,
 			'parent_id' => $board_info['id'],
 			'set_latest_post' => false,
-			'countChildPosts' => !empty($modSettings['countChildPosts']),
+			'countChildPosts' => true,
 		];
 		$context['boards'] = getBoardIndex($boardIndexOptions);
 

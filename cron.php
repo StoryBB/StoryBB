@@ -32,7 +32,7 @@ define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 define('MAX_CRON_TIME', 10);
 
 // We're going to want a few globals... these are all set later.
-global $time_start, $msubject, $mmessage, $language;
+global $time_start, $language;
 global $boardurl, $boarddir, $sourcedir;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $modSettings, $context, $sc, $user_info, $txt;

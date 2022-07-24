@@ -23,17 +23,6 @@
 						<dd>
 							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;">
 						</dd>
-
-{{#if (neq modSettings.disableHostnameLookup '1')}}
-						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname"{{#if context.ban_trigger.hostname.selected}} checked{{/if}}>
-							<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
-						</dt>
-						<dd>
-							<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;">
-						</dd>
-{{/if}}
-
 						<dt>
 							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email"{{#if context.ban_trigger.email.selected}} checked{{/if}}>
 							<label for="email_check">{{{txt.ban_on_email}}}</label>

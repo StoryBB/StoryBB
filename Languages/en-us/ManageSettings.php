@@ -19,7 +19,6 @@ $txt['polls_as_topics'] = 'Show existing polls as topics';
 $txt['userLanguage'] = 'Enable user-selectable language support';
 $txt['allow_hideOnline'] = 'Allow non-administrators to hide their online status';
 $txt['enable_buddylist'] = 'Enable buddy/ignore lists';
-$txt['enable_shipper'] = 'Enable shipper list';
 $txt['time_format'] = 'Default time format';
 $txt['setting_time_offset'] = 'Overall time offset';
 $txt['setting_time_offset_note'] = '(added to the member specific option)';
@@ -31,7 +30,7 @@ $txt['loginHistoryDays'] = 'Days to keep login history';
 $txt['lastActive'] = 'User online time threshold';
 $txt['trackStats'] = 'Track daily statistics';
 $txt['hitStats'] = 'Track daily page views (must have stats enabled)';
-$txt['debug_templates'] = 'Enable template debug mode';
+$txt['enable_debug_templates'] = 'Enable template debug mode';
 $txt['error_log_desc'] = 'The error log, if enabled, will log every error encountered by users using your forum. This can be an invaluable aid to identifying forum problems.';
 $txt['enableErrorLogging'] = 'Enable error logging';
 $txt['enableErrorQueryLogging'] = 'Include database query in the error log';
@@ -50,8 +49,6 @@ $txt['timeBetweenPosts'] = 'Display "x days later" banner between posts after ho
 $txt['timeBetweenPostsBoards'] = 'When displaying "x days later" banner, which boards should this apply to?';
 $txt['disallow_sendBody'] = 'Don\'t allow post text in notifications';
 $txt['enable_ajax_alerts'] = 'Allow AJAX Desktop Notifications for Alerts';
-$txt['analytics_google_id'] = 'Google Analytics ID';
-$txt['analytics_google_id_sub'] = 'You can get this from your GA account admin, and it looks something like UA-000000-2.';
 $txt['minimize_css'] = 'Minimize CSS (cached)';
 $txt['minimize_js'] = 'Minimize JS (cached)';
 $txt['max_pm_recipients'] = 'Maximum number of recipients allowed in a personal message';
@@ -67,7 +64,6 @@ $txt['today_disabled'] = 'Disabled';
 $txt['today_only'] = 'Only Today';
 $txt['yesterday_today'] = 'Today &amp; Yesterday';
 $txt['defaultMaxMembers'] = 'Members per page in member list';
-$txt['disableHostnameLookup'] = 'Disable hostname lookups';
 $txt['who_enabled'] = 'Enable who\'s online list';
 $txt['meta_keywords'] = 'Meta keywords associated with forum';
 $txt['meta_keywords_note'] = 'For search engines. Leave blank for default.';
@@ -86,32 +82,6 @@ $txt['enable_likes'] = 'Enable likes';
 
 // Mention settings.
 $txt['enable_mentions'] = 'Enable mentions';
-
-$txt['caching_information'] = 'StoryBB supports caching through the following: APCu, Memcache, Redis, SQLite, and Zend Platform/Performance Suite, as well as an internal file-based cache.';
-$txt['detected_no_caching'] = '<strong class="alert">StoryBB has not been able to detect a compatible accelerator on your server. File based caching can be used instead.</strong>';
-$txt['detected_accelerators'] = '<strong class="success">StoryBB has detected the following accelerators: %1$s</strong>';
-
-
-$txt['cache_enable'] = 'Caching Level';
-$txt['cache_off'] = 'No caching';
-$txt['cache_level1'] = 'Level 1 Caching (Recommended)';
-$txt['cache_level2'] = 'Level 2 Caching';
-$txt['cache_level3'] = 'Level 3 Caching (Not Recommended)';
-$txt['cache_accelerator'] = 'Caching Accelerator';
-$txt['sbb_cache'] = 'StoryBB file based caching';
-$txt['sqlite_cache'] = 'SQLite3 database based caching';
-$txt['cachedir_sqlite'] = 'SQLite3 database cache directory';
-$txt['memcache_cache'] = 'Memcache';
-$txt['memcached_cache'] = 'Memcached';
-$txt['zend_cache'] = 'Zend Platform/Performance Suite';
-$txt['cache_sbb_settings'] = 'StoryBB file based caching settings';
-$txt['cache_sqlite_settings'] = 'SQLite3 database caching settings';
-$txt['cache_memcache_settings'] = 'Memcache(d) settings';
-$txt['cache_memcache_servers'] = 'Memcache(d) servers';
-$txt['cache_memcache_servers_subtext'] = 'Example: 127.0.0.1:11211,127.0.0.2';
-$txt['cache_redis_settings'] = 'Redis settings';
-$txt['cache_redis_server'] = 'Redis server';
-$txt['cache_redis_server_subtext'] = 'Example: 127.0.0.1:6379 or 127.0.0.1:6379:password if a password is needed';
 
 $txt['setting_password_strength'] = 'Required strength for user passwords';
 $txt['setting_password_strength_low'] = 'Low - 4 character minimum';
@@ -437,7 +407,5 @@ $txt['setting_proxy_ip_header_autodetect'] = 'Auto-detect Proxy IP header';
 $txt['setting_proxy_ip_servers'] = 'Reverse Proxy Servers IPs';
 
 $txt['select_boards_from_list'] = 'Select boards which apply';
-
-$txt['topic_move_any'] = 'Allow moving of topics to read-only boards';
 
 $txt['defaultMaxListItems'] = 'Maximum number of items per page in lists';

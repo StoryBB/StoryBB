@@ -71,6 +71,7 @@ $txt['board_perms_group_read_only'] = 'This board does not allow posting';
 
 // Membergroup info!
 $txt['member_group_color'] = 'Color';
+$txt['member_group_item_none_set'] = 'None set';
 $txt['member_group_max_messages'] = 'Max Personal Messages';
 $txt['member_group_icons'] = 'Icons';
 $txt['member_group_settings'] = 'Settings';
@@ -78,7 +79,13 @@ $txt['member_group_access'] = 'Board Access';
 $txt['member_group_level'] = 'Group level';
 $txt['member_group_level_account'] = 'Account';
 $txt['member_group_level_char'] = 'Character';
-$txt['member_group_postcount'] = 'Post-count';
+
+$txt['member_group_type'] = 'Type';
+$txt['member_group_type_automatic'] = 'Automatic';
+$txt['member_group_type_private'] = 'Private';
+$txt['member_group_type_protected'] = 'Protected';
+$txt['member_group_type_requestable'] = 'Requestable';
+$txt['member_group_type_joinable'] = 'Joinable';
 
 // Board info.
 $txt['none'] = 'None';
@@ -100,6 +107,8 @@ $txt['board_is_ic'] = 'In character';
 $txt['board_is_ooc'] = 'Out of character';
 
 // Group Permissions.
+$txt['general_permissions'] = 'Permissions';
+$txt['board_access'] = 'Board access';
 $txt['group_perms_name_access_mod_center'] = 'Access Moderation Center';
 $txt['group_perms_name_admin_forum'] = 'Admin forum';
 $txt['group_perms_name_issue_warning'] = 'Issue warnings';
@@ -140,7 +149,6 @@ $txt['group_perms_name_view_warning_any'] = 'View any warnings';
 $txt['group_perms_name_view_warning_own'] = 'View own warnings';
 $txt['group_perms_name_who_view'] = 'See who\'s online';
 
-$txt['report_error_too_many_staff'] = 'You have too many staff members. The report will not work with more than 300 staff members.';
 $txt['report_staff_position'] = 'Position';
 $txt['report_staff_moderates'] = 'Moderates';
 $txt['report_staff_posts'] = 'Posts';

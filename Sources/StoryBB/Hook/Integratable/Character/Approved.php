@@ -25,7 +25,7 @@ class Approved extends AbstractIntegratable implements Integratable
 
 	protected $vars = [];
 
-	public function __construct(int $account_id, int $character_id)
+	public function __construct(int $account_id, int $character_id, string $raw_sheet)
 	{
 		global $scripturl;
 
@@ -34,6 +34,7 @@ class Approved extends AbstractIntegratable implements Integratable
 			'character_id' => $character_id,
 			'character' => $this->get_character_details($account_id, $character_id),
 			'character_sheet' => $scripturl . '?action=profile;u=' . $account_id . ';area=character_sheet;char=' . $character_id,
+			'sheet_body' => $raw_sheet,
 		];
 	}
 }

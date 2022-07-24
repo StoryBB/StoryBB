@@ -146,7 +146,6 @@ trait AdminNavigation
 						'label' => new Phrase('Admin:system_settings'),
 						'items' => [
 							'system/security' => ['security_settings'],
-							'system/cache' => ['cache_settings'],
 							'system/phpinfo' => ['php_info'],
 						],
 					],
@@ -162,6 +161,24 @@ trait AdminNavigation
 						'items' => [
 							'system/tasks/scheduled' => ['scheduled_tasks'],
 							'system/tasks/adhoc' => ['adhoc_tasks'],
+						],
+					],
+					'maintenance' => [
+						'label' => new Phrase('Admin:maintenance'),
+						'items' => [
+							'system/maintenance/routine' => ['routine_maintenance'],
+						],
+					],
+				],
+			],
+			'plugins' => [
+				'icon' => 'fas fa-puzzle-piece',
+				'label' => new Phrase('Admin:plugins'),
+				'sections' => [
+					'plugins' => [
+						'label' => new Phrase('Admin:plugins'),
+						'items' => [
+							'plugins/manager' => ['plugin_manager'],
 						],
 					],
 				],

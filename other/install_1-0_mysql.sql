@@ -2,16 +2,6 @@
 #### Install script for MySQL 4.0.18+
 
 #
-# Dumping data for table `admin_info_files`
-#
-
-INSERT INTO {$db_prefix}admin_info_files
-  (id_file, filename, path, parameters, data, filetype)
-VALUES
-  (1, 'updates.json', '', '', '', 'application/json');
-# --------------------------------------------------------
-
-#
 # Dumping data for table `board_permissions`
 #
 
@@ -495,6 +485,9 @@ INSERT INTO {$db_prefix}settings
   (variable, value)
 VALUES ('sbbVersion', '{$sbb_version}'),
   ('forum_name', '{$default_forum_name}'),
+  ('maintenance_mode', '0'),
+  ('maintenance_mode_subject', '{$default_maintenance_mode_subject}'),
+  ('maintenance_mode_body', '{$default_maintenance_mode_body}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
   ('attachmentSizeLimit', '128'),

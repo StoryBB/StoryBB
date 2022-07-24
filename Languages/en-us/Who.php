@@ -118,3 +118,8 @@ $txt['who_viewprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">%
 $txt['who_viewownprofile'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d">their own profile</a>.';
 $txt['who_profile'] = 'Editing the profile of <a href="{scripturl}?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="%1$s">%2$s</a>.';
+
+$txt['who_profile_characters'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d;area=characters;char=%2$d">%3$s</a>\'s bio.';
+$txt['who_profile_character_sheet'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d;area=characters;char=%2$d">%3$s</a>\'s <a href="{scripturl}?action=profile;u=%1$d;area=character_sheet;char=%2$d">character sheet</a>.';
+$txt['who_profile_character_posts'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d;area=characters;char=%2$d">%3$s</a>\'s <a href="{scripturl}?action=profile;u=%1$d;area=character_posts;char=%2$d">posts</a>.';
+$txt['who_profile_character_topics'] = 'Viewing <a href="{scripturl}?action=profile;u=%1$d;area=characters;char=%2$d">%3$s</a>\'s <a href="{scripturl}?action=profile;u=%1$d;area=character_topics;char=%2$d">topics</a>.';

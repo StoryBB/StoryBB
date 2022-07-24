@@ -399,7 +399,7 @@ function BanEdit()
 						'data' => [
 							'function' => function($ban_item) use ($txt)
 							{
-								if (in_array($ban_item['type'], ['ip', 'hostname', 'email']))
+								if (in_array($ban_item['type'], ['ip', 'email']))
 									return '<strong>' . $txt[$ban_item['type']] . ':</strong>&nbsp;' . $ban_item[$ban_item['type']];
 								elseif ($ban_item['type'] == 'user')
 									return '<strong>' . $txt['username'] . ':</strong>&nbsp;' . $ban_item['user']['link'];
@@ -505,7 +505,6 @@ function BanEdit()
 			];
 			$context['ban_suggestions'] = [
 				'main_ip' => '',
-				'hostname' => '',
 				'email' => '',
 				'member' => [
 					'id' => 0,
@@ -540,10 +539,6 @@ function BanEdit()
 					$context['ban']['name'] = $context['ban_suggestions']['member']['name'];
 					// @todo: there should be a better solution...used to lock the "Ban on Username" input when banning from profile
 					$context['ban']['from_user'] = true;
-
-					// Would be nice if we could also ban the hostname.
-					if ((IP::is_valid_ipv4($context['ban_suggestions']['main_ip']) || IP::is_valid_ipv6($context['ban_suggestions']['main_ip'])) && empty($modSettings['disableHostnameLookup']))
-						$context['ban_suggestions']['hostname'] = IP::get_host($context['ban_suggestions']['main_ip']);
 
 					$context['ban_suggestions']['other_ips'] = banLoadAdditionalIPs($context['ban_suggestions']['member']['id']);
 				}
@@ -604,7 +599,7 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 	$ban_items = [];
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			bi.id_ban, bi.hostname, bi.email_address, bi.id_member, bi.hits,
+			bi.id_ban, bi.email_address, bi.id_member, bi.hits,
 			bi.ip_low, bi.ip_high,
 			bg.id_ban_group, bg.name, bg.ban_time, bg.expire_time, bg.reason, bg.notes, bg.cannot_access, bg.cannot_register, bg.cannot_login, bg.cannot_post,
 			COALESCE(mem.id_member, 0) AS id_member, mem.member_name, mem.real_name
@@ -642,7 +637,6 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 					'login' => !empty($row['cannot_login']),
 				],
 				'is_new' => false,
-				'hostname' => '',
 				'email' => '',
 			];
 		}
@@ -657,11 +651,6 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 			{
 				$ban_items[$row['id_ban']]['type'] = 'ip';
 				$ban_items[$row['id_ban']]['ip'] = IP::from_range($row['ip_low'], $row['ip_high']);
-			}
-			elseif (!empty($row['hostname']))
-			{
-				$ban_items[$row['id_ban']]['type'] = 'hostname';
-				$ban_items[$row['id_ban']]['hostname'] = str_replace('%', '*', $row['hostname']);
 			}
 			elseif (!empty($row['email_address']))
 			{
@@ -909,7 +898,6 @@ function saveTriggers($suggestions = [], $ban_group, $member = 0, $ban_id = 0)
 
 	$triggers = [
 		'main_ip' => '',
-		'hostname' => '',
 		'email' => '',
 		'member' => [
 			'id' => $member,
@@ -967,7 +955,7 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 	// First order of business: Load up the info so we can log this...
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			bi.id_ban, bi.hostname, bi.email_address, bi.id_member, bi.hits,
+			bi.id_ban, bi.email_address, bi.id_member, bi.hits,
 			bi.ip_low, bi.ip_high,
 			COALESCE(mem.id_member, 0) AS id_member, mem.member_name, mem.real_name
 		FROM {db_prefix}ban_items AS bi
@@ -996,15 +984,6 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 				$log_info[] = [
 					'bantype' => ($is_range ? 'ip_range' : 'main_ip'),
 					'value' => $ban_items[$row['id_ban']]['ip'],
-				];
-			}
-			elseif (!empty($row['hostname']))
-			{
-				$ban_items[$row['id_ban']]['type'] = 'hostname';
-				$ban_items[$row['id_ban']]['hostname'] = str_replace('%', '*', $row['hostname']);
-				$log_info[] = [
-					'bantype' => 'hostname',
-					'value' => $row['hostname'],
 				];
 			}
 			elseif (!empty($row['email_address']))
@@ -1170,18 +1149,6 @@ function validateTriggers(&$triggers)
 					];
 				}
 			}
-			elseif ($key == 'hostname')
-			{
-				if (preg_match('/[^\w.\-*]/', $value) == 1)
-					$context['ban_errors'][] = 'invalid_hostname';
-				else
-				{
-					// Replace the * wildcard by a MySQL wildcard %.
-					$value = substr(str_replace('*', '%', $value), 0, 255);
-
-					$ban_triggers['hostname']['hostname'] = $value;
-				}
-			}
 			elseif ($key == 'email')
 			{
 				if (preg_match('/[^\w.\-\+*@]/', $value) == 1)
@@ -1293,7 +1260,6 @@ function addTriggers($group_id = 0, $triggers = [], $logs = [])
 	// Preset all values that are required.
 	$values = [
 		'id_ban_group' => $group_id,
-		'hostname' => '',
 		'email_address' => '',
 		'id_member' => 0,
 		'ip_low' => 'null',
@@ -1302,7 +1268,6 @@ function addTriggers($group_id = 0, $triggers = [], $logs = [])
 
 	$insertKeys = [
 		'id_ban_group' => 'int',
-		'hostname' => 'string',
 		'email_address' => 'string',
 		'id_member' => 'int',
 		'ip_low' => 'inet',
@@ -1365,7 +1330,6 @@ function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
 	// Preset all values that are required.
 	$values = [
 		'id_ban_group' => $group_id,
-		'hostname' => '',
 		'email_address' => '',
 		'id_member' => 0,
 		'ip_low' => 'null',
@@ -1377,7 +1341,7 @@ function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
 	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}ban_items
 		SET
-			hostname = {string:hostname}, email_address = {string:email_address}, id_member = {int:id_member},
+			email_address = {string:email_address}, id_member = {int:id_member},
 			ip_low = {inet:ip_low}, ip_high = {inet:ip_high}
 		WHERE id_ban = {int:ban_item}
 			AND id_ban_group = {int:id_ban_group}',
@@ -1394,7 +1358,7 @@ function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
  * A small function to unify logging of triggers (updates and new)
  *
  * @param array $logs an array of logs, each log contains the following keys:
- *                - bantype: a known type of ban (ip_range, hostname, email, user, main_ip)
+ *                - bantype: a known type of ban (ip_range, email, user, main_ip)
  *                - value: the value of the bantype (e.g. the IP or the email address banned)
  * @param bool $new Whether the trigger is new or an update of an existing one
  * @param bool $removal Whether the trigger is being deleted
@@ -1406,7 +1370,6 @@ function logTriggersUpdates($logs, $new = true, $removal = false)
 
 	$log_name_map = [
 		'main_ip' => 'ip_range',
-		'hostname' => 'hostname',
 		'email' => 'email',
 		'user' => 'member',
 		'ip_range' => 'ip_range',
@@ -1622,10 +1585,6 @@ function BanEditTrigger()
 				'value' => '',
 				'selected' => true,
 			],
-			'hostname' => [
-				'selected' => false,
-				'value' => '',
-			],
 			'email' => [
 				'value' => '',
 				'selected' => false,
@@ -1641,7 +1600,7 @@ function BanEditTrigger()
 	{
 		$request = $smcFunc['db']->query('', '
 			SELECT
-				bi.id_ban, bi.id_ban_group, bi.hostname, bi.email_address, bi.id_member,
+				bi.id_ban, bi.id_ban_group, bi.email_address, bi.id_member,
 				bi.ip_low, bi.ip_high,
 				mem.member_name, mem.real_name
 			FROM {db_prefix}ban_items AS bi
@@ -1665,10 +1624,6 @@ function BanEditTrigger()
 			'ip' => [
 				'value' => empty($row['ip_low']) ? '' : IP::from_range($row['ip_low'], $row['ip_high']),
 				'selected' => !empty($row['ip_low']),
-			],
-			'hostname' => [
-				'value' => str_replace('%', '*', $row['hostname']),
-				'selected' => !empty($row['hostname']),
 			],
 			'email' => [
 				'value' => str_replace('%', '*', $row['email_address']),
@@ -1695,7 +1650,7 @@ function BanEditTrigger()
 /**
  * This handles the screen for showing the banned entities
  * It is accessed by ?action=admin;area=ban;sa=browse
- * It uses sub-tabs for browsing by IP, hostname, email or username.
+ * It uses sub-tabs for browsing by IP, email or username.
  *
  * @uses ManageBans template, browse_triggers sub template.
  */
@@ -1718,7 +1673,7 @@ function BanBrowseTriggers()
 		updateSettings(['banLastUpdated' => time()]);
 	}
 
-	$context['selected_entity'] = isset($_REQUEST['entity']) && in_array($_REQUEST['entity'], ['ip', 'hostname', 'email', 'member']) ? $_REQUEST['entity'] : 'ip';
+	$context['selected_entity'] = isset($_REQUEST['entity']) && in_array($_REQUEST['entity'], ['ip', 'email', 'member']) ? $_REQUEST['entity'] : 'ip';
 
 	$listOptions = [
 		'id' => 'ban_trigger_list',
@@ -1799,7 +1754,7 @@ function BanBrowseTriggers()
 		'additional_rows' => [
 			[
 				'position' => 'above_column_headers',
-				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
+				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
 			],
 			[
 				'position' => 'bottom_of_list',
@@ -1823,19 +1778,6 @@ function BanBrowseTriggers()
 		$listOptions['columns']['banned_entity']['sort'] = [
 			'default' => 'bi.ip_low, bi.ip_high, bi.ip_low',
 			'reverse' => 'bi.ip_low DESC, bi.ip_high DESC',
-		];
-	}
-	elseif ($context['selected_entity'] === 'hostname')
-	{
-		$listOptions['columns']['banned_entity']['data'] = [
-			'function' => function($rowData) use ($smcFunc)
-			{
-				return strtr(StringLibrary::escape($rowData['hostname']), ['%' => '*']);
-			},
-		];
-		$listOptions['columns']['banned_entity']['sort'] = [
-			'default' => 'bi.hostname',
-			'reverse' => 'bi.hostname DESC',
 		];
 	}
 	elseif ($context['selected_entity'] === 'email')
@@ -1883,7 +1825,7 @@ function BanBrowseTriggers()
  * @param int $start The item to start with (for pagination purposes)
  * @param int $items_per_page How many items to show on each page
  * @param string $sort A string telling ORDER BY how to sort the results
- * @param string $trigger_type The trigger type - can be 'ip', 'hostname' or 'email'
+ * @param string $trigger_type The trigger type - can be 'ip' or 'email'
  * @return array An array of ban trigger info for the list
  */
 function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
@@ -1892,13 +1834,12 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 
 	$where = [
 		'ip' => 'bi.ip_low is not null',
-		'hostname' => 'bi.hostname != {string:blank_string}',
 		'email' => 'bi.email_address != {string:blank_string}',
 	];
 
 	$request = $smcFunc['db']->query('', '
 		SELECT
-			bi.id_ban, bi.ip_low, bi.ip_high, bi.hostname, bi.email_address, bi.hits,
+			bi.id_ban, bi.ip_low, bi.ip_high, bi.email_address, bi.hits,
 			bg.id_ban_group, bg.name' . ($trigger_type === 'member' ? ',
 			mem.id_member, mem.real_name' : '') . '
 		FROM {db_prefix}ban_items AS bi
@@ -1925,7 +1866,7 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 /**
  * This returns the total number of ban triggers of the given type. Callback for $listOptions['get_count'] in BanBrowseTriggers().
  *
- * @param string $trigger_type The trigger type. Can be 'ip', 'hostname' or 'email'
+ * @param string $trigger_type The trigger type. Can be 'ip' or 'email'
  * @return int The number of triggers of the specified type
  */
 function list_getNumBanTriggers($trigger_type)
@@ -1934,7 +1875,6 @@ function list_getNumBanTriggers($trigger_type)
 
 	$where = [
 		'ip' => 'bi.ip_low is not null',
-		'hostname' => 'bi.hostname != {string:blank_string}',
 		'email' => 'bi.email_address != {string:blank_string}',
 	];
 
