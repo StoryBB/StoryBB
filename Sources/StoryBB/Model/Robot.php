@@ -45,6 +45,7 @@ class Robot
 			'bingpreview' => 'bingpreview',
 			'blexbot' => 'webmeup',
 			'bw/1' => 'builtwith',
+			'chrome-lighthouse' => 'pagespeed',
 			'deadlinkchecker' => 'deadlinkchecker',
 			'discordapp' => 'discord',
 			'dotbot' => 'moz.com_dotbot',
@@ -321,6 +322,10 @@ class Robot
 			'node-fetch' => [
 				'title' => 'node-fetch',
 				'link' => 'https://github.com/node-fetch/node-fetch',
+			],
+			'pagespeed' => [
+				'title' => 'PageSpeed Insights',
+				'link' => 'https://pagespeed.web.dev/',
 			],
 			'paperlibot' => [
 				'title' => 'PaperLiBot',
