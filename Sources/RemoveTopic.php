@@ -502,6 +502,14 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	TopicCollection::delete_topics($topics);
 
 	$smcFunc['db']->query('', '
+		DELETE FROM {db_prefix}shipper_timeline
+		WHERE id_topic IN ({array_int:topics})',
+		[
+			'topics' => $topics,
+		]
+	);
+
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}topics
 		WHERE id_topic IN ({array_int:topics})',
 		[
