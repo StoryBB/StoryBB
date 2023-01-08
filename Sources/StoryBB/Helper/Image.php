@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use GuzzleHttp\Client;
+
 class Image
 {
 	/**
