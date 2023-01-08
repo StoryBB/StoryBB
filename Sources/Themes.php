@@ -1375,13 +1375,16 @@ function InstallDir()
 	$context['to_install'] = [
 		'theme_dir' => $_REQUEST['theme_dir'],
 		'theme_url' => $themeurl . '/' . $name,
-		'shortname' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 	];
 
 	// Read its info form the XML file.
 	$theme_info = get_theme_info($context['to_install']['theme_dir']);
 	$context['to_install'] += $theme_info;
+	if (empty($context['to_install']['shortname']))
+	{
+		$context['to_install']['shortname'] = $name;
+	}
 
 	// Install the theme. theme_install() will take care of possible errors.
 	$context['to_install']['id'] = theme_install($context['to_install']);
