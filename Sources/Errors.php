@@ -153,7 +153,7 @@ function fatal_error($error, $log = 'general', $status = 500)
 	global $txt;
 
 	// Send the appropriate HTTP status header - set this to 0 or false if you don't want to send one at all
-	if (!empty($status))
+	if (!empty($status) && !defined('FROM_CLI'))
 		send_http_status($status);
 
 	// We don't have $txt yet, but that's okay...
