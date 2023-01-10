@@ -12,6 +12,8 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\Phrase;
+
 /**
  * A high-level stats block.
  */
@@ -27,8 +29,7 @@ class MiniStats extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['forum_stats'];
+		return new Phrase('General:forum_stats');
 	}
 
 	public function get_default_title(): string

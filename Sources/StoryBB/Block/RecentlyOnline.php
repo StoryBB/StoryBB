@@ -13,6 +13,7 @@
 namespace StoryBB\Block;
 
 use StoryBB\Model\Group;
+use StoryBB\Phrase;
 
 /**
  * The recent online block.
@@ -29,8 +30,7 @@ class RecentlyOnline extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['recently_online'];
+		return new Phrase('General:recently_online');
 	}
 
 	public function get_default_title(): string

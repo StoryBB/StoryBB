@@ -12,6 +12,7 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\Phrase;
 use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 use Throwable;
@@ -31,8 +32,7 @@ class DiscordServer extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['online_in_discord'];
+		return new Phrase('General:online_in_discord');
 	}
 
 	public function get_default_title(): string
