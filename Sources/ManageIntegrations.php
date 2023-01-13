@@ -358,6 +358,19 @@ function EditIntegration()
 			redirectexit('action=admin;area=integrations');
 		}
 	}
+	elseif (isset($_POST['delete']))
+	{
+		checkSession();
+
+		$smcFunc['db']->query('', '
+			DELETE FROM {db_prefix}integrations
+			WHERE id_integration = {int:integration}',
+			[
+				'integration' => $context['integration']['id'],
+			]
+		);
+		redirectexit('action=admin;area=integrations');
+	}
 
 	$context['page_title'] = sprintf($txt['edit_integration_name'], $possible_integrations[$row['integration']]['name']);
 	$context['sub_template'] = 'admin_integrations_edit';
