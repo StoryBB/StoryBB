@@ -12,6 +12,8 @@
 
 namespace StoryBB\Block;
 
+use StoryBB\Phrase;
+
 /**
  * The recent posts block.
  */
@@ -27,8 +29,7 @@ class RecentPosts extends AbstractBlock implements Block
 
 	public function get_name(): string
 	{
-		global $txt;
-		return $txt['recent_posts'];
+		return new Phrase('General:recent_posts');
 	}
 
 	public function get_default_title(): string

@@ -1,6 +1,6 @@
 # StoryBB
 
-[![Build Status](https://img.shields.io/github/workflow/status/StoryBB/StoryBB/Syntax%20check/master)](https://github.com/StoryBB/StoryBB/actions/workflows/syntax.yml) [![Open Source Helpers](https://www.codetriage.com/storybb/storybb/badges/users.svg)](https://www.codetriage.com/storybb/storybb) [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) 
+[![Build Status](https://img.shields.io/github/workflow/status/StoryBB/StoryBB/syntax.yml?branch=master)](https://github.com/StoryBB/StoryBB/actions/workflows/syntax.yml) [![Open Source Helpers](https://www.codetriage.com/storybb/storybb/badges/users.svg)](https://www.codetriage.com/storybb/storybb) [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) 
 ![GitHub last commit](https://img.shields.io/github/last-commit/storybb/storybb/master.svg)
 
 StoryBB is a piece of software designed to let you run a forum with a roleplayer-focused set of features.

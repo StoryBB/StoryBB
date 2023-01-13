@@ -37,7 +37,7 @@ class BareHtml extends AbstractBlock implements Block
 
 	public function get_block_content(): string
 	{
-		global $txt, $scripturl, $modSettings;
+		global $context;
 
 		if ($this->content !== null)
 		{
@@ -49,6 +49,8 @@ class BareHtml extends AbstractBlock implements Block
 		}
 
 		$this->content = $this->config['content'] ?? '';
+
+		$this->content = str_replace('{{{page_title}}}', $context['page_title'], $this->content);
 
 		return $this->content;
 	}

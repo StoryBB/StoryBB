@@ -44,6 +44,7 @@ class Robot
 			'binglocalsearch' => 'bing',
 			'bingpreview' => 'bingpreview',
 			'blexbot' => 'webmeup',
+			'bytespider' => 'bytespider',
 			'bw/1' => 'builtwith',
 			'chrome-lighthouse' => 'pagespeed',
 			'deadlinkchecker' => 'deadlinkchecker',
@@ -213,6 +214,10 @@ class Robot
 			'builtwith' => [
 				'title' => 'BuiltWith',
 				'link' => 'https://builtwith.com/biup',
+			],
+			'bytespider' => [
+				'title' => 'ByteSpider',
+				'link' => 'https://zhanzhang.toutiao.com/',
 			],
 			'deadlinkchecker' => [
 				'title' => 'Dead Link Checker',

@@ -13,7 +13,7 @@ $primary-accent-light: lighten($primary-accent, 10%) !default;
 
 $secondary-accent: #0f0 !default;
 $secondary-accent-contrast: #fff !default;
-$secondary-accent-dark: dark($secondary-accent, 10%) !default;
+$secondary-accent-dark: darken($secondary-accent, 10%) !default;
 $secondary-accent-light: lighten($primary-accent, 10%) !default;
 
 $tertiary-accent: #00f !default;

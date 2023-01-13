@@ -107,9 +107,9 @@ function ScheduledTasks()
 		$get_info = $smcFunc['db']->query('', '
 			SELECT disabled
 			FROM {db_prefix}scheduled_tasks
-			WHERE task = {string:remove_redirect}',
+			WHERE class = {string:remove_redirect}',
 			[
-				'remove_redirect' => 'remove_topic_redirect'
+				'remove_redirect' => 'StoryBB\Task\Schedulable\RemoveTopicRedirects'
 			]
 		);
 
