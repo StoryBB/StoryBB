@@ -1,4 +1,17 @@
 /** Variable magic. */
 :root {
 	--default-background: #{$default-background};
+
+	--primary-accent: #{$primary-accent};
+	--primary-accent-contrast: #{$primary-accent-contrast};
+	--primary-accent-dark: #{$primary-accent-dark};
+	--primary-accent-light: #{$primary-accent-light};
+
+	--secondary-accent: #{$secondary-accent};
+	--secondary-accent-contrast: #{$secondary-accent-contrast};
+	--secondary-accent-dark: #{$secondary-accent-dark};
+	--secondary-accent-light: #{$secondary-accent-light};
+
+	--tertiary-accent: #{$tertiary-accent};
+	--tertiary-accent-contrast: #{$tertiary-accent-contrast};
 }
