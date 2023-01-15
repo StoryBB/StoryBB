@@ -369,7 +369,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 		$errors[] = ['lang', 'error_long_name'];
 
 	// No name?!  How can you register with no name?
-	if ($username == '')
+	if (!trim($username))
 		$errors[] = ['lang', 'need_username'];
 
 	// Only these characters are permitted.
