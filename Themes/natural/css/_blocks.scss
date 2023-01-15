@@ -182,6 +182,8 @@
 	}
 }
 
+$block-gutters: $block-gutter-x * 2;
+
 @media screen and (max-width: 767px) {
 	.block-container {
 		.block-region-left-sidebar {
@@ -212,6 +214,23 @@
 		.block-region-right-sidebar {
 			order: 3;
 			width: 100%;
+		}
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.block-region {
+		display: flex;
+		flex-flow: row wrap;
+		width: 100%;
+
+		&> .block {
+			margin: $block-gutter-y $block-gutter-x;
+			@for $i from 1 through 12 {
+				&.block-col-#{$i} {
+					width: calc(100% / 12 * #{$i} - #{$block-gutters});
+				}
+			}
 		}
 	}
 }
