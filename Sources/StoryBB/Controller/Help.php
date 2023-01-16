@@ -32,7 +32,7 @@ class Help implements Routable
 
 	public static function register_own_routes(RouteCollection $routes): void
 	{
-		$routes->add('help', new Route('/help', ['_function' => [static::class, 'help_index']]));
+		$routes->add('help', new Route('/help', ['_controller' => [static::class, 'help_index']]));
 		$routes->add('help_smileys', new Route('/help/smileys', ['_controller' => [static::class, 'smileys']]));
 		$routes->add('help_policy', new Route('/help/{policy}', ['_function' => [static::class, 'policy']]));
 	}
@@ -40,13 +40,11 @@ class Help implements Routable
 	/**
 	 * Displays the main help index.
 	 */
-	public static function help_index()
+	public function help_index(): Response
 	{
-		global $context, $txt, $scripturl, $smcFunc, $user_info, $language;
-
 		$url = App::container()->get('urlgenerator');
 
-		$context['manual_sections'] = [
+		$manual_sections = [
 			'smileys' => [
 				'link' => $url->generate('help_smileys'),
 				'title' => new Phrase('Manual:manual_smileys'),
@@ -57,7 +55,7 @@ class Help implements Routable
 		$policies = static::get_help_policies();
 		foreach ($policies as $policy_type => $policy)
 		{
-			$context['manual_sections'][$policy_type] = $policy;
+			$manual_sections[$policy_type] = $policy;
 		}
 
 		// Now let's see if there are any pages for the user.
@@ -66,7 +64,7 @@ class Help implements Routable
 		{
 			foreach ($pages as $id_page => $page)
 			{
-				$context['manual_sections']['page_' . $id_page] = [
+				$manual_sections['page_' . $id_page] = [
 					'title' => $page['page_title'],
 					'desc' => '',
 					'link' => $url->generate('pages', ['page' => $page['page_name']]),
@@ -74,17 +72,12 @@ class Help implements Routable
 			}
 		}
 
-		$context['canonical_url'] = $url->generate('help');
+		$page = $this->page();
+		$page->addLinktree(new Phrase('General:help'), $url->generate('help'));
 
-		// Build the link tree.
-		$context['linktree'][] = [
-			'url' => $context['canonical_url'],
-			'name' => new Phrase('help'),
-		];
-
-		// Lastly, some minor template stuff.
-		$context['page_title'] = new Phrase('Manual:manual_storybb_user_help');
-		$context['sub_template'] = 'help_manual';
+		return (App::make(RenderResponse::class))->render('help_manual.twig', [
+			'manual_sections' => $manual_sections,
+		]);
 	}
 
 	public function smileys(): Response
@@ -217,9 +210,11 @@ class Help implements Routable
 	{
 		global $smcFunc, $user_info;
 
+		$user = App::container()->get('currentuser');
+
 		$pages = [];
 
-		$base_access = allowedTo('admin_forum') ? 'a' : 'x';
+		$base_access = $user->can('admin_forum') ? 'a' : 'x';
 
 		$request = $smcFunc['db']->query('', '
 			SELECT id_page, page_name, page_title
@@ -239,7 +234,7 @@ class Help implements Routable
 		}
 
 		// Admins don't need to check.
-		if (allowedTo('admin_forum'))
+		if ($user->can('admin_forum'))
 		{
 			return $pages;
 		}
