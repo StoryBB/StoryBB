@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Represents a fatal error response in the system.
  */
-class ErrorResponse extends RenderResponse
+class UnstyledErrorResponse extends Response
 {
 	public function __construct(?string $content = '', int $status = 403, array $headers = [])
 	{
@@ -25,11 +25,25 @@ class ErrorResponse extends RenderResponse
 
 		if (empty($content))
 		{
-			$content = new Phrase('General:error_occured')
+			$content = $this->placeholder_content();
 		}
-		$this->render('error_fatal.twig', ['error_title' => new Phrase('General:error_occurred'), 'error_message' => $content]);
-
+		$this->setContent($content);
 		$this->setStatusCode($status);
 		$this->setProtocolVersion('1.0');
+	}
+
+	protected function placeholder_content() : string
+	{
+		return '<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+
+		<title>Not Found</title>
+	</head>
+	<body>
+		Not Found.
+	</body>
+</html>';
 	}
 }
