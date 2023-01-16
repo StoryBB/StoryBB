@@ -1,13 +1,11 @@
-{#{% extends '@layouts/default.twig' %}#}
+{% extends '@layouts/default.twig' %}
 
-{#% block title %}{{ phrase('Manual:manual_smileys') }}{% endblock %}#}
+{% block title %}{{ phrase('Manual:manual_smileys') }}{% endblock %}
 
 {% block content %}
-	<div class="cat_bar">
-		<h3 class="catbg">{{ phrase('Manual:manual_smileys') }} - {{ forum_name }}</h3>
-	</div>
-	<div id="help_container">
-		<div id="helpmain" class="windowbg">
+	<x-panel class="help_container">
+		<x-panel.heading>{{ phrase('Manual:manual_smileys') }} - {{ forum_name }}</x-panel.heading>
+		<x-panel.body>
 			<table>
 
 				{% for smiley in smileys %}
@@ -24,6 +22,6 @@
 				</tr>
 				{% endfor %}
 			</table>
-		</div>
-	</div>
+		</x-panel.body>
+	</x-panel>
 {% endblock %}
