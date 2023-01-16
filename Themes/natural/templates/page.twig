@@ -1,0 +1,41 @@
+{% extends '@layouts/default.twig' %}
+
+{% block title %}{{ page_title|raw }}{% endblock %}
+
+{% block content %}
+	<x-panel class="help_container">
+		<x-panel.heading>{{ page_title }}</x-panel.heading>
+		<x-panel.body>
+			{{ page_content|raw }}
+		</x-panel.body>
+	</x-panel>
+	<br>
+
+	{% if custom_fields %}
+		{% for key, field in custom_fields %}
+			<x-panel.subheading>{{ field_name }}{% if key != '' %} - {{ key }}{% endif %}</x-panel.subheading>
+			{% for character in field %}
+			<div class="up_contain">
+				<div class="lastpost">
+					<div class="last_poster">
+						{{ character.avatar.image|raw }}
+					</div>
+					{% if in_character %}
+						<p>
+							<a href="{{ character.character_link }}">{{ character.character_name|raw }}</a><br>
+							<a href="{{ character.account_link }}">{{ character.real_name|raw }}</a>
+						</p>
+					{% else %}
+						<p>
+							<a href="{{ character.account_link }}">{{ character.real_name|raw }}</a>
+						</p>
+					{% endif %}
+				</div>
+				<div class="info">
+					{{ character.value|raw }}
+				</div>
+			</div>
+			{% endfor %}
+		{% endfor %}
+	{% endif %}
+{% endblock %}
