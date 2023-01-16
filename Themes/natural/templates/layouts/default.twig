@@ -3,13 +3,18 @@
 <head>
 	<meta charset="UTF-8">
 	<title>{% block title %}{% endblock %}</title>
-	{% include '@layouts/meta_header.twig' %}
+	{% include '@partials/meta_header.twig' %}
+	{% block header %}{% endblock %}
 </head>
 <body>
-	{% include '@partials/linktree.twig' %}
+	{% include '@partials/theme/header.twig' %}
+	<x-linktree linktree=page.getLinkTree />
 
 	{% block content %}{% endblock %}
 
-	{% include '@layouts/theme_footer.twig' %}
+	{% include '@partials/theme/footer.twig' %}
+	<x-cookie-footer />
+
+	{% block js %}{% endblock %}
 </body>
 </html>

@@ -1,6 +1,6 @@
 <nav aria-label="breadcrumb">
 	<ol>
-	{% for breadcrumb in page.getLinkTree %}
+	{% for breadcrumb in linktree %}
 		<li>
 		{% if breadcrumb.url %}
 			<a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
