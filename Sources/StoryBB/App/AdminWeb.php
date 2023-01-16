@@ -20,6 +20,7 @@ use StoryBB\Helper\Cookie;
 use StoryBB\Phrase;
 use StoryBB\Routing\Exception\InvalidRouteException;
 use StoryBB\Search\AdapterFactory as SearchAdapterFactory;
+use Performing\TwigComponents\Configuration;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -301,6 +302,12 @@ class AdminWeb
 			$twig->addFunction(new TwigFunction('session', function ($sess) use ($container) {
 				return $container->get('session')->get($sess);
 			}));
+
+			Configuration::make($twig)
+				->setTemplatesPath('components')
+				->setTemplatesExtension('twig')
+				->useCustomTags()
+				->setup();
 
 			return $twig;
 		});
