@@ -16,7 +16,6 @@ $txt['generate_reports_type'] = 'Select Type of Report';
 $txt['gr_type_desc_board_perms'] = 'Generate reports showing permissions each membergroup has across the different boards in your forum.';
 $txt['gr_type_desc_member_groups'] = 'Report showing the settings for each membergroup on your forum.';
 $txt['gr_type_desc_group_perms'] = 'Report on the permissions each membergroup has in the forum.';
-$txt['gr_type_desc_staff'] = 'This report summarizes all members who currently have positions of authority on the forum.';
 
 $txt['full_member'] = 'Full Member';
 $txt['global_boards'] = 'Global Boards';

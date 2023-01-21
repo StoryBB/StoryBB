@@ -50,6 +50,7 @@ $txt['membergroups'] = 'Membergroups';
 $txt['membergroup_permissions'] = 'Membergroup Permissions';
 $txt['boards'] = 'Boards';
 $txt['board_permissions'] = 'Board Permissions';
+$txt['staff'] = 'Staff';
 $txt['member_reports'] = 'Member Reports';
 $txt['member_visits'] = 'Member Visits';
 $txt['member_activity'] = 'Member Activity';
@@ -499,7 +500,6 @@ $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 $txt['generate_reports_index'] = 'Reports List';
 $txt['gr_type_board_perms'] = 'Board Permissions';
-$txt['gr_type_staff'] = 'Staff';
 
 $txt['update_available'] = 'Update Available';
 $txt['update_message'] = 'You\'re using an outdated version of StoryBB, which contains some bugs which have since been fixed.

@@ -1,0 +1,27 @@
+{% extends '@layouts/admin.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		{% for staff_member in staff %}
+			<x-admin.panel.heading>{{ staff_member.name }}</x-admin.panel.heading>
+			<x-admin.panel.body>
+				<table class="staff-report">
+					<tr>
+						<th>{{ phrase('Reports:report_staff_position') }}</th>
+						<td>{{ staff_member.position }}</td>
+					</tr>
+					<tr>
+						<th>{{ phrase('Reports:report_staff_posts') }}</th>
+						<td>{{ staff_member.posts }}</td>
+					</tr>
+					<tr>
+						<th>{{ phrase('Reports:report_staff_moderates') }}</th>
+						<td>{{ staff_member.moderates }}</td>
+					</tr>
+				</table>
+			</x-admin.panel.body>
+		{% endfor %}
+	{% endautoescape %}
+{% endblock %}

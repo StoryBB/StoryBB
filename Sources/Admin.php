@@ -386,7 +386,6 @@ function AdminMain()
 					'subsections' => [
 						'list' => [$txt['generate_reports_index'], 'admin_forum'],
 						'board_perms' => [$txt['gr_type_board_perms'], 'admin_forum'],
-						'staff' => [$txt['gr_type_staff'], 'admin_forum'],
 					],
 				],
 				'logs' => [
