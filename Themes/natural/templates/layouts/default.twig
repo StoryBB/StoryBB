@@ -7,12 +7,53 @@
 	{% block header %}{% endblock %}
 </head>
 <body>
-	{% include '@partials/theme/header.twig' %}
-	<x-linktree linktree=page.getLinkTree />
+	{% include '@partials/theme/navigation.twig' %}
 
-	{% block content %}{% endblock %}
+	<div id="wrapper">
+		<a href="" id="top"></a>
 
-	{% include '@partials/theme/footer.twig' %}
+		{% include '@partials/theme/user-navigation.twig' %}
+		{% include '@partials/theme/header.twig' %}
+
+		<div id="content_wrapper">
+			<div id="upper_section">
+				<div id="inner_section">
+					<x-linktree linktree=page.getLinkTree />
+				</div>
+			</div>
+			<div id="content_section">
+				<div id="main_content_section">
+
+{#if (and context.in_maintenance context.user.is_admin)}
+					<div class="errorbox">
+						<dl>
+							<dt>
+								<strong id="error_serious">{{txt.forum_in_maintenance}}</strong>
+							</dt>
+							<dd class="error" id="error_list">
+								{{txt.maintenance_page}}
+							</dd>
+						</dl>
+					</div>
+{{/if}#}
+
+					<div class="block-container">{#
+						#}{#block_region 'before-content'#}{#
+							 #}<div class="block-middle">{#block_region 'left-sidebar'#}{#
+								#}<div class="block-inner">{#block_region 'above-content'#}{#
+									#}{{status_messages}}{#
+									#}<aside class="main-body-content">{% block content %}{% endblock %}</aside>{#
+								#}{#block_region 'below-content'#}</div>{#
+							#}{#block_region 'right-sidebar'#}</div>{#
+						#}{#block_region 'after-content'#}{#
+					#}</div>
+				</div>
+			</div>
+		</div><!-- #content_wrapper -->
+
+		{% include '@partials/theme/footer.twig' %}
+
+	</div>
 	<x-cookie-footer />
 
 	{% block js %}{% endblock %}
