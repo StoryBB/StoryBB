@@ -12,6 +12,9 @@
 
 namespace StoryBB\Cache;
 
+use StoryBB\App;
+use StoryBB\Task\Maintenance;
+
 /**
  * Our Cache API class
  * @package cacheAPI
@@ -145,20 +148,7 @@ class File extends API
 	 */
 	public function cleanCache($type = '')
 	{
-		$cachedir = $this->cachedir;
-
-		// No directory = no game.
-		if (!is_dir($cachedir))
-			return;
-
-		// Remove the files in StoryBB's own disk cache, if any
-		$dh = opendir($cachedir);
-		while ($file = readdir($dh))
-		{
-			if ($file != '.' && $file != '..' && $file != 'index.php' && $file != '.htaccess' && (!$type || substr($file, 0, strlen($type)) == $type))
-				@unlink($cachedir . '/' . $file);
-		}
-		closedir($dh);
+		App::make(Maintenance\ClearFileCache::class)->execute();
 
 		// Make this invalid.
 		$this->invalidateCache();
