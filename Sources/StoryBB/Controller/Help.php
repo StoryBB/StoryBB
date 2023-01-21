@@ -82,7 +82,7 @@ class Help implements Routable
 
 	public function smileys(): Response
 	{
-		$container = \StoryBB\Container::instance();
+		$container = App::container();
 		$smiley_helper = $container->get('smileys');
 
 		$page = $this->page();
@@ -99,7 +99,7 @@ class Help implements Routable
 			];
 		}
 
-		return ($container->instantiate(LegacyTemplateResponse::class))->render('help_smileys.twig', [
+		return ($container->instantiate(RenderResponse::class))->render('help_smileys.twig', [
 			'smileys' => $smileys,
 			'forum_name' => $container->get('sitesettings')->forum_name,
 		]);
