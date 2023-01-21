@@ -12,19 +12,24 @@
 
 namespace StoryBB\Controller\Admin;
 
-use StoryBB\Container;
+use StoryBB\App;
 use StoryBB\Controller\Admin\AdminNavigation;
 use StoryBB\Routing\Behaviours\MaintenanceAccessible;
+use StoryBB\Dependency\AdminUrlGenerator;
+use StoryBB\Dependency\Session;
 use StoryBB\Dependency\TemplateRenderer;
 use StoryBB\Routing\RenderResponse;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractAdminController implements MaintenanceAccessible
 {
 	use TemplateRenderer;
 	use AdminNavigation;
+	use AdminUrlGenerator;
+	use Session;
 
 	public function requires_permissions(): array
 	{
@@ -33,6 +38,11 @@ abstract class AbstractAdminController implements MaintenanceAccessible
 
 	abstract public static function register_own_routes(RouteCollection $routes): void;
 
+	public function redirect(string $route, array $params = []): Response
+	{
+		return new RedirectResponse($this->adminurlgenerator()->generate($route, $params));
+	}
+
 	public function render(string $template, string $route, array $rendercontext = []): Response
 	{
 		if (!isset($rendercontext['navigation']))
@@ -40,7 +50,6 @@ abstract class AbstractAdminController implements MaintenanceAccessible
 			$rendercontext['navigation'] = $this->get_navigation($route);
 		}
 
-		$container = Container::instance();
-		return ($container->instantiate(RenderResponse::class))->render($template, $rendercontext);
+		return (App::make(RenderResponse::class))->render($template, $rendercontext);
 	}
 }

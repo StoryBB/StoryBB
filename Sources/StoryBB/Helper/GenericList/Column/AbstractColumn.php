@@ -28,5 +28,10 @@ abstract class AbstractColumn
 		return (string) $this->label;
 	}
 
+	public function __toString(): string
+	{
+		return $this->get_label();
+	}
+
 	abstract public function get_value(array $row, string $column_id);
 }

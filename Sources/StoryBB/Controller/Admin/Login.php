@@ -22,7 +22,6 @@ use StoryBB\Dependency\Database;
 use StoryBB\Dependency\RequestVars;
 use StoryBB\Dependency\CurrentUser;
 use StoryBB\Phrase;
-use StoryBB\Dependency\AdminUrlGenerator;
 use StoryBB\Routing\RenderResponse;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
@@ -37,7 +36,6 @@ class Login extends AbstractAdminController implements Administrative, Maintenan
 	use CurrentUser;
 	use Database;
 	use RequestVars;
-	use AdminUrlGenerator;
 
 	/** @var $login_errors Any errors shown in the login form. */
 	protected $login_errors = [];
