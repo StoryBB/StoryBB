@@ -16,7 +16,7 @@ use StoryBB\Helper\Mail;
 /**
  * Perform the standard checks on expiring/near expiring subscriptions.
  */
-class UpdatePaidSubs implements \StoryBB\Task\Schedulable
+class UpdatePaidSubs extends \StoryBB\Task\AbstractSchedulable implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

@@ -31,8 +31,25 @@ interface Schedulable extends Discoverable
 	public function get_description(): string;
 
 	/**
+	 * Sets the enabled state of this task.
+	 *
+	 * @param bool $new_enabled_state Set to true to enable the task, false to disable.
+	 */
+	public function set_state(bool $new_enabled_state): void;
+
+	/**
 	 * The function to actually execute a task
 	 * @return bool True on success
 	 */
 	public function execute(): bool;
+
+	/**
+	 * Any additional processing triggered by enabling this task.
+	 */
+	public function on_enable(): void;
+
+	/**
+	 * Any additional processing triggered by disabling this task.
+	 */
+	public function on_disable(): void;
 }

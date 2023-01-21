@@ -16,7 +16,7 @@ use StoryBB\Task;
 /**
  * Weekly maintenance.
  */
-class WeeklyMaintenance implements \StoryBB\Task\Schedulable
+class WeeklyMaintenance extends \StoryBB\Task\AbstractSchedulable implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task;
 
+use StoryBB\App;
+
 /**
  * A class for managing tasks being queued for scheduled running.
  */
@@ -31,16 +33,9 @@ class Scheduler
 
 	public static function set_enabled_state(string $class, bool $enabled_state)
 	{
-		global $smcFunc;
-
-		$smcFunc['db']->query('', '
-			UPDATE {db_prefix}scheduled_tasks
-			SET disabled = {int:disabled}
-			WHERE class = {string:class}',
-			[
-				'disabled' => $enabled_state ? 0 : 1,
-				'class' => $class,
-			]
-		);
+		if (class_exists($class))
+		{
+			App::make($class)->set_state($enabled_state);
+		}
 	}
 }
