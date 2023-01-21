@@ -12,6 +12,7 @@
 
 namespace StoryBB\Routing;
 
+use StoryBB\Phrase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -25,11 +26,17 @@ class ErrorResponse extends RenderResponse
 
 		if (empty($content))
 		{
-			$content = new Phrase('General:error_occured')
+			$content = new Phrase('General:error_occured');
 		}
-		$this->render('error_fatal.twig', ['error_title' => new Phrase('General:error_occurred'), 'error_message' => $content]);
 
+		$this->setContent($content);
 		$this->setStatusCode($status);
 		$this->setProtocolVersion('1.0');
+	}
+
+	public function sendContent()
+	{
+		$this->render('error_fatal.twig', ['error_title' => new Phrase('General:error_occured'), 'error_message' => $this->content]);
+		parent::sendContent();
 	}
 }

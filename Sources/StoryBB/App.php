@@ -24,6 +24,7 @@ use StoryBB\Routing\Behaviours\Unloggable;
 use StoryBB\Routing\Exception\ApplicationException;
 use StoryBB\Routing\Exception\LoggedApplicationException;
 use StoryBB\Routing\Exception\InvalidRouteException;
+use StoryBB\Routing\ErrorResponse;
 use StoryBB\Search\AdapterFactory as SearchAdapterFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

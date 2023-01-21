@@ -62,7 +62,7 @@ class CustomPage implements Routable
 
 		if (empty($page))
 		{
-			throw new ApplicationException(new Phrase('no_access'), 404);
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 
 		$this->assertPageVisible((int) $page['id_page']);
@@ -209,7 +209,7 @@ class CustomPage implements Routable
 
 		if (empty($groups))
 		{
-			throw new ApplicationException(new Phrase('no_access'), 404);
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 
 		$access = 'x';
@@ -241,7 +241,7 @@ class CustomPage implements Routable
 		if ($access != 'a')
 		{
 			// @todo is_not_guest(); // It might improve if you are logged in, perhaps. But we're not going to confirm that for you.
-			throw new ApplicationException(new Phrase('no_access'), 404);
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 	}
 }
