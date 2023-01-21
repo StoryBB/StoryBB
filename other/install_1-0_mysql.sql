@@ -342,9 +342,9 @@ VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0
 
 INSERT INTO {$db_prefix}membergroups
   (id_group, group_name, description, online_color, icons, group_type)
-VALUES (1, '{$default_administrator_group}', '', '#FF0000', '5#iconadmin.png', 1),
-  (2, '{$default_global_moderator_group}', '', '#0000FF', '5#icongmod.png', 0),
-  (3, '{$default_moderator_group}', '', '', '5#iconmod.png', 0);
+VALUES (1, '{$default_administrator_group}', '', '#FF0000', '5#iconadmin.webp', 1),
+  (2, '{$default_global_moderator_group}', '', '#0000FF', '5#icongmod.webp', 0),
+  (3, '{$default_moderator_group}', '', '', '5#iconmod.webp', 0);
 # --------------------------------------------------------
 
 #
