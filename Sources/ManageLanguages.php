@@ -83,7 +83,7 @@ function ModifyLanguages()
 		if ($_POST['default_language'] != $language && $lang_exists)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
-			updateSettingsFile(['language' => $_POST['default_language']]);
+			updateSettingsFile(['language' => JavaScriptEscape($_POST['default_language'])]);
 			$language = $_POST['default_language'];
 		}
 
