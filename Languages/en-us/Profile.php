@@ -730,6 +730,10 @@ $txt['char_sheet_click_to_expand'] = '<a href="#" class="click_expand">show more
 $txt['char_sheet_click_to_collapse'] = '<a href="#" class="click_collapse">show less</a>';
 $txt['char_sheet_empty'] = 'No character sheet was given.';
 
+$txt['character_skills'] = 'Skills';
+$txt['character_skills_link'] = 'Skills';
+$txt['character_skills_blurb'] = 'You can configure your character\'s skills below.';
+
 $txt['char_sheet_wip'] = 'Work in progress';
 $txt['char_sheet_submitted'] = 'Submitted';
 $txt['char_sheet_feedback'] = 'Feedback';

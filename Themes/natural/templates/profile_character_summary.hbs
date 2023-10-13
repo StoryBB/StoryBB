@@ -41,6 +41,10 @@
 				<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=edit" class="button">{{{txt.edit_char_link}}}</a>
 {{/if}}
 
+{{#if (and context.skills_enabled context.user.is_owner)}}
+				<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=character_skills;char={{context.character.id_character}}" class="button">{{{txt.character_skills_link}}}</a>
+{{/if}}
+
 {{#if (and context.character.editable context.character.retire_eligible)}}
 				<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=retire;{{session_url}}" class="button">{{#if (eq context.character.retired '1')}}{{{txt.char_unretire_char}}}{{else}}{{{txt.char_retire_char}}}{{/if}}</a>
 {{/if}}
@@ -79,6 +83,28 @@
 
 {{#if context.character.signature}}
 			<div class="char_signature">{{{context.character.signature_parsed}}}</div>
+{{/if}}
+
+{{#if context.character.skills}}
+			<h5>{{txt.character_skills}}</h5>
+			<dl class="profile-skills">
+	{{#each context.character.skills}}
+				<dt class="skillset-title skillset-title-{{ @index }}">{{ title }}:</dt>
+				<dd class="skillset-content skillset-content-{{ @index }}">
+		{{#each skills}}
+						<ul class="skill-branch skill-branch-{{ @index }}">
+			{{#each skills}}
+				{{#if link}}
+					<li class="skill skill-{{ @index }}"><a href="{{{ link }}}">{{{ name }}}</a></li>
+				{{else}}
+					<li class="skill skill-{{ @index }}">{{{ name }}}</li>
+				{{/if}}
+			{{/each}}
+						</ul>
+		{{/each}}
+				</dd>
+	{{/each}}
+			</dl>
 {{/if}}
 
 {{#if context.character.editable}}

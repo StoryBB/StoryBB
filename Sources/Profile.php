@@ -227,6 +227,18 @@ function Profile()
 			$section = $characters->add_section(new NavSection('characters', $txt['characters']));
 		}
 
+		$request = $smcFunc['db']->query('', '
+			SELECT COUNT(s.id_skill)
+			FROM {db_prefix}skillsets AS ss
+				INNER JOIN {db_prefix}skill_branches AS sb ON (sb.id_skillset = ss.id_skillset)
+				INNER JOIN {db_prefix}skills AS s ON (s.id_branch = sb.id_branch)
+			WHERE ss.active = 1
+				AND sb.active = 1'
+		);
+		list ($num_skills) = $smcFunc['db']->fetch_row($request);
+		$context['skills_enabled'] = $num_skills > 0;
+		$smcFunc['db']->free_result($request);
+
 		foreach ($context['member']['characters'] as $id_character => $character)
 		{
 			// Skip the OOC 'character'.
@@ -250,6 +262,18 @@ function Profile()
 				'',
 				['area' => 'characters', 'u' => $memID, 'char' => $id_character]
 			));
+			if ($context['skills_enabled'] && $context['user']['is_owner'])
+			{
+				$section->add_item(new NavHiddenItem(
+					'character_skills_' . $id_character,
+					$character['character_name'] . ' - ' . $txt['character_skills'],
+					['area' => 'character_skills', 'u' => $memID, 'char' => $id_character],
+					'StoryBB\\Controller\\Profile\\CharacterSkills',
+					['is_not_guest'],
+					'',
+					['area' => 'characters', 'u' => $memID, 'char' => $id_character]
+				));
+			}
 			$section->add_item(new NavHiddenItem(
 				'character_posts_' . $id_character,
 				$character['character_name'] . ' - ' . $txt['showMessages'],

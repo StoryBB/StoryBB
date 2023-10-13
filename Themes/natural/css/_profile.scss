@@ -76,6 +76,41 @@
 				grid-column-end: 3;
 			}
 		}
+
+		.profile-skills {
+			.skill-branch, .skill {
+				display: inline-block;
+			}
+		}
+	}
+}
+
+.character-skillset {
+	.skillset-branch-container {
+		position: relative;
+	}
+	input.expand-skill-branch {
+		position: absolute;
+		right: 5px;
+		top: 5px;
+		color: #fff;
+
+		&:after {
+			content: "\f078";
+			font-weight: 900;
+			color: #fff;
+		}
+		&:checked:after {
+			content: "\f077";
+			font-weight: 900;
+			color: #fff;
+		}
+	}
+	input.expand-skill-branch + .skill-branch {
+		display: none;
+	}
+	input.expand-skill-branch:checked + .skill-branch {
+		display: block;
 	}
 }
 

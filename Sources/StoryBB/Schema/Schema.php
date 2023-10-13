@@ -37,6 +37,7 @@ class Schema
 			'\\StoryBB\\Schema\\TableGroup\\Policies',
 			'\\StoryBB\\Schema\\TableGroup\\Polls',
 			'\\StoryBB\\Schema\\TableGroup\\Shippers',
+			'\\StoryBB\\Schema\\TableGroup\\Skills',
 			'\\StoryBB\\Schema\\TableGroup\\Tasks',
 			'\\StoryBB\\Schema\\TableGroup\\Uncategorised',
 		];

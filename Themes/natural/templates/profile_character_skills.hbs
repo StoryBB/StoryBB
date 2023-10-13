@@ -1,0 +1,45 @@
+		{{! Showing a character's skills }}
+		<div class="cat_bar profile">
+			<h3 class="catbg">
+				{{{context.character.character_name}}} - {{{txt.character_skills}}}
+			</h3>
+		</div>
+
+		<div class="information">{{txt.character_skills_blurb}}</div>
+
+		<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=character_skills;char={{context.character.id_character}}" method="post">
+{{#each context.character.skills}}
+			<div class="character-skillset">
+				<div class="cat_bar">
+					<h3 class="catbg skillset-title skillset-title-{{ @index }}">{{ title }}</h3>
+				</div>
+
+				<div class="skillset-content skillset-content-{{ @index }}">
+	{{#each skills}}
+					<div class="skillset-branch-container skillset-branch-container-{{ @index }}">
+						<div class="title_bar skillset-branch skillset-branch-{{ @index }}">
+							<h4 class="titlebg">{{ title }}</h4>
+						</div>
+						<input type="checkbox" {{#if opened}} checked{{/if}} class="expand-skill-branch"><ul class="skill-branch skill-branch-{{ @index }}">
+		{{#each skills}}
+							<li class="skill skill-{{ @index }}">
+								<input type="checkbox" id="skill-{{ @index }}" name="skill[{{ @index }}]" value="skill[{{ @index }}]" {{#if has}} checked{{/if}}>
+								<label for="skill-{{ @index }}">{{{ name }}}</label>
+							</li>
+		{{/each}}
+						</ul>
+					</div>
+	{{/each}}
+				</div>
+			</div>
+{{/each}}
+			{{session_form}}
+{{#if context.character.inactive_skills}}
+	{{#each context.character.inactive_skills}}
+		<input type="hidden" name="skill[{{ . }}]" value="[{{ . }}]">
+	{{/each}}
+{{/if}}
+			<div class="buttonlist righttext">
+				<button type="submit" name="save" value="save" class="active button">{{txt.save}}</button>
+			</div>
+		</form>
