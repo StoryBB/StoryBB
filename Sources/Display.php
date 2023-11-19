@@ -1217,6 +1217,7 @@ function Display()
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
+		addJavaScriptVar('sbb_autocomplete_rawcharacter', \StoryBB\App::container()->get('urlgenerator')->generate('autocomplete', ['type' => 'rawcharacter', 'sessvar' => $context['session_var'], 'sessid' => $context['session_id']]), true);
 		loadJavaScriptFile('jquery.atwho.min.js', ['defer' => true], 'sbb_atwho');
 		loadJavaScriptFile('jquery.caret.min.js', ['defer' => true], 'sbb_caret');
 		loadJavaScriptFile('mentions.js', ['defer' => true], 'sbb_mentions');

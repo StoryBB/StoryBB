@@ -35,7 +35,7 @@ var atwhoConfig = {
 					return;
 
 			$.ajax({
-				url: sbb_scripturl + '?action=autocomplete;' + sbb_session_var + '=' + sbb_session_id,
+				url: sbb_preparePrettyUrl(sbb_autocomplete_rawcharacter),
 				method: 'GET',
 				data: {
 					term: query,
