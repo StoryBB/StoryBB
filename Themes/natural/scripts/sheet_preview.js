@@ -3,7 +3,7 @@ function ajax_getSheetPreview ()
 	$.ajax({
 		type: "POST",
 		url: sbb_scripturl + "?action=xmlhttp;sa=previews;xml",
-		data: {item: "char_sheet_preview", sheet: $("#message").data('sceditor').val()},
+		data: {item: "char_sheet_preview", user_id: $('#user_id').val(), char_id: $('#char_id').val(), sheet: $("#message").data('sceditor').val()},
 		context: document.body,
 		success: function(request){
 			$("#box_preview").css({display:""});
