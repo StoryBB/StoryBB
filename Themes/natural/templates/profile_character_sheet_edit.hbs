@@ -75,6 +75,8 @@
 				</div>
 				<br class="clear">
 				<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
+				<input type="hidden" id="user_id" value="{{context.id_member}}">
+				<input type="hidden" id="char_id" value="{{context.character.id_character}}">
 				{{session_form}}
 			</form>
 

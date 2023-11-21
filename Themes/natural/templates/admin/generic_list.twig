@@ -1,0 +1,12 @@
+{% extends '@layouts/admin.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	<x-admin.panel>
+		<x-admin.panel.heading>{{ page_title }}</x-admin.panel.heading>
+		<x-admin.panel.body>
+			{{ list|raw }}
+		</x-admin.panel.body>
+	</x-panel>
+{% endblock %}

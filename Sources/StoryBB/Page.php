@@ -12,10 +12,15 @@
 
 namespace StoryBB;
 
+use StoryBB\App;
+use StoryBB\Dependency\CurrentUser;
+use StoryBB\Dependency\SiteSettings;
 use StoryBB\Dependency\UrlGenerator;
 
 class Page
 {
+	use CurrentUser;
+	use SiteSettings;
 	use UrlGenerator;
 
 	protected $meta = [
@@ -116,5 +121,16 @@ class Page
 			'timestamp' => $timestamp,
 		];
 		$this->addLink('stylesheet', $urlgenerator->generate('css', $options));
+	}
+
+	public function get_footer_links()
+	{
+		$site_settings = $this->sitesettings();
+		$current_user = $this->currentuser();
+
+		$policy = App::make('StoryBB\\Model\\Policy');
+		$footer_links = $policy->get_footer_policies($current_user->get_language());
+
+		return $footer_links;
 	}
 }

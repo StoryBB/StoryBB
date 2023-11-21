@@ -117,6 +117,7 @@ trait AdminNavigation
 							'reports/membergroup_permissions' => ['membergroup_permissions'],
 							'reports/boards' => ['boards'],
 							'reports/board_permissions' => ['board_permissions'],
+							'reports/staff' => ['staff'],
 						],
 					],
 					'memberreports' => [

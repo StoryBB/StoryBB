@@ -11,11 +11,17 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use StoryBB\Dependency\Database;
+use StoryBB\Dependency\SiteSettings;
+
 /**
  * Check for and remove move topic notices that have expired.
  */
-class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
+class RemoveTopicRedirects extends \StoryBB\Task\AbstractSchedulable implements \StoryBB\Task\Schedulable
 {
+	use Database;
+	use SiteSettings;
+
 	/**
 	 * Get the human-readable name for this task.
 	 * @return string The human readable name.
@@ -70,5 +76,21 @@ class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 		}
 
 		return true;
+	}
+
+	/**
+	 * Any additional processing triggered by enabling this task.
+	 */
+	public function on_enable(): void
+	{
+		$this->sitesettings()->save(['allow_expire_redirect' => 1]);
+	}
+
+	/**
+	 * Any additional processing triggered by disabling this task.
+	 */
+	public function on_disable(): void
+	{
+		$this->sitesettings()->save(['allow_expire_redirect' => 0]);
 	}
 }

@@ -93,11 +93,23 @@ function RetrievePreview()
  */
 function char_sheet_preview()
 {
-	global $context, $sourcedir, $txt, $user_info, $scripturl;
+	global $context, $sourcedir, $txt, $user_info, $scripturl, $user_profile;
 
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('Profile');
+
+	if (!empty($_POST['user_id']) && !empty($_POST['char_id']))
+	{
+		$user_id = (int) $_POST['user_id'];
+		$char_id = (int) $_POST['char_id'];
+
+		loadMemberData($user_id);
+		if (!empty($user_profile[$user_id]['characters'][$char_id]))
+		{
+			$context['character'] = $user_profile[$user_id]['characters'][$char_id];
+		}
+	}
 
 	$context['post_error']['sheet'] = [];
 

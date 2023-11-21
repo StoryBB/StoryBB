@@ -1,0 +1,12 @@
+		<header>
+			<h1 class="forumtitle">
+				<a href="{{scripturl}}">
+
+{#if context.header_logo_url_html_safe}}
+					<img src="{{{context.header_logo_url_html_safe}}}" alt="{{{context.forum_name_html_safe}}}">
+{{else}}
+					{{{context.forum_name_html_safe}}}
+{{/if#}
+				</a>
+			</h1>
+		</header>

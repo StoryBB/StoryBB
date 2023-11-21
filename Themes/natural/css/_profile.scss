@@ -8,8 +8,13 @@
 		flex-flow: row wrap;
 
 		.user-summary {
-			flex-basis: calc(#{$avatar_max_width}px + 100px);
-			padding-right: 30px;
+			width: calc(#{$avatar_max_width}px + 100px);
+			@media screen and (min-width: 768px) {
+				padding-right: 30px;
+			}
+			@media screen and (max-width: 767px) {
+				text-align: center;
+			}
 		}
 
 		.profile-online {
@@ -28,6 +33,8 @@
 		}
 
 		.user-details {
+			flex: 1;
+
 			h5 {
 				margin-top: 20px;
 				margin-bottom: 10px;
@@ -56,26 +63,75 @@
 					padding-left: 30px;
 				}
 			}
-		}
 
-		dl {
-			display: grid;
-			grid-template: auto / 15em 1fr;
-			row-gap: 0.5em;
-
-			dt {
-				grid-column: 1;
-			}
-
-			dd {
-				grid-column: 2;
-			}
-
-			dt.full-width {
-				grid-column-start: 1;
-				grid-column-end: 3;
+			.button {
+				margin: 0 10px 10px 0 !important;
 			}
 		}
+
+		@media screen and (min-width: 768px) {
+			dl {
+				display: grid;
+				grid-template: auto / 15em 1fr;
+				row-gap: 0.5em;
+
+				dt {
+					grid-column: 1;
+				}
+
+				dd {
+					grid-column: 2;
+				}
+
+				dt.full-width {
+					grid-column-start: 1;
+					grid-column-end: 3;
+				}
+			}
+		}
+		@media screen and (max-width: 767px) {
+			dl {
+				dd {
+					margin-top: 3px;
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.profile-skills {
+			.skill-branch, .skill {
+				display: inline-block;
+			}
+		}
+	}
+}
+
+.character-skillset {
+	.skillset-branch-container {
+		position: relative;
+	}
+	input.expand-skill-branch {
+		position: absolute;
+		right: 5px;
+		top: 5px;
+		color: #fff;
+
+		&:after {
+			content: "\f078";
+			font-weight: 900;
+			color: #fff;
+		}
+		&:checked:after {
+			content: "\f077";
+			font-weight: 900;
+			color: #fff;
+		}
+	}
+	input.expand-skill-branch + .skill-branch {
+		display: none;
+	}
+	input.expand-skill-branch:checked + .skill-branch {
+		display: block;
 	}
 }
 

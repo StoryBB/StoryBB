@@ -1,0 +1,20 @@
+{% extends '@layouts/admin.twig' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+	{% autoescape false %}
+		<form action="{{ route }}" method="post">
+			{% for task_id, task in tasks %}
+				<div>
+					<h5>{{ task.name }}</h5>
+					<p>{{ task.description }}</p>
+					<button name="execute" value="{{ task_id }}">
+						{{ phrase('ManageMaintenance:maintain_run_now') }}
+					</button>
+				</div>
+			{% endfor %}
+			<input type="hidden" name="{{ session('session_var') }}" value="{{ session('session_value') }}">
+		</form>
+	{% endautoescape %}
+{% endblock %}

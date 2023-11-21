@@ -27,9 +27,9 @@ use Symfony\Component\Routing\RequestContext;
 // Get everything started up...
 define('STORYBB', 1);
 
-if (version_compare(phpversion(), '7.1.3', '<'))
+if (version_compare(phpversion(), '7.4', '<'))
 {
-	die("PHP 7.1.3 or newer is required, your server has " . phpversion() . ". Please ask your host to upgrade PHP.");
+	die("PHP 7.4 or newer is required, your server has " . phpversion() . ". Please ask your host to upgrade PHP.");
 }
 
 require_once(__DIR__ . '/vendor/autoload.php');

@@ -46,8 +46,6 @@ function ManageMaintenance()
 			'activities' => [
 				'repair' => 'MaintainFindFixErrors',
 				'recount' => 'AdminBoardRecount',
-				'cleancache' => 'MaintainCleanCache',
-				'cleantemplatecache' => 'MaintainCleanTemplateCache',
 			],
 		],
 		'members' => [
@@ -199,39 +197,6 @@ function MaintainFindFixErrors()
 
 	require_once($sourcedir . '/RepairBoards.php');
 	RepairBoards();
-}
-
-/**
- * Wipes the whole cache directory.
- * This only applies to StoryBB's own cache directory, though.
- */
-function MaintainCleanCache()
-{
-	global $txt;
-
-	checkSession();
-	validateToken('admin-maint');
-
-	// Just wipe the whole cache directory!
-	clean_cache();
-
-	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_cache']));
-}
-
-/**
- * Removes cached templates.
- */
-function MaintainCleanTemplateCache()
-{
-	global $txt;
-
-	checkSession();
-	validateToken('admin-maint');
-
-	// Just wipe the whole cache directory!
-	StoryBB\Template\Cache::clean();
-
-	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_template_cache']));
 }
 
 /**

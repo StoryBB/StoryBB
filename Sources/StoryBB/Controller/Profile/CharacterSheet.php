@@ -487,6 +487,9 @@ class CharacterSheet extends AbstractProfileController
 		require_once($sourcedir . '/Subs-Editor.php');
 		require_once($sourcedir . '/Drafts.php');
 
+		// @todo there must be a better way of initialising CSS?
+		\StoryBB\Helper\Bbcode\AbstractParser::get_all_bbcodes();
+
 		loadLanguage('Admin');
 
 		loadJavascriptFile('sheet_preview.js', ['default_theme' => true]);

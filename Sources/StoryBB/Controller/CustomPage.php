@@ -13,26 +13,42 @@
 namespace StoryBB\Controller;
 
 use StoryBB\App;
+use StoryBB\Dependency\CurrentUser;
+use StoryBB\Dependency\Database;
+use StoryBB\Dependency\Page;
+use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Helper\Parser;
 use StoryBB\Phrase;
 use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\StringLibrary;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use StoryBB\Routing\Exception\ApplicationException;
+use StoryBB\Routing\RenderResponse;
 
 class CustomPage implements Routable
 {
+	use CurrentUser;
+	use Database;
+	use Page;
+	use UrlGenerator;
+
 	public static function register_own_routes(RouteCollection $routes): void
 	{
-		$routes->add('pages', new Route('/pages/{page}', ['_function' => [static::class, 'view_page']]));
+		$routes->add('pages', new Route('/pages/{page}', ['_controller' => [static::class, 'view_page']]));
 	}
 
-	public static function view_page()
+	public function view_page(string $page)
 	{
-		global $context, $txt, $smcFunc, $scripturl;
+		$scripturl = App::get_global_config_item('boardurl') . '/index.php';
 
-		$page_name = isset($context['routing']['page']) && preg_match('~^[a-z0-9_-]+$~i', $context['routing']['page']) ? $context['routing']['page'] : '';
-		$request = $smcFunc['db']->query('', '
+		$page_name = $page;
+
+		$db = $this->db();
+		$url = $this->urlgenerator();
+		$current_page = $this->page();
+
+		$request = $db->query('', '
 			SELECT p.id_page, p.page_name, p.page_title, p.page_content, p.show_help, p.show_custom_field, p.custom_field_filter, cf.field_name, cf.in_character, cf.bbc AS cf_bbc
 			FROM {db_prefix}page AS p
 				LEFT JOIN {db_prefix}custom_fields AS cf ON (p.show_custom_field = cf.id_field)
@@ -41,40 +57,32 @@ class CustomPage implements Routable
 				'page_name' => $page_name,
 			]
 		);
-		$row = $smcFunc['db']->fetch_assoc($request);
-		$smcFunc['db']->free_result($request);
+		$page = $db->fetch_assoc($request);
+		$db->free_result($request);
 
-		if (empty($row))
+		if (empty($page))
 		{
-			fatal_lang_error('no_access', false);
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 
-		$context['page'] = $row;
+		$this->assertPageVisible((int) $page['id_page']);
 
-		static::assertPageVisible((int) $context['page']['id_page']);
+		$current_page->addLinktree($page['page_title'], $url->generate('pages', ['page' => $page['page_name']]));
+		$current_page->setCanonical($url->generate('pages', ['page' => $page['page_name']]));
 
-		$url = App::container()->get('urlgenerator');
+		$page['page_content'] = Parser::parse_bbc($page['page_content'], true, 'page-' . $page_name);
 
-		$context['linktree'][] = [
-			'url' => $url->generate('pages', ['page' => $context['page']['page_name']]),
-			'name' => $context['page']['page_title'],
-		];
-
-		$context['current_subaction'] = $context['page']['page_name'];
-
-		$context['page']['page_content'] = Parser::parse_bbc($context['page']['page_content'], true, 'page-' . $page_name);
-
-		if (!empty($context['page']['page_content']))
+		if (!empty($page['page_content']))
 		{
-			$context['meta_description'] = shorten_subject(strip_tags(preg_replace('/<br ?\/?>/i', "\n", $context['page']['page_content'])), 500);
+			$current_page->addMetaName('description', shorten_subject(strip_tags(preg_replace('/<br ?\/?>/i', "\n", $page['page_content'])), 500));
 		}
 
-		if (!empty($context['page']['field_name']))
+		if (!empty($page['field_name']))
 		{
-			$context['page']['custom_fields'] = [];
+			$page['custom_fields'] = [];
 			$characters_loaded = [];
 
-			$request = $smcFunc['db']->query('', '
+			$request = $db->query('', '
 				SELECT cfv.value, cfv.id_character, chars.character_name, mem.id_member, mem.real_name, chars.avatar AS avatar_url, a.filename AS avatar_filename
 				FROM {db_prefix}custom_field_values AS cfv
 					INNER JOIN {db_prefix}characters AS chars ON (cfv.id_character = chars.id_character)
@@ -83,17 +91,17 @@ class CustomPage implements Routable
 				WHERE cfv.id_field = {int:field}
 				ORDER BY cfv.value',
 				[
-					'field' => $context['page']['show_custom_field'],
+					'field' => $page['show_custom_field'],
 				]
 			);
-			while ($row = $smcFunc['db']->fetch_assoc($request))
+			while ($row = $db->fetch_assoc($request))
 			{
 				$row['value'] = trim($row['value']);
 				if (empty($row['value']))
 				{
 					continue;
 				}
-				if ($context['page']['cf_bbc'])
+				if ($page['cf_bbc'])
 				{
 					$row['value'] = Parser::parse_bbc($row['value']);
 				}
@@ -111,11 +119,11 @@ class CustomPage implements Routable
 
 				$characters_loaded[$row['id_character']] = 0;
 
-				$context['page']['custom_fields'][$index][$row['id_character']] = $row;
+				$page['custom_fields'][$index][$row['id_character']] = $row;
 			}
-			$smcFunc['db']->free_result($request);
+			$db->free_result($request);
 
-			if (!empty($characters_loaded) && !empty($context['page']['custom_field_filter']))
+			if (!empty($characters_loaded) && !empty($page['custom_field_filter']))
 			{
 				// Values correspond to:
 				// 0 = 'No checks; always display'
@@ -124,7 +132,7 @@ class CustomPage implements Routable
 				// 3 = 'Must have posted in the last six months'
 				// 4 = 'Must have posted at least once'
 				// Now we need to find, of the characters in question, which had their last posts when.
-				$request = $smcFunc['db']->query('', '
+				$request = $db->query('', '
 					SELECT id_character, MAX(poster_time) AS most_recent
 					FROM {db_prefix}messages
 					WHERE id_character IN ({array_int:characters})
@@ -133,11 +141,11 @@ class CustomPage implements Routable
 						'characters' => array_keys($characters_loaded)
 					]
 				);
-				while ($row = $smcFunc['db']->fetch_assoc($request))
+				while ($row = $db->fetch_assoc($request))
 				{
 					$characters_loaded[$row['id_character']] = (int) $row['most_recent'];
 				}
-				$smcFunc['db']->free_result($request);
+				$db->free_result($request);
 
 				$removals = [];
 				$min_age = [
@@ -149,7 +157,7 @@ class CustomPage implements Routable
 
 				foreach ($characters_loaded as $id_character => $most_recent)
 				{
-					if ($most_recent < $min_age[$context['page']['custom_field_filter']])
+					if ($most_recent < $min_age[$page['custom_field_filter']])
 					{
 						$removals[$id_character] = $id_character;
 					}
@@ -157,63 +165,65 @@ class CustomPage implements Routable
 
 				if (!empty($removals))
 				{
-					foreach ($context['page']['custom_fields'] as $index => $characters)
+					foreach ($page['custom_fields'] as $index => $characters)
 					{
 						foreach (array_keys($characters) as $id_character)
 						{
 							if (isset($removals[$id_character]))
 							{
-								unset ($context['page']['custom_fields'][$index][$id_character]);
+								unset ($page['custom_fields'][$index][$id_character]);
 							}
 						}
 					}
 
-					foreach ($context['page']['custom_fields'] as $index => $characters)
+					foreach ($page['custom_fields'] as $index => $characters)
 					{
 						if (empty($characters))
 						{
-							unset ($context['page']['custom_fields'][$index]);
+							unset ($page['custom_fields'][$index]);
 						}
 					}
 				}
 
-				if (!empty($context['page']['custom_fields']))
+				if (!empty($page['custom_fields']))
 				{
-					ksort($context['page']['custom_fields']);
+					ksort($page['custom_fields']);
 				}
 			}
 		}
 
-		$context['page_title'] = $context['page']['page_title'];
-		$context['sub_template'] = 'page';
+		return (App::make(RenderResponse::class))->render('page.twig', $page);
 	}
 
-	public static function assertPageVisible($page_id)
+	public function assertPageVisible($page_id)
 	{
-		global $user_info, $smcFunc;
+		$db = $this->db();
+		$user = $this->currentuser();
 
-		if (allowedTo('admin_forum'))
+		if ($user->can('admin_forum'))
 		{
 			return;
 		}
 
-		if (empty($user_info['groups']))
+		$groups = $user->get_groups();
+
+		if (empty($groups))
 		{
-			fatal_lang_error('no_access');
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 
 		$access = 'x';
-		$request = $smcFunc['db']->query('', '
+		$request = $db->query('', '
 			SELECT id_group, allow_deny
 			FROM {db_prefix}page_access
 			WHERE id_page = {int:id_page}
 				AND id_group IN ({array_int:groups})',
 			[
 				'id_page' => $page_id,
-				'groups' => $user_info['groups'],
+				'groups' => $groups,
 			]
 		);
-		while ($row = $smcFunc['db']->fetch_assoc($request))
+		while ($row = $db->fetch_assoc($request))
 		{
 			if ($row['allow_deny'])
 			{
@@ -226,12 +236,12 @@ class CustomPage implements Routable
 				$access = 'a';
 			}
 		}
-		$smcFunc['db']->free_result($request);
+		$db->free_result($request);
 
 		if ($access != 'a')
 		{
-			is_not_guest(); // It might improve if you are logged in, perhaps. But we're not going to confirm that for you.
-			fatal_lang_error('no_access', false);
+			// @todo is_not_guest(); // It might improve if you are logged in, perhaps. But we're not going to confirm that for you.
+			throw new ApplicationException(new Phrase('Errors:no_access'), 404);
 		}
 	}
 }

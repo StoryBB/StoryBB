@@ -21,7 +21,10 @@ use StoryBB\Phrase;
 use StoryBB\Routing\Behaviours\Administrative;
 use StoryBB\Routing\Behaviours\MaintenanceAccessible;
 use StoryBB\Routing\Behaviours\Unloggable;
+use StoryBB\Routing\Exception\ApplicationException;
+use StoryBB\Routing\Exception\LoggedApplicationException;
 use StoryBB\Routing\Exception\InvalidRouteException;
+use StoryBB\Routing\ErrorResponse;
 use StoryBB\Search\AdapterFactory as SearchAdapterFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -299,7 +302,20 @@ class App
 				}
 			}
 
-			$result = $instance->$method(...$args);
+			try
+			{
+				$result = $instance->$method(...$args);
+			}
+			catch(ApplicationException $e)
+			{
+				$result = App::make(ErrorResponse::class, $e->getMessage(), $e->getCode());
+			}
+			catch(LoggedApplicationException $e)
+			{
+				// @todo log this fatal error.
+				$result = App::make(ErrorResponse::class, $e->getMessage(), $e->getCode());
+			}
+
 			// There's a bit of logging we're going to be doing here, potentially.
 			if (!$instance instanceof Unloggable && !$instance instanceof Administrative)
 			{

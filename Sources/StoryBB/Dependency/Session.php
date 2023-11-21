@@ -12,6 +12,7 @@
 
 namespace StoryBB\Dependency;
 
+use StoryBB\App;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
 use StoryBB\Routing\Exception\SessionTimeoutException;
@@ -42,6 +43,18 @@ trait Session
 	protected function assert_session(string $sessvar, string $sessid): void
 	{
 		if (!$this->check_session($sessvar, $sessid))
+		{
+			throw new SessionTimeoutException;
+		}
+	}
+
+	protected function assert_session_from_post(): void
+	{
+		$request = App::container()->get('requestvars');
+		$session_var = $this->_session->get('session_var');
+		$session_id = $this->_session->get('session_value');
+
+		if (!$request->request->has($session_var) || $request->request->get($session_var) !== $session_id)
 		{
 			throw new SessionTimeoutException;
 		}

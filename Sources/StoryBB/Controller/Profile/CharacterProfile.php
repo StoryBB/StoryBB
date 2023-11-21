@@ -90,6 +90,32 @@ class CharacterProfile extends AbstractProfileController
 		$smcFunc['db']->free_result($result);
 		$context['character']['num_topics'] = comma_format($context['num_topics']);
 
+		// skills.
+		$context['character']['skills'] = [];
+		$request = $smcFunc['db']->query('', '
+			SELECT ss.id_skillset, ss.skillset_name, sb.id_branch, sb.skill_branch_name, s.id_skill, s.skill_name, s.skill_link
+			FROM {db_prefix}skillsets AS ss
+				INNER JOIN {db_prefix}skill_branches AS sb ON (sb.id_skillset = ss.id_skillset)
+				INNER JOIN {db_prefix}skills AS s ON (s.id_branch = sb.id_branch)
+				INNER JOIN {db_prefix}character_skills AS cs ON (cs.id_character = {int:character} AND cs.id_skill = s.id_skill)
+			WHERE ss.active = 1
+				AND sb.active = 1
+			ORDER BY ss.id_skillset, sb.branch_order, s.skill_order',
+			[
+				'character' => $context['character']['id_character'],
+			]
+		);
+		while ($row = $smcFunc['db']->fetch_assoc($request))
+		{
+			$context['character']['skills'][$row['id_skillset']]['title'] = $row['skillset_name'];
+			$context['character']['skills'][$row['id_skillset']]['skills'][$row['id_branch']]['title'] = $row['skill_branch_name'];
+			$context['character']['skills'][$row['id_skillset']]['skills'][$row['id_branch']]['skills'][$row['id_skill']] = [
+				'name' => $row['skill_name'],
+				'link' => $row['skill_link'],
+			];
+		}
+		$smcFunc['db']->free_result($request);
+
 		$context['sub_template'] = 'profile_character_summary';
 
 		$this->load_custom_fields();

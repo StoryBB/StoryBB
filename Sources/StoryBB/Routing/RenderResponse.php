@@ -37,6 +37,8 @@ class RenderResponse extends Response
 		$rendercontext['footer'] = [
 			'storybb_version' => App::SOFTWARE_VERSION,
 			'storybb_year' => App::SOFTWARE_YEAR,
+			'links' => $this->page()->get_footer_links(),
+			'debug' => App::get_global_config_item('db_show_debug'),
 		];
 
 		$this->setContent(($templater->load($template))->render($rendercontext));

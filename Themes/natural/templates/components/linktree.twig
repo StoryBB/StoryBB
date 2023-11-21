@@ -1,0 +1,13 @@
+<nav aria-label="breadcrumb">
+	<ol>
+	{% for breadcrumb in linktree %}
+		<li>
+		{% if breadcrumb.url %}
+			<a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
+		{% else %}
+			{{ breadcrumb.name }}
+		{% endif %}
+		</li>
+	{% endfor %}
+	</ol>
+</nav>

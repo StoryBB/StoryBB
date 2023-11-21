@@ -188,13 +188,7 @@ function preparsecode(&$message, $previewing = false)
 		$message = preg_replace(array_keys($mistake_fixes), $mistake_fixes, $message);
 
 	// Remove empty bbc from the sections outside the code tags
-	$allowedEmpty = [
-		'anchor',
-		'td',
-	];
-
-	$bbcTags = AbstractParser::get_all_bbcodes();
-	$alltags = array_diff($bbcTags, $allowedEmpty);
+	$alltags = AbstractParser::get_allowed_empty_bbcodes();
 
 	$alltags_regex = '\b' . implode("\b|\b", array_unique($alltags)) . '\b';
 

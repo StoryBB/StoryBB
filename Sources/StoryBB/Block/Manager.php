@@ -96,6 +96,11 @@ class Manager
 				continue;
 			}
 			$config = !empty($row['configuration']) ? json_decode($row['configuration'], true) : [];
+			if (empty($config['width']))
+			{
+				$config['width'] = 12;
+			}
+			$row['width'] = min(max($config['width'], 0), 12);
 			$row['object'] = App::make($row['class'], $config);
 
 			$this->page_blocks[$row['region']][$row['id_instance']] = $row;
@@ -187,6 +192,7 @@ class Manager
 				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
 				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
 				'blocktype' => $instance->get_blocktype(),
+				'width' => $instance_details['width'],
 				'icon' => isset($block_config['icon']) ? $block_config['icon'] : '',
 				'fa_icon' => isset($block_config['fa-icon']) ? $block_config['fa-icon'] : '',
 				'collapsible' => !empty($toggle),

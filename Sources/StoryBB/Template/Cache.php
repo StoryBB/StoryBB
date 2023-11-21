@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace StoryBB\Template;
 
+use StoryBB\App;
+use StoryBB\Task\Maintenance;
+
 /**
  * Handles caching for the template layer.
  */
@@ -81,15 +84,6 @@ class Cache
 	 */
 	public static function clean()
 	{
-		global $cachedir;
-
-		$dh = opendir($cachedir);
-		while ($file = readdir($dh))
-		{
-			if (strpos($file, 'template') === 0)
-				@unlink($cachedir . '/' . $file);
-		}
-		closedir($dh);
-		clearstatcache();
+		App::make(Maintenance\ClearTemplateCache::class)->execute();
 	}
 }

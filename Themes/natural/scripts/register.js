@@ -209,26 +209,17 @@ function sbbRegister(formID, passwordDifficultyLevel, regTextStrings)
 
 		// Request a search on that username.
 		checkName = curUsername.php_to8bit().php_urlencode();
-		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=signup;sa=usernamecheck;xml;username=' + checkName, checkUsernameCallback);
+		$.getJSON(sbb_prepareScriptUrl(sbb_scripturl) + 'action=signup;sa=usernamecheck;username=' + checkName, function(data) {
+			ajax_indicator(false);
+
+			var alt = textStrings[data.valid ? 'username_valid' : 'username_invalid'] ? textStrings[data.valid ? 'username_valid' : 'username_invalid'] : '';
+			verificationFields['username'][1].className = verificationFields['username'][5] + ' ' + (data.valid ? 'valid_input' : 'invalid_input');
+			setVerificationImage(verificationFields['username'][0], data.valid, alt);
+
+			ajax_indicator(false);
+		});
 
 		return true;
-	}
-
-	// Callback for getting the username data.
-	function checkUsernameCallback(XMLDoc)
-	{
-		if (XMLDoc.getElementsByTagName("username"))
-			isValid = XMLDoc.getElementsByTagName("username")[0].getAttribute("valid");
-		else
-			isValid = true;
-
-		// What to alt?
-		var alt = textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] ? textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] : '';
-
-		verificationFields['username'][1].className = verificationFields['username'][5] + ' ' + (isValid == 1 ? 'valid_input' : 'invalid_input');
-		setVerificationImage(verificationFields['username'][0], isValid == 1, alt);
-
-		ajax_indicator(false);
 	}
 
 	// Set the image to be the correct type.

@@ -1,0 +1,24 @@
+	<footer id="bottom">
+		<ul>
+			<li class="copyright"><a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">StoryBB {{ footer.storybb_version }} &copy; {{ footer.storybb_year }}, StoryBB project</a></li>
+
+			<li class="contact">
+				<a href="{{ link('contact') }}">{{ phrase('contact_us') }}</a>
+			</li>
+			<li class="help">
+				<a href="{{ link('help') }}">{{ phrase('help') }}</a>
+			</li>
+			{% for policy_type, link in footer.links %}
+				<li class="{{ policy_type }}">
+					<a href="{{ link.link }}">{{ link.title }}</a>
+				</li>
+			{% endfor %}
+			{% if footer.debug %}
+				<li class="debug">Debug</li>
+			{% endif %}
+		</ul>
+
+		<div class="jump_buttons" style="display: none;">
+		<a href="#top" title="{{ phrase('go_up') }}" class="go_up"></a>
+		<a href="#bottom" title="{{ phrase('go_down') }}" class="go_down"></a>
+	</footer>

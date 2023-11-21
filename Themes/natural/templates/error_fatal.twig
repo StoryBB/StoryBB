@@ -1,0 +1,16 @@
+{% extends '@layouts/default.twig' %}
+
+{% block title %}{{ error_title }}{% endblock %}
+
+{% block content %}
+	<x-panel class="fatal_error">
+		<x-panel.heading>{{ error_title }}</x-panel.heading>
+		<x-panel.body>
+			{{ error_message|raw }}
+		</x-panel.body>
+	</x-panel>
+
+	<div class="centertext">
+		<a class="button" style="float:none" href="javascript:document.location=document.referrer">{{ phrase('General:back') }}</a>
+	</div>
+{% endblock %}

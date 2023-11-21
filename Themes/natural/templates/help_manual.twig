@@ -1,0 +1,19 @@
+{% extends '@layouts/default.twig' %}
+
+{% block title %}{{ phrase('Manual:manual_storybb_user_help') }}{% endblock %}
+
+{% block content %}
+	<x-panel class="help_container">
+		<x-panel.heading>{{ phrase('Manual:manual_storybb_user_help') }}</x-panel.heading>
+		<x-panel.body>
+			<ul>
+				{% for section in manual_sections %}
+					<li>
+						<a href="{{ section.link }}">{{ section.title|raw }}</a><br>
+						{{ section.desc|raw }}
+					</li>
+				{% endfor %}
+			</ul>
+		</x-panel.body>
+	</x-panel>
+{% endblock %}

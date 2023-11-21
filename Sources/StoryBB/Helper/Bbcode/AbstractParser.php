@@ -233,6 +233,7 @@ abstract class AbstractParser
 				'test' => '[#]?([A-Za-z][A-Za-z0-9_\-]*)\]',
 				'before' => '<span id="post_$1">',
 				'after' => '</span>',
+				'permit_empty' => true,
 			],
 			[
 				'tag' => 'attach',
@@ -732,6 +733,7 @@ abstract class AbstractParser
 				'block_level' => true,
 				'disabled_before' => '',
 				'disabled_after' => '',
+				'permit_empty' => true,
 			],
 			[
 				'tag' => 'tr',
@@ -807,6 +809,34 @@ abstract class AbstractParser
 
 		foreach ($codes as $code)
 		{
+			$simple_list[$code['tag']] = true;
+		}
+
+		$simple_list = array_keys($simple_list);
+
+		usort($simple_list, function ($a, $b) {
+			return strcmp($a, $b);
+		});
+		return $simple_list;
+	}
+
+	/**
+	 * Return a list of bbcodes that do not permit empty content.
+	 *
+	 * @return array An array fo strings representing known bbcodes.
+	 */
+	public static function get_allowed_empty_bbcodes(): array
+	{
+		[$codes] = static::bbcode_definitions();
+		$simple_list = [];
+
+		foreach ($codes as $code)
+		{
+			if (!empty($code['permit_empty']))
+			{
+				continue;
+			}
+
 			$simple_list[$code['tag']] = true;
 		}
 

@@ -1,22 +1,15 @@
 {% extends '@layouts/admin.twig' %}
-{% import '@partials/admin/panels.twig' as panel %}
 
-{% block title %}ADMIN LOGIN{% endblock %}
+{% block title %}{{ phrase('General:login') }}{% endblock %}
 
 {% block content %}
-	{{ panel.begin() }}
-		{{ panel.heading( phrase('General:login') ) }}
-		{{ panel.body_begin() }}
+	<x-admin.panel>
+		<x-admin.panel.heading>{{ phrase('General:login') }}</x-admin.panel.heading>
+		<x-admin.panel.body>
 			{% if login_errors %}
-				<div class="errorbox">
-					<ul>
-						{% for error in login_errors %}
-						<li>{{ error|raw }}</li>
-						{% endfor %}
-					</ul>
-				</div>
+				<x-admin.error-list errors=login_errors />
 			{% endif %}
 			{{ form|raw }}
-		{{ panel.body_end() }}
-	{{ panel.end() }}
+		</x-admin.panel.body>
+	</x-admin.panel>
 {% endblock %}

@@ -1,13 +1,12 @@
 {% extends '@layouts/admin.twig' %}
-{% import '@partials/admin/panels.twig' as panel %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-	{{ panel.begin() }}
-		{{ panel.heading( title ) }}
-		{{ panel.body_begin() }}
+	<x-admin.panel>
+		<x-admin.panel.heading>{{ title }}</x-admin.panel.heading>
+		<x-admin.panel.body>
 			{{ form|raw }}
-		{{ panel.body_end() }}
-	{{ panel.end() }}
+		</x-admin.panel.body>
+	</x-panel>
 {% endblock %}

@@ -21,7 +21,7 @@ use StoryBB\Dependency\UrlGenerator;
 use StoryBB\Routing\Behaviours\MaintenanceAccessible;
 use StoryBB\Routing\Behaviours\Routable;
 use StoryBB\Routing\Behaviours\Unloggable;
-use StoryBB\Routing\ErrorResponse;
+use StoryBB\Routing\UnstyledErrorResponse;
 use StoryBB\Routing\NotFoundResponse;
 use StoryBB\StringLibrary;
 use ScssPhp\ScssPhp\Compiler;
@@ -86,7 +86,7 @@ class Css implements Routable, Unloggable, MaintenanceAccessible
 		}
 		catch (Exception $e)
 		{
-			return new ErrorResponse('/* Problem building CSS: ' . $e->getMessage() . ' */', 500, ['content-type' => 'text/css']);
+			return new UnstyledErrorResponse('/* Problem building CSS: ' . $e->getMessage() . ' */', 500, ['content-type' => 'text/css']);
 		}
 	}
 

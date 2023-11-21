@@ -16,7 +16,7 @@ use StoryBB\Model\Attachment;
 /**
  * Clean up older data exports.
  */
-class CleanExports implements \StoryBB\Task\Schedulable
+class CleanExports extends \StoryBB\Task\AbstractSchedulable implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

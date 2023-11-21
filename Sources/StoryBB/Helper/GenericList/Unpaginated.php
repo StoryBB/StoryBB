@@ -33,7 +33,7 @@ abstract class Unpaginated
 
 	public function get_id()
 	{
-		return str_replace('\\', '_', get_class($this));
+		return strtolower(str_replace('\\', '_', get_class($this)));
 	}
 
 	abstract public function get_title(): Phrase;
@@ -72,7 +72,7 @@ abstract class Unpaginated
 			$rendercontext['rows'][] = $table_row;
 		}
 
-		return $this->templaterenderer()->load('@partials/list.twig')->render($rendercontext);
+		return $this->templaterenderer()->load('components/admin/generic-list.twig')->render($rendercontext);
 	}
 
 	public function __toString(): string

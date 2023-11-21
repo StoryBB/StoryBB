@@ -733,14 +733,8 @@ function RegisterCheckUsername()
 {
 	global $sourcedir, $context;
 
-	// This is XML!
-	StoryBB\Template::set_layout('xml');
-	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
-	StoryBB\Template::add_helper([
-		'cleanXml' => 'cleanXml'
-	]);
 
 	// Clean it up like mother would.
 	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $context['checked_username']);
@@ -749,6 +743,14 @@ function RegisterCheckUsername()
 	$errors = validateUsername(0, $context['checked_username'], true);
 
 	$context['valid_username'] = empty($errors);
+
+	$response = [
+		'valid' => empty($errors),
+		'username' => $context['checked_username'],
+	];
+
+	sbb_serverResponse(json_encode($response));
+	die;
 }
 
 /**

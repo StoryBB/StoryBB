@@ -12,12 +12,13 @@
 
 namespace StoryBB\Routing;
 
+use StoryBB\Phrase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Represents a fatal error response in the system.
  */
-class ErrorResponse extends Response
+class ErrorResponse extends RenderResponse
 {
 	public function __construct(?string $content = '', int $status = 403, array $headers = [])
 	{
@@ -25,25 +26,17 @@ class ErrorResponse extends Response
 
 		if (empty($content))
 		{
-			$content = $this->placeholder_content();
+			$content = new Phrase('General:error_occured');
 		}
+
 		$this->setContent($content);
 		$this->setStatusCode($status);
 		$this->setProtocolVersion('1.0');
 	}
 
-	protected function placeholder_content() : string
+	public function sendContent()
 	{
-		return '<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8" />
-
-		<title>Not Found</title>
-	</head>
-	<body>
-		Not Found.
-	</body>
-</html>';
+		$this->render('error_fatal.twig', ['error_title' => new Phrase('General:error_occured'), 'error_message' => $this->content]);
+		parent::sendContent();
 	}
 }

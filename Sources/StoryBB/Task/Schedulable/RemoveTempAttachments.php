@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Check for un-posted attachments and remove them.
  */
-class RemoveTempAttachments implements \StoryBB\Task\Schedulable
+class RemoveTempAttachments extends \StoryBB\Task\AbstractSchedulable implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.
