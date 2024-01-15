@@ -585,9 +585,13 @@ function SetThemeOptions()
 
 	foreach ($context['options'] as $i => $setting)
 	{
-		// Just skip separators
 		if (!is_array($setting))
+		{
+			$context['options'][$i] = $txt[$setting];
 			continue;
+		}
+
+		$context['options'][$i]['label'] = $txt[$setting['label']];
 
 		// Is this disabled?
 		if (($setting['id'] == 'topics_per_page' || $setting['id'] == 'messages_per_page') && !empty($modSettings['disableCustomPerPage']))
@@ -743,8 +747,8 @@ function SetThemeSettings()
 
 	$context['settings'] = $context['theme_settings'];
 	$context['theme_settings'] = $settings;
-	
-	
+
+
 
 	foreach ($context['settings'] as $i => $setting)
 	{
@@ -778,7 +782,7 @@ function SetThemeSettings()
 			];
 		}
 		$context['default_variant'] = !empty($settings['default_variant']) && isset($context['theme_variants'][$settings['default_variant']]) ? $settings['default_variant'] : $settings['theme_variants'][0];
-		
+
 		$context['default_variant']['thumbnail'] = $context['theme_variants'][$context['default_variant']]['thumbnail'];
 	}
 

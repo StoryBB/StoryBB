@@ -68,7 +68,7 @@ function ModifyLanguages()
 		checkSession();
 		validateToken('admin-lang');
 
-		getLanguages();
+		getLanguages(false);
 		$lang_exists = false;
 		foreach ($context['languages'] as $lang)
 		{
@@ -83,7 +83,7 @@ function ModifyLanguages()
 		if ($_POST['default_language'] != $language && $lang_exists)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
-			updateSettingsFile(['language' => $_POST['default_language']]);
+			updateSettingsFile(['language' => JavaScriptEscape($_POST['default_language'])]);
 			$language = $_POST['default_language'];
 		}
 
@@ -280,7 +280,7 @@ function list_getLanguages()
 	$backup_actual_theme_dir = $settings['actual_theme_dir'];
 	$backup_base_theme_dir = !empty($settings['base_theme_dir']) ? $settings['base_theme_dir'] : '';
 
-	getLanguages();
+	getLanguages(false);
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)
